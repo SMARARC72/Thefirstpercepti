@@ -1,0 +1,66 @@
+[
+  {
+    "id": "fac-drowned-court",
+    "name": "The Drowned Court",
+    "description": "A faction drawn to drowned law and failed vessels. They operate where justice has leaked into something older.",
+    "stance": "neutral",
+    "trust": 0,
+    "fear": 25,
+    "need": "Proof that the fountain is remembering names",
+    "plan": {
+      "description": "Seal the fountain's lower chamber before the door opens",
+      "turnsRemaining": 15,
+      "visibleToPlayer": false
+    },
+    "knownSecrets": ["fountain_door", "court_precedents"],
+    "npcs": ["npc-sister-mourn"]
+  },
+  {
+    "id": "fac-luminous-archive",
+    "name": "The Luminous Archive",
+    "description": "Keepers of bright records in a city that rewrites itself. They believe knowledge is a form of resistance.",
+    "stance": "neutral",
+    "trust": 5,
+    "fear": 15,
+    "need": "A complete catalog of post-Shattering phenomena",
+    "plan": {
+      "description": "Recruit the player as a field observer",
+      "turnsRemaining": 20,
+      "visibleToPlayer": false
+    },
+    "knownSecrets": ["archive_vault", "keeper_walks"],
+    "npcs": []
+  },
+  {
+    "id": "fac-umbral-covenant",
+    "name": "The Umbral Covenant",
+    "description": "Operators who move where public memory thins. They trade in absences.",
+    "stance": "wary",
+    "trust": -10,
+    "fear": 40,
+    "need": "Someone to be forgotten in a specific way",
+    "plan": {
+      "description": "Test the player's capacity for strategic forgetting",
+      "turnsRemaining": 12,
+      "visibleToPlayer": false
+    },
+    "knownSecrets": ["memory_trade", "forgotten_names"],
+    "npcs": ["npc-fennick"]
+  },
+  {
+    "id": "fac-azure-merchants",
+    "name": "Azure Merchants' Guild",
+    "description": "Ledger-holders who can buy passage through most locked doors. They measure worth in debts and favors.",
+    "stance": "neutral",
+    "trust": 0,
+    "fear": 10,
+    "need": "New markets in information and protection",
+    "plan": {
+      "description": "Assess the player as potential client or competitor",
+      "turnsRemaining": 18,
+      "visibleToPlayer": false
+    },
+    "knownSecrets": ["guild_routes", "debt_records"],
+    "npcs": []
+  }
+]

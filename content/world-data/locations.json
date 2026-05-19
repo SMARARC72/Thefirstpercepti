@@ -1,0 +1,140 @@
+[
+  {
+    "id": "loc-fountain",
+    "name": "The Sunken Fountain",
+    "description": "A fountain that has been underwater for years. The water is black, and the carved names on its lip seem to shift when unobserved.",
+    "regionId": "reg-greywake",
+    "dangerBase": 25,
+    "discovered": true,
+    "investigated": false,
+    "tags": ["water", "archive-connected", "court-seal"],
+    "exits": [
+      {
+        "toLocationId": "loc-archive",
+        "visible": true,
+        "label": "To the Archive Steps",
+        "travelRisk": 15
+      },
+      {
+        "toLocationId": "loc-market",
+        "visible": true,
+        "label": "To Greywake Market",
+        "travelRisk": 20
+      },
+      {
+        "toLocationId": "loc-breach",
+        "visible": false,
+        "label": "To the Old Breach",
+        "hiddenDescription": "A path that only appears after the fountain has been touched at Deep Night.",
+        "travelRisk": 60,
+        "locked": {
+          "description": "Requires Deep Night touch"
+        }
+      }
+    ],
+    "pointsOfInterest": [
+      {
+        "id": "poi-fountain-lip",
+        "name": "The Carved Lip",
+        "description": "Names carved in an order you do not yet understand.",
+        "investigated": false,
+        "tags": ["names", "court-seal"]
+      },
+      {
+        "id": "poi-fountain-water",
+        "name": "The Black Water",
+        "description": "Water that is not wet. Memory held in surface tension.",
+        "investigated": false,
+        "tags": ["water", "memory"]
+      }
+    ]
+  },
+  {
+    "id": "loc-archive",
+    "name": "The Archive Steps",
+    "description": "The Luminous Archive rises like a held breath. Rows of shelves extend into shadow, each holding records of things that should not have survived.",
+    "regionId": "reg-greywake",
+    "dangerBase": 15,
+    "discovered": false,
+    "investigated": false,
+    "tags": ["knowledge", "bells", "restricted"],
+    "exits": [
+      {
+        "toLocationId": "loc-fountain",
+        "visible": true,
+        "label": "To the Sunken Fountain",
+        "travelRisk": 15
+      }
+    ],
+    "pointsOfInterest": [
+      {
+        "id": "poi-archive-index",
+        "name": "The Master Index",
+        "description": "Coded references to records you cannot yet access.",
+        "investigated": false,
+        "tags": ["records", "coded"]
+      },
+      {
+        "id": "poi-archive-bells",
+        "name": "The Silent Bells",
+        "description": "Bells that ring in frequencies you feel rather than hear.",
+        "investigated": false,
+        "tags": ["bells", "sound"]
+      }
+    ]
+  },
+  {
+    "id": "loc-market",
+    "name": "Greywake Market",
+    "description": "A market that trades in memories, debts, and silence. The stalls are arranged by how much light they permit.",
+    "regionId": "reg-greywake",
+    "dangerBase": 35,
+    "discovered": false,
+    "investigated": false,
+    "tags": ["trade", "crowd", "factions"],
+    "exits": [
+      {
+        "toLocationId": "loc-fountain",
+        "visible": true,
+        "label": "To the Sunken Fountain",
+        "travelRisk": 20
+      }
+    ],
+    "pointsOfInterest": [
+      {
+        "id": "poi-market-debt-court",
+        "name": "The Debt Court",
+        "description": "A court that judges by memories people never confessed.",
+        "investigated": false,
+        "tags": ["court", "debt", "memories"]
+      }
+    ]
+  },
+  {
+    "id": "loc-breach",
+    "name": "The Old Breach",
+    "description": "Where the Shattered entered. The wound in reality has not healed. It has learned to hide.",
+    "regionId": "reg-greywake",
+    "dangerBase": 80,
+    "discovered": false,
+    "investigated": false,
+    "tags": ["shattered", "dangerous", "hidden"],
+    "exits": [
+      {
+        "toLocationId": "loc-fountain",
+        "visible": false,
+        "label": "Back to the Fountain",
+        "travelRisk": 40
+      }
+    ],
+    "pointsOfInterest": [
+      {
+        "id": "poi-breach-wound",
+        "name": "The Wound",
+        "description": "Reality is thin here. You can see through to something that is not quite sky.",
+        "investigated": false,
+        "tags": ["shattered", "reality"]
+      }
+    ]
+  }
+]

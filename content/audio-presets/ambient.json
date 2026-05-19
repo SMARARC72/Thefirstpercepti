@@ -1,0 +1,31 @@
+{
+  "name": "District Ambient",
+  "description": "Base atmospheric drone for Greywake Market District",
+  "layer": "ambient",
+  "synth": {
+    "type": "FM",
+    "carrier": { "frequency": 55, "waveform": "sine" },
+    "modulator": { "frequency": 0.25, "depth": 200, "waveform": "sine" }
+  },
+  "filter": {
+    "type": "lowpass",
+    "frequency": 800,
+    "resonance": 2
+  },
+  "envelope": {
+    "attack": 4,
+    "decay": 2,
+    "sustain": 0.7,
+    "release": 6
+  },
+  "effects": [
+    { "type": "reverb", "roomSize": 0.8, "wet": 0.4 },
+    { "type": "delay", "time": 0.5, "feedback": 0.3, "wet": 0.2 }
+  ],
+  "lfo": {
+    "frequency": 0.1,
+    "depth": 50,
+    "target": "filter.frequency"
+  },
+  "volume": -18
+}

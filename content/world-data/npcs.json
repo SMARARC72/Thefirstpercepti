@@ -1,0 +1,104 @@
+[
+  {
+    "id": "npc-sister-mourn",
+    "name": "Sister Mourn",
+    "role": "field archivist",
+    "description": "A woman who catalogs disasters with the patience of someone who has already seen the ending.",
+    "disposition": "curious",
+    "wants": "proof that the fountain is remembering names",
+    "secrets": [
+      {
+        "id": "sec-fountain-memory",
+        "content": "The fountain repeats names only after someone has paid to erase them.",
+        "revealed": false,
+        "topicId": "fountain",
+        "difficulty": 8
+      },
+      {
+        "id": "sec-archive-vault",
+        "content": "She can provide access to the Archive's restricted vault in exchange for genuine fountain water.",
+        "revealed": false,
+        "topicId": "archive",
+        "difficulty": 12
+      }
+    ],
+    "locationId": "loc-fountain",
+    "factionId": "fac-drowned-court",
+    "tags": ["archivist", "fountain", "quest-giver"],
+    "alive": true,
+    "dialogueState": {}
+  },
+  {
+    "id": "npc-fennick",
+    "name": "Fennick the Tongue",
+    "role": "broker of harmful information",
+    "description": "A man who sells secrets he has not yet stolen. His laughter sounds like pages tearing.",
+    "disposition": "wary",
+    "wants": "a secret he can sell twice",
+    "secrets": [
+      {
+        "id": "sec-fountain-door",
+        "content": "There is a door under the fountain that has been opening itself for three hundred years.",
+        "revealed": false,
+        "topicId": "fountain",
+        "difficulty": 10
+      },
+      {
+        "id": "sec-breach-connection",
+        "content": "The fountain's door opens into the Breach, but not into the Breach as a place — into the Breach as a when.",
+        "revealed": false,
+        "topicId": "breach",
+        "difficulty": 16
+      }
+    ],
+    "locationId": "loc-market",
+    "factionId": "fac-umbral-covenant",
+    "tags": ["broker", "market", "secrets"],
+    "alive": true,
+    "dialogueState": {}
+  },
+  {
+    "id": "npc-foundling",
+    "name": "The Foundling",
+    "role": "unclaimed witness",
+    "description": "A child who followed something home from the Breach. They are not afraid enough for their own good.",
+    "disposition": "afraid",
+    "wants": "someone to believe what followed them home",
+    "secrets": [
+      {
+        "id": "sec-breach-child",
+        "content": "The door under the fountain opens into a 'when', not a place. Time moves differently on the other side.",
+        "revealed": false,
+        "topicId": "breach",
+        "difficulty": 14
+      }
+    ],
+    "locationId": "loc-breach",
+    "factionId": null,
+    "tags": ["child", "witness", "breach"],
+    "alive": true,
+    "dialogueState": {}
+  },
+  {
+    "id": "npc-keeper",
+    "name": "The Bell Keeper",
+    "role": "archive custodian",
+    "description": "A keeper who was buried three days ago, but whose bells still ring. Some keepers do not stay buried.",
+    "disposition": "neutral",
+    "wants": "someone to catalog the bells that ring backwards",
+    "secrets": [
+      {
+        "id": "sec-bells-time",
+        "content": "The bells ring backwards when someone is about to arrive who has already been here.",
+        "revealed": false,
+        "topicId": "bells",
+        "difficulty": 12
+      }
+    ],
+    "locationId": "loc-archive",
+    "factionId": "fac-luminous-archive",
+    "tags": ["keeper", "bells", "archive", "dead"],
+    "alive": false,
+    "dialogueState": {}
+  }
+]

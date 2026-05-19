@@ -1,0 +1,59 @@
+[
+  {
+    "id": "item-brass-lens",
+    "name": "Cracked Brass Lens",
+    "type": "tool",
+    "description": "Shows you things you are not ready to see. Cracks spider outward from the center like frozen lightning.",
+    "effects": [
+      { "type": "reveal", "target": "hidden_exits", "value": 1 }
+    ],
+    "equipSlot": "accessory"
+  },
+  {
+    "id": "item-fountain-water",
+    "name": "Sealed Fountain Water",
+    "type": "consumable",
+    "description": "Water that is not wet. Memory held in surface tension. Drinking it is not recommended.",
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": [
+      { "type": "condition", "target": "salt_touched", "value": 1, "duration": 5 }
+    ]
+  },
+  {
+    "id": "item-iron-token",
+    "name": "Dull Iron Token",
+    "type": "misc",
+    "description": "A token with no visible markings. It is warm to the touch, as if recently held by someone feverish."
+  },
+  {
+    "id": "item-dry-matches",
+    "name": "Three Dry Matches",
+    "type": "tool",
+    "description": "Ordinary matches that burn with a blue flame. The flame casts no shadow."
+  },
+  {
+    "id": "item-testimony-scrap",
+    "name": "Sealed Scrap of Testimony",
+    "type": "document",
+    "description": "A fragment of someone's sworn statement. The seal is intact, but the paper inside is blank."
+  },
+  {
+    "id": "item-violet-thread",
+    "name": "Violet Thread",
+    "type": "misc",
+    "description": "Thread pulled from a drain near the fountain. It twitches occasionally, as if remembering being part of something larger."
+  },
+  {
+    "id": "item-backwards-book",
+    "name": "Book of Backwards Names",
+    "type": "document",
+    "description": "A book from the market with pages that turn backwards. The names inside are arranged by date of un-birth."
+  },
+  {
+    "id": "item-court-seal",
+    "name": "Scratched Court Seal",
+    "type": "key",
+    "description": "A seal from the Drowned Court, scratched into fountain stone. It opens nothing physical."
+  }
+]

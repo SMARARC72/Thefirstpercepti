@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative\\scenes\\fountain.ink",
+  "compiledAt": "2026-05-19T21:56:42.590Z",
+  "storyContent": "// ============================================================================\n// THE SUNKEN FOUNTAIN — Central location hub\n// ============================================================================\n\n=== fountain ===\nThe Sunken Fountain waits.\n\n# sound:ambient_drip\n# animation:pulse\n\n{ world_danger > 60:\n    The water is black today. Something has been feeding at the bottom.\n}\n\n{ world_danger > 80:\n    The fountain repeats names only after someone has paid to erase them. You hear your own name bubbling in the water.\n}\n\n* [Touch the water] -> fountain_touch\n* [Read the carved names] -> fountain_names\n* [Examine the court seal] -> fountain_examine_seal\n* [Go to Greywake Market] -> market\n* [Go to the Archive Steps] -> archive\n* [Step back] -> arrival\n\n=== fountain_touch ===\nYour fingers break the surface.\n\n{ roll_check(\"metaphysical\", 12) >= 12:\n    The water is not wet. It is memory, held in surface tension. For a moment you see the fountain as it was: full, surrounded by flowers, ringing with coins.\n    ~ add_journal_entry(\"Vision\", \"The fountain remembers being full.\")\n- else:\n    The cold is absolute. Your hand comes back covered in something that smells of old copper and regret.\n    ~ player_hp = player_hp - 1\n}\n\n-> DONE\n\n=== fountain_names ===\nYou lean closer to read what has been carved.\n\n{ get_player_stat(\"mind\") >= 3:\n    The names are arranged by date of death, but some dates are in the future. One entry reads: \"{player_name} — Day {world_day + 3}.\"\n    ~ add_journal_entry(\"Carved names\", \"Your name, dated three days from now.\")\n- else:\n    The carving is too worn. You make out fragments: \"...drowned...\", \"...remember...\", \"...do not look up.\"\n}\n\n-> DONE\n\n=== fountain_examine_seal ===\nA court seal scratched into the stone lip.\n\n{ get_player_stat(\"lore\") >= 2 || player_domain == \"lore\":\n    The Drowned Court's mark. They have claimed this fountain as evidence in a trial that has not happened yet.\n    ~ add_journal_entry(\"Evidence\", \"Drowned Court seal on fountain.\")\n    -> faction_reaction\n- else:\n    You recognize it as official, but not which office. The symbol seems to shift when you look directly at it.\n}\n\n-> DONE\n",
+  "metadata": {
+    "knots": [
+      "fountain",
+      "fountain_touch",
+      "fountain_names",
+      "fountain_examine_seal"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

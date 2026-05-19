@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative\\scenes\\dreams.ink",
+  "compiledAt": "2026-05-19T21:56:42.585Z",
+  "storyContent": "// ============================================================================\n// DREAMS — Rest and sleep encounter events\n// ============================================================================\n\n=== dream_rest ===\nYou find a place where the district's attention thins.\n\n{ world_danger > 60:\n    Even here, the danger presses against your eyelids. Sleep will not come cleanly.\n}\n\n{ player_form == \"spirit_bound\":\n    Your bound spirit paces while you rest. It does not sleep. It has never slept.\n}\n\n* [Sleep lightly] -> dream_light\n* [Sleep deeply] -> dream_deep\n* [Stay awake] -> dream_awake\n\n=== dream_light ===\nYou let yourself drift, but keep one hand on the stone.\n\n{ roll_check(\"sense\", 10) >= 12:\n    In the space between waking and sleeping, you hear the district's true name. Not the name the maps use — the name it calls itself, which is older and sadder.\n    ~ add_journal_entry(\"True name\", \"Heard the district's true name in light sleep.\")\n    ~ player_focus = player_focus + 2\n- else:\n    Dreams come, but they are not yours. You dream of being a fountain, remembering names you never knew.\n    ~ player_focus = player_focus + 1\n}\n\n~ player_hp = min(player_hp + 2, player_max_hp)\n-> DONE\n\n=== dream_deep ===\nYou surrender to sleep entirely.\n\n{ roll_check(\"will\", 12) >= 12:\n    You dream of the world before the Shattering. It is not better, but it is more certain. You wake with a word on your tongue that you do not recognize.\n    ~ add_journal_entry(\"Pre-Shattering dream\", \"Dreamed the world before the Shattering.\")\n    ~ player_hp = min(player_hp + 4, player_max_hp)\n    ~ player_focus = min(player_focus + 3, player_max_focus)\n- else:\n    Something visits you in the deep. It does not harm you, but it studies you, and you can feel its attention like cold fingers on your thoughts.\n    ~ player_focus = player_focus - 2\n    ~ player_hp = min(player_hp + 1, player_max_hp)\n}\n\n-> DONE\n\n=== dream_awake ===\nYou choose vigilance over rest.\n\n{ get_player_stat(\"sense\") >= 3:\n    The district changes while you watch. A doorway appears where there was only wall. A shadow moves against the light. By morning, three things will be different, and you will have witnessed only one of them.\n    ~ add_journal_entry(\"Vigil\", \"Witnessed the district changing while awake.\")\n- else:\n    The night is long. Your attention frays. By morning you are no more rested than when you stopped, but at least you are still here.\n}\n\n-> DONE\n",
+  "metadata": {
+    "knots": [
+      "dream_rest",
+      "dream_light",
+      "dream_deep",
+      "dream_awake"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

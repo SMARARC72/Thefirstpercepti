@@ -1,0 +1,27 @@
+{
+  "name": "@first-perception/narrative",
+  "version": "2.0.0",
+  "description": "Ink narrative integration: compiler wrapper, bridge, runtime.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "inkjs": "^2.3.0",
+    "@first-perception/types": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.0.0"
+  }
+}

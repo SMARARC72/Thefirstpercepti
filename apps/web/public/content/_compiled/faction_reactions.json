@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative\\systems\\faction_reactions.ink",
+  "compiledAt": "2026-05-19T21:56:42.606Z",
+  "storyContent": "// ============================================================================\n// FACTION REACTIONS — Dynamic faction responses\n// ============================================================================\n\n=== faction_reaction ===\n{ get_faction_trust(\"drowned_court\") < -20:\n    -> fc_hostile\n}\n\n{ get_faction_trust(\"drowned_court\") > 20:\n    -> fc_friendly\n}\n\n-> fc_neutral\n\n=== fc_hostile ===\nThe Drowned Court has marked you. You notice watchers at the fountain's edge, too still to be casual.\n\n~ world_danger = world_danger + 5\n\n-> DONE\n\n=== fc_friendly ===\nA court agent approaches openly. \"The Court extends protection to those who understand the value of silence.\"\n\n-> DONE\n\n=== fc_neutral ===\nThe Court observes. They have not decided what you are yet.\n\n-> DONE\n",
+  "metadata": {
+    "knots": [
+      "faction_reaction",
+      "fc_hostile",
+      "fc_friendly",
+      "fc_neutral"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

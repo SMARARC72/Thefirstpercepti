@@ -1,0 +1,14 @@
+node_modules
+dist
+.vite
+coverage
+*.log
+.env
+.env.local
+playwright-report
+test-results
+packages/*/node_modules
+packages/*/dist
+apps/*/node_modules
+apps/*/dist
+scripts/*/node_modules

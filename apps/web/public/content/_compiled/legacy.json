@@ -1,0 +1,14 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative\\systems\\legacy.ink",
+  "compiledAt": "2026-05-19T21:56:42.614Z",
+  "storyContent": "// ============================================================================\n// LEGACY — Death and inheritance narratives\n// ============================================================================\n\n=== legacy_death ===\nYou do not end. You become a detail in someone else's first perception.\n\n{ player_name != \"No One\":\n    The name {player_name} is spoken one more time, then filed in the Archive under \"Pending.\"\n}\n\nThe world you leave behind has been changed by your passage. Factions remember. Locations bear marks. Rumors grow new details.\n\n* [Begin again] -> legacy_begin_again\n\n=== legacy_begin_again ===\nSomeone new arrives at {world_location}.\n\n{ has_item(\"cracked_brass_lens\"):\n    They find a cracked brass lens in the fountain's basin. It shows them things they are not ready to see.\n}\n\nThe cycle continues. The world notices them first.\n\n-> DONE\n",
+  "metadata": {
+    "knots": [
+      "legacy_death",
+      "legacy_begin_again"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

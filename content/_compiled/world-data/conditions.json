@@ -1,0 +1,89 @@
+[
+  {
+    "id": "cond-salt-touched",
+    "typeId": "salt_touched",
+    "name": "Salt-Touched",
+    "description": "The district has marked you. You taste salt in unexpected places. The world notices you more clearly.",
+    "category": "environmental",
+    "isHarmful": false,
+    "turnsRemaining": null,
+    "stacks": 1,
+    "maxStacks": 1,
+    "effects": [
+      { "stat": "sense", "modifier": 1 }
+    ]
+  },
+  {
+    "id": "cond-wounded",
+    "typeId": "wounded",
+    "name": "Wounded",
+    "description": "Your blood is not the right color. It carries something that flickers in the lamplight.",
+    "category": "physical",
+    "isHarmful": true,
+    "turnsRemaining": 8,
+    "stacks": 1,
+    "maxStacks": 3,
+    "effects": [
+      { "hpPerTurn": -1, "stat": "body", "modifier": -1 }
+    ]
+  },
+  {
+    "id": "cond-exhausted",
+    "typeId": "exhausted",
+    "name": "Exhausted",
+    "description": "Every closed eye contains a street you have not walked yet. Rest does not come cleanly.",
+    "category": "mental",
+    "isHarmful": true,
+    "turnsRemaining": 5,
+    "stacks": 1,
+    "maxStacks": 2,
+    "effects": [
+      { "stat": "will", "modifier": -2 },
+      { "focusPerTurn": -1 }
+    ]
+  },
+  {
+    "id": "cond-haunted",
+    "typeId": "haunted",
+    "name": "Haunted by Bells",
+    "description": "You hear bells at unexpected moments. They ring from inside your skull, from a place that remembers being a church.",
+    "category": "mental",
+    "isHarmful": true,
+    "turnsRemaining": null,
+    "stacks": 1,
+    "maxStacks": 1,
+    "effects": [
+      { "stat": "mind", "modifier": -1 },
+      { "focusPerTurn": -1 }
+    ]
+  },
+  {
+    "id": "cond-remembered",
+    "typeId": "remembered",
+    "name": "Too Remembered",
+    "description": "The fountain knows your true name. The world uses it when it thinks you are not listening.",
+    "category": "divine",
+    "isHarmful": true,
+    "turnsRemaining": null,
+    "stacks": 1,
+    "maxStacks": 1,
+    "effects": [
+      { "stat": "presence", "modifier": 2 },
+      { "stat": "will", "modifier": -1 }
+    ]
+  },
+  {
+    "id": "cond-debt-marked",
+    "typeId": "debt_marked",
+    "name": "Debt-Marked",
+    "description": "The debt court has added your name to a list. They will hear from you when your debts mature.",
+    "category": "social",
+    "isHarmful": true,
+    "turnsRemaining": 15,
+    "stacks": 1,
+    "maxStacks": 1,
+    "effects": [
+      { "stat": "authority", "modifier": -2 }
+    ]
+  }
+]

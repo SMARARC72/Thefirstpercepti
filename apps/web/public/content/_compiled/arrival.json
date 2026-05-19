@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative\\scenes\\arrival.ink",
+  "compiledAt": "2026-05-19T21:56:42.550Z",
+  "storyContent": "// ============================================================================\n// ARRIVAL — First scene after character creation\n// ============================================================================\n\n=== arrival ===\n{ world_location }\n\n# sound:ambient_drip\n# animation:pulse\n\n{ player_form == \"spirit_bound\":\n    Your second shadow answers half a breath late. The street notices.\n}\n\n{ player_form == \"warped\":\n    Your body remembers the Shattering in ways the paving stones cannot ignore.\n}\n\n{ player_form == \"construct\":\n    The materials that still dream inside you resonate with the fountain's frequency.\n}\n\nPeople keep their distance, not because they know what you are, but because the world seems to notice you first.\n\n* [Look around] -> arrival_look\n* [Listen for trouble] -> arrival_listen\n* [Approach the fountain] -> fountain\n* [Go to Greywake Market] -> market\n* [Go to the Archive Steps] -> archive\n* [Speak to the nearest witness] -> dialogue_sister_mourn\n* [Rest here] -> dream_rest\n\n=== arrival_look ===\nThe scene sharpens.\n\n{ get_player_stat(\"sense\") >= 2:\n    You notice: a drain clogged with violet thread, a court seal scratched into the fountain lip, and one dry footprint pointing away.\n    ~ add_journal_entry(\"Perceived evidence\", \"Violet thread, court seal, dry footprint.\")\n- else:\n    You find details, but they arrange themselves into the wrong conclusion before you can stop them.\n}\n\n* [Follow the dry footprint] -> arrival\n* [Inspect the court seal] -> fountain_examine_seal\n* [Pull the violet thread] -> arrival\n\n=== arrival_listen ===\nYou open your attention to the district's hidden frequencies.\n\n{ get_player_stat(\"sense\") >= 3:\n    Beneath the public noise: three knocks, a breath, then water moving uphill. Someone nearby says your name as if reading it from a ledger.\n    ~ add_journal_entry(\"Heard\", \"Your name spoken from a ledger.\")\n- else:\n    The street sounds normal. Too normal. The absence of strangeness is itself a warning.\n}\n\n-> DONE\n",
+  "metadata": {
+    "knots": [
+      "arrival",
+      "arrival_look",
+      "arrival_listen"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

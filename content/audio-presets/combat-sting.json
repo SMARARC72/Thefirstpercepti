@@ -1,0 +1,21 @@
+{
+  "name": "Combat Sting",
+  "description": "Percussive impact for combat initiation",
+  "layer": "combat",
+  "synth": {
+    "type": "membrane",
+    "pitch": 80,
+    "octaves": 4
+  },
+  "envelope": {
+    "attack": 0.01,
+    "decay": 0.3,
+    "sustain": 0,
+    "release": 0.5
+  },
+  "effects": [
+    { "type": "distortion", "amount": 0.3 },
+    { "type": "reverb", "roomSize": 0.7, "wet": 0.25 }
+  ],
+  "volume": -10
+}

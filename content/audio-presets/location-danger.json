@@ -1,0 +1,27 @@
+{
+  "name": "Danger Location",
+  "description": "Dissonant, unstable harmony for high-danger areas",
+  "layer": "location",
+  "scale": ["C2", "C3", "F#3", "C4"],
+  "synth": {
+    "type": "fm",
+    "carrier": { "frequency": 65.41, "waveform": "sawtooth" },
+    "modulator": { "frequency": 0.5, "depth": 400, "waveform": "sine" }
+  },
+  "filter": {
+    "type": "lowpass",
+    "frequency": 400,
+    "resonance": 4
+  },
+  "envelope": {
+    "attack": 0.5,
+    "decay": 1,
+    "sustain": 0.6,
+    "release": 3
+  },
+  "effects": [
+    { "type": "reverb", "roomSize": 0.9, "wet": 0.5 },
+    { "type": "distortion", "amount": 0.15 }
+  ],
+  "volume": -12
+}

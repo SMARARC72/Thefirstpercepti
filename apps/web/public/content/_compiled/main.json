@@ -1,0 +1,5383 @@
+{
+  "inkVersion": 21,
+  "root": [
+    [
+      [
+        "done",
+        {
+          "#n": "g-0"
+        }
+      ],
+      null
+    ],
+    "done",
+    {
+      "arrival": [
+        [
+          "ev",
+          {
+            "VAR?": "world_location"
+          },
+          "out",
+          "/ev",
+          "\n",
+          "#",
+          "^sound:ambient_drip",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^spirit_bound",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Your second shadow answers half a breath late. The street notices.",
+                "\n",
+                {
+                  "->": ".^.^.^.19"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^warped",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Your body remembers the Shattering in ways the paving stones cannot ignore.",
+                "\n",
+                {
+                  "->": ".^.^.^.29"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^construct",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The materials that still dream inside you resonate with the fountain's frequency.",
+                "\n",
+                {
+                  "->": ".^.^.^.39"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "^People keep their distance, not because they know what you are, but because the world seems to notice you first.",
+          "\n",
+          "ev",
+          "str",
+          "^Look around",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Listen for trouble",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Approach the fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to Greywake Market",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Archive Steps",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Speak to the nearest witness",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Rest here",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-6",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "arrival_look"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "arrival_listen"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "archive"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "dialogue_sister_mourn"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-6": [
+              "^ ",
+              {
+                "->": "dream_rest"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "arrival_look": [
+        [
+          "^The scene sharpens.",
+          "\n",
+          "ev",
+          "str",
+          "^sense",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          2,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^You notice: a drain clogged with violet thread, a court seal scratched into the fountain lip, and one dry footprint pointing away.",
+                "\n",
+                "ev",
+                "str",
+                "^Perceived evidence",
+                "/str",
+                "str",
+                "^Violet thread, court seal, dry footprint.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": ".^.^.^.12"
+                },
+                null
+              ]
+            }
+          ],
+          [
+            {
+              "->": ".^.b"
+            },
+            {
+              "b": [
+                "\n",
+                "^You find details, but they arrange themselves into the wrong conclusion before you can stop them.",
+                "\n",
+                {
+                  "->": ".^.^.^.12"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Follow the dry footprint",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Inspect the court seal",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Pull the violet thread",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "fountain_examine_seal"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "arrival_listen": [
+        "^You open your attention to the district's hidden frequencies.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Beneath the public noise: three knocks, a breath, then water moving uphill. Someone nearby says your name as if reading it from a ledger.",
+              "\n",
+              "ev",
+              "str",
+              "^Heard",
+              "/str",
+              "str",
+              "^Your name spoken from a ledger.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The street sounds normal. Too normal. The absence of strangeness is itself a warning.",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fountain": [
+        [
+          "^The Sunken Fountain waits.",
+          "\n",
+          "#",
+          "^sound:ambient_drip",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          60,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The water is black today. Something has been feeding at the bottom.",
+                "\n",
+                {
+                  "->": ".^.^.^.14"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          80,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The fountain repeats names only after someone has paid to erase them. You hear your own name bubbling in the water.",
+                "\n",
+                {
+                  "->": ".^.^.^.22"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Touch the water",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Read the carved names",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Examine the court seal",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to Greywake Market",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Archive Steps",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Step back",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "fountain_touch"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "fountain_names"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "fountain_examine_seal"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "archive"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "fountain_touch": [
+        "^Your fingers break the surface.",
+        "\n",
+        "ev",
+        "str",
+        "^metaphysical",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The water is not wet. It is memory, held in surface tension. For a moment you see the fountain as it was: full, surrounded by flowers, ringing with coins.",
+              "\n",
+              "ev",
+              "str",
+              "^Vision",
+              "/str",
+              "str",
+              "^The fountain remembers being full.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The cold is absolute. Your hand comes back covered in something that smells of old copper and regret.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              1,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fountain_names": [
+        "^You lean closer to read what has been carved.",
+        "\n",
+        "ev",
+        "str",
+        "^mind",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The names are arranged by date of death, but some dates are in the future. One entry reads: \"",
+              "ev",
+              {
+                "VAR?": "player_name"
+              },
+              "out",
+              "/ev",
+              "^ — Day ",
+              "ev",
+              {
+                "VAR?": "world_day"
+              },
+              3,
+              "+",
+              "out",
+              "/ev",
+              "^.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Carved names",
+              "/str",
+              "str",
+              "^Your name, dated three days from now.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The carving is too worn. You make out fragments: \"...drowned...\", \"...remember...\", \"...do not look up.\"",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fountain_examine_seal": [
+        "^A court seal scratched into the stone lip.",
+        "\n",
+        "ev",
+        "str",
+        "^lore",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        2,
+        ">=",
+        {
+          "VAR?": "player_domain"
+        },
+        "str",
+        "^lore",
+        "/str",
+        "==",
+        "||",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The Drowned Court's mark. They have claimed this fountain as evidence in a trial that has not happened yet.",
+              "\n",
+              "ev",
+              "str",
+              "^Evidence",
+              "/str",
+              "str",
+              "^Drowned Court seal on fountain.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": "faction_reaction"
+              },
+              {
+                "->": ".^.^.^.18"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You recognize it as official, but not which office. The symbol seems to shift when you look directly at it.",
+              "\n",
+              {
+                "->": ".^.^.^.18"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "archive": [
+        [
+          "^The Luminous Archive rises around you like a held breath.",
+          "\n",
+          "#",
+          "^sound:archive_bell",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "^Rows of shelves extend into shadow. Each book is a record of something that should not have survived the Shattering.",
+          "\n",
+          "ev",
+          "str",
+          "^Search for records about the fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Look for your name",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Study the archive bells",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Sunken Fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to Greywake Market",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "archive_search_fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "archive_search_name"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "archive_bells"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "archive_search_fountain": [
+        "^You search the indices for anything connected to the Sunken Fountain.",
+        "\n",
+        "ev",
+        "str",
+        "^lore",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You find a deposition from a witness who no longer exists: \"The fountain does not drown people. It remembers them too completely, and the weight of that memory pulls them under.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Archive record",
+              "/str",
+              "str",
+              "^Fountain remembers too completely.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The indices are coded. You find references to \"Project Sunken\" and \"The Breach Memorandum\" but the actual texts are stored in a restricted vault.",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "archive_search_name": [
+        "ev",
+        "str",
+        "^lore",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^There is a file. Thin, recent. It contains only a sketch of your face and the words: \"Subject arrived. Do not intervene yet.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              10,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              "ev",
+              "str",
+              "^Discovery",
+              "/str",
+              "str",
+              "^A file on you exists in the Archive.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^If there is a record, it is not under any name you have used. The Archive keeps secrets in categories that have not been invented yet.",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "archive_bells": [
+        "^The bells hang motionless, but you feel their ringing in your teeth.",
+        "\n",
+        "ev",
+        {
+          "VAR?": "world_day"
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^They are ringing for a keeper who was buried three days ago. The keepers here do not always stay buried.",
+              "\n",
+              "ev",
+              "str",
+              "^Archive bells",
+              "/str",
+              "str",
+              "^Ringing for a buried keeper.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The bells are silent. In the Archive, silence is louder than ringing.",
+              "\n",
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "combat_threat_emerges": [
+        [
+          "^A threat finishes becoming a shape.",
+          "\n",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          70,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^It has been following you since you arrived. The district has been feeding it your hesitation.",
+                "\n",
+                {
+                  "->": ".^.^.^.8"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "#",
+          "^sound:combat_start",
+          "/#",
+          "#",
+          "^animation:shudder",
+          "/#",
+          "ev",
+          "str",
+          "^Attack",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Defend",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Flee",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Speak to it",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "combat_attack"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "combat_defend"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "combat_flee"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "combat_speak"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "combat_attack": [
+        "ev",
+        "str",
+        "^combat",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You act before it finishes becoming real. It breaks apart into wet ash and a smell like old coins.",
+              "\n",
+              "ev",
+              "str",
+              "^Combat",
+              "/str",
+              "str",
+              "^Defeated a forming threat.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              "#",
+              "^sound:blade_ring",
+              "/#",
+              "#",
+              "^animation:flash",
+              "/#",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The thing you strike learns the shape of your arm. Pain arrives with a precise memory of your childhood door.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              4,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "#",
+              "^sound:impact_wet",
+              "/#",
+              "#",
+              "^consequence:wounded",
+              "/#",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "combat_defend": [
+        "^You raise what protection you have.",
+        "\n",
+        "ev",
+        "str",
+        "^combat",
+        "/str",
+        8,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The threat tests your guard and finds it sufficient. It withdraws, but not far. You can feel it waiting in the next shadow.",
+              "\n",
+              "#",
+              "^sound:guard_hold",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Your guard is not enough. Something gets through — not your flesh, but your certainty. You will hesitate next time.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              2,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              3,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              "#",
+              "^sound:impact_wet",
+              "/#",
+              "#",
+              "^consequence:wounded",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "combat_flee": [
+        "^You choose the moment no one was watching.",
+        "\n",
+        "ev",
+        "str",
+        "^stealth",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The district loses you for the length of one held breath. You find a safer angle, for now.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              10,
+              "-",
+              0,
+              {
+                "x()": "max",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              "\n",
+              "#",
+              "^sound:footsteps_fade",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You run, but the sound of pursuit keeps pace from inside your own chest. The district has your rhythm now.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              6,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              "#",
+              "^sound:footsteps_chase",
+              "/#",
+              "#",
+              "^consequence:danger_rise",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "combat_speak": [
+        "^You address the threat as if it could understand.",
+        "\n",
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^It pauses. Not because it understands your words, but because it has never been spoken to before. The hesitation is enough.",
+              "\n",
+              "ev",
+              "str",
+              "^Strange diplomacy",
+              "/str",
+              "str",
+              "^Spoke to a threat; it hesitated.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              "#",
+              "^sound:whisper_resolved",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Your voice gives it a shape to aim for. It becomes more real, more focused, more hungry.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              8,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              "#",
+              "^sound:breach_rumble",
+              "/#",
+              "#",
+              "^consequence:danger_rise",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "dialogue_sister_mourn": [
+        [
+          "^Sister Mourn watches you with the patience of someone who catalogs disasters.",
+          "\n",
+          "^\"You have the look of someone who has already seen the ending,\" she says. \"Most people arrive here still hoping for a middle.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Ask about the fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask what she wants",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about the Archive",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "sm_fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "sm_wants"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "sm_archive"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "sm_fountain": [
+        "^\"The fountain repeats names,\" she says, \"but only after someone has paid to erase them. The Drowned Court has been buying silence for three generations.\"",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^She does not look at the fountain when she speaks of it. Her eyes track something above the waterline.",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "ev",
+        "str",
+        "^Sister Mourn",
+        "/str",
+        "str",
+        "^Fountain repeats erased names.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "dialogue_sister_mourn"
+        },
+        null
+      ],
+      "sm_wants": [
+        [
+          "^\"I want proof that the fountain is remembering names. Not repeating them — remembering. There is a difference between echo and memory.\"",
+          "\n",
+          "^She produces a small vial. \"If you can get me water that remembers, I can get you access to the Archive's restricted vault.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Agree",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Refuse",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Bargain for more",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "sm_agree"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "sm_refuse"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "sm_bargain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "sm_agree": [
+        "^\"Good. The fountain is most honest at Deep Night. Bring me what you find.\"",
+        "\n",
+        "ev",
+        "str",
+        "^Quest",
+        "/str",
+        "str",
+        "^Collect fountain water at Deep Night for Sister Mourn.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        "done",
+        null
+      ],
+      "sm_refuse": [
+        "^She nods as if you have confirmed something. \"Most refuse. Most also return, eventually. The fountain has that effect.\"",
+        "\n",
+        "ev",
+        {
+          "VAR?": "world_danger"
+        },
+        2,
+        "+",
+        "/ev",
+        {
+          "VAR=": "world_danger",
+          "re": true
+        },
+        "done",
+        null
+      ],
+      "sm_bargain": [
+        "ev",
+        "str",
+        "^intrigue",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"You bargain like someone who has already lost everything once. Fine. The vault access, plus one truth from the Archive about your own arrival.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Bargain",
+              "/str",
+              "str",
+              "^Sister Mourn: vault access + truth about arrival.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^\"You have nothing to bargain with. The fountain has not taken enough from you yet. Come back when you have scars worth trading.\"",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "sm_archive": [
+        "^\"The Archive keeps what the world tries to forget. But some things forget themselves so thoroughly that even the Archive cannot hold them.\"",
+        "\n",
+        "^She looks at you with sudden intensity. \"Be careful what you look for in there. The Archive does not always distinguish between searching and becoming.\"",
+        "\n",
+        {
+          "->": "dialogue_sister_mourn"
+        },
+        null
+      ],
+      "market": [
+        [
+          "^Greywake Market breathes in layers: the top layer of voices, the middle layer of prices, and the bottom layer of things that change hands without being named.",
+          "\n",
+          "#",
+          "^sound:market_murmur",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          50,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The merchants have pulled their awnings low. You can see the whites of their eyes even from a distance.",
+                "\n",
+                {
+                  "->": ".^.^.^.14"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^sense",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          3,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Beneath the bargaining, someone is crying in a language that has no words for help.",
+                "\n",
+                {
+                  "->": ".^.^.^.25"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Browse the stalls",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Listen for rumors",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Approach the debt court",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Sunken Fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Archive Steps",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "market_browse"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "market_rumors"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "market_debt_court"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "archive"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "market_browse": [
+        "^The stalls sell what the district has decided is valuable today: dried lamp-fish, seal-wax, secondhand names, and small vials of fountain water labeled \"memory-enhancing.\"",
+        "\n",
+        "ev",
+        "str",
+        "^cracked_brass_lens",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Your lens hums when you pass a stall selling optical equipment. The merchant does not look up, but her shoulders tighten.",
+              "\n",
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^One jar contains something that moves against the glass: a rumor given physical form, preserved in vinegar and spite.",
+              "\n",
+              "ev",
+              "str",
+              "^Market find",
+              "/str",
+              "str",
+              "^A rumor preserved in a jar.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.22"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You browse, but every price seems to include a fraction of your attention that you will not get back.",
+              "\n",
+              {
+                "->": ".^.^.^.22"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "market_rumors": [
+        "^You open your attention to the market's hidden frequencies.",
+        "\n",
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"The Drowned Court is buying silence again,\" a voice says from behind a stack of empty crates. \"But this time they're paying in futures. Day after tomorrow, someone important forgets their own name.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Rumor",
+              "/str",
+              "str",
+              "^Drowned Court buying silence with futures.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The rumors sense your interest and close like a fist. Whatever they were saying, they have decided to say it to someone else.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              2,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              "#",
+              "^consequence:danger_rise",
+              "/#",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "market_debt_court": [
+        [
+          "^A makeshift tribunal beneath a torn banner. The judge wears a mask made of old receipts.",
+          "\n",
+          "#",
+          "^sound:market_murmur",
+          "/#",
+          "#",
+          "^animation:shudder",
+          "/#",
+          "ev",
+          "str",
+          "^authority",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          2,
+          ">=",
+          {
+            "VAR?": "player_domain"
+          },
+          "str",
+          "^intrigue",
+          "/str",
+          "==",
+          "||",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^You recognize the procedure: it is not justice, but accounting. The debt being judged is not money, but attention. The accused owes the district twelve hours of being noticed.",
+                "\n",
+                "ev",
+                "str",
+                "^Debt court",
+                "/str",
+                "str",
+                "^District judges debts of attention.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": "faction_reaction"
+                },
+                {
+                  "->": ".^.^.^.24"
+                },
+                null
+              ]
+            }
+          ],
+          [
+            {
+              "->": ".^.b"
+            },
+            {
+              "b": [
+                "\n",
+                "^The language of the court is dense and rhythmic. You understand that someone is being punished, but not for what.",
+                "\n",
+                {
+                  "->": ".^.^.^.24"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Intervene",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Observe",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave quietly",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "market_intervene"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "market_observe"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "market_intervene": [
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Your interruption is so unexpected that the court forgets its script. The accused flees. The judge turns to you with an expression you cannot read behind the receipts.",
+              "\n",
+              "ev",
+              "str",
+              "^Intervention",
+              "/str",
+              "str",
+              "^Disrupted a debt court.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The court absorbs your interruption into its proceedings. You are now listed as a co-defendant. The district has noticed you twice.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              5,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "market_observe": [
+        "^You watch without being watched.",
+        "\n",
+        "ev",
+        "str",
+        "^stealth",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The judge removes the mask between cases. Beneath it, she is younger than the receipts suggest. Her eyes are the color of fountain water.",
+              "\n",
+              "ev",
+              "str",
+              "^Observation",
+              "/str",
+              "str",
+              "^Debt court judge has fountain-water eyes.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Someone taps your shoulder. \"Spectators pay double,\" they whisper. You pay, or you leave.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              2,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "breach": [
+        [
+          "^The Old Breach is not a place. It is a disagreement between the city and the ground beneath it.",
+          "\n",
+          "#",
+          "^sound:breach_rumble",
+          "/#",
+          "#",
+          "^animation:shudder",
+          "/#",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          70,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The air tastes of copper and old lightning. Things live here that have never been named, because naming them would require admitting they exist.",
+                "\n",
+                {
+                  "->": ".^.^.^.14"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^warped",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Your body resonates with the Breach. The Shattering that made you also made this. You are kin, whether you want to be or not.",
+                "\n",
+                {
+                  "->": ".^.^.^.24"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Explore carefully",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Listen to the walls",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Descend",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Go to the Sunken Fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Retreat",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "breach_explore"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "breach_listen"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "breach_descend"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "breach_explore": [
+        "^You move through the Breach as if it were a living thing that might startle.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The debris is arranged in patterns. Not architecture — grammar. The Breach is trying to say something, and the city has been misunderstanding it for generations.",
+              "\n",
+              "ev",
+              "str",
+              "^Breach grammar",
+              "/str",
+              "str",
+              "^Debris arranged in linguistic patterns.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^A floorboard that should not exist creaks. Something below you shifts its weight.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              4,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "breach_listen": [
+        "^You press your ear to the wall. It is warm.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        4,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The wall has a heartbeat, slow and deliberate. Whoever built this place did not build it empty. They built it as a container.",
+              "\n",
+              "ev",
+              "str",
+              "^Breach heartbeat",
+              "/str",
+              "str",
+              "^The walls are alive and deliberate.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You hear your own pulse returned to you, distorted, as if the wall is trying to learn the rhythm of your fear.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              3,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "breach_descend": [
+        "^The stairs downward have been worn by feet that were not entirely human.",
+        "\n",
+        "#",
+        "^sound:stone_scrape",
+        "/#",
+        "#",
+        "^animation:shudder",
+        "/#",
+        "ev",
+        "str",
+        "^physical",
+        "/str",
+        16,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You descend through three false floors. At the bottom, a door without a handle. The keyhole is shaped like an eye.",
+              "\n",
+              "ev",
+              "str",
+              "^Deep breach",
+              "/str",
+              "str",
+              "^Door with eye-shaped keyhole at bottom of stairs.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.19"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The stairs end in a collapse. You turn back, but the way up seems longer than it should be. The Breach has borrowed some of your distance.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              3,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "#",
+              "^consequence:wounded",
+              "/#",
+              {
+                "->": ".^.^.^.19"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "dialogue_fennick": [
+        [
+          "^Fennick the Tongue leans against a wall that does not exist. He has been selling the same secret to three different people for six years, and none of them have compared notes.",
+          "\n",
+          "^\"You want information,\" he says. \"Everyone wants information. The question is whether you can afford the kind that does not come with consequences.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Ask about the market",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about the Breach",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Buy a secret",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Threaten him",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "fennick_market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "fennick_breach"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "fennick_buy"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "fennick_threaten"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "market"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "fennick_market": [
+        "^\"The market is a thermometer,\" Fennick says. \"When the Drowned Court is nervous, prices drop. When the Archive is nervous, prices rise. Right now, both are nervous, which means the real trade is happening somewhere else entirely.\"",
+        "\n",
+        "ev",
+        "str",
+        "^intrigue",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^He leans closer. \"The Foundling has been asking about you. Not your name — your shadow. Someone wants to know what follows you.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Fennick warning",
+              "/str",
+              "str",
+              "^The Foundling is asking about your shadow.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^He smiles, and the smile contains no information you can use.",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "dialogue_fennick"
+        },
+        null
+      ],
+      "fennick_breach": [
+        "^\"The Breach is not a wound,\" Fennick says, suddenly serious. \"It is a mouth. And mouths do not open without wanting something.\"",
+        "\n",
+        "ev",
+        "str",
+        "^lore",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        2,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^He notices your attention. \"You know something. I can see it in the way you hold your shoulders. Tell me, and I'll tell you what the mouth wants.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Tell him what you know",
+              "/str",
+              "/ev",
+              {
+                "*": ".^.c-0",
+                "flg": 20
+              },
+              "ev",
+              "str",
+              "^Remain silent",
+              "/str",
+              "/ev",
+              {
+                "*": ".^.c-1",
+                "flg": 20
+              },
+              {
+                "->": ".^.^.^.12"
+              },
+              {
+                "c-0": [
+                  "^ ",
+                  {
+                    "->": "fennick_exchange"
+                  },
+                  "\n",
+                  {
+                    "#f": 5
+                  }
+                ],
+                "c-1": [
+                  "^ ",
+                  {
+                    "->": "fennick_silent"
+                  },
+                  "\n",
+                  {
+                    "#f": 5
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^\"But you do not need to know what it wants,\" he continues, relaxing. \"You only need to know that it is hungry.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              2,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": "dialogue_fennick"
+              },
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        null
+      ],
+      "fennick_exchange": [
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You trade a fragment of your first perception for a fragment of his. The exchange leaves you both slightly different.",
+              "\n",
+              "ev",
+              "str",
+              "^Exchange",
+              "/str",
+              "str",
+              "^Traded first perception fragment with Fennick.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              1,
+              "+",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^He takes your knowledge and gives you a lie wrapped in truth's clothing. You will not know which is which until it matters.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              2,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fennick_silent": [
+        "^\"Silence is also information,\" Fennick says, nodding as if you have confirmed something. \"I will sell your silence to someone who needs it.\"",
+        "\n",
+        "done",
+        null
+      ],
+      "fennick_buy": [
+        [
+          "^\"Secrets have grades,\" Fennick says. \"Safe, warm, and burning. Which can you afford?\"",
+          "\n",
+          "ev",
+          "str",
+          "^a_dull_iron_token",
+          "/str",
+          {
+            "x()": "has_item",
+            "exArgs": 1
+          },
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "ev",
+                "str",
+                "^Pay with the iron token",
+                "/str",
+                "/ev",
+                {
+                  "*": ".^.c-0",
+                  "flg": 20
+                },
+                {
+                  "->": ".^.^.^.9"
+                },
+                {
+                  "c-0": [
+                    "^ ",
+                    {
+                      "->": "fennick_pay_token"
+                    },
+                    "\n",
+                    {
+                      "#f": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Pay with a promise",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Decide against it",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "fennick_pay_promise"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "dialogue_fennick"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "fennick_pay_token": [
+        "^He takes the token without looking at it. \"This is older than the market. It remembers when this place was water.\"",
+        "\n",
+        "ev",
+        "str",
+        "^intrigue",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"The secret is this: the fountain does not remember names. The fountain remembers the absence of names. That is why the Court is afraid of it.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Fennick's secret",
+              "/str",
+              "str",
+              "^The fountain remembers absence of names.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^\"The secret is this: someone is watching the watcher. Good luck sleeping.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              1,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fennick_pay_promise": [
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"A promise from you is worth more than coin,\" he says. \"I will collect later. For now: the Archive's restricted vault contains a mirror that shows the viewer's first perception. The Archivists use it to screen applicants.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Promise debt",
+              "/str",
+              "str",
+              "^Owed Fennick a promise for vault mirror secret.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^\"Your promises are cheap. Everyone promises. The district is made of broken promises and the things that grow in their cracks.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              3,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "fennick_threaten": [
+        "ev",
+        "str",
+        "^combat",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Fennick raises his hands. \"Violence is also information. I have filed yours under 'impatient.'\"",
+              "\n",
+              "^He produces a folded paper. \"Here. A list of everyone who has asked about you in the last three days. Use it wisely.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Threat",
+              "/str",
+              "str",
+              "^Forced Fennick to reveal who is asking about you.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Fennick does not flinch. \"Threats are currency I do not accept. But I will note that you tried.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              5,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "dialogue_foundling": [
+        [
+          "^The Foundling sits where the light fails to reach, wrapped in something that might once have been a banner.",
+          "\n",
+          "^\"You are not the first to arrive here,\" they say, not looking at you. \"But you might be the first to leave without being claimed.\"",
+          "\n",
+          "ev",
+          "str",
+          "^sense",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          3,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Their shadow is wrong. It points in a direction where there is no light source.",
+                "\n",
+                {
+                  "->": ".^.^.^.13"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Ask what followed them",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about being claimed",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Offer protection",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "foundling_followed"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "foundling_claimed"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "foundling_protection"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "foundling_followed": [
+        "^\"It does not have a shape yet,\" the Foundling whispers. \"It is still learning from the people it watches. Yesterday it walked like the market guard. Today it walks like you.\"",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"Tomorrow it will walk like someone you trust. That is when you must run.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Foundling warning",
+              "/str",
+              "str",
+              "^A shapeless thing is learning to walk like you.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^They shudder. \"I should not have told you. Now it knows that I know.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              3,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "foundling_claimed": [
+        [
+          "^\"The district claims everyone eventually,\" they say. \"Some become streets. Some become stories. Some become the silence between words. I am trying to become none of those.\"",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^spirit_bound",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^They look at you with sudden recognition. \"You are already claimed. You just have not noticed the second signature yet.\"",
+                "\n",
+                "ev",
+                "str",
+                "^Claimed",
+                "/str",
+                "str",
+                "^The Foundling says I am already claimed.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": ".^.^.^.10"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Ask who claims you",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Say nothing",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "foundling_who"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "foundling_silence"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "foundling_who": [
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^\"The fountain,\" they say. \"The fountain claims everyone who drinks from it. Not the water — the reflection. It keeps a copy.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Fountain claim",
+              "/str",
+              "str",
+              "^The fountain claims people through their reflection.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^They shake their head. \"If I name it, it will hear me. And it has been listening so carefully.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              1,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "foundling_silence": [
+        "^Your silence is not empty. The Foundling fills it with their own breathing, which is rapid and shallow.",
+        "\n",
+        "^\"Thank you,\" they say finally. \"Most people talk until the listening becomes a weapon.\"",
+        "\n",
+        "ev",
+        {
+          "VAR?": "player_focus"
+        },
+        1,
+        "+",
+        "/ev",
+        {
+          "VAR=": "player_focus",
+          "re": true
+        },
+        "done",
+        null
+      ],
+      "foundling_protection": [
+        "ev",
+        "str",
+        "^social",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The Foundling looks at you with an expression you cannot name. \"No one has offered that before. The market offers trade. The Archive offers knowledge. But protection...\"",
+              "\n",
+              "^They stand, and their shadow corrects itself. \"I will remember you. That is dangerous, but I will do it anyway.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Protection",
+              "/str",
+              "str",
+              "^Offered protection to the Foundling.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^\"You cannot protect me,\" they say, not unkindly. \"You cannot even protect yourself. The district has already made copies of both of us.\"",
+              "\n",
+              "ev",
+              {
+                "VAR?": "world_danger"
+              },
+              2,
+              "+",
+              "/ev",
+              {
+                "VAR=": "world_danger",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "dream_rest": [
+        [
+          "^You find a place where the district's attention thins.",
+          "\n",
+          "ev",
+          {
+            "VAR?": "world_danger"
+          },
+          60,
+          ">",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Even here, the danger presses against your eyelids. Sleep will not come cleanly.",
+                "\n",
+                {
+                  "->": ".^.^.^.8"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_form"
+          },
+          "str",
+          "^spirit_bound",
+          "/str",
+          "==",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Your bound spirit paces while you rest. It does not sleep. It has never slept.",
+                "\n",
+                {
+                  "->": ".^.^.^.18"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Sleep lightly",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Sleep deeply",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Stay awake",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "dream_light"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "dream_deep"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "dream_awake"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "dream_light": [
+        "^You let yourself drift, but keep one hand on the stone.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^In the space between waking and sleeping, you hear the district's true name. Not the name the maps use — the name it calls itself, which is older and sadder.",
+              "\n",
+              "ev",
+              "str",
+              "^True name",
+              "/str",
+              "str",
+              "^Heard the district's true name in light sleep.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              2,
+              "+",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Dreams come, but they are not yours. You dream of being a fountain, remembering names you never knew.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              1,
+              "+",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "ev",
+        {
+          "VAR?": "player_hp"
+        },
+        2,
+        "+",
+        {
+          "VAR?": "player_max_hp"
+        },
+        {
+          "x()": "min",
+          "exArgs": 2
+        },
+        "/ev",
+        {
+          "VAR=": "player_hp",
+          "re": true
+        },
+        "\n",
+        "done",
+        null
+      ],
+      "dream_deep": [
+        "^You surrender to sleep entirely.",
+        "\n",
+        "ev",
+        "str",
+        "^will",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You dream of the world before the Shattering. It is not better, but it is more certain. You wake with a word on your tongue that you do not recognize.",
+              "\n",
+              "ev",
+              "str",
+              "^Pre-Shattering dream",
+              "/str",
+              "str",
+              "^Dreamed the world before the Shattering.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              4,
+              "+",
+              {
+                "VAR?": "player_max_hp"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              3,
+              "+",
+              {
+                "VAR?": "player_max_focus"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Something visits you in the deep. It does not harm you, but it studies you, and you can feel its attention like cold fingers on your thoughts.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              2,
+              "-",
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              1,
+              "+",
+              {
+                "VAR?": "player_max_hp"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "dream_awake": [
+        "^You choose vigilance over rest.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The district changes while you watch. A doorway appears where there was only wall. A shadow moves against the light. By morning, three things will be different, and you will have witnessed only one of them.",
+              "\n",
+              "ev",
+              "str",
+              "^Vigil",
+              "/str",
+              "str",
+              "^Witnessed the district changing while awake.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The night is long. Your attention frays. By morning you are no more rested than when you stopped, but at least you are still here.",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "faction_reaction": [
+        "ev",
+        "str",
+        "^drowned_court",
+        "/str",
+        {
+          "x()": "get_faction_trust",
+          "exArgs": 1
+        },
+        -20,
+        "<",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              {
+                "->": "fc_hostile"
+              },
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "ev",
+        "str",
+        "^drowned_court",
+        "/str",
+        {
+          "x()": "get_faction_trust",
+          "exArgs": 1
+        },
+        20,
+        ">",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              {
+                "->": "fc_friendly"
+              },
+              {
+                "->": ".^.^.^.20"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "fc_neutral"
+        },
+        null
+      ],
+      "fc_hostile": [
+        "^The Drowned Court has marked you. You notice watchers at the fountain's edge, too still to be casual.",
+        "\n",
+        "ev",
+        {
+          "VAR?": "world_danger"
+        },
+        5,
+        "+",
+        "/ev",
+        {
+          "VAR=": "world_danger",
+          "re": true
+        },
+        "done",
+        null
+      ],
+      "fc_friendly": [
+        "^A court agent approaches openly. \"The Court extends protection to those who understand the value of silence.\"",
+        "\n",
+        "done",
+        null
+      ],
+      "fc_neutral": [
+        "^The Court observes. They have not decided what you are yet.",
+        "\n",
+        "done",
+        null
+      ],
+      "consequence_wounded": [
+        "^Your wound opens again when you move too quickly.",
+        "\n",
+        "ev",
+        {
+          "VAR?": "player_hp"
+        },
+        5,
+        "<=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The blood is not the right color. It carries something that flickers in the lamplight, like letters trying to form words.",
+              "\n",
+              "ev",
+              "str",
+              "^Condition",
+              "/str",
+              "str",
+              "^Wound bleeding strangely.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.8"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "consequence_danger_rise": [
+        "^The district has noticed your pattern.",
+        "\n",
+        "ev",
+        {
+          "VAR?": "world_danger"
+        },
+        80,
+        ">",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The streets themselves seem to lean toward you. Doorways narrow. Shadows lengthen in directions that do not match the light.",
+              "\n",
+              {
+                "->": ".^.^.^.8"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "consequence_faction_shift": [
+        "^Word travels fast in a city that reads ledgers before faces.",
+        "\n",
+        "done",
+        null
+      ],
+      "legacy_death": [
+        [
+          "^You do not end. You become a detail in someone else's first perception.",
+          "\n",
+          "ev",
+          {
+            "VAR?": "player_name"
+          },
+          "str",
+          "^No One",
+          "/str",
+          "!=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The name ",
+                "ev",
+                {
+                  "VAR?": "player_name"
+                },
+                "out",
+                "/ev",
+                "^ is spoken one more time, then filed in the Archive under \"Pending.\"",
+                "\n",
+                {
+                  "->": ".^.^.^.10"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "^The world you leave behind has been changed by your passage. Factions remember. Locations bear marks. Rumors grow new details.",
+          "\n",
+          "ev",
+          "str",
+          "^Begin again",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "legacy_begin_again"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "legacy_begin_again": [
+        "^Someone new arrives at ",
+        "ev",
+        {
+          "VAR?": "world_location"
+        },
+        "out",
+        "/ev",
+        "^.",
+        "\n",
+        "ev",
+        "str",
+        "^cracked_brass_lens",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^They find a cracked brass lens in the fountain's basin. It shows them things they are not ready to see.",
+              "\n",
+              {
+                "->": ".^.^.^.14"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "^The cycle continues. The world notices them first.",
+        "\n",
+        "done",
+        null
+      ],
+      "start": [
+        "^The world notices you before you notice it.",
+        "\n",
+        "ev",
+        {
+          "VAR?": "player_name"
+        },
+        "str",
+        "^No One",
+        "/str",
+        "!=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The name ",
+              "ev",
+              {
+                "VAR?": "player_name"
+              },
+              "out",
+              "/ev",
+              "^ carries weight here. Or perhaps the weight is in what the name has survived.",
+              "\n",
+              {
+                "->": "start.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^No name survives first contact. That is the first lesson.",
+              "\n",
+              {
+                "->": "start.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "^You stand at ",
+        "ev",
+        {
+          "VAR?": "world_location"
+        },
+        "out",
+        "/ev",
+        "^, in the ",
+        "ev",
+        {
+          "VAR?": "world_region"
+        },
+        "out",
+        "/ev",
+        "^. The ",
+        "ev",
+        {
+          "VAR?": "world_phase"
+        },
+        "out",
+        "/ev",
+        "^ settles over the district like a decision already made.",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "wait_and_watch": [
+        "^You let the hour pass through you.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Beneath the public noise, a second rhythm appears: three knocks, a breath, then water moving uphill.",
+              "\n",
+              "ev",
+              "str",
+              "^World pulse",
+              "/str",
+              "str",
+              "^Three knocks, a breath, water uphill.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The street changes in ways you cannot name. A shutter opens where there was no window.",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "ev",
+        {
+          "VAR?": "world_danger"
+        },
+        50,
+        ">",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Something in the district has been waiting for stillness.",
+              "\n",
+              {
+                "->": ".^.^.^.20"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "rest": [
+        "^You search for a dry angle beneath collapsed stone.",
+        "\n",
+        "ev",
+        "str",
+        "^physical",
+        "/str",
+        10,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Your breathing steadies. The district briefly forgets to punish stillness.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              3,
+              "+",
+              {
+                "VAR?": "player_max_hp"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_focus"
+              },
+              3,
+              "+",
+              {
+                "VAR?": "player_max_focus"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_focus",
+                "re": true
+              },
+              "\n",
+              {
+                "->": "rest.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You rest, but not cleanly. Every closed eye contains a street you have not walked yet.",
+              "\n",
+              "ev",
+              {
+                "VAR?": "player_hp"
+              },
+              1,
+              "+",
+              {
+                "VAR?": "player_max_hp"
+              },
+              {
+                "x()": "min",
+                "exArgs": 2
+              },
+              "/ev",
+              {
+                "VAR=": "player_hp",
+                "re": true
+              },
+              "\n",
+              {
+                "->": "rest.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "done",
+        null
+      ],
+      "global decl": [
+        "ev",
+        "str",
+        "^No One",
+        "/str",
+        {
+          "VAR=": "player_name"
+        },
+        20,
+        {
+          "VAR=": "player_hp"
+        },
+        20,
+        {
+          "VAR=": "player_max_hp"
+        },
+        15,
+        {
+          "VAR=": "player_focus"
+        },
+        15,
+        {
+          "VAR=": "player_max_focus"
+        },
+        "str",
+        "^human",
+        "/str",
+        {
+          "VAR=": "player_form"
+        },
+        "str",
+        "^seeker",
+        "/str",
+        {
+          "VAR=": "player_posture"
+        },
+        "str",
+        "^lore",
+        "/str",
+        {
+          "VAR=": "player_domain"
+        },
+        34,
+        {
+          "VAR=": "world_danger"
+        },
+        "str",
+        "^The Sunken Fountain",
+        "/str",
+        {
+          "VAR=": "world_location"
+        },
+        "str",
+        "^Greywake Market District",
+        "/str",
+        {
+          "VAR=": "world_region"
+        },
+        1,
+        {
+          "VAR=": "world_day"
+        },
+        "str",
+        "^The Waking Hour",
+        "/str",
+        {
+          "VAR=": "world_phase"
+        },
+        0,
+        {
+          "VAR=": "turn_count"
+        },
+        "/ev",
+        "end",
+        null
+      ]
+    }
+  ],
+  "listDefs": {},
+  "_metadata": {
+    "sourceFile": "narrative\\main.ink",
+    "compiledAt": "2026-05-19T21:56:42.535Z",
+    "knots": [
+      "arrival",
+      "arrival_look",
+      "arrival_listen",
+      "fountain",
+      "fountain_touch",
+      "fountain_names",
+      "fountain_examine_seal",
+      "archive",
+      "archive_search_fountain",
+      "archive_search_name",
+      "archive_bells",
+      "combat_threat_emerges",
+      "combat_attack",
+      "combat_defend",
+      "combat_flee",
+      "combat_speak",
+      "dialogue_sister_mourn",
+      "sm_fountain",
+      "sm_wants",
+      "sm_agree",
+      "sm_refuse",
+      "sm_bargain",
+      "sm_archive",
+      "market",
+      "market_browse",
+      "market_rumors",
+      "market_debt_court",
+      "market_intervene",
+      "market_observe",
+      "breach",
+      "breach_explore",
+      "breach_listen",
+      "breach_descend",
+      "dialogue_fennick",
+      "fennick_market",
+      "fennick_breach",
+      "fennick_exchange",
+      "fennick_silent",
+      "fennick_buy",
+      "fennick_pay_token",
+      "fennick_pay_promise",
+      "fennick_threaten",
+      "dialogue_foundling",
+      "foundling_followed",
+      "foundling_claimed",
+      "foundling_who",
+      "foundling_silence",
+      "foundling_protection",
+      "dream_rest",
+      "dream_light",
+      "dream_deep",
+      "dream_awake",
+      "faction_reaction",
+      "fc_hostile",
+      "fc_friendly",
+      "fc_neutral",
+      "consequence_wounded",
+      "consequence_danger_rise",
+      "consequence_faction_shift",
+      "legacy_death",
+      "legacy_begin_again",
+      "start",
+      "wait_and_watch",
+      "rest"
+    ],
+    "variables": [
+      "player_name",
+      "player_hp",
+      "player_max_hp",
+      "player_focus",
+      "player_max_focus",
+      "player_form",
+      "player_posture",
+      "player_domain",
+      "world_danger",
+      "world_location",
+      "world_region",
+      "world_day",
+      "world_phase",
+      "turn_count"
+    ],
+    "externalFunctions": [
+      "get_player_stat",
+      "get_world_danger",
+      "get_faction_trust",
+      "get_faction_fear",
+      "has_condition",
+      "has_item",
+      "get_turn_count",
+      "roll_check",
+      "add_journal_entry",
+      "min",
+      "max"
+    ]
+  }
+}

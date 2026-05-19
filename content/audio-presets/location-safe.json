@@ -1,0 +1,26 @@
+{
+  "name": "Safe Location",
+  "description": "Warm, stable harmony for sanctuary spaces",
+  "layer": "location",
+  "scale": ["C3", "E3", "G3", "B3"],
+  "synth": {
+    "type": "am",
+    "carrier": { "frequency": 130.81, "waveform": "triangle" },
+    "modulator": { "frequency": 2, "depth": 0.3, "waveform": "sine" }
+  },
+  "filter": {
+    "type": "lowpass",
+    "frequency": 1200,
+    "resonance": 1
+  },
+  "envelope": {
+    "attack": 2,
+    "decay": 1,
+    "sustain": 0.8,
+    "release": 4
+  },
+  "effects": [
+    { "type": "reverb", "roomSize": 0.6, "wet": 0.3 }
+  ],
+  "volume": -15
+}

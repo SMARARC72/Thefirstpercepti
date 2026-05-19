@@ -1,0 +1,32 @@
+{
+  "name": "the-first-perception-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node tests/smoke.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@first-perception/engine": "^2.0.0",
+    "@first-perception/narrative": "^2.0.0",
+    "@first-perception/ui-system": "^2.0.0",
+    "@first-perception/audio": "^2.0.0",
+    "@first-perception/persistence": "^2.0.0",
+    "@first-perception/llm-client": "^2.0.0",
+    "inkjs": "^2.3.0",
+    "tone": "^15.0.4",
+    "gsap": "^3.12.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "playwright": "^1.60.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.0.0"
+  }
+}

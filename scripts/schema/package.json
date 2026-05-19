@@ -1,0 +1,11 @@
+{
+  "name": "the-first-perception-schema-smoke",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node smoke-schema.mjs"
+  },
+  "dependencies": {
+    "sql.js": "1.14.1"
+  }
+}

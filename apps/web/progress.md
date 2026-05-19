@@ -1,0 +1,8 @@
+Original prompt: Workspace: c:\Users\arahi\Desktop\Kimi_Agent_My Game -\the-first-perception. You are not alone in the codebase; do not revert edits made by others. Ownership: create a new responsive web app under apps/web/** only. Do not modify backend/**, database/**, root package files, or docs unless absolutely necessary. Goal: implement a local playable frontend for The First Perception using Vite/React/TypeScript or vanilla if simpler. Requirements: title screen, character creation with 6 steps, gameplay screen with mobile-first tabs/sheets, command input with submit feedback, first-turn onboarding, save/load via localStorage, accessible labels, document title updates, and expose window.render_game_to_text plus window.advanceTime hooks for testability. Use package scripts in apps/web/package.json. Keep dependencies reasonable. Return status, files changed, and how to run/verify.
+
+## 2026-05-19
+
+- Created an isolated `apps/web` Vite/TypeScript app plan. The frontend will be self-contained and will not import or edit backend/database/docs files.
+- Added the core local game state, six-step character creation model, generated world/player/faction/NPC state, command reducer, localStorage persistence helpers, document title updater, and `render_game_to_text`/`advanceTime` test hooks.
+- Added the first pass of the Vite DOM UI: title screen, creation flow, responsive gameplay panels, mobile tabs, command dock, onboarding prompt, and canvas perception map.
+- Added a non-storage `?demo=1` boot path so automated verification can land directly in gameplay while the normal URL still starts at the title screen.

@@ -1,0 +1,33 @@
+{
+  "name": "the-first-perception",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Studio-grade solo text-based living-world RPG. Hosted on Kimi.",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "scripts/*"
+  ],
+  "scripts": {
+    "dev": "npm --prefix apps/web run dev",
+    "build": "npm run content:compile && npm --prefix apps/web run build",
+    "build:packages": "npm --prefix packages/types run build && npm --prefix packages/engine run build && npm --prefix packages/llm-client run build && npm --prefix packages/persistence run build && npm --prefix packages/narrative run build && npm --prefix packages/audio run build && npm --prefix packages/ui-system run build",
+    "build:engine": "npm --prefix packages/engine run build",
+    "typecheck": "npm --prefix packages/engine run typecheck && npm --prefix apps/web run typecheck",
+    "test": "npm --prefix packages/engine test && npm --prefix apps/web test",
+    "test:e2e": "npm --prefix apps/web run smoke",
+    "content:compile": "node scripts/build-content.mjs",
+    "content:validate": "node scripts/validate-content.mjs",
+    "verify": "npm run typecheck && npm run test && npm run build && npm run test:e2e",
+    "deploy": "node scripts/deploy.mjs",
+    "clean": "rm -rf apps/web/dist packages/engine/dist && npm --prefix packages/engine run clean"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
