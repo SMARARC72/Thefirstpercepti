@@ -22,8 +22,8 @@
     "@first-perception/types": "^2.0.0"
   },
   "devDependencies": {
-    "@types/node": "^25.9.0",
-    "typescript": "^6.0.3",
-    "vitest": "^4.0.13"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.0.0"
   }
 }

@@ -107,6 +107,30 @@
 
 ---
 
+## 2026-05-19 (Session 3) — Phase 1: Safety Net
+
+**Goal:** Lock down toolchain versions, add a root tsconfig base, and stand up CI so future work doesn't regress silently.
+
+### What was done
+- Fixed `packages/engine/package.json` versions (`typescript ^6.0.3 → ^5.8.3`, `vitest ^4.0.13 → ^3.0.0`, `@types/node ^25.9.0 → ^22.0.0`). These versions didn't exist; npm was resolving them to whatever 4.x/25.x it could find, producing inconsistent test runs.
+- Added `tsconfig.base.json` at repo root; every workspace `tsconfig.json` now `extends` it and only declares per-package overrides (lib, rootDir/outDir, paths, etc.).
+- Added `.github/workflows/ci.yml` — runs `npm ci`, `build:packages`, `typecheck`, `content:compile`, `test`, web build, and Playwright smoke on every PR / push to `main`. Concurrency-grouped to cancel superseded runs.
+- Regenerated `package-lock.json` from scratch after fixing engine versions to clear the stale Vitest 4.1.6 entry that was previously hoisted into `packages/engine/node_modules/`.
+
+### Baseline (honest)
+| Stage | Status |
+|-------|--------|
+| Workspace install (`npm install`) | ✅ |
+| `npm run build:packages` (7 packages) | ✅ |
+| `npm run typecheck` (engine + web) | ✅ |
+| `npm test` — engine | ✅ 9/9 |
+| `npm test` — web | ✅ 9/9 |
+| `npm run content:compile` | ✅ |
+| `npm run build` (web) | ✅ — main 222 kB / vendor 456 kB (audit target in Phase 7) |
+| `npm run test:e2e` (Playwright smoke) | ⚠ Blocked locally: sandbox can't download Chromium binary. Harness boots preview server correctly; will run in CI. |
+
+The previously documented "engine death-handling test failing" issue in `AGENTS.md:139` is **stale** — all 9 engine tests pass. `progress.md` Session 2 was more accurate.
+
 ## Build Commands
 
 ```bash
