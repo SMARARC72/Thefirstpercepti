@@ -131,6 +131,43 @@
 
 The previously documented "engine death-handling test failing" issue in `AGENTS.md:139` is **stale** — all 9 engine tests pass. `progress.md` Session 2 was more accurate.
 
+## 2026-05-19 (Session 3 cont.) — Phase 2: Cleanup
+
+**Goal:** Delete orphaned code, dev scratch, and ship-blocking screenshots so the
+working tree reflects the actual product surface.
+
+### Deleted
+- `backend/` (entire directory) — duplicate `@first-perception/engine` v1.0.0
+  with its own lockfile, unreferenced from any `apps/`, `packages/`, `scripts/`,
+  root `package.json`, or `vercel.json`. The canonical engine is
+  `packages/engine/`.
+- Root Ink scratch: `test3.ink`, `test4.ink`, `test5.ink`, `test6.ink`,
+  `test7.ink`, `test8.ink`, `test9.ink`, `debug.ink` (31 KB preprocessed
+  dump) and the matching `*.ink.json`.
+- Root scratch scripts: `check.mjs` (Ink rebind probe), `debug-preprocess.mjs`
+  (Ink include flattener).
+- Root PNG screenshots: 3 × `current-state-*.png` + 7 × `live-*-1440.png`
+  (~4.5 MB total).
+- `.playwright-mcp/` (3 Playwright MCP page snapshots).
+
+### Changed
+- `.gitignore` — added `.playwright-mcp/` so MCP-driven sessions don't re-leak.
+- `.vercelignore` — added `.github/`, `docs/`, `AGENTS.md`, `progress.md`,
+  `tests`, `*.test.ts`, `*.spec.ts`, `.playwright-mcp` to keep the deploy
+  upload lean.
+- `README.md` — rewrote to reflect the actual workspace layout, single
+  `npm install` at root, and the active 8-phase roadmap.
+
+### Verify
+- `npm run typecheck` ✅ — engine + web.
+- `npm test` ✅ — 9/9 engine + 9/9 web.
+- `npm run content:compile` ✅.
+- `npm run build` ✅ — same bundle sizes (main 222 kB, vendor 456 kB).
+
+The remaining `"backend"` references in `docs/OPTIMIZED_BUILD_AND_DESIGN_PLAN.md`
+and historical sections of `progress.md` describe prior architecture; left in
+place as history.
+
 ## Build Commands
 
 ```bash
