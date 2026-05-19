@@ -288,8 +288,8 @@ export class SettingsModal {
         const reader = new FileReader();
         reader.onload = () => {
           try {
-            const parsed = JSON.parse(String(reader.result));
-            console.log("Import payload", parsed);
+            JSON.parse(String(reader.result));
+            // TODO(phase-3b): wire imported payload into AppState restoration.
           } catch {
             alert("Invalid save file.");
           }

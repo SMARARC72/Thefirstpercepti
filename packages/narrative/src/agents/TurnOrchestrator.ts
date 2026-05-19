@@ -316,9 +316,11 @@ export class TurnOrchestrator {
   private _fallbackResult(
     game: GameState,
     playerAction: string,
-    reason: string
+    _reason: string
   ): TurnOrchestratorResult {
-    console.log(`[TurnOrchestrator] Fallback: ${reason}`);
+    // Fallback details are returned in the TurnOrchestratorResult and
+    // surfaced by the caller; intentionally not logged from here so the
+    // happy-path doesn't spam the console.
     return {
       taleEntry: {
         id: makeId("fb"),

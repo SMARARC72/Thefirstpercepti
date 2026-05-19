@@ -168,6 +168,61 @@ The remaining `"backend"` references in `docs/OPTIMIZED_BUILD_AND_DESIGN_PLAN.md
 and historical sections of `progress.md` describe prior architecture; left in
 place as history.
 
+## 2026-05-19 (Session 3 cont.) — Phase 3a: Engine hygiene & movement
+
+**Goal:** Close the audio first-command sync gap, harden the JSON-load type
+boundary, and remove debug logging that survived from earlier development.
+
+### Reality check
+
+The audit had flagged "locations have no exits — `moveReducer` cannot move
+the player." That issue is **stale**. `apps/web/src/data/worldLoader.ts`
+already maps exits from `content/world-data/locations.json` into the game
+state, and `packages/engine/src/reducers/moveReducer.ts` honors them
+(label-or-id matching, visibility/lock gating, travelRisk → DC scaling,
+discovery side-effects). The hybrid mechanical-plus-Ink movement model
+the audit asked for was already in place. Added a regression test so any
+future loader change that drops exits is caught immediately.
+
+### Changes
+
+1. **Audio first-command sync.** `AudioEngine.start()` was fire-and-forget
+   — it called `void this.initialize()` and returned immediately, so the
+   first `audioEngine.updateFromGameState(game)` in `main.ts` ran on an
+   uninitialized engine and was silently dropped. Made `start()` async
+   (`packages/audio/src/AudioEngine.ts:67`); the first-click handler in
+   `apps/web/src/main.ts:716` now awaits it before calling
+   `updateFromGameState`.
+
+2. **Strengthened the JSON-load boundary.** `apps/web/src/data/worldLoader.ts`
+   defined every `map*` function with `raw: any[]`, dropping six type
+   signals at the seam between authored content and runtime types. Replaced
+   with explicit `RawLocation`, `RawExit`, `RawPoi`, `RawFaction`, `RawNpc`,
+   `RawSecret`, `RawCondition`, `RawConditionEffect`, `RawItem`, and
+   `RawLocked` interfaces. `RawLocked` and `RawConditionEffect` extend the
+   shared runtime types so JSON authors can't silently drift the schema.
+
+3. **Stripped debug-only logging.** Removed five `console.log` calls used as
+   init pulses (`apps/web/src/main.ts` "LLM layer disabled/initialized",
+   "SQLite repository initialized", "Narrative engine ready"), one debug
+   dump (`apps/web/src/screens/SettingsModal.ts:292` "Import payload"),
+   and one operational log
+   (`packages/narrative/src/agents/TurnOrchestrator.ts:321`
+   "[TurnOrchestrator] Fallback: ..."). All `console.warn` and
+   `console.error` calls remain — Phase 7 will route those through
+   Sentry.
+
+4. **Reconciled AGENTS.md "Active Issues".** Items 1–5 were marked with
+   their real status (4 of 5 resolved; web smoke is sandbox-blocked but
+   runs in CI).
+
+### Verify
+- `npm run typecheck` ✅
+- `npm test` ✅ — 9/9 engine + **10/10 web** (added exits-integrity spec)
+- `npm run build:packages` ✅
+- `npm run content:compile` ✅
+- `npm run build` ✅ — main 221.84 kB / vendor 455.80 kB
+
 ## Build Commands
 
 ```bash

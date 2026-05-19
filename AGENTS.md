@@ -133,11 +133,22 @@ cd apps/web && npm test           # no tests yet — exits 0
 
 ## Active Issues (do not lose track of these)
 
-1. **Engine death-handling test failing** — `GameController.processTurn()` checks player HP before `phaseDetermineOutcome` applies damage. See `packages/engine/tests/engine-intended-behavior.spec.ts:582`.
-2. **Web app has zero unit tests** — need smoke tests for `createGameFromCreation`, reducer integration, and narrative adapter.
-3. **Playwright smoke outdated** — `apps/web/tests/smoke.mjs` needs updating for Ink-driven flow.
-4. **Locations have no exits** — `moveReducer` cannot mechanically move the player because `locations[].exits` is empty.
-5. **Audio misses first-command sync** — `updateFromGameState()` runs before user clicks, when `isInitialized` is false.
+1. **Engine death-handling test** — ✅ resolved in Session 2. All 9 engine tests
+   pass.
+2. **Web unit tests** — ✅ minimal coverage in place (9 specs covering
+   `createGameFromCreation`, command dispatch, location/exits integrity,
+   tale tone). Wider coverage lands in Phase 4.
+3. **Playwright smoke** — present at `apps/web/tests/smoke.mjs`; verified
+   booting against the Vite preview. Browser binary download is sandbox-
+   blocked locally but CI installs it.
+4. **Locations have exits** — ✅ wired. `apps/web/src/data/worldLoader.ts`
+   maps `content/world-data/locations.json` exits into the game state.
+   `moveReducer` honors them mechanically and discovery side-effects fire
+   on first entry. Ink-driven movement still complements this.
+5. **Audio first-command sync** — ✅ resolved in Phase 3a. `AudioEngine.start()`
+   is now async; `apps/web/src/main.ts` awaits it before the first
+   `updateFromGameState()` so the first command's audio adaptation no
+   longer runs on an uninitialized engine.
 
 ---
 

@@ -64,11 +64,11 @@ export class AudioEngine implements AudioSystem {
     this.isInitialized = true;
   }
 
-  start(): void {
+  async start(): Promise<void> {
     if (!this.isInitialized) {
-      void this.initialize();
+      await this.initialize();
     } else {
-      void Tone.getContext().resume();
+      await Tone.getContext().resume();
     }
   }
 

@@ -708,19 +708,25 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Initialize audio on first interaction
+// Initialize audio on first interaction. Tone.js requires a user gesture
+// before it will start its AudioContext, and start() is async — we must
+// await it before the first updateFromGameState() call, otherwise the
+// first command's audio adaptation runs on an uninitialized engine and
+// is silently dropped.
 document.addEventListener(
   "click",
   () => {
-    try {
-      audioEngine.start();
-      const state = store.getState();
-      if (state.game) {
-        audioEngine.updateFromGameState(state.game);
+    void (async () => {
+      try {
+        await audioEngine.start();
+        const state = store.getState();
+        if (state.game) {
+          audioEngine.updateFromGameState(state.game);
+        }
+      } catch {
+        // AudioContext may not be supported
       }
-    } catch {
-      // AudioContext may not be supported
-    }
+    })();
   },
   { once: true },
 );
@@ -731,7 +737,6 @@ function initLLMLayer(enabled: boolean, apiKey: string): void {
   if (!enabled || !apiKey) {
     turnOrchestrator = null;
     llmClient = null;
-    console.log("LLM layer disabled.");
     return;
   }
 
@@ -749,7 +754,6 @@ function initLLMLayer(enabled: boolean, apiKey: string): void {
       maxActiveNPCs: 3,
       maxActiveFactions: 2,
     });
-    console.log("LLM layer initialized.");
   } catch (err) {
     console.warn("Failed to initialize LLM layer:", err);
     turnOrchestrator = null;
@@ -764,7 +768,6 @@ async function boot(): Promise<void> {
     sqliteRepo = new SqliteRepository();
     await sqliteRepo.init();
     await sqliteRepo.runSchema(MINIMAL_SCHEMA);
-    console.log("SQLite repository initialized.");
   } catch (err) {
     console.warn("SQLite repository failed to initialize:", err);
     sqliteRepo = null;
@@ -780,7 +783,6 @@ async function boot(): Promise<void> {
     getSaveSlots(),
     narrativeEngine.initialize().then(() => {
       narrativeReady = true;
-      console.log("Narrative engine ready");
     }).catch((err) => {
       console.warn("Narrative engine failed to initialize:", err);
     }),
