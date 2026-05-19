@@ -815,7 +815,7 @@ store.subscribe((state) => {
             : target;
   if (currentName !== target) {
     render();
-  } else if (currentName === "gameplay" && currentScreen && "update" in currentScreen) {
+  } else if (currentScreen && "update" in currentScreen) {
     (currentScreen as unknown as { update(props: { state: AppState }): void }).update({ state });
   }
 });

@@ -469,6 +469,52 @@ export class CreationScreen {
     }
   }
 
+  update(props: { state: AppState }): void {
+    const newState = props.state;
+    const oldStep = this.props.state.creation.step;
+    const newStep = newState.creation.step;
+    if (newStep === oldStep) return;
+
+    this.props = { ...this.props, state: newState };
+
+    // Replace form content for new step
+    const oldContent = this.form?.querySelector(".creation-step-content");
+    if (oldContent && this.form) {
+      oldContent.replaceWith(this.renderStep());
+    }
+
+    // Update stepper dots
+    const stepper = this.element?.querySelector(".stepper");
+    if (stepper) {
+      const lis = stepper.querySelectorAll("li");
+      lis.forEach((li, i) => {
+        li.className = i === newStep ? "current" : i < newStep ? "done" : "";
+      });
+    }
+
+    // Update header
+    const heading = this.element?.querySelector("#creation-heading");
+    if (heading) heading.textContent = CREATION_STEPS[newStep];
+    const stepLabel = this.element?.querySelector(".eyebrow");
+    if (stepLabel) stepLabel.textContent = `Step ${newStep + 1} of ${CREATION_STEPS.length}`;
+
+    // Update controls
+    const nextBtn = this.element?.querySelector("#creation-next");
+    if (nextBtn) nextBtn.textContent = newStep === CREATION_STEPS.length - 1 ? "Enter The World" : "Continue";
+    const backBtn = this.element?.querySelector("#creation-back") as HTMLButtonElement | null;
+    if (backBtn) backBtn.disabled = newStep === 0;
+
+    // Update background tint
+    if (this.element) {
+      this.element.style.background = STEP_TINTS[newStep] ?? "transparent";
+    }
+
+    // Re-animate
+    if (this.form && document.documentElement.dataset.reducedMotion !== "true") {
+      gsap.fromTo(this.form.children, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, ease: "power2.out" });
+    }
+  }
+
   destroy(): void {
     this.element = null;
     this.form = null;
