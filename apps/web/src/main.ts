@@ -789,7 +789,14 @@ async function boot(): Promise<void> {
   render();
 }
 
-boot();
+boot().catch((err) => {
+  console.error("Boot failed:", err);
+  appRoot!.innerHTML = `<div style="padding:2rem;color:#c9b8a8;font-family:system-ui">
+    <h1>The First Perception</h1>
+    <p>Failed to initialize. Try a hard refresh (Ctrl+Shift+R) or open in incognito mode.</p>
+    <pre style="background:#1a1a1a;padding:1rem;border-radius:4px;overflow:auto">${String(err)}</pre>
+  </div>`;
+});
 
 // Subscribe to re-render on screen changes
 store.subscribe((state) => {
