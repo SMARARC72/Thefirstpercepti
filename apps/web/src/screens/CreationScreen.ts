@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import type { AppState, CreationStepIndex, Option } from "../game";
+import type { AppState, CreationState, CreationStepIndex, Option } from "../game";
 import {
   CREATION_STEPS,
   DOMAIN_OPTIONS,
@@ -399,35 +399,37 @@ export class CreationScreen {
     return div;
   }
 
-  private readInputs(): void {
+  private readInputs(): CreationState {
     const form = this.form;
-    if (!form) return;
     const next = { ...this.props.state.creation };
-    const getVal = (id: string) => (form!.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? "");
-    const getRadio = (name: string) => form!.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? "";
+    if (form) {
+      const getVal = (id: string) => (form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? "");
+      const getRadio = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? "";
 
-    next.name = getVal("creation-name");
-    next.form = getRadio("form") as typeof next.form;
-    next.formDescription = getVal("form-description");
-    next.perception = getVal("first-perception");
-    next.dominantSense = getVal("dominant-sense") || next.dominantSense;
-    next.capabilityClaim = getVal("capability-claim");
-    next.primaryDomain = getVal("primary-domain") as typeof next.primaryDomain;
-    next.posture = getRadio("posture") as typeof next.posture;
-    next.postureDescription = getVal("posture-description");
-    next.optionalDetails = getVal("optional-details");
-    next.desiredItem = getVal("desired-item");
-    next.fear = getVal("fear");
-    next.leftBehind = getVal("left-behind");
+      next.name = getVal("creation-name");
+      next.form = getRadio("form") as typeof next.form;
+      next.formDescription = getVal("form-description");
+      next.perception = getVal("first-perception");
+      next.dominantSense = getVal("dominant-sense") || next.dominantSense;
+      next.capabilityClaim = getVal("capability-claim");
+      next.primaryDomain = getVal("primary-domain") as typeof next.primaryDomain;
+      next.posture = getRadio("posture") as typeof next.posture;
+      next.postureDescription = getVal("posture-description");
+      next.optionalDetails = getVal("optional-details");
+      next.desiredItem = getVal("desired-item");
+      next.fear = getVal("fear");
+      next.leftBehind = getVal("left-behind");
 
-    this.props.onUpdate(next);
+      this.props.onUpdate(next);
 
-    // Update preview
-    const preview = this.element?.querySelector(".creation-preview");
-    if (preview) {
-      preview.innerHTML = "";
-      preview.appendChild(this.buildPreview());
+      // Update preview
+      const preview = this.element?.querySelector(".creation-preview");
+      if (preview) {
+        preview.innerHTML = "";
+        preview.appendChild(this.buildPreview());
+      }
     }
+    return next;
   }
 
   private goBack(): void {
@@ -436,8 +438,8 @@ export class CreationScreen {
   }
 
   private handleSubmit(): void {
-    this.readInputs();
-    const error = validateCreationStep(this.props.state.creation);
+    const creation = this.readInputs();
+    const error = validateCreationStep(creation);
     if (error) {
       const feedback = this.element?.querySelector(".screen-feedback");
       if (feedback) {
@@ -447,9 +449,9 @@ export class CreationScreen {
       return;
     }
 
-    if (this.props.state.creation.step < CREATION_STEPS.length - 1) {
-      const step = (this.props.state.creation.step + 1) as CreationStepIndex;
-      this.props.onUpdate({ ...this.props.state.creation, step });
+    if (creation.step < CREATION_STEPS.length - 1) {
+      const step = (creation.step + 1) as CreationStepIndex;
+      this.props.onUpdate({ ...creation, step });
       return;
     }
 
