@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "npm --prefix apps/web run dev",
     "build": "npm run content:compile && npm --prefix apps/web run build",
-    "build:packages": "npm --prefix packages/types run build && npm --prefix packages/engine run build && npm --prefix packages/llm-client run build && npm --prefix packages/persistence run build && npm --prefix packages/narrative run build && npm --prefix packages/audio run build && npm --prefix packages/ui-system run build",
+    "build:packages": "npm --prefix packages/types run build && npm --prefix packages/engine run build && npm --prefix packages/persistence run build && npm --prefix packages/llm-client run build && npm --prefix packages/narrative run build && npm --prefix packages/audio run build && npm --prefix packages/ui-system run build",
     "build:engine": "npm --prefix packages/engine run build",
     "typecheck": "npm --prefix packages/engine run typecheck && npm --prefix apps/web run typecheck",
     "test": "npm --prefix packages/engine test && npm --prefix apps/web test",
