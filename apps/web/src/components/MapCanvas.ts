@@ -91,7 +91,7 @@ export class MapCanvas {
     this.ctx.arc(x, y, point.kind === "player" ? 8 : 6, 0, Math.PI * 2);
     this.ctx.fill();
     this.ctx.shadowBlur = 0;
-    this.ctx.font = "13px Inter, system-ui, sans-serif";
+    this.ctx.font = "13px \"EB Garamond\", Garamond, serif";
     this.ctx.fillStyle = "rgba(241, 238, 225, 0.82)";
     this.ctx.fillText(point.label, x + 12, y + 4);
   }

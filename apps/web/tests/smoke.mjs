@@ -69,12 +69,12 @@ async function runTests(baseUrl) {
   const initialStateText = await page.evaluate(() => window.render_game_to_text?.() ?? "{}");
   const initialState = JSON.parse(initialStateText);
   if (!initialState.game) throw new Error("Demo mode did not create a game");
-  console.log("✓ Demo mode loaded, turn:", initialState.game.turnCount);
+  console.log("[OK] Demo mode loaded, turn:", initialState.game.turnCount);
 
   // ── 2. Verify initial suggestions ──
   const initialButtons = await page.locator(".quick-actions button").allTextContents();
   if (initialButtons.length === 0) throw new Error("No initial quick-action buttons");
-  console.log("✓ Initial suggestions:", initialButtons.length, "buttons");
+  console.log("[OK] Initial suggestions:", initialButtons.length, "buttons");
 
   // ── 3. Submit a command via quick action ──
   await page.click('.quick-actions button:has-text("Approach the fountain")');
@@ -85,20 +85,20 @@ async function runTests(baseUrl) {
   if (afterFountain.game.turnCount <= initialState.game.turnCount) {
     throw new Error("Turn count did not advance after command");
   }
-  console.log("✓ Command processed, turn:", afterFountain.game.turnCount);
+  console.log("[OK] Command processed, turn:", afterFountain.game.turnCount);
 
   // ── 4. Verify narrative updated ──
   const latestTale = afterFountain.game.latestTale ?? afterFountain.game.tale?.[0];
   if (!latestTale || !latestTale.title) {
     throw new Error("No tale entry after command");
   }
-  console.log("✓ Tale updated:", latestTale.title);
+  console.log("[OK] Tale updated:", latestTale.title);
 
   // ── 5. Verify suggestions changed ──
   const fountainButtons = await page.locator(".quick-actions button").allTextContents();
   const hasChanged = fountainButtons.some((b) => b.includes("Touch the water") || b.includes("Read the carved names"));
   if (!hasChanged) throw new Error("Suggestions did not update after fountain approach");
-  console.log("✓ Suggestions updated after location change");
+  console.log("[OK] Suggestions updated after location change");
 
   // ── 6. Cross-location travel ──
   await page.click('.quick-actions button:has-text("Go to Greywake Market")');
@@ -107,7 +107,7 @@ async function runTests(baseUrl) {
   const marketButtons = await page.locator(".quick-actions button").allTextContents();
   const atMarket = marketButtons.some((b) => b.includes("Browse the stalls") || b.includes("Listen for rumors"));
   if (!atMarket) throw new Error("Cross-location travel failed");
-  console.log("✓ Cross-location travel works");
+  console.log("[OK] Cross-location travel works");
 
   // ── 7. Save state ──
   await page.evaluate(() => {
@@ -118,7 +118,7 @@ async function runTests(baseUrl) {
   if (!savedRaw) throw new Error("Save to localStorage failed");
   const saved = JSON.parse(savedRaw);
   if (!saved.game || saved.game.turnCount < 1) throw new Error("Saved state missing game data");
-  console.log("✓ State saved");
+  console.log("[OK] State saved");
 
   // ── 8. Reload and verify state restored ──
   await page.reload();
@@ -126,7 +126,7 @@ async function runTests(baseUrl) {
 
   const restoredText = await page.evaluate(() => window.render_game_to_text?.() ?? "{}");
   const restored = JSON.parse(restoredText);
-  console.log("✓ Reload completed, turn:", restored.game?.turnCount);
+  console.log("[OK] Reload completed, turn:", restored.game?.turnCount);
 
   // ── 9. Title screen reachable from gameplay (New run path) ──
   // Open the in-game settings drawer (gear icon) — it routes back to
@@ -136,7 +136,7 @@ async function runTests(baseUrl) {
     await newGameButton.click({ timeout: 5_000 }).catch(() => {});
     await page.waitForTimeout(800);
     const title = await page.locator(".title-screen, h1").first().textContent().catch(() => "");
-    console.log("✓ Title-screen exit path reachable, banner:", title?.trim().slice(0, 32));
+    console.log("[OK] Title-screen exit path reachable, banner:", title?.trim().slice(0, 32));
   } else {
     console.log("· New Game button not exposed in current layout; skipping exit-path check");
   }
@@ -155,7 +155,7 @@ async function runTests(baseUrl) {
     console.error("Console errors:", fatalErrors);
     throw new Error(`Found ${fatalErrors.length} unexpected console errors`);
   }
-  console.log("✓ No fatal console errors");
+  console.log("[OK] No fatal console errors");
 
   await browser.close();
 }

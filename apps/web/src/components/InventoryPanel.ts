@@ -129,7 +129,7 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
       if (needsAttune) {
         const at = document.createElement("span");
         at.className = "inventory-glyph inventory-glyph-attune";
-        at.textContent = "✦"; // ✦
+        at.textContent = "◆"; // ◆ Authority-cost / attunement marker (Tide-Stained allowed glyph)
         at.setAttribute("aria-label", "Requires attunement");
         glyphs.appendChild(at);
       }

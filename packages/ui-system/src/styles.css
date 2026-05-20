@@ -1,185 +1,323 @@
 /**
  * ============================================================================
- * DESIGN SYSTEM — The First Perception
+ * DESIGN SYSTEM — The First Perception · Tide-Stained Codex
  * ============================================================================
  * Studio-grade design tokens, typography, and base styles.
+ * Canonical source: design_system/colors_and_type.css in the design layer
+ * (see project_reconciliation_state.md). Mirror lives at
+ * content/schemas/ /-adjacent if a future phase brings the brand bible into
+ * the repo.
+ *
+ * LAYERING NOTE (Phase 14 / Wave C):
+ *   1. Tide-Stained tokens (NEW, canonical) — Vellum / Brass / Tide-Ink palette
+ *      with EB Garamond + IM Fell English SC + Caveat + JetBrains Mono.
+ *   2. Legacy compatibility aliases (DEPRECATED) — maps old Void/Teal/Gold and
+ *      Phase 6 Grimoire tokens onto Tide-Stained equivalents so existing
+ *      components don't error mid-migration.
+ *   3. Base reset + utilities (stack-level, brand-agnostic).
+ *
  * Import this once at app entry point.
  * ============================================================================
  */
 
-/* ── Font Imports ── */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* ── Font imports — Tide-Stained 4-font system + legacy until components migrate ── */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IM+Fell+English+SC&family=Caveat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* ── Root Tokens ── */
+/* ── Tide-Stained Codex tokens ── */
 :root {
-  /* Color Primitives: Void */
-  --void-950: #020306;
-  --void-900: #05060a;
-  --void-850: #070810;
-  --void-800: #090a10;
-  --void-750: #0c0e15;
-  --void-700: #0e1018;
-  --void-650: #11141c;
-  --void-600: #141820;
-  --void-500: #1a1f2a;
-  --void-400: #252b38;
-  --void-300: #353d4d;
+  /* ----- PALETTE (raw, 12-color closed system) ------------- */
+  --vellum:        #E8DFC8;  /* primary surface — page */
+  --salt-bleach:   #F5EFE0;  /* elevated surface — card */
+  --bone:          #C8BFA8;  /* dividers, disabled */
+  --tide-ink:      #1A1F2A;  /* primary text */
+  --drowned-ink:   #0E1218;  /* scene container, deepest bg */
+  --saltline:      #4A5A6A;  /* borders, secondary text */
+  --brass:         #B89968;  /* instruments, accents */
+  --brass-dim:     #8A724A;  /* secondary brass */
+  --verdigris:     #4F7A6A;  /* success, oxidation, success-band */
+  --lantern:       #E8B85C;  /* visible roll, attention */
+  --tide-bloom:    #6B3F8E;  /* metaphysical accent */
+  --drowned-red:   #8A2E2E;  /* lethal stakes, canon seal, death */
+  --phosphor:      #6FE0C8;  /* creator/debug only — NEVER player UI */
 
-  /* Color Primitives: Bioluminescent Teal */
-  --teal-600: #3dd4b0;
-  --teal-500: #66e0c2;
-  --teal-400: #8ce8d0;
-  --teal-300: #b2f0de;
-  --teal-200: #d8f7ef;
-  --teal-glow: rgba(102, 224, 194, 0.15);
-  --teal-glow-strong: rgba(102, 224, 194, 0.35);
+  /* ----- ALPHA DERIVATIVES --------------------------------- */
+  --paper-shadow:       rgba(26, 31, 42, 0.18);
+  --tide-bloom-wash:    rgba(107, 63, 142, 0.10);
+  --drowned-red-wash:   rgba(138, 46, 46, 0.06);
+  --brass-wash:         rgba(184, 152, 104, 0.18);
+  --verdigris-wash:     rgba(79, 122, 106, 0.18);
+  --lantern-wash:       rgba(232, 184, 92, 0.20);
+  --saltline-wash:      rgba(74, 90, 106, 0.10);
 
-  /* Color Primitives: Aged Gold */
-  --gold-600: #f0cc5a;
-  --gold-500: #f5d982;
-  --gold-400: #f7e09c;
-  --gold-300: #f9e7b6;
-  --gold-200: #fbf0d0;
-  --gold-glow: rgba(245, 217, 130, 0.15);
-  --gold-glow-strong: rgba(245, 217, 130, 0.35);
+  /* ----- SEMANTIC COLOR ------------------------------------ */
+  --fg-1:           var(--tide-ink);     /* primary text on vellum */
+  --fg-2:           var(--saltline);     /* secondary / labels */
+  --fg-3:           var(--brass-dim);    /* tertiary / numbering */
+  --fg-on-dark:     var(--vellum);       /* primary text on drowned-ink */
+  --fg-dim-on-dark: var(--bone);
 
-  /* Color Primitives: Accents */
-  --crimson-500: #ff6b6b;
-  --crimson-400: #ff8a8a;
-  --crimson-glow: rgba(255, 107, 107, 0.2);
-  --twilight-500: #9fb7ff;
-  --twilight-400: #b8caff;
-  --twilight-glow: rgba(159, 183, 255, 0.15);
-  --moss-500: #7dd87d;
-  --moss-400: #99e299;
-  --moss-glow: rgba(125, 216, 125, 0.15);
+  --bg-page:        var(--vellum);       /* default page */
+  --bg-card:        var(--salt-bleach);  /* card / panel */
+  --bg-scene:       var(--drowned-ink);  /* tactical / scene container */
+  --bg-tide:        var(--tide-ink);     /* dark accent surface */
 
-  /* Semantic: Surfaces */
-  --surface-base: var(--void-800);
-  --surface-elevated: var(--void-700);
-  --surface-floating: var(--void-600);
-  --surface-input: var(--void-850);
-  --surface-overlay: rgba(5, 6, 10, 0.92);
+  --border:           var(--saltline);
+  --border-soft:      var(--bone);
+  --border-brass:     var(--brass);
+  --border-metaphys:  var(--tide-bloom);
+  --border-lethal:    var(--drowned-red);
 
-  /* Semantic: Text */
-  --text-primary: #f3efe2;
-  --text-secondary: #a9adad;
-  --text-tertiary: #6b6f7a;
-  --text-disabled: #4a4d56;
-  --text-inverse: var(--void-900);
+  --accent-success:   var(--verdigris);
+  --accent-attention: var(--lantern);
+  --accent-metaphys:  var(--tide-bloom);
+  --accent-lethal:    var(--drowned-red);
+  --accent-instr:     var(--brass);
 
-  /* Semantic: Borders */
-  --border-subtle: rgba(202, 211, 196, 0.08);
-  --border-default: rgba(202, 211, 196, 0.14);
-  --border-strong: rgba(126, 224, 194, 0.35);
-  --border-gold: rgba(245, 217, 130, 0.3);
-  --border-crimson: rgba(255, 107, 107, 0.35);
+  /* ----- TYPOGRAPHY (canonical — each font has one job) ---- */
+  --font-display: "IM Fell English SC", "Cormorant SC", Garamond, serif;
+  --font-body:    "EB Garamond", Garamond, "Times New Roman", serif;
+  --font-margin:  "Caveat", "Reenie Beanie", cursive;
+  --font-mono:    "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Spacing Scale (4px base) */
-  --space-px: 1px;
-  --space-0_5: 0.125rem;  /* 2px */
-  --space-1: 0.25rem;     /* 4px */
-  --space-1_5: 0.375rem;  /* 6px */
-  --space-2: 0.5rem;      /* 8px */
-  --space-2_5: 0.625rem;  /* 10px */
-  --space-3: 0.75rem;     /* 12px */
-  --space-4: 1rem;        /* 16px */
-  --space-5: 1.25rem;     /* 20px */
-  --space-6: 1.5rem;      /* 24px */
-  --space-8: 2rem;        /* 32px */
-  --space-10: 2.5rem;     /* 40px */
-  --space-12: 3rem;       /* 48px */
-  --space-16: 4rem;       /* 64px */
-  --space-20: 5rem;       /* 80px */
-  --space-24: 6rem;       /* 96px */
+  /* ----- TYPE SCALE (px / unitless line-height) ------------ */
+  --t-display-xl: 48px;    /* codex title */
+  --t-display-l:  32px;    /* chapter h2 */
+  --t-display-m:  20px;    /* h3 */
+  --t-display-s:  14px;    /* eyebrow / label-caps */
+  --t-display-xs: 11px;    /* mini-label-caps */
+  --t-body-l:     19px;
+  --t-body:       17px;
+  --t-body-s:     14px;
+  --t-body-xs:    13px;
+  --t-margin-l:   22px;
+  --t-margin:     20px;
+  --t-margin-s:   16px;
+  --t-mono-l:     14px;
+  --t-mono:       13px;
+  --t-mono-s:     11px;
+  --t-mono-xs:    10px;
 
-  /* Typography */
-  --font-display: 'Cinzel', Georgia, 'Times New Roman', serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  /* ----- SPACING (4-unit base — codex is tight) ------------ */
+  --space-px:   1px;
+  --space-0_5:  2px;
+  --space-1:    4px;
+  --space-1_5:  6px;
+  --space-2:    8px;
+  --space-2_5:  10px;
+  --space-3:    12px;
+  --space-4:    16px;
+  --space-5:    20px;
+  --space-6:    24px;
+  --space-8:    32px;
+  --space-10:   40px;
+  --space-12:   48px;
+  --space-14:   56px;
+  --space-16:   64px;
+  --space-20:   80px;
+  --space-24:   96px;
 
-  --text-xs: 0.6875rem;   /* 11px */
-  --text-sm: 0.8125rem;   /* 13px */
-  --text-base: 0.9375rem; /* 15px */
-  --text-md: 1.0625rem;   /* 17px */
-  --text-lg: 1.25rem;     /* 20px */
-  --text-xl: 1.5rem;      /* 24px */
-  --text-2xl: 2rem;       /* 32px */
-  --text-3xl: 2.75rem;    /* 44px */
-  --text-4xl: 3.75rem;    /* 60px */
-  --text-5xl: 5rem;       /* 80px */
+  /* ----- RADII (orthogonal by default) --------------------- */
+  --radius-0:    0px;
+  --radius-1:    2px;
+  --radius-2:    4px;
+  --radius-pill: 999px;
 
-  --leading-tight: 1.1;
-  --leading-snug: 1.3;
-  --leading-normal: 1.55;
-  --leading-relaxed: 1.75;
+  /* ----- LINES & STROKES ----------------------------------- */
+  --stroke-hair:   0.5px;
+  --stroke-thin:   1px;
+  --stroke-med:    1.5px;
+  --stroke-thick:  3px;
 
-  --tracking-tight: -0.02em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.05em;
-  --tracking-wider: 0.1em;
+  /* ----- SHADOWS / ELEVATION (paper, not glass) ------------ */
+  --shadow-paper:  0 4px 30px var(--paper-shadow),
+                   inset 0 0 80px rgba(74, 90, 106, 0.08);
+  --shadow-inset:  inset 0 0 40px rgba(74, 90, 106, 0.06);
+  --shadow-seal:   0 1px 0 rgba(26, 31, 42, 0.4),
+                   0 4px 12px rgba(138, 46, 46, 0.25);
 
-  /* Radii */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
+  /* ----- MOTION (no bounce, no spring) --------------------- */
+  --ease-paper:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-ink:       280ms;
+  --dur-seal:      180ms;
+  --dur-roll:      420ms;
+  --dur-fog:       1200ms;
+  --dur-fast:      120ms;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.6);
-  --shadow-glow-teal: 0 0 30px var(--teal-glow), 0 0 60px var(--teal-glow);
-  --shadow-glow-gold: 0 0 30px var(--gold-glow), 0 0 60px var(--gold-glow);
-  --shadow-glow-crimson: 0 0 30px var(--crimson-glow), 0 0 60px var(--crimson-glow);
+  /* ----- LAYOUT (carried from prior repo system) ----------- */
+  --header-height:        64px;
+  --bottom-nav-height:    56px;
+  --command-dock-height:  72px;
+  --sidebar-width:        320px;
+  --max-content-width:    1440px;
 
-  /* Animation */
-  --ease-linear: linear;
-  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  --duration-instant: 80ms;
-  --duration-fast: 150ms;
-  --duration-normal: 300ms;
-  --duration-slow: 500ms;
-  --duration-dramatic: 800ms;
-  --duration-ambient: 12000ms;
-
-  /* Z-index Scale */
-  --z-base: 0;
-  --z-dropdown: 100;
-  --z-sticky: 200;
+  /* ----- Z-INDEX (carried) --------------------------------- */
+  --z-base:           0;
+  --z-dropdown:       100;
+  --z-sticky:         200;
   --z-modal-backdrop: 300;
-  --z-modal: 400;
-  --z-popover: 500;
-  --z-toast: 600;
-
-  /* Layout */
-  --header-height: 64px;
-  --bottom-nav-height: 56px;
-  --command-dock-height: 72px;
-  --sidebar-width: 320px;
-  --max-content-width: 1440px;
+  --z-modal:          400;
+  --z-popover:        500;
+  --z-toast:          600;
 }
 
-/* ── High Contrast Mode ── */
+/* ============================================================================
+ * LEGACY COMPATIBILITY LAYER (deprecated — migrate components to Tide-Stained
+ * tokens above and remove these as references go away).
+ *
+ * Old tokens (Void/Teal/Gold + Phase 6 Grimoire) are aliased to the closest
+ * Tide-Stained equivalent so existing components keep rendering while
+ * migration progresses ticket-by-ticket. See packages/ui-system/README.md
+ * for the migration map and per-component status.
+ * ============================================================================ */
+:root {
+  /* Void → Tide-Ink / Drowned-Ink family */
+  --void-950: var(--drowned-ink);
+  --void-900: var(--drowned-ink);
+  --void-850: var(--tide-ink);
+  --void-800: var(--tide-ink);
+  --void-750: var(--tide-ink);
+  --void-700: var(--saltline);
+  --void-650: var(--saltline);
+  --void-600: var(--saltline);
+  --void-500: var(--saltline);
+  --void-400: var(--bone);
+  --void-300: var(--bone);
+
+  /* Teal → Verdigris (success/oxidation) */
+  --teal-600: var(--verdigris);
+  --teal-500: var(--verdigris);
+  --teal-400: var(--verdigris);
+  --teal-300: var(--verdigris);
+  --teal-200: var(--bone);
+  --teal-glow:        var(--verdigris-wash);
+  --teal-glow-strong: var(--verdigris-wash);
+
+  /* Gold → Brass / Lantern */
+  --gold-600: var(--brass-dim);
+  --gold-500: var(--brass);
+  --gold-400: var(--lantern);
+  --gold-300: var(--lantern);
+  --gold-200: var(--vellum);
+  --gold-glow:        var(--brass-wash);
+  --gold-glow-strong: var(--lantern-wash);
+
+  /* Accents */
+  --crimson-500: var(--drowned-red);
+  --crimson-400: var(--drowned-red);
+  --crimson-glow: var(--drowned-red-wash);
+  --twilight-500: var(--tide-bloom);
+  --twilight-400: var(--tide-bloom);
+  --twilight-glow: var(--tide-bloom-wash);
+  --moss-500: var(--verdigris);
+  --moss-400: var(--verdigris);
+  --moss-glow: var(--verdigris-wash);
+
+  /* Semantic surface/text/border (rebound) */
+  --surface-base:     var(--bg-scene);
+  --surface-elevated: var(--bg-tide);
+  --surface-floating: var(--bg-tide);
+  --surface-input:    var(--drowned-ink);
+  --surface-overlay:  rgba(14, 18, 24, 0.92);
+  --text-primary:     var(--fg-on-dark);
+  --text-secondary:   var(--fg-dim-on-dark);
+  --text-tertiary:    var(--saltline);
+  --text-disabled:    var(--saltline);
+  --text-inverse:     var(--tide-ink);
+  --border-subtle:    rgba(232, 223, 200, 0.08);
+  --border-default:   rgba(232, 223, 200, 0.14);
+  --border-strong:    var(--brass-dim);
+  --border-gold:      var(--brass);
+  --border-crimson:   var(--drowned-red);
+
+  /* Legacy text scale (size names) — point at Tide-Stained equivalents */
+  --text-xs:   0.6875rem;
+  --text-sm:   0.8125rem;
+  --text-base: 1.0625rem;     /* aligned with --t-body 17px */
+  --text-md:   1.0625rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.5rem;
+  --text-2xl:  2rem;
+  --text-3xl:  2.75rem;
+  --text-4xl:  3rem;          /* 48px = --t-display-xl */
+  --text-5xl:  3.75rem;
+
+  --leading-tight:   1.1;
+  --leading-snug:    1.3;
+  --leading-normal:  1.55;
+  --leading-relaxed: 1.75;
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.05em;
+  --tracking-wider:  0.1em;
+
+  /* Legacy radii */
+  --radius-sm:   var(--radius-2);
+  --radius-md:   var(--radius-2);
+  --radius-lg:   var(--radius-2);
+  --radius-xl:   var(--radius-2);
+  --radius-full: var(--radius-pill);
+
+  /* Legacy shadows — bind to Tide-Stained paper shadows */
+  --shadow-sm: var(--shadow-inset);
+  --shadow-md: var(--shadow-paper);
+  --shadow-lg: var(--shadow-paper);
+  --shadow-xl: var(--shadow-paper);
+  --shadow-glow-teal:    0 0 30px var(--verdigris-wash);
+  --shadow-glow-gold:    0 0 30px var(--lantern-wash);
+  --shadow-glow-crimson: 0 0 30px var(--drowned-red-wash);
+
+  /* Legacy easing/durations */
+  --ease-linear:   linear;
+  --ease-smooth:   var(--ease-paper);
+  --ease-out:      var(--ease-paper);
+  --ease-in:       var(--ease-paper);
+  --ease-dramatic: var(--ease-paper);
+  --ease-bounce:   var(--ease-paper);   /* no bounce in Tide-Stained */
+  --duration-instant:   var(--dur-fast);
+  --duration-fast:      var(--dur-fast);
+  --duration-normal:    var(--dur-ink);
+  --duration-slow:      var(--dur-roll);
+  --duration-dramatic:  var(--dur-fog);
+  --duration-ambient:   12000ms;        /* preserved — used by ambient atmospherics */
+
+  /* Phase 6 Grimoire — drop into Tide-Stained equivalents */
+  --ember-900: var(--drowned-red);
+  --ember-700: var(--drowned-red);
+  --ember-500: var(--drowned-red);
+  --ember-400: var(--drowned-red);
+  --ember-300: var(--lantern);
+  --ember-glow:        var(--drowned-red-wash);
+  --ember-glow-strong: var(--drowned-red-wash);
+  --sigil-700: var(--brass-dim);
+  --sigil-500: var(--brass);
+  --sigil-400: var(--lantern);
+  --sigil-300: var(--lantern);
+  --sigil-glow: var(--lantern-wash);
+  --bone-100:  var(--vellum);
+  --bone-200:  var(--bone);
+  --bone-400:  var(--bone);
+  --bone-600:  var(--brass-dim);
+  --ink-950:   var(--drowned-ink);
+  --ink-900:   var(--drowned-ink);
+  --ink-800:   var(--tide-ink);
+  --ink-700:   var(--tide-ink);
+  --ink-600:   var(--saltline);
+  --whisper-fg: rgba(232, 223, 200, 0.62);
+  --font-grimoire: var(--font-body);   /* Cormorant → EB Garamond per Tide-Stained */
+}
+
+/* ── Accessibility variants ── */
 [data-high-contrast="true"] {
+  --fg-on-dark: #ffffff;
+  --fg-dim-on-dark: #e6e6e6;
   --text-primary: #ffffff;
   --text-secondary: #cccccc;
   --border-default: rgba(255, 255, 255, 0.3);
   --border-strong: rgba(255, 255, 255, 0.5);
 }
 
-/* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -188,14 +326,21 @@
 }
 
 [data-reduced-motion="true"] {
-  --duration-instant: 0ms;
-  --duration-fast: 0ms;
-  --duration-normal: 0ms;
-  --duration-slow: 0ms;
+  --dur-ink:  0ms;
+  --dur-seal: 0ms;
+  --dur-roll: 0ms;
+  --dur-fog:  0ms;
+  --dur-fast: 0ms;
+  --duration-instant:  0ms;
+  --duration-fast:     0ms;
+  --duration-normal:   0ms;
+  --duration-slow:     0ms;
   --duration-dramatic: 0ms;
 }
 
-/* ── Base Reset ── */
+/* ============================================================================
+ * BASE RESET + STACK-LEVEL UTILITIES (brand-agnostic)
+ * ============================================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -212,16 +357,16 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: var(--text-base);
-  line-height: var(--leading-normal);
-  color: var(--text-primary);
-  background: var(--surface-base);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: var(--fg-on-dark);
+  background: var(--bg-scene);
   min-height: 100vh;
   min-height: 100svh;
   overflow-x: hidden;
 }
 
-/* ── Film Grain Overlay ── */
+/* ── Film grain overlay (kept — stack-level atmospheric) ── */
 body::after {
   content: '';
   position: fixed;
@@ -233,96 +378,53 @@ body::after {
   background-repeat: repeat;
   background-size: 128px;
 }
-
 [data-reduced-motion="true"] body::after,
-[data-film-grain="false"] body::after {
-  display: none;
-}
+[data-film-grain="false"] body::after { display: none; }
 
-/* ── Typography ── */
+/* ── Typography (Tide-Stained canonical) ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
-  color: var(--text-primary);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: var(--fg-on-dark);
 }
+h1 { font-size: var(--t-display-xl); }
+h2 { font-size: var(--t-display-l); }
+h3 { font-size: var(--t-display-m); }
+h4 { font-size: var(--t-body-l); }
 
-h1 { font-size: var(--text-3xl); }
-h2 { font-size: var(--text-2xl); }
-h3 { font-size: var(--text-xl); }
-h4 { font-size: var(--text-lg); }
+p { line-height: 1.55; color: var(--fg-dim-on-dark); }
 
-p {
-  line-height: var(--leading-normal);
-  color: var(--text-secondary);
-}
-
-/* ── Interactive Elements ── */
 button, input, select, textarea {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
 }
-
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
+button { cursor: pointer; border: none; background: none; -webkit-tap-highlight-color: transparent; }
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid var(--teal-500);
+  outline: 2px solid var(--lantern);   /* attention color, not teal */
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-1);
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* ── Scrollbar (Tide-Stained restraint — no flashy colors) ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--saltline); border-radius: var(--radius-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--brass-dim); }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::selection { background: var(--lantern-wash); color: var(--fg-on-dark); }
 
-::-webkit-scrollbar-thumb {
-  background: var(--void-400);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--void-300);
-}
-
-/* ── Selection ── */
-::selection {
-  background: var(--teal-glow-strong);
-  color: var(--text-primary);
-}
-
-/* ── Utility Classes ── */
-
-/* Screen reader only */
+/* ── Utilities ── */
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
-
-/* Container */
 .container {
   width: 100%;
   max-width: var(--max-content-width);
@@ -330,168 +432,125 @@ textarea:focus-visible,
   padding-inline: var(--space-4);
 }
 
-/* Glow utilities */
-.glow-teal { box-shadow: var(--shadow-glow-teal); }
-.glow-gold { box-shadow: var(--shadow-glow-gold); }
-.glow-crimson { box-shadow: var(--shadow-glow-crimson); }
-
-/* Text utilities */
-.text-gradient-teal {
-  background: linear-gradient(135deg, var(--teal-400), var(--teal-500));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Animation utilities */
-@keyframes breathe {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px var(--teal-glow); }
-  50% { box-shadow: 0 0 40px var(--teal-glow-strong); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-  20%, 40%, 60%, 80% { transform: translateX(3px); }
-}
-
-.animate-breathe { animation: breathe 4s ease-in-out infinite; }
+/* ── Animations (stack-level — preserved from prior system) ── */
+@keyframes breathe   { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px var(--lantern-wash); } 50% { box-shadow: 0 0 40px var(--lantern-wash); } }
+@keyframes float     { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes fade-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shake     { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); } 20%, 40%, 60%, 80% { transform: translateX(3px); } }
+.animate-breathe    { animation: breathe 4s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
-.animate-float { animation: float 6s ease-in-out infinite; }
-.animate-fade-in { animation: fade-in var(--duration-normal) var(--ease-out) forwards; }
-.animate-fade-in-up { animation: fade-in-up var(--duration-normal) var(--ease-out) forwards; }
-.animate-shake { animation: shake 0.4s var(--ease-smooth); }
+.animate-float      { animation: float 6s ease-in-out infinite; }
+.animate-fade-in    { animation: fade-in var(--dur-ink) var(--ease-paper) forwards; }
+.animate-fade-in-up { animation: fade-in-up var(--dur-ink) var(--ease-paper) forwards; }
+.animate-shake      { animation: shake 0.4s var(--ease-paper); }
 
-/* ============================================================================
- * OCCULT GRIMOIRE LAYER — Phase 6
- * ============================================================================
- * Augments the void/teal/gold base with parchment, ember, sigil-gold, and
- * ink-bleed tokens. The base palette stays alive for legacy components
- * during the transition; new components reach for the grimoire tokens via
- * CSS custom-property fallbacks.
- *
- * Cormorant supplies the body voice (a humanist serif with proper
- * italics, slow weight transitions). Inter remains for UI chrome where
- * dense readability beats atmosphere.
- * ========================================================================== */
+/* ── Glow utilities (legacy names, rebound) ── */
+.glow-teal    { box-shadow: 0 0 30px var(--verdigris-wash); }
+.glow-gold    { box-shadow: 0 0 30px var(--lantern-wash); }
+.glow-crimson { box-shadow: 0 0 30px var(--drowned-red-wash); }
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
-
-:root {
-  /* Grimoire color tokens. Layer A: ember, the punctuating warm. */
-  --ember-900: #2a0a04;
-  --ember-700: #6a1a08;
-  --ember-500: #b34419;
-  --ember-400: #d9613a;
-  --ember-300: #f08359;
-  --ember-glow: rgba(217, 97, 58, 0.22);
-  --ember-glow-strong: rgba(217, 97, 58, 0.5);
-
-  /* Layer B: sigil-gold, the revelatory accent. Replaces the colder gold. */
-  --sigil-700: #8a6a18;
-  --sigil-500: #d8a93a;
-  --sigil-400: #e7c062;
-  --sigil-300: #f1d486;
-  --sigil-glow: rgba(216, 169, 58, 0.22);
-
-  /* Layer C: bone, the body text against ink. */
-  --bone-100: #f3eee0;
-  --bone-200: #e7decb;
-  --bone-400: #c2b497;
-  --bone-600: #8a7e63;
-
-  /* Layer D: ink, deeper than void; receives the grain overlay. */
-  --ink-950: #0a070b;
-  --ink-900: #0d0a10;
-  --ink-800: #131019;
-  --ink-700: #1a1622;
-  --ink-600: #221d2c;
-
-  /* Layer E: whisper, the desaturated voice for lower-importance prose. */
-  --whisper-fg: rgba(243, 238, 224, 0.62);
-
-  /* Grimoire typography. Body sits Cormorant on Inter to keep UI readable. */
-  --font-grimoire: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
-
-  /* Paper-grain overlay (SVG noise) — applied via .grimoire-grain class. */
-  --grimoire-grain:
-    url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.87  0 0 0 0 0.74  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");
+/* ── Text utilities (legacy names, rebound) ── */
+.text-gradient-teal {
+  background: linear-gradient(135deg, var(--verdigris), var(--brass));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-
-/* Light-touch grain on any container that opts in.  Tile-repeats at
- * 240px so the noise stays subliminal at any breakpoint; pointer-events
- * none so the overlay never eats clicks. */
-.grimoire-grain {
-  position: relative;
-  isolation: isolate;
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--brass), var(--lantern));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.text-sigil   { color: var(--lantern); }
+.text-ember   { color: var(--drowned-red); }
+.text-bone    { color: var(--bone); }
+.text-whisper { color: rgba(232, 223, 200, 0.62); font-style: italic; }
+
+/* ── Grimoire grain overlay (kept — composes well with Tide-Stained vellum) ── */
+.grimoire-grain { position: relative; isolation: isolate; }
 .grimoire-grain::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: var(--grimoire-grain);
-  background-size: 240px 240px;
-  background-repeat: repeat;
-  mix-blend-mode: overlay;
-  opacity: 0.5;
-  z-index: 0;
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.87  0 0 0 0 0.74  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");
+  background-size: 240px 240px; background-repeat: repeat;
+  mix-blend-mode: overlay; opacity: 0.5; z-index: 0;
 }
-.grimoire-grain > * {
-  position: relative;
-  z-index: 1;
-}
+.grimoire-grain > * { position: relative; z-index: 1; }
 
-/* Sigil-gold + ember utility text colors so authored copy can lean on them. */
-.text-sigil { color: var(--sigil-400); }
-.text-ember { color: var(--ember-400); }
-.text-bone  { color: var(--bone-200); }
-.text-whisper {
-  color: var(--whisper-fg);
-  font-style: italic;
-}
-
-/* Slow ember breathe — used by danger glyphs and the turn pill as
- * danger rises. Cheap, GPU-friendly. */
+/* ── Ember-breathe (kept — used by Phase 6 danger glyphs) ── */
 @keyframes ember-breathe {
-  0%, 100% {
-    text-shadow: 0 0 8px var(--ember-glow), 0 0 18px transparent;
-  }
-  50% {
-    text-shadow: 0 0 14px var(--ember-glow-strong), 0 0 26px var(--ember-glow);
-  }
+  0%, 100% { text-shadow: 0 0 8px var(--drowned-red-wash), 0 0 18px transparent; }
+  50%      { text-shadow: 0 0 14px var(--drowned-red-wash), 0 0 26px var(--drowned-red-wash); }
 }
-.animate-ember-breathe { animation: ember-breathe 3.4s ease-in-out infinite; }
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-ember-breathe { animation: none; }
-}
-
+.animate-ember-breathe { animation: ember-breathe 3.4s var(--ease-paper) infinite; }
+@media (prefers-reduced-motion: reduce) { .animate-ember-breathe { animation: none; } }
 [data-reduced-motion="true"] .animate-ember-breathe { animation: none; }
+
+/* ============================================================================
+ * SEMANTIC TYPE STYLES — Tide-Stained canonical classes
+ * (compose with utility classes above; apply directly to elements)
+ * ============================================================================ */
+.codex-title, h1.display {
+  font-family: var(--font-display); font-size: var(--t-display-xl);
+  line-height: 1.05; letter-spacing: 0.01em; color: var(--fg-on-dark);
+}
+.chapter-h2, h2.display {
+  font-family: var(--font-display); font-size: var(--t-display-l);
+  line-height: 1.1; letter-spacing: 0.02em; color: var(--fg-on-dark);
+  margin: 0 0 var(--space-2);
+}
+.section-h3, h3.display {
+  font-family: var(--font-display); font-size: var(--t-display-m);
+  line-height: 1.2; letter-spacing: 0.02em; color: var(--fg-on-dark);
+  margin: var(--space-6) 0 var(--space-3);
+}
+.eyebrow, .label-caps {
+  font-family: var(--font-display); font-size: var(--t-display-s);
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-2);
+}
+.label-caps--mini {
+  font-family: var(--font-display); font-size: var(--t-display-xs);
+  letter-spacing: 0.20em; text-transform: uppercase; color: var(--fg-2);
+}
+.body, p.body { font-family: var(--font-body); font-size: var(--t-body); line-height: 1.55; color: var(--fg-on-dark); text-wrap: pretty; }
+.body--lead  { font-family: var(--font-body); font-size: var(--t-body-l); line-height: 1.55; color: var(--fg-on-dark); }
+.body--small { font-family: var(--font-body); font-size: var(--t-body-s); line-height: 1.55; color: var(--fg-on-dark); }
+.dek, .subtitle {
+  font-family: var(--font-body); font-style: italic;
+  font-size: var(--t-body); line-height: 1.55; color: var(--fg-dim-on-dark);
+}
+.margin, .marginalia {
+  font-family: var(--font-margin); font-size: var(--t-margin);
+  line-height: 1.25; color: var(--brass-dim);
+}
+.litany {
+  font-family: var(--font-margin); font-size: var(--t-margin-l);
+  line-height: 1.25; color: var(--tide-bloom);
+  background: var(--tide-bloom-wash);
+  border-left: 3px solid var(--tide-bloom);
+  padding: var(--space-3) var(--space-4);
+}
+.litany::before { content: "❦ "; color: var(--brass-dim); }
+.mech, .mono {
+  font-family: var(--font-mono); font-size: var(--t-mono);
+  color: var(--fg-on-dark); font-variant-numeric: tabular-nums;
+}
+.mech--lg { font-family: var(--font-mono); font-size: var(--t-mono-l); color: var(--fg-on-dark); font-variant-numeric: tabular-nums; }
+.mech--sm { font-family: var(--font-mono); font-size: var(--t-mono-s); color: var(--fg-2); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+
+/* ============================================================================
+ * CHIPS / PILLS — sign-off + stance + status
+ * ============================================================================ */
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: var(--t-mono-xs);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px;
+  border: var(--stroke-thin) solid var(--saltline);
+  background: var(--bg-tide);
+  color: var(--fg-on-dark);
+  border-radius: var(--radius-1);
+}
+.chip--ok     { border-color: var(--verdigris);   color: var(--verdigris); }
+.chip--watch  { border-color: var(--lantern);     color: var(--brass-dim); }
+.chip--danger { border-color: var(--drowned-red); color: var(--drowned-red); }
+.chip--meta   { border-color: var(--tide-bloom);  color: var(--tide-bloom); }
