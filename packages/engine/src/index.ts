@@ -41,3 +41,9 @@ export {
   makeId,
   cloneState,
 } from './engine-utils';
+export {
+  parseDiceExpression,
+  rollDice,
+  type ParsedDice,
+  type DiceRoll,
+} from './dice-expression';
