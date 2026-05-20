@@ -16,7 +16,7 @@
  * ============================================================================
  */
 
-import type { RarityTier, RarityTierId } from './items-5e-types';
+import type { RarityTier, RarityTierId } from '@first-perception/types';
 
 const RARITY_TIERS: readonly RarityTier[] = Object.freeze([
   Object.freeze<RarityTier>({

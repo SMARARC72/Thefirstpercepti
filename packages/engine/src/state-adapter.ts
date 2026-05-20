@@ -123,6 +123,7 @@ function oldItemToNew(old: OldItem): Item {
     name: old.name,
     type: typeMap[old.category] ?? 'misc',
     description: old.description,
+    rarity: 'common',
     durability: old.maxUses > 0 ? old.maxUses : undefined,
     maxDurability: old.maxUses > 0 ? old.maxUses : undefined,
     charges: old.maxUses > 0 ? old.usesRemaining : undefined,
@@ -173,6 +174,10 @@ export function oldPlayerToNewPlayer(old: OldPlayer): Player {
     conditions: old.conditions.map(oldConditionToNew),
     inventory: old.inventory.map(oldItemToNew),
     tags: [],
+    proficiencyBonus: 2,
+    hitDice: { current: 1, max: 1, die: 'd8' },
+    savingThrowProficiencies: [],
+    attunementSlots: { used: 0, max: 3 },
   };
 }
 

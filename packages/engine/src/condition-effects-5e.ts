@@ -16,85 +16,25 @@
  * ============================================================================
  */
 
-// Type contracts are duplicated here from `packages/types/src/conditions-5e.ts`
-// because the types package does not yet re-export submodules from its main
-// entry — Phase 7 wires up the unified export and this engine module can then
-// swap to importing from `@first-perception/types`. The shapes are kept
-// byte-identical by the structural-validation spec.
+import type {
+  ActiveCondition5e,
+  Condition5eCategory,
+  Condition5eDef,
+  Condition5eEffectsAtLevel,
+  Condition5eId,
+  ResolvedConditionEffects,
+  SaveAbility,
+} from '@first-perception/types';
 
-export type Condition5eId =
-  | 'blinded'
-  | 'charmed'
-  | 'deafened'
-  | 'exhaustion'
-  | 'frightened'
-  | 'grappled'
-  | 'incapacitated'
-  | 'invisible'
-  | 'paralyzed'
-  | 'petrified'
-  | 'poisoned'
-  | 'prone'
-  | 'restrained'
-  | 'stunned'
-  | 'unconscious';
-
-export type Condition5eCategory = 'sensory' | 'mental' | 'physical' | 'metaphysical';
-
-export type SaveAbility =
-  | 'strength'
-  | 'dexterity'
-  | 'constitution'
-  | 'intelligence'
-  | 'wisdom'
-  | 'charisma';
-
-export interface Condition5eEffectsAtLevel {
-  level?: number;
-  attackRollAdvantageAgainst?: boolean;
-  attackRollDisadvantageFor?: boolean;
-  abilityChecksDisadvantage?: 'all' | 'strength' | 'dexterity' | 'none';
-  savingThrowsDisadvantage?: SaveAbility[];
-  speedReducedToZero?: boolean;
-  speedHalved?: boolean;
-  cantTakeActions?: boolean;
-  cantTakeReactions?: boolean;
-  autoFailStrengthDexSaves?: boolean;
-  hpMaxReducedHalf?: boolean;
-  speedReducedZeroLevel?: boolean;
-  death?: boolean;
-  narrative: string;
-}
-
-export interface Condition5eDef {
-  id: Condition5eId;
-  label: string;
-  category: Condition5eCategory;
-  hasLevels: boolean;
-  maxLevel?: number;
-  description: string;
-  effects: Condition5eEffectsAtLevel[];
-  recoveryVector: string;
-}
-
-export interface ActiveCondition5e {
-  id: Condition5eId;
-  level?: number;
-  source?: string;
-  rounds?: number;
-}
-
-export interface ResolvedConditionEffects {
-  hasAdvantage: Set<string>;
-  hasDisadvantage: Set<string>;
-  savingThrowDisadvantage: Set<SaveAbility>;
-  speedMultiplier: 0 | 0.5 | 1;
-  cantTakeActions: boolean;
-  cantTakeReactions: boolean;
-  autoFailStrengthDexSaves: boolean;
-  hpMaxMultiplier: 0.5 | 1;
-  unconscious: boolean;
-}
+export type {
+  ActiveCondition5e,
+  Condition5eCategory,
+  Condition5eDef,
+  Condition5eEffectsAtLevel,
+  Condition5eId,
+  ResolvedConditionEffects,
+  SaveAbility,
+};
 
 const CONDITIONS_5E_DATA: Condition5eDef[] = [
   {

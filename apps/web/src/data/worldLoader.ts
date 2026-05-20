@@ -126,12 +126,16 @@ interface RawItem {
   name: string;
   type?: Item["type"];
   description?: string;
+  rarity?: Item["rarity"];
   durability?: number;
   maxDurability?: number;
   charges?: number;
   maxCharges?: number;
   effects?: Item["effects"];
   equipSlot?: Item["equipSlot"];
+  magical?: boolean;
+  attunement?: Item["attunement"];
+  requires?: Item["requires"];
 }
 
 function mapExits(raw: RawExit[]): Exit[] {
@@ -260,12 +264,16 @@ function mapItems(raw: RawItem[]): Item[] {
     name: i.name,
     type: i.type ?? "misc",
     description: i.description ?? "",
+    rarity: i.rarity ?? "common",
     durability: i.durability,
     maxDurability: i.maxDurability,
     charges: i.charges,
     maxCharges: i.maxCharges,
     effects: i.effects,
     equipSlot: i.equipSlot,
+    magical: i.magical,
+    attunement: i.attunement,
+    requires: i.requires,
   }));
 }
 

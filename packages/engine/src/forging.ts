@@ -27,7 +27,7 @@ import type {
   ForgeOutcome,
   ForgeRecipe,
   RarityTierId,
-} from './items-5e-types';
+} from '@first-perception/types';
 
 const FORGING_RECIPES: readonly ForgeRecipe[] = Object.freeze([
   Object.freeze<ForgeRecipe>({

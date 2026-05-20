@@ -11,6 +11,7 @@ function makeItem(id: string, overrides: Partial<Item> = {}): Item {
     name: `Item ${id}`,
     type: "misc",
     description: `Description for ${id}`,
+    rarity: "common",
     ...overrides,
   };
 }
@@ -42,6 +43,10 @@ function makePlayer(inventory: Item[]): Player {
     conditions: [],
     inventory,
     tags: [],
+    proficiencyBonus: 2,
+    hitDice: { current: 1, max: 1, die: "d8" },
+    savingThrowProficiencies: [],
+    attunementSlots: { used: 0, max: 3 },
   };
 }
 

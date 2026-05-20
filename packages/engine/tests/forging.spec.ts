@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { attemptForge, loadForgingRecipes, validateRecipe } from '../src/forging';
-import type { ForgeRecipe } from '../src/items-5e-types';
+import type { ForgeRecipe } from '@first-perception/types';
 
 function baseRecipe(overrides: Partial<ForgeRecipe> = {}): ForgeRecipe {
   return {

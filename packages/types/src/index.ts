@@ -8,6 +8,8 @@
  * ============================================================================
  */
 
+import type { RarityTierId, AttunementRequirement } from './items-5e.js';
+
 // =============================================================================
 // PRIMITIVES
 // =============================================================================
@@ -93,6 +95,24 @@ export const CORE_STATS = [
 
 export interface Stats extends Record<CoreStat, number> {}
 
+export type HitDie = 'd6' | 'd8' | 'd10' | 'd12';
+
+export interface HitDicePool {
+  current: number;
+  max: number;
+  die: HitDie;
+}
+
+export interface AttunementSlots {
+  used: number;
+  max: number;
+}
+
+export interface SpellSlotLevel {
+  current: number;
+  max: number;
+}
+
 export interface Player {
   id: UUID;
   name: string;
@@ -109,6 +129,11 @@ export interface Player {
   conditions: Condition[];
   inventory: Item[];
   tags: string[];
+  proficiencyBonus: number;
+  hitDice: HitDicePool;
+  savingThrowProficiencies: ReadonlyArray<CoreStat>;
+  attunementSlots: AttunementSlots;
+  spellSlots?: Record<number, SpellSlotLevel>;
 }
 
 // =============================================================================
@@ -117,17 +142,27 @@ export interface Player {
 
 export type ItemType = "weapon" | "armor" | "consumable" | "tool" | "key" | "document" | "misc";
 
+export interface ItemRequirements {
+  form?: CharacterForm;
+  posture?: KnowledgePosture;
+  domain?: Domain;
+}
+
 export interface Item {
   id: UUID;
   name: string;
   type: ItemType;
   description: string;
+  rarity: RarityTierId;
   durability?: number;
   maxDurability?: number;
   charges?: number;
   maxCharges?: number;
   effects?: ItemEffect[];
   equipSlot?: "hand" | "body" | "head" | "accessory";
+  magical?: boolean;
+  attunement?: AttunementRequirement;
+  requires?: ItemRequirements;
 }
 
 export interface ItemEffect {
@@ -749,4 +784,25 @@ export interface AppState {
 // =============================================================================
 export { getLogger, setLogger, resetLogger } from './logger.js';
 export type { Logger, LogLevel, LogContext } from './logger.js';
+
+// =============================================================================
+// 5e RULESET (re-exported from ./items-5e, ./conditions-5e)
+// =============================================================================
+export type {
+  RarityTierId,
+  RarityTier,
+  AttunementRequirement,
+  ForgeRecipe,
+  ForgeOutcomeKind,
+  ForgeOutcome,
+} from './items-5e.js';
+export type {
+  Condition5eId,
+  Condition5eCategory,
+  SaveAbility,
+  Condition5eEffectsAtLevel,
+  Condition5eDef,
+  ActiveCondition5e,
+  ResolvedConditionEffects,
+} from './conditions-5e.js';
 

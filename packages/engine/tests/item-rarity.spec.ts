@@ -6,7 +6,7 @@ import {
   getRarityTier,
   loadRarityTiers,
 } from '../src/item-rarity';
-import type { RarityTierId } from '../src/items-5e-types';
+import type { RarityTierId } from '@first-perception/types';
 
 describe('compareRarity', () => {
   it('returns a negative number when a is lower than b', () => {

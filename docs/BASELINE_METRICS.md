@@ -6,6 +6,15 @@ bugfixes (PR #7) merged. Every subsequent phase logs the delta in
 its `progress.md` "Verify" block against these numbers, so
 regressions are caught early and budgets stay honest.
 
+> **Phase 7 update (same date):** schema extension + mirror consolidation landed.
+> Bundle delta: `main.js` 192.55 → 193.08 kB raw (+0.53 kB), gzip 55.31 → 55.47 kB
+> (+0.16 kB). `vendor.js` + `main.css` unchanged. Test count unchanged at 113 engine +
+> 25 apps/web (the new schema fields are exercised by existing tests via fixture
+> updates; no new specs). Leak grep still 0. The two type mirrors are gone:
+> `packages/engine/src/items-5e-types.ts` deleted, the inline `Condition5e*` block at
+> the top of `packages/engine/src/condition-effects-5e.ts` replaced with an
+> import-and-re-export from `@first-perception/types`.
+
 ## Tests
 
 | Suite | Files | Tests |

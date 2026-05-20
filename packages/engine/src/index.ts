@@ -61,7 +61,7 @@ export type {
   ForgeRecipe,
   RarityTier,
   RarityTierId,
-} from './items-5e-types';
+} from '@first-perception/types';
 export {
   loadConditions5e,
   getCondition5e,

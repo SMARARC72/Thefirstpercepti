@@ -979,6 +979,147 @@ dependency-driven, not vibes; each phase's outputs unblock the next.
 
 - **Phase 7** — see above.
 
+---
+
+## 2026-05-20 (Session 8) — Phase 7: Schema foundation + mirror consolidation
+
+Foundation pass that lifts the Wave 1 type mirrors and ships the
+canonical 5e-augmented `Player` and `Item` shapes. Sets up the
+clean type surface Phase 8a's panel wiring, Phase 9's combat
+rewrite, and Phase 10's spell system all build on.
+
+### Pre-flight: optimization + planning
+- Merged the Wave 1 follow-up PR #7 (three reducer bugfixes) into
+  the integration branch `claude/codebase-audit-plan-n0dx0`.
+- Deleted 7 stale local feature branches.
+- Added `--passWithNoTests` to `packages/ui-system` and
+  `packages/audio` test scripts so a future CI gate can fan out
+  across every workspace uniformly.
+- Captured `docs/BASELINE_METRICS.md` — the post-Wave-1 floor every
+  subsequent phase reports a delta against.
+- Captured `docs/PHASE_7_PUNCH_LIST.md` — the starting brief for
+  this session. Includes verified Player + Item consumer maps,
+  exact mirror-import sites, the export-strategy decision tree, and
+  honest correction of a research-agent finding about
+  `StateEngine.ts:1094` that turned out to be a false alarm (it's a
+  validator on `player.stats`, not on `player`, so Phase 7
+  additions don't enter the loop).
+
+### What landed in Phase 7
+
+**Types package surface.**
+`packages/types/src/index.ts` now re-exports the 5e ruleset types
+(`RarityTierId`, `RarityTier`, `AttunementRequirement`,
+`ForgeRecipe`, `ForgeOutcome*`, the seven `Condition5e*` shapes,
+and `ResolvedConditionEffects`) through its main entry. No
+subpath exports needed; the `@first-perception/types` import path
+stays single-entry. Verified no name collisions with the existing
+exports before the re-write.
+
+**Mirror deletion.** Both Wave 1 mirrors are gone:
+- `packages/engine/src/items-5e-types.ts` deleted (was a
+  byte-identical copy of the canonical, stripped of JSDoc); five
+  consumer imports re-pointed to `@first-perception/types`
+  (`engine/src/index.ts`, `item-rarity.ts`, `forging.ts`, plus the
+  two engine spec files).
+- The inline `Condition5e*` type block at the top of
+  `packages/engine/src/condition-effects-5e.ts` (lines 19–97 of
+  pre-Phase-7) replaced with a single `import-and-re-export` from
+  `@first-perception/types`. The re-export pattern keeps the
+  conditions-5e spec's bundled `import { fn, type Foo }` style
+  working without touching the spec.
+
+**Player schema extension.** Five new fields on the canonical
+`Player` in `packages/types/src/index.ts`:
+- `proficiencyBonus: number` (default 2; Phase 9 wires growth).
+- `hitDice: HitDicePool` — `{ current, max, die }` with `die ∈ d6 | d8 | d10 | d12`.
+- `savingThrowProficiencies: ReadonlyArray<CoreStat>` — empty by
+  default; Phase 10 / posture system populates.
+- `attunementSlots: AttunementSlots` — `{ used, max }`; max defaults to 3.
+- `spellSlots?: Record<number, SpellSlotLevel>` — optional, only
+  set when a posture grants casting (Phase 10 surface).
+
+Seeded in four construction sites: `state-adapter.oldPlayerToNewPlayer`,
+`apps/web/src/game.ts:createGameFromCreation`, plus the two web
+test fixture helpers (`character-sheet-panel.spec.ts`,
+`inventory-panel.spec.ts`).
+
+**Item schema extension.** One required + three optional fields:
+- `rarity: RarityTierId` — required.
+- `magical?: boolean` — optional.
+- `attunement?: AttunementRequirement` — optional.
+- `requires?: ItemRequirements` — `{ form?, posture?, domain? }`,
+  optional.
+
+**Content migration.** `content/world-data/items.json` migrated:
+every entry gains `rarity: "common"`; four entries with clear
+supernatural effects gain `magical: true` (Brass Lens, Fountain
+Water, Book of Backwards Names, Court Seal). Rarity left at
+`common` across the board — upgrading specific items to
+`uncommon`/`rare`/etc. is a deliberate content design pass, not a
+foundation move.
+
+**Wire-through sites.** `apps/web/src/data/worldLoader.ts:mapItems`
+now reads the new fields from `RawItem` and defaults `rarity` to
+`"common"` if missing (defensive default for any future content
+authors who forget). `state-adapter.oldItemToNew` seeds `rarity:
+'common'` on the legacy → canonical Item bridge.
+
+### Surprise found (logged here for next-session continuity)
+
+**The engine has its own internal `Player` shape.** The punch list
+assumed one Player type; in fact `packages/engine/src/engine-types.ts`
+declares a parallel `Player` interface with engine-internal fields
+(`firstPerception`, `capabilityClaim`, `knowledgePosture`,
+`abilities`, `traits`, `locationId`, `knownRumors`,
+`factionStanding`, `relationships`, …). `CharacterCreation` and
+`StateEngine` construct THIS shape; `state-adapter.ts` converts
+between the engine-internal Player and the canonical Player.
+
+This means Phase 7 only needed to extend the canonical Player and
+seed the 5e fields in the `oldPlayerToNewPlayer` converter — NOT
+in `CharacterCreation` as the punch list initially suggested. The
+5e fields live on the canonical surface only. They don't yet
+round-trip back to the engine-internal Player; Phase 9's combat
+rewrite is where that two-way bridge will need to grow, since
+combat rolls will read `proficiencyBonus` and write back to
+`hitDice.current` on short rests.
+
+Updating the punch list in-flight didn't seem worth a separate
+commit since Phase 7 is the only consumer of it; flagged here so
+future-me reads it before Phase 9.
+
+### Verify
+
+- `npm run typecheck` — clean across packages + apps/web + api.
+- `npm run build:packages` — clean, all 7 workspace packages.
+- `npm test` — 18 + 35 + 10 + 113 + 25 = **201 tests passing**
+  across persistence + llm-client + narrative + engine + apps/web.
+  Engine count held at 113; apps/web held at 25. Wave 1's
+  `condition-effects-5e.spec.ts` still passes after the inline
+  type block was replaced with a re-export.
+- `npm run build` — 1077 modules, 3.31 s, no errors. Pre-existing
+  PostCSS font-import-order warning unchanged.
+- Bundle delta vs `BASELINE_METRICS.md`:
+  - `main.js` 192.55 → 193.08 kB raw (**+0.53 kB**, +0.16 kB gzip)
+  - `vendor.js` 455.80 kB — unchanged
+  - `main.css` 44.75 kB — unchanged
+- Leak grep on `apps/web/dist/assets/*.js` — 0 hits across all
+  four sentinels.
+
+### What's still ahead (Phase 8a onward)
+
+Phase 8a now has a clean type surface to wire `CharacterSheetPanel`
+and `InventoryPanel` against. Item.rarity is required, so the
+panel's `getItemRarity` fallback can be deleted — it can read
+`item.rarity` directly. `item.magical` and `item.attunement` are
+optional but typed; the "magical halo" CSS Wave 1 shipped lights
+up correctly off `item.magical === true`.
+
+Phase 9 will need to grow the two-way bridge between the engine-
+internal Player and the canonical Player so combat reducers can
+read `proficiencyBonus` + write back `hitDice.current` on rests.
+
 ## Build Commands
 
 ```bash
