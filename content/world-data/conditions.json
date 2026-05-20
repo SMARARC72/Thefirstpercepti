@@ -1,89 +1,91 @@
-[
-  {
-    "id": "cond-salt-touched",
-    "typeId": "salt_touched",
-    "name": "Salt-Touched",
-    "description": "The district has marked you. You taste salt in unexpected places. The world notices you more clearly.",
-    "category": "environmental",
-    "isHarmful": false,
-    "turnsRemaining": null,
-    "stacks": 1,
-    "maxStacks": 1,
-    "effects": [
-      { "stat": "sense", "modifier": 1 }
-    ]
-  },
-  {
-    "id": "cond-wounded",
-    "typeId": "wounded",
-    "name": "Wounded",
-    "description": "Your blood is not the right color. It carries something that flickers in the lamplight.",
-    "category": "physical",
-    "isHarmful": true,
-    "turnsRemaining": 8,
-    "stacks": 1,
-    "maxStacks": 3,
-    "effects": [
-      { "hpPerTurn": -1, "stat": "body", "modifier": -1 }
-    ]
-  },
-  {
-    "id": "cond-exhausted",
-    "typeId": "exhausted",
-    "name": "Exhausted",
-    "description": "Every closed eye contains a street you have not walked yet. Rest does not come cleanly.",
-    "category": "mental",
-    "isHarmful": true,
-    "turnsRemaining": 5,
-    "stacks": 1,
-    "maxStacks": 2,
-    "effects": [
-      { "stat": "will", "modifier": -2 },
-      { "focusPerTurn": -1 }
-    ]
-  },
-  {
-    "id": "cond-haunted",
-    "typeId": "haunted",
-    "name": "Haunted by Bells",
-    "description": "You hear bells at unexpected moments. They ring from inside your skull, from a place that remembers being a church.",
-    "category": "mental",
-    "isHarmful": true,
-    "turnsRemaining": null,
-    "stacks": 1,
-    "maxStacks": 1,
-    "effects": [
-      { "stat": "mind", "modifier": -1 },
-      { "focusPerTurn": -1 }
-    ]
-  },
-  {
-    "id": "cond-remembered",
-    "typeId": "remembered",
-    "name": "Too Remembered",
-    "description": "The fountain knows your true name. The world uses it when it thinks you are not listening.",
-    "category": "divine",
-    "isHarmful": true,
-    "turnsRemaining": null,
-    "stacks": 1,
-    "maxStacks": 1,
-    "effects": [
-      { "stat": "presence", "modifier": 2 },
-      { "stat": "will", "modifier": -1 }
-    ]
-  },
-  {
-    "id": "cond-debt-marked",
-    "typeId": "debt_marked",
-    "name": "Debt-Marked",
-    "description": "The debt court has added your name to a list. They will hear from you when your debts mature.",
-    "category": "social",
-    "isHarmful": true,
-    "turnsRemaining": 15,
-    "stacks": 1,
-    "maxStacks": 1,
-    "effects": [
-      { "stat": "authority", "modifier": -2 }
-    ]
-  }
-]
+{
+  "conditions": [
+    {
+      "condition_id": "salt_rimed",
+      "name": "Salt-Rimed",
+      "scope": "regional",
+      "source_pack": "greywake_conditions_v1",
+      "abbreviation": "SLT",
+      "ui_glyph": "salt-crystal-band",
+      "ui_category": "metaphysical",
+      "stackable": false,
+      "level_based": true,
+      "max_level": 2,
+      "duration_types_allowed": [
+        "n_scenes",
+        "until_long_rest",
+        "until_canon_event"
+      ],
+      "effect_rules": "Level 1 (light): -1 to DEX checks involving fine manipulation; visible salt-crystal-band on hands and lips; faintly tide-bloom in Drowned Church presence. Level 2 (heavy): -1 to DEX checks AND -1 to CHA checks against non-Greywake NPCs (they read you as 'one of the salt'); cannot be removed by ordinary washing; Drowned Church faction stance shifts toward favorable by +1 if heavy-rimed witnessed in cathedral. Both levels: practicing water flows toward the rimed body if within 5 ft; minor narrative effect but witnessed by NPCs.",
+      "removal_methods": [
+        "long rest in fresh (non-salt) water",
+        "Purgative Tincture (alchemy slice recipe)",
+        "Imposed Unname spell variant (not slice-available)",
+        "Drowned Church absolution rite (Faith:Umberlee >= 4 required to be offered)"
+      ]
+    },
+    {
+      "condition_id": "recognized_by_not_yet_named",
+      "name": "Recognized by Not-Yet-Named",
+      "scope": "regional",
+      "source_pack": "greywake_conditions_v1",
+      "abbreviation": "RNN",
+      "ui_glyph": "tide-bloom-eye-half-open",
+      "ui_category": "metaphysical",
+      "stackable": false,
+      "level_based": false,
+      "duration_types_allowed": [
+        "until_canon_event",
+        "permanent"
+      ],
+      "effect_rules": "The Unnamed has noticed the bearer. While active: +1 Notice from The Unnamed per cast of any Imposed-school spell; -1 to Stealth in metaphysical perception domains (the bearer is faintly visible to anything that perceives through Authority-pressure); +1 to Insight checks involving naming, oath-keeping, or word-power; one canon-event opportunity per long rest where the World Director may surface a 'name proposal' (an NPC or environment offers a tentative name for the Unnamed-as-noticed-you; declining holds the condition; accepting may resolve it but commits a contradiction ledger entry).",
+      "removal_methods": [
+        "canon-event resolution (one of the name-proposals accepted; contradiction ledger seeded)",
+        "deicide of The Unnamed (extreme; substrate_practicing_word re-exposes)",
+        "Imposed Unrecord spell targeting the perception-event that started recognition (DC 18)"
+      ]
+    },
+    {
+      "condition_id": "debt_marked",
+      "name": "Debt-Marked",
+      "scope": "regional",
+      "source_pack": "greywake_conditions_v1",
+      "abbreviation": "DBT",
+      "ui_glyph": "drowned-coin-stamp",
+      "ui_category": "social_legal",
+      "stackable": false,
+      "level_based": false,
+      "duration_types_allowed": [
+        "until_canon_event"
+      ],
+      "effect_rules": "The bearer carries an unresolved debt to a named creditor (faction or NPC). Debt meter floor for this character is the debt value or 2, whichever is greater. While active: -2 to Persuasion checks vs the creditor or their representatives; +1 to Insight checks specifically about the creditor's interests; Tide League and Bell Court NPCs can read the debt mark on sight (it appears as a faint stamp on the bearer's clothing, brass-tinted); creditor may dispatch a collector NPC if debt exceeds 6 or in-world time elapses without payment. Bearer may transfer debt via canon-event (with creditor consent) or pay it off (which removes the condition).",
+      "removal_methods": [
+        "pay the debt in full (creditor receives commensurate value; state_diff commits)",
+        "creditor's death or dissolution (debt void; contradiction ledger 'unmade_event' kind seeded)",
+        "transfer to another bearer via consenting canon-event"
+      ]
+    },
+    {
+      "condition_id": "bell_marked",
+      "name": "Bell-Marked",
+      "scope": "regional",
+      "source_pack": "greywake_conditions_v1",
+      "abbreviation": "BLM",
+      "ui_glyph": "single-bell-strike-glyph",
+      "ui_category": "social_legal",
+      "stackable": false,
+      "level_based": false,
+      "duration_types_allowed": [
+        "n_scenes",
+        "until_long_rest",
+        "until_canon_event"
+      ],
+      "effect_rules": "The Bell Court has rung the bell against the bearer (formally or by accidental association during an off-hour strike). While active: -1 to all CHA checks vs Bell Court NPCs; +1 to checks involving witnesses (the bell-mark counts as a witness in legal proceedings, sometimes for the bearer, sometimes against); Bell Court visitor ledger entries about the bearer are treated as canonical_observation rather than rumor; the mark is visible to Bell-Magistrate Orro and his deputies. Three accumulated bell-marks in a campaign (path:law domain weight >= 3) escalates to permanent Bell-Marked status with attendant legal consequences.",
+      "removal_methods": [
+        "Bell Court formal absolution (DC 15 Persuasion or canon-event resolving the underlying charge)",
+        "duration expiry (most bell-marks expire over n_scenes or until_long_rest)",
+        "Bell-Marked Charm attunement (slice item) provides partial mitigation: -1 to penalty severity while attuned"
+      ]
+    }
+  ]
+}

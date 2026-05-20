@@ -1,0 +1,1164 @@
+{
+  "loot_tables": [
+    {
+      "loot_table_id": "lt_carried_common_bandit",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_dagger",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_leather_armor",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_rations_day",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_coin_purse_small",
+          "weight": 50,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_torch",
+          "weight": 30,
+          "qty": 2
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_basic_poison",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 15,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "local_watch",
+          "faction_brigands"
+        ],
+        "decay_pattern": "6_days_then_seized",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_carried_city_guard",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_longsword",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_chain_shirt",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_shield_iron",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_signet_ring",
+          "weight": 40,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_letter_of_credit",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_writing_kit",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 35,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "faction_civic_authority"
+        ],
+        "decay_pattern": "immediate_civic_investigation",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_carried_traveler_merchant",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_backpack",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_rations_day",
+          "qty": 2
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_letter_of_credit",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_amulet_minor_protection",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_signet_ring",
+          "weight": 35,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_painted_locket",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_compass_homing",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 25,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_carried_low_cleric",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_quarterstaff",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_clay_token_temple",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_holy_water_vial",
+          "qty": 1,
+          "qty_die": "1d3"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_scroll_cure_wounds",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_scroll_detect_magic",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_traveler_journal",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 25,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_carried_wizard_apprentice",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_quarterstaff",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_spellbook_blank",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_inkpot_blackest",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_scroll_magic_missile",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_wand_magic_missiles",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_pearl_of_power",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_scroll_invisibility",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 45,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_carried_heavy_thug",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_warhammer",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_chain_shirt",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_healing_common",
+          "weight": 40,
+          "qty": 1,
+          "qty_die": "1d2"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_brandy_bottle",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_gauntlets_ogre_power",
+          "weight": 2,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 33,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_carried_ranger_scout",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_shortbow",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_quiver_ehlonna",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_studded_leather",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_dagger",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_arrows_silvered",
+          "weight": 35,
+          "qty": 20
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_compass_homing",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_winged_boots",
+          "weight": 1,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 49,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_carried_paladin",
+      "scope": "carried",
+      "trigger_event_kind": "npc_defeated",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_longsword",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_chain_mail",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_shield_iron",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_holy_water_vial",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_healing_uncommon",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_amulet_minor_protection",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_brooch_shielding",
+          "weight": 4,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 54,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_hidden_roadside_cache",
+      "scope": "hidden",
+      "trigger_event_kind": "perception_check_pass",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "weighted",
+          "item_id": "itm_coin_purse_small",
+          "weight": 35,
+          "qty": 1,
+          "qty_die": "1d4"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_dagger",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_healing_common",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_iron_key_generic",
+          "weight": 10,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_torch",
+          "weight": 10,
+          "qty": 1,
+          "qty_die": "1d4"
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 10,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "original_owner_if_alive",
+          "local_watch"
+        ],
+        "decay_pattern": "undisturbed_indefinitely",
+        "rumor_risk": false
+      }
+    },
+    {
+      "loot_table_id": "lt_hidden_old_smuggler_cache",
+      "scope": "hidden",
+      "trigger_event_kind": "investigation_check_pass",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "weighted",
+          "item_id": "itm_thieves_tools",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_lockpicks_blessed",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_letter_of_credit",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_dust_disappearance",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_invisibility",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_bag_of_holding",
+          "weight": 3,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 32,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "faction_smugglers_guild"
+        ],
+        "decay_pattern": "1_year_then_decayed",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_hidden_temple_reliquary",
+      "scope": "hidden",
+      "trigger_event_kind": "investigation_check_pass_dc20",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_holy_water_vial",
+          "qty": 1,
+          "qty_die": "1d4+1"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_clay_token_temple",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_scroll_cure_wounds",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_amulet_minor_protection",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_witness_bell",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_oath_chain",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 12,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "faction_local_temple",
+          "faction_civic_authority"
+        ],
+        "decay_pattern": "investigated_within_1_week",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_hidden_ancient_tomb",
+      "scope": "hidden",
+      "trigger_event_kind": "tomb_unsealed",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "weighted",
+          "item_id": "itm_signet_ring",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_thing_that_remembers",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_healing_uncommon",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_inverter_dagger",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_artifact_eye_vecna",
+          "weight": 1,
+          "qty": 1,
+          "condition": "canon_progression_total_>=_8"
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 29,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "faction_history_keepers",
+          "faction_descendant_lineage"
+        ],
+        "decay_pattern": "resealed_after_30_days",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_hidden_alchemist_secret_shelf",
+      "scope": "hidden",
+      "trigger_event_kind": "investigation_check_pass",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_climbing",
+          "weight": 25,
+          "qty": 1,
+          "qty_die": "1d2"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_antitoxin",
+          "weight": 20,
+          "qty": 1,
+          "qty_die": "1d3"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_basic_poison",
+          "weight": 15,
+          "qty": 1,
+          "qty_die": "1d3"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_dust_dryness",
+          "weight": 10,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_oil_slipperiness",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_alchemists_supplies",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 10,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_hidden_marsh_corpse",
+      "scope": "hidden",
+      "trigger_event_kind": "corpse_searched",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_iron_key_generic",
+          "qty": 1,
+          "qty_die": "1d2"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_signet_ring",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_coin_purse_small",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_traveler_journal",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_memory_jar",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 20,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "family_of_deceased",
+          "faction_civic_authority"
+        ],
+        "decay_pattern": "natural_corpse_decay",
+        "rumor_risk": false
+      }
+    },
+    {
+      "loot_table_id": "lt_yielded_quest_minor",
+      "scope": "yielded",
+      "trigger_event_kind": "quest_completion_minor",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_coin_purse_small",
+          "qty": 1,
+          "qty_die": "1d6"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_potion_healing_common",
+          "weight": 30,
+          "qty": 1,
+          "qty_die": "1d3"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_sword_plus_1",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_amulet_minor_protection",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 50,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_yielded_quest_major",
+      "scope": "yielded",
+      "trigger_event_kind": "quest_completion_major",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_letter_of_credit",
+          "qty": 1
+        },
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_coin_purse_small",
+          "qty": 1,
+          "qty_die": "1d10+5"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_sword_plus_2",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_armor_plus_2_chain",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_cloak_of_protection",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_truesilver_unsayable",
+          "weight": 8,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_oath_chain",
+          "weight": 12,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 20,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_yielded_faction_loyalty_reward",
+      "scope": "yielded",
+      "trigger_event_kind": "faction_reputation_threshold_reached",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_signet_ring",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_amulet_minor_protection",
+          "weight": 25,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_cloak_of_protection",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_witness_bell",
+          "weight": 10,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_marking_brand",
+          "weight": 5,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 45,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_yielded_oath_sworn",
+      "scope": "yielded",
+      "trigger_event_kind": "sworn_oath_canon_event",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_orig_oath_chain",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_truesilver_unsayable",
+          "weight": 30,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_holy_avenger",
+          "weight": 1,
+          "qty": 1,
+          "condition": "paladin_class_and_lawful_alignment"
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 69,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_yielded_canon_progression_authority_10",
+      "scope": "yielded",
+      "trigger_event_kind": "canon_progression_authority_threshold_reached_10",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_orig_artifact_first_witness_stone",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_artifact_unmaker_chisel",
+          "weight": 5,
+          "qty": 1,
+          "condition": "player_has_existing_unmake_a_truth_prep"
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 95,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_yielded_witness_milestone",
+      "scope": "yielded",
+      "trigger_event_kind": "witness_inscription_milestone",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "guaranteed",
+          "item_id": "itm_orig_witness_quill",
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_thing_that_remembers",
+          "weight": 20,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_name_locket",
+          "weight": 15,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_memory_jar",
+          "weight": 10,
+          "qty": 1
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 55,
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "loot_table_id": "lt_canon_drop_first_killing",
+      "scope": "canon_event_drop",
+      "trigger_event_kind": "first_human_killing_by_player",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Memory of First Killing — bound to player; provides Modify Memory protection on this specific event for life",
+          "weight": 50
+        },
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Cursed Knife — the weapon used; gains Soul (witness binding) automatically",
+          "weight": 30
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 20,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [],
+        "decay_pattern": "permanent",
+        "rumor_risk": false
+      }
+    },
+    {
+      "loot_table_id": "lt_canon_drop_deicide",
+      "scope": "canon_event_drop",
+      "trigger_event_kind": "deicide_canon_event",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Relic of [killed_deity] — a fragment of the slain god; deicidal flag true",
+          "weight": 100
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "faction_inheritor_cult",
+          "faction_civic_authority",
+          "faction_rival_cults"
+        ],
+        "decay_pattern": "contested_for_a_year",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_canon_drop_world_mutation",
+      "scope": "canon_event_drop",
+      "trigger_event_kind": "world_mutation_canon_event",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_artifact_first_witness_stone",
+          "weight": 30,
+          "qty": 1,
+          "condition": "mutation_concerns_civic_record"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_orig_artifact_unmaker_chisel",
+          "weight": 30,
+          "qty": 1,
+          "condition": "mutation_concerns_canonical_truth"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_artifact_eye_vecna",
+          "weight": 10,
+          "qty": 1,
+          "condition": "mutation_concerns_undeath"
+        },
+        {
+          "kind": "weighted",
+          "item_id": "itm_artifact_book_of_vile_darkness",
+          "weight": 10,
+          "qty": 1,
+          "condition": "mutation_concerns_corruption"
+        },
+        {
+          "kind": "weighted",
+          "item_id": null,
+          "weight": 20,
+          "qty": 1
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [
+          "any_faction_with_ground_truth_claim"
+        ],
+        "decay_pattern": "never",
+        "rumor_risk": true
+      }
+    },
+    {
+      "loot_table_id": "lt_canon_drop_pact_consummation",
+      "scope": "canon_event_drop",
+      "trigger_event_kind": "pact_consummation_event",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Pact Object — the physical token of the pact; bound to player and patron permanently",
+          "weight": 100
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [],
+        "decay_pattern": "permanent_until_pact_broken",
+        "rumor_risk": false
+      }
+    },
+    {
+      "loot_table_id": "lt_canon_drop_dying",
+      "scope": "canon_event_drop",
+      "trigger_event_kind": "player_dying_first_time",
+      "region_id": null,
+      "location_id": null,
+      "faction_id": null,
+      "rolls": [
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Item bound to player who saved them (if applicable) — chooser at save event",
+          "weight": 50
+        },
+        {
+          "kind": "memory",
+          "creates_item_id_template": "Memento mori — small object representing player's near-death; appears in legacy inventory",
+          "weight": 50
+        }
+      ],
+      "refusal_consequences": {
+        "claimable_by_factions": [],
+        "decay_pattern": "permanent",
+        "rumor_risk": false
+      }
+    }
+  ]
+}

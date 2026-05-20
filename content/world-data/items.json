@@ -1,237 +1,4484 @@
-[
-  {
-    "id": "item-bell-marked-charm",
-    "name": "Bell-Marked Charm",
-    "type": "tool",
-    "description": "A small brass disc the size of a coin, stamped with the Civic Bell Court's seal on one face and salt-immersed on the other. Cool to the touch; warms slightly when its bearer is named in any nearby ledger entry. Bearers report a faint ringing at the inner ear when within twenty paces of the dry fountain.",
-    "rarity": "rare",
-    "magical": true,
-    "effects": [
-      { "type": "stat_modifier", "target": "presence", "value": 1 },
-      { "type": "trigger", "target": "bell_court_proximity_detection_30ft", "value": 1 }
-    ],
-    "equipSlot": "accessory"
-  },
-  {
-    "id": "item-marrow-wax-seal-of-ilyra",
-    "name": "Marrow-Wax Seal of Ilyra",
-    "type": "tool",
-    "description": "A finger-sized seal of marrow-wax pressed into an iron core. The drowned-red wax bears Marrow-Saint Ilyra's personal sigil — a salt-ring around a vertical line. Cool to the touch even when held over flame; the marrow does not render unless the holder is rendering the marrow's source. Sworn (not attuned): the bond is permanent and broken only by the seal's destruction or by death.",
-    "rarity": "very_rare",
-    "magical": true,
-    "effects": [
-      { "type": "stat_modifier", "target": "will", "value": 2 },
-      { "type": "condition", "target": "bonded_to_marrow_saint_ilyra", "value": 1 },
-      { "type": "save_advantage", "target": "saves_against_drowned_red_conditions", "value": 1 }
-    ],
-    "equipSlot": "accessory"
-  },
-  {
-    "id": "item-listening-childs-pebble",
-    "name": "The Listening Child's Pebble",
-    "type": "misc",
-    "description": "An almost-perfectly-round pebble the size of a fingernail. The Listening Child gave it to you. It is warm in your pocket. It does not chip. It does not weather. If you set it down it is back in your pocket within a scene; if you drop it intentionally it is back within a turn. There is no inscription. No sound when you hold it to your ear.",
-    "rarity": "legendary",
-    "magical": true,
-    "effects": [
-      { "type": "trigger", "target": "auto_return_to_player_on_drop_or_loss", "value": 1 },
-      { "type": "trigger", "target": "creation_stat_increment_threshold_witness", "value": 1 }
-    ]
-  },
-  {
-    "id": "item-vial-of-practiced-name-water",
-    "name": "Vial of Practiced-Name Water",
-    "type": "consumable",
-    "description": "A finger-length vial of clear water gathered at the dry fountain during a successful Hear-the-Fountain casting. The water is practicing — there is no clearer term — and the practice is audible at very close range. Drink to gain temporary fluency in unspoken names; pour onto an object to allow Compose to target that object regardless of distance.",
-    "rarity": "rare",
-    "magical": true,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": [
-      { "type": "condition", "target": "practicing_water_drunk", "value": 1, "duration": 1 }
-    ]
-  },
-  {
-    "id": "item-salt-rime-shard",
-    "name": "Salt-Rime Shard",
-    "type": "consumable",
-    "description": "Salt that has formed in defiance of weather. Brittle, sharp at the edges, oddly warm in the hand. Used in salt-immersion ceremonies, in Salt-Mark casting, and as a binding agent in marrow-wax preparation. Decays outside Greywake — crumbles to ordinary salt within three turns of leaving the region.",
-    "rarity": "common",
-    "magical": true,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": [
-      { "type": "fuel", "target": "salt_immersion_or_salt_mark", "value": 1 }
-    ]
-  },
-  {
-    "id": "item-witness-bell",
-    "name": "Witness Bell",
-    "type": "tool",
-    "description": "A handbell of mottled brass and a single curved sliver of bone for the clapper. Silent in transit. Rings — sharp, brief, unignorable — whenever a canon-progression event is committed within thirty paces of the bearer. The bell cannot be silenced while ringing.",
-    "rarity": "rare",
-    "magical": true,
-    "effects": [
-      { "type": "trigger", "target": "announce_canon_event_within_30ft", "value": 1 },
-      { "type": "stat_modifier", "target": "sense", "value": 1 }
-    ],
-    "equipSlot": "accessory"
-  },
-  {
-    "id": "item-drowned-amber-pendant",
-    "name": "Drowned-Amber Pendant",
-    "type": "tool",
-    "description": "A walnut-sized piece of drowned-amber strung on a salt-stained leather cord. The amber holds a single small thing — a fingerbone, an inscribed coin, a flake of paper — that has been inside the amber long enough that the thing has stopped trying to be itself. Worn by Drowned Church initiates; signals doctrinal allegiance.",
-    "rarity": "uncommon",
-    "magical": true,
-    "effects": [
-      { "type": "social_signal", "target": "faith_drowned_church_visible_to_observers", "value": 1 }
-    ],
-    "equipSlot": "accessory"
-  },
-  {
-    "id": "item-tide-league-scrip-bundle-25",
-    "name": "Tide League Scrip Bundle (25)",
-    "type": "misc",
-    "description": "A canvas-tied bundle of 25 salt-scrip notes. Each note is a small rectangle of salt-fixed parchment stamped with the Tide League weighing-pan sigil. Redeemable at Tide League offices for goods at face value, or tradeable to other factions at exchange rates that vary by tide-cycle.",
-    "rarity": "common",
-    "magical": false,
-    "effects": []
-  },
-  {
-    "id": "item-bell-court-inkwell-stamp",
-    "name": "Bell Court Inkwell-Stamp",
-    "type": "tool",
-    "description": "A finger-sized brass inkwell with a hinged stamp head. The stamp leaves a small canon-mark on parchment — a circle around a vertical bar — that the Bell Court treats as an authorized minor witness mark. Issued to junior clerks.",
-    "rarity": "uncommon",
-    "magical": false,
-    "charges": 25,
-    "maxCharges": 25,
-    "effects": [
-      { "type": "trigger", "target": "issue_bell_court_minor_witness_mark", "value": 1 }
-    ]
-  },
-  {
-    "id": "item-meteoric-iron-dagger",
-    "name": "Meteoric Iron Dagger",
-    "type": "weapon",
-    "description": "A thin double-edged dagger forged from meteoric iron — the metal still slightly warm to the touch from the cold-hammering. Ward-cutting: bypasses contradiction wards and salt-circle wards at the cost of a Ruin +1 to the wielder per use. Greywake-forged.",
-    "rarity": "rare",
-    "magical": true,
-    "effects": [
-      { "type": "damage_resist", "target": "psychic_warding_resistance", "value": 1 },
-      { "type": "trigger", "target": "bypass_contradiction_or_salt_ward", "value": 1 }
-    ],
-    "equipSlot": "weapon"
-  },
-  {
-    "id": "item-compose-chalk",
-    "name": "Compose-Chalk",
-    "type": "consumable",
-    "description": "A stub of dense pale chalk — pressed marrow, fine salt, and a binding agent the Drowned Church does not disclose. Drawn lines hold their shape under rain and are visible to Drowned Church members regardless of distance. Used to mark the boundary of a Compose ritual.",
-    "rarity": "uncommon",
-    "magical": true,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": [
-      { "type": "trigger", "target": "establish_compose_ritual_boundary", "value": 1 }
-    ]
-  },
-  {
-    "id": "item-field-journal-blank",
-    "name": "Field Journal (blank)",
-    "type": "tool",
-    "description": "An ordinary field journal — leather cover, ribbon bookmark, 80 numbered blank pages. Writing in the journal at end-of-scene commits the entry to the player's Tale Log, with the journal voice (Caveat font, brass margin marks).",
-    "rarity": "common",
-    "magical": false,
-    "charges": 80,
-    "maxCharges": 80,
-    "effects": [
-      { "type": "trigger", "target": "commit_tale_log_entry_from_player_input", "value": 1 }
-    ]
-  },
-  {
-    "id": "item-simple-dagger",
-    "name": "Simple Dagger",
-    "type": "weapon",
-    "description": "A serviceable double-edged dagger. Light, finesse, thrown.",
-    "rarity": "common",
-    "magical": false,
-    "effects": [],
-    "equipSlot": "weapon"
-  },
-  {
-    "id": "item-shortsword",
-    "name": "Shortsword",
-    "type": "weapon",
-    "description": "A short single-edged blade with leather grip. Light, finesse.",
-    "rarity": "common",
-    "magical": false,
-    "effects": [],
-    "equipSlot": "weapon"
-  },
-  {
-    "id": "item-leather-armor",
-    "name": "Leather Armor",
-    "type": "armor",
-    "description": "Boiled and oil-cured leather. Light, quiet, unrestricting.",
-    "rarity": "common",
-    "magical": false,
-    "effects": [],
-    "equipSlot": "armor"
-  },
-  {
-    "id": "item-simple-torch",
-    "name": "Simple Torch",
-    "type": "tool",
-    "description": "A pitch-soaked stick. Lights a 20-foot radius for one hour.",
-    "rarity": "common",
-    "magical": false,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": []
-  },
-  {
-    "id": "item-rope-hempen-50ft",
-    "name": "Hempen Rope (50ft)",
-    "type": "tool",
-    "description": "Fifty feet of coarse hempen rope. AC 11; 2 HP; can be burst with a Body check DC 17.",
-    "rarity": "common",
-    "magical": false,
-    "effects": []
-  },
-  {
-    "id": "item-rations-1day",
-    "name": "Rations (1 day)",
-    "type": "consumable",
-    "description": "Hardtack, dried fruit, salted meat. Enough for one day of travel.",
-    "rarity": "common",
-    "magical": false,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": []
-  },
-  {
-    "id": "item-healing-potion-common",
-    "name": "Healing Potion",
-    "type": "consumable",
-    "description": "A small vial of red liquid. Restores 2d4+2 hit points when drunk.",
-    "rarity": "common",
-    "magical": true,
-    "charges": 1,
-    "maxCharges": 1,
-    "effects": [
-      { "type": "heal", "target": "self", "value": 7 }
-    ]
-  },
-  {
-    "id": "item-arcane-focus-crystal",
-    "name": "Arcane Focus (crystal)",
-    "type": "tool",
-    "description": "A clear quartz crystal mounted on a brass haft. Functions as an arcane focus for spellcasting.",
-    "rarity": "common",
-    "magical": true,
-    "effects": [],
-    "equipSlot": "accessory"
-  }
-]
+{
+  "items": [
+    {
+      "item_id": "itm_dagger",
+      "name": "Dagger",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 200,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_melee",
+      "damage_dice": "1d4",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse",
+        "light",
+        "thrown"
+      ]
+    },
+    {
+      "item_id": "itm_handaxe",
+      "name": "Handaxe",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 500,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_melee",
+      "damage_dice": "1d6",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "light",
+        "thrown"
+      ]
+    },
+    {
+      "item_id": "itm_club",
+      "name": "Club",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 10,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_melee",
+      "damage_dice": "1d4",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "light"
+      ]
+    },
+    {
+      "item_id": "itm_quarterstaff",
+      "name": "Quarterstaff",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 2.0,
+      "value_cp": 20,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_melee",
+      "damage_dice": "1d6",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile"
+      ]
+    },
+    {
+      "item_id": "itm_spear",
+      "name": "Spear",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 100,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_melee",
+      "damage_dice": "1d6",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "thrown",
+        "versatile"
+      ]
+    },
+    {
+      "item_id": "itm_shortsword",
+      "name": "Shortsword",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 1000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d6",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse",
+        "light"
+      ]
+    },
+    {
+      "item_id": "itm_longsword",
+      "name": "Longsword",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 1500,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ]
+    },
+    {
+      "item_id": "itm_greatsword",
+      "name": "Greatsword",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 3.0,
+      "value_cp": 5000,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "2d6",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "heavy",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_warhammer",
+      "name": "Warhammer",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 1500,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d8",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile"
+      ]
+    },
+    {
+      "item_id": "itm_battleaxe",
+      "name": "Battleaxe",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 2.0,
+      "value_cp": 1000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ]
+    },
+    {
+      "item_id": "itm_rapier",
+      "name": "Rapier",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 2500,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d8",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse"
+      ]
+    },
+    {
+      "item_id": "itm_scimitar",
+      "name": "Scimitar",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 2500,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d6",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "finesse",
+        "light"
+      ]
+    },
+    {
+      "item_id": "itm_glaive",
+      "name": "Glaive",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 3.0,
+      "value_cp": 2000,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_melee",
+      "damage_dice": "1d10",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "heavy",
+        "reach",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_shortbow",
+      "name": "Shortbow",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 2500,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_ranged",
+      "damage_dice": "1d6",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "ammunition",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_longbow",
+      "name": "Longbow",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 5000,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_ranged",
+      "damage_dice": "1d8",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "ammunition",
+        "heavy",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_light_crossbow",
+      "name": "Light Crossbow",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 2.0,
+      "value_cp": 2500,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_ranged",
+      "damage_dice": "1d8",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "ammunition",
+        "loading",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_heavy_crossbow",
+      "name": "Heavy Crossbow",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 8.0,
+      "value_cp": 5000,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "martial_ranged",
+      "damage_dice": "1d10",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "ammunition",
+        "heavy",
+        "loading",
+        "two_handed"
+      ]
+    },
+    {
+      "item_id": "itm_sling",
+      "name": "Sling",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 0.1,
+      "value_cp": 10,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "simple_ranged",
+      "damage_dice": "1d4",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "ammunition"
+      ]
+    },
+    {
+      "item_id": "itm_padded_armor",
+      "name": "Padded Armor",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 4.0,
+      "value_cp": 500,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "light",
+      "armor_ac_base": 11,
+      "armor_dex_cap": 99,
+      "armor_stealth_disadvantage": true
+    },
+    {
+      "item_id": "itm_leather_armor",
+      "name": "Leather Armor",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 5.0,
+      "value_cp": 1000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "light",
+      "armor_ac_base": 11,
+      "armor_dex_cap": 99
+    },
+    {
+      "item_id": "itm_studded_leather",
+      "name": "Studded Leather",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 6.5,
+      "value_cp": 4500,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "light",
+      "armor_ac_base": 12,
+      "armor_dex_cap": 99
+    },
+    {
+      "item_id": "itm_chain_shirt",
+      "name": "Chain Shirt",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 9.0,
+      "value_cp": 5000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "medium",
+      "armor_ac_base": 13,
+      "armor_dex_cap": 2
+    },
+    {
+      "item_id": "itm_scale_mail",
+      "name": "Scale Mail",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 20.0,
+      "value_cp": 5000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "medium",
+      "armor_ac_base": 14,
+      "armor_dex_cap": 2,
+      "armor_stealth_disadvantage": true
+    },
+    {
+      "item_id": "itm_breastplate",
+      "name": "Breastplate",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 9.0,
+      "value_cp": 40000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "medium",
+      "armor_ac_base": 14,
+      "armor_dex_cap": 2
+    },
+    {
+      "item_id": "itm_chain_mail",
+      "name": "Chain Mail",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 25.0,
+      "value_cp": 7500,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "heavy",
+      "armor_ac_base": 16,
+      "armor_dex_cap": 0,
+      "armor_strength_min": 13,
+      "armor_stealth_disadvantage": true
+    },
+    {
+      "item_id": "itm_plate",
+      "name": "Plate Armor",
+      "type": "armor",
+      "rarity": "common",
+      "weight_kg": 30.0,
+      "value_cp": 150000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "subtype": "heavy",
+      "armor_ac_base": 18,
+      "armor_dex_cap": 0,
+      "armor_strength_min": 15,
+      "armor_stealth_disadvantage": true
+    },
+    {
+      "item_id": "itm_shield_wooden",
+      "name": "Wooden Shield",
+      "type": "shield",
+      "rarity": "common",
+      "weight_kg": 3.0,
+      "value_cp": 1000,
+      "equip_slot": "shield",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "armor_ac_base": 2
+    },
+    {
+      "item_id": "itm_shield_iron",
+      "name": "Iron-Banded Shield",
+      "type": "shield",
+      "rarity": "common",
+      "weight_kg": 4.0,
+      "value_cp": 2000,
+      "equip_slot": "shield",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0,
+      "armor_ac_base": 2
+    },
+    {
+      "item_id": "itm_backpack",
+      "name": "Backpack",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 2.5,
+      "value_cp": 200,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_bedroll",
+      "name": "Bedroll",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 3.5,
+      "value_cp": 100,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_lantern_hooded",
+      "name": "Hooded Lantern",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_torch",
+      "name": "Torch",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 1,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_rope_hempen",
+      "name": "Hempen Rope (50 ft)",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 4.5,
+      "value_cp": 100,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_rope_silk",
+      "name": "Silk Rope (50 ft)",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 2.5,
+      "value_cp": 1000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_grappling_hook",
+      "name": "Grappling Hook",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 2.0,
+      "value_cp": 200,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_thieves_tools",
+      "name": "Thieves' Tools",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 2500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_smiths_tools",
+      "name": "Smith's Tools",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 4.0,
+      "value_cp": 2000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_alchemists_supplies",
+      "name": "Alchemist's Supplies",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 4.0,
+      "value_cp": 5000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_herbalism_kit",
+      "name": "Herbalism Kit",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_healers_kit",
+      "name": "Healer's Kit",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_lockpicks_quality",
+      "name": "Quality Lockpicks",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.2,
+      "value_cp": 2500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_mirror_steel",
+      "name": "Steel Mirror",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.2,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_spyglass",
+      "name": "Spyglass",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 100000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_writing_kit",
+      "name": "Writing Kit",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 100,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_signet_ring",
+      "name": "Signet Ring",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_chalk_box",
+      "name": "Chalk (box, 10)",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 1,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_holy_water_vial",
+      "name": "Holy Water (vial)",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 2500,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_oil_flask",
+      "name": "Oil Flask",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 10,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_rations_day",
+      "name": "Trail Rations (1 day)",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 50,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_waterskin",
+      "name": "Waterskin",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 2.5,
+      "value_cp": 20,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_potion_healing_common",
+      "name": "Potion of Healing",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 5000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_potion_climbing",
+      "name": "Potion of Climbing",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_antitoxin",
+      "name": "Antitoxin",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 5000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_basic_poison",
+      "name": "Basic Poison (vial)",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_herb_yarrow",
+      "name": "Yarrow Bundle",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 20,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_herb_wormwood_bundle",
+      "name": "Wormwood Bundle",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 30,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_bread_loaf",
+      "name": "Bread Loaf",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.3,
+      "value_cp": 2,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_dried_meat",
+      "name": "Dried Meat (strip)",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.1,
+      "value_cp": 5,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_apple",
+      "name": "Apple",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.2,
+      "value_cp": 1,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_brandy_bottle",
+      "name": "Brandy (bottle)",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 200,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_spellbook_blank",
+      "name": "Spellbook (blank)",
+      "type": "book",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 5000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_traveler_journal",
+      "name": "Traveler's Journal",
+      "type": "book",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 100,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_iron_key_generic",
+      "name": "Iron Key",
+      "type": "key",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 10,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_brass_key_ornate",
+      "name": "Brass Key (ornate)",
+      "type": "key",
+      "rarity": "common",
+      "weight_kg": 0.1,
+      "value_cp": 100,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_letter_of_credit",
+      "name": "Letter of Credit",
+      "type": "currency_token",
+      "rarity": "common",
+      "weight_kg": 0.01,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_coin_purse_small",
+      "name": "Small Coin Purse",
+      "type": "currency_token",
+      "rarity": "common",
+      "weight_kg": 0.1,
+      "value_cp": 10,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_clay_token_temple",
+      "name": "Clay Temple Token",
+      "type": "trinket",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 2,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_painted_locket",
+      "name": "Painted Locket",
+      "type": "trinket",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 500,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 0
+    },
+    {
+      "item_id": "itm_potion_healing_uncommon",
+      "name": "Potion of Healing (Greater)",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 15000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "regain_4d4+4_HP"
+      ]
+    },
+    {
+      "item_id": "itm_potion_water_breathing",
+      "name": "Potion of Water Breathing",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 18000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "breathe_underwater_1hr"
+      ]
+    },
+    {
+      "item_id": "itm_potion_invisibility",
+      "name": "Potion of Invisibility",
+      "type": "consumable",
+      "rarity": "very_rare",
+      "weight_kg": 0.5,
+      "value_cp": 18000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "effects_on_use": [
+        "invisibility_1hr_or_attack_breaks"
+      ]
+    },
+    {
+      "item_id": "itm_torch_eversmoking",
+      "name": "Torch of Eversmoke",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 30000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "produces_thick_smoke_no_light",
+        "2_action_dismiss"
+      ]
+    },
+    {
+      "item_id": "itm_lantern_hooded_continual",
+      "name": "Hooded Lantern of Continual Flame",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "no_oil_needed",
+        "cannot_be_extinguished_by_wind"
+      ]
+    },
+    {
+      "item_id": "itm_quiver_of_returning",
+      "name": "Quiver of Returning Arrows",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 50000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "arrows_drawn_from_quiver_return_at_long_rest",
+        "holds_20_arrows"
+      ]
+    },
+    {
+      "item_id": "itm_clothing_mending",
+      "name": "Mending Cloak",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 30000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "self_mends_minor_tears_overnight",
+        "resist_grime"
+      ]
+    },
+    {
+      "item_id": "itm_token_safe_passage",
+      "name": "Token of Safe Passage",
+      "type": "trinket",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 25000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "one_time_use",
+        "ignore_one_random_encounter_when_traveling"
+      ]
+    },
+    {
+      "item_id": "itm_marble_thinking",
+      "name": "Marble of Thinking",
+      "type": "trinket",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 20000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "roll_to_check_a_fact",
+        "+1d4_to_one_INT_check_per_long_rest"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_inkpot_blackest",
+      "name": "Inkpot of the Blackest Black",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 0.3,
+      "value_cp": 15000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "produces_ink_that_does_not_fade",
+        "permanent_record_substrate"
+      ]
+    },
+    {
+      "item_id": "itm_dagger_of_returning",
+      "name": "Returning Dagger",
+      "type": "weapon",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 35000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "damage_dice": "1d4",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse",
+        "light",
+        "thrown"
+      ],
+      "effects_on_equip": [
+        "thrown_dagger_returns_at_start_of_next_turn"
+      ]
+    },
+    {
+      "item_id": "itm_arrows_silvered",
+      "name": "Silvered Arrows (20)",
+      "type": "ammunition",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "subtype": "arrows",
+      "effects_on_use": [
+        "bypass_lycanthrope_resistance",
+        "bypass_undead_resistance_to_nonsilver"
+      ]
+    },
+    {
+      "item_id": "itm_arrows_blessed",
+      "name": "Blessed Arrows (20)",
+      "type": "ammunition",
+      "rarity": "common",
+      "weight_kg": 1.0,
+      "value_cp": 15000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "subtype": "arrows",
+      "effects_on_use": [
+        "+1d4_radiant_damage_vs_undead_fiend"
+      ]
+    },
+    {
+      "item_id": "itm_lockpicks_blessed",
+      "name": "Blessed Lockpicks",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.2,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "+1_to_lockpicking_checks",
+        "lockpicks_never_break"
+      ]
+    },
+    {
+      "item_id": "itm_compass_homing",
+      "name": "Homing Compass",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 0.3,
+      "value_cp": 30000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "needle_points_to_attuned_object_not_north"
+      ]
+    },
+    {
+      "item_id": "itm_walking_cane_telescope",
+      "name": "Walking Cane (Telescoping)",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 1.5,
+      "value_cp": 15000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "telescopes_to_10ft_or_collapses_to_6in",
+        "quarterstaff_stats_when_extended"
+      ]
+    },
+    {
+      "item_id": "itm_pouch_bottomless_small",
+      "name": "Small Bottomless Pouch",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 0.5,
+      "value_cp": 30000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "holds_50lb_in_2lb_space",
+        "cannot_hold_living_things"
+      ]
+    },
+    {
+      "item_id": "itm_candle_truth_revealing",
+      "name": "Candle of Truth-Revealing",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.2,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "burns_1hr",
+        "creatures_within_10ft_disadvantage_on_deception",
+        "burns_to_stub"
+      ]
+    },
+    {
+      "item_id": "itm_chalk_drawing_lights",
+      "name": "Chalk of Drawing Lights",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 2000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "drawn_lines_emit_dim_light_for_8hrs"
+      ],
+      "charges": {
+        "max": 10,
+        "current": 10,
+        "recharge": "single_use"
+      }
+    },
+    {
+      "item_id": "itm_horseshoes_silence",
+      "name": "Horseshoes of Silence (set of 4)",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 2.0,
+      "value_cp": 60000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "horse_movement_silent",
+        "advantage_on_stealth_while_mounted"
+      ]
+    },
+    {
+      "item_id": "itm_signet_ring_iron",
+      "name": "Iron Signet Ring of the Sealed Letter",
+      "type": "tool",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 8000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "sealing_with_this_ring_locks_letter_to_named_recipient",
+        "tampering_visible"
+      ]
+    },
+    {
+      "item_id": "itm_amulet_minor_protection",
+      "name": "Amulet of Minor Protection",
+      "type": "wondrous",
+      "rarity": "common",
+      "weight_kg": 0.1,
+      "value_cp": 25000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 12,
+      "effects_on_equip": [
+        "+1_to_first_save_per_long_rest"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_sword_plus_1",
+      "name": "Longsword +1",
+      "type": "weapon",
+      "rarity": "uncommon",
+      "weight_kg": 1.5,
+      "value_cp": 100000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_equip": [
+        "+1_attack_and_damage_rolls"
+      ]
+    },
+    {
+      "item_id": "itm_armor_plus_1_leather",
+      "name": "Leather Armor +1",
+      "type": "armor",
+      "rarity": "uncommon",
+      "weight_kg": 5.0,
+      "value_cp": 100000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "subtype": "light",
+      "armor_ac_base": 12,
+      "effects_on_equip": [
+        "+1_AC"
+      ]
+    },
+    {
+      "item_id": "itm_shield_plus_1",
+      "name": "Shield +1",
+      "type": "shield",
+      "rarity": "uncommon",
+      "weight_kg": 3.0,
+      "value_cp": 80000,
+      "equip_slot": "shield",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "armor_ac_base": 3,
+      "effects_on_equip": [
+        "+1_AC_in_addition_to_base"
+      ]
+    },
+    {
+      "item_id": "itm_cloak_of_protection",
+      "name": "Cloak of Protection",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 350000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "+1_AC",
+        "+1_all_saves"
+      ]
+    },
+    {
+      "item_id": "itm_ring_of_swimming",
+      "name": "Ring of Swimming",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 250000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_equip": [
+        "swim_speed_40ft"
+      ]
+    },
+    {
+      "item_id": "itm_ring_of_jumping",
+      "name": "Ring of Jumping",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 250000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cast_jump_at_will_no_components"
+      ]
+    },
+    {
+      "item_id": "itm_bag_of_holding",
+      "name": "Bag of Holding",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 7.5,
+      "value_cp": 400000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_equip": [
+        "holds_500lb_in_64cuft_internal_space",
+        "weight_15lb_fixed",
+        "extradimensional_collapse_if_torn"
+      ]
+    },
+    {
+      "item_id": "itm_circlet_of_blasting",
+      "name": "Circlet of Blasting",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.2,
+      "value_cp": 150000,
+      "equip_slot": "helm",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cast_scorching_ray_once_per_dawn"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_boots_of_elvenkind",
+      "name": "Boots of Elvenkind",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 150000,
+      "equip_slot": "boots",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_equip": [
+        "movement_silent_on_natural_surface",
+        "advantage_stealth_quiet_movement"
+      ]
+    },
+    {
+      "item_id": "itm_cloak_of_elvenkind",
+      "name": "Cloak of Elvenkind",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 250000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "wisdom_perception_to_see_you_at_disadvantage",
+        "stealth_advantage_with_hood"
+      ]
+    },
+    {
+      "item_id": "itm_amulet_health",
+      "name": "Amulet of Health",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.1,
+      "value_cp": 80000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "CON_19_while_attuned_min"
+      ]
+    },
+    {
+      "item_id": "itm_immovable_rod",
+      "name": "Immovable Rod",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 500000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "button_press_fixes_rod_in_air_8000lb_force_to_move"
+      ]
+    },
+    {
+      "item_id": "itm_periapt_health",
+      "name": "Periapt of Health",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.1,
+      "value_cp": 200000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "immune_to_disease_natural"
+      ]
+    },
+    {
+      "item_id": "itm_pearl_of_power",
+      "name": "Pearl of Power",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 350000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "recover_one_expended_spell_slot_L3_or_lower_per_dawn"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_wand_magic_missiles",
+      "name": "Wand of Magic Missiles",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 250000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cast_magic_missile_using_charges",
+        "1_charge_per_spell_level"
+      ],
+      "charges": {
+        "max": 7,
+        "current": 7,
+        "recharge": "dawn_1d6+1"
+      }
+    },
+    {
+      "item_id": "itm_dust_disappearance",
+      "name": "Dust of Disappearance",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.1,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "sprinkle_to_become_invisible_2d4_minutes_no_attack_breaks"
+      ]
+    },
+    {
+      "item_id": "itm_dust_dryness",
+      "name": "Dust of Dryness",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.1,
+      "value_cp": 8000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "1_handful_absorbs_15cuft_water_to_marble",
+        "throw_to_dispel_water_elemental"
+      ]
+    },
+    {
+      "item_id": "itm_oil_slipperiness",
+      "name": "Oil of Slipperiness",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "coat_object_no_climb_grapple_grease_floor_10ft"
+      ]
+    },
+    {
+      "item_id": "itm_potion_giant_strength_hill",
+      "name": "Potion of Hill Giant Strength",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 10000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "STR_21_for_1hr"
+      ]
+    },
+    {
+      "item_id": "itm_potion_animal_friendship",
+      "name": "Potion of Animal Friendship",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "cast_animal_friendship_for_1hr_no_save"
+      ]
+    },
+    {
+      "item_id": "itm_potion_growth",
+      "name": "Potion of Growth",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "enlarge_self_for_1d4_hours"
+      ]
+    },
+    {
+      "item_id": "itm_brooch_shielding",
+      "name": "Brooch of Shielding",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 150000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "resistance_to_force_damage",
+        "immunity_to_magic_missile"
+      ]
+    },
+    {
+      "item_id": "itm_eyes_charming",
+      "name": "Eyes of Charming",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 300000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cast_charm_person_3_charges_per_dawn"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_eyes_minute_seeing",
+      "name": "Eyes of Minute Seeing",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 100000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "read_tiny_print_or_objects_inch_size_within_1ft"
+      ]
+    },
+    {
+      "item_id": "itm_gloves_swimming_climbing",
+      "name": "Gloves of Swimming and Climbing",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 200000,
+      "equip_slot": "gloves",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "climb_speed_walking",
+        "swim_speed_walking",
+        "advantage_swim_climb_athletics"
+      ]
+    },
+    {
+      "item_id": "itm_ring_warmth",
+      "name": "Ring of Warmth",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 200000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "resist_cold",
+        "ignore_extreme_cold_temperature"
+      ]
+    },
+    {
+      "item_id": "itm_helm_telepathy",
+      "name": "Helm of Telepathy",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 300000,
+      "equip_slot": "helm",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cast_detect_thoughts_at_will",
+        "suggestion_3_per_dawn"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_javelin_lightning",
+      "name": "Javelin of Lightning",
+      "type": "weapon",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 80000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "damage_dice": "1d6",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "thrown"
+      ],
+      "effects_on_use": [
+        "throw_to_become_lightning_bolt_4d6_dex_save_dc15_120ft_line"
+      ]
+    },
+    {
+      "item_id": "itm_sword_plus_2",
+      "name": "Longsword +2",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 1.5,
+      "value_cp": 800000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_equip": [
+        "+2_attack_and_damage"
+      ]
+    },
+    {
+      "item_id": "itm_armor_plus_2_chain",
+      "name": "Chain Mail +2",
+      "type": "armor",
+      "rarity": "rare",
+      "weight_kg": 25.0,
+      "value_cp": 600000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "subtype": "heavy",
+      "armor_ac_base": 18,
+      "armor_strength_min": 13,
+      "armor_stealth_disadvantage": true,
+      "effects_on_equip": [
+        "+2_AC_baked_in"
+      ]
+    },
+    {
+      "item_id": "itm_shield_plus_2",
+      "name": "Shield +2",
+      "type": "shield",
+      "rarity": "rare",
+      "weight_kg": 3.0,
+      "value_cp": 400000,
+      "equip_slot": "shield",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "armor_ac_base": 4,
+      "effects_on_equip": [
+        "+2_AC"
+      ]
+    },
+    {
+      "item_id": "itm_flame_tongue",
+      "name": "Flame Tongue",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 1.5,
+      "value_cp": 500000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "command_to_ignite_blade",
+        "+2d6_fire_damage_on_hit_while_lit",
+        "sheds_bright_light_40ft"
+      ]
+    },
+    {
+      "item_id": "itm_frost_brand",
+      "name": "Frost Brand",
+      "type": "weapon",
+      "rarity": "very_rare",
+      "weight_kg": 1.5,
+      "value_cp": 1200000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 17,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+1d6_cold_damage",
+        "extinguish_nonmagical_fire_within_30ft",
+        "resist_fire_while_held"
+      ]
+    },
+    {
+      "item_id": "itm_dagger_venom",
+      "name": "Dagger of Venom",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 350000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "damage_dice": "1d4",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse",
+        "light"
+      ],
+      "effects_on_attune": [
+        "+1_attack_damage",
+        "once_per_dawn_coat_blade_2d10_poison_save_DC15_CON"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_bow_warning",
+      "name": "Bow of Warning",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 1.0,
+      "value_cp": 400000,
+      "equip_slot": "two_handed",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "damage_dice": "1d6",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "ammunition",
+        "two_handed"
+      ],
+      "effects_on_attune": [
+        "awaken_if_hostile_within_30ft_during_long_rest"
+      ]
+    },
+    {
+      "item_id": "itm_cloak_displacement",
+      "name": "Cloak of Displacement",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 1.0,
+      "value_cp": 1000000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "enemies_have_disadvantage_to_attack_you",
+        "effect_ends_until_next_turn_when_you_take_damage"
+      ]
+    },
+    {
+      "item_id": "itm_ring_evasion",
+      "name": "Ring of Evasion",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 800000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "3_charges_use_reaction_to_succeed_dex_save"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn_1d3"
+      }
+    },
+    {
+      "item_id": "itm_ring_spell_storing",
+      "name": "Ring of Spell Storing",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 1000000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "store_5_levels_of_spells_cast_at_original_level"
+      ]
+    },
+    {
+      "item_id": "itm_belt_giant_strength_fire",
+      "name": "Belt of Fire Giant Strength",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 0.5,
+      "value_cp": 6000000,
+      "equip_slot": "belt",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "STR_25_while_attuned"
+      ]
+    },
+    {
+      "item_id": "itm_boots_speed",
+      "name": "Boots of Speed",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 1000000,
+      "equip_slot": "boots",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "click_heels_for_10_rounds_double_speed_disadvantage_to_opportunity_attacks"
+      ],
+      "charges": {
+        "max": 10,
+        "current": 10,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_helm_brilliance",
+      "name": "Helm of Brilliance",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 1.0,
+      "value_cp": 2000000,
+      "equip_slot": "helm",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "1d4+10_gems_each_grant_one_use_of_listed_spell"
+      ]
+    },
+    {
+      "item_id": "itm_wand_fireballs",
+      "name": "Wand of Fireballs",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 800000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "cast_fireball_using_charges",
+        "1_charge_per_spell_level_3rd+"
+      ],
+      "charges": {
+        "max": 7,
+        "current": 7,
+        "recharge": "dawn_1d6+1"
+      }
+    },
+    {
+      "item_id": "itm_staff_woodlands",
+      "name": "Staff of the Woodlands",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 2.0,
+      "value_cp": 1500000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "damage_dice": "1d6",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+2_attack_damage",
+        "+2_spell_attack",
+        "DC+2",
+        "cast_animal_friendship_barkskin_locate_animals_speak_with_plants_using_charges"
+      ],
+      "charges": {
+        "max": 10,
+        "current": 10,
+        "recharge": "dawn_1d6+4"
+      }
+    },
+    {
+      "item_id": "itm_quiver_ehlonna",
+      "name": "Quiver of Ehlonna",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_equip": [
+        "3_compartments_each_extradimensional",
+        "holds_60_arrows_18_javelins_6_staves"
+      ]
+    },
+    {
+      "item_id": "itm_horn_blasting",
+      "name": "Horn of Blasting",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 1.0,
+      "value_cp": 350000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "sound_to_deal_5d6_thunder_30ft_cone_DC15_CON",
+        "destroy_objects_with_breakable",
+        "20%_chance_self_explode_per_use"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_dust_sneezing",
+      "name": "Dust of Sneezing and Choking",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.1,
+      "value_cp": 4000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "throw_in_20ft_cube_creatures_DC15_CON_save_or_incapacitated_1min"
+      ]
+    },
+    {
+      "item_id": "itm_chime_opening",
+      "name": "Chime of Opening",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 350000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "10_charges_use_to_open_locks_or_lift_lift_arcane_lock_30ft"
+      ],
+      "charges": {
+        "max": 10,
+        "current": 10,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_carpet_of_flying",
+      "name": "Carpet of Flying",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 2.0,
+      "value_cp": 2000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "fly_speed_60ft",
+        "carry_2_medium_creatures"
+      ]
+    },
+    {
+      "item_id": "itm_mace_terror",
+      "name": "Mace of Terror",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 2.0,
+      "value_cp": 400000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "damage_dice": "1d6",
+      "damage_type": "bludgeoning",
+      "effects_on_attune": [
+        "3_charges_use_action_unleash_terror_60ft_targets_WIS_save_DC15_frightened_1min"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_winged_boots",
+      "name": "Winged Boots",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 400000,
+      "equip_slot": "boots",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "fly_speed_30ft_4hr_segments_total_24hr",
+        "recharge_dawn"
+      ],
+      "charges": {
+        "max": 4,
+        "current": 4,
+        "recharge": "dawn_2hr"
+      }
+    },
+    {
+      "item_id": "itm_sword_plus_3",
+      "name": "Longsword +3",
+      "type": "weapon",
+      "rarity": "very_rare",
+      "weight_kg": 1.5,
+      "value_cp": 6000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_equip": [
+        "+3_attack_and_damage"
+      ]
+    },
+    {
+      "item_id": "itm_armor_plus_3_plate",
+      "name": "Plate Armor +3",
+      "type": "armor",
+      "rarity": "very_rare",
+      "weight_kg": 30.0,
+      "value_cp": 10000000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "subtype": "heavy",
+      "armor_ac_base": 21,
+      "armor_strength_min": 15,
+      "armor_stealth_disadvantage": true,
+      "effects_on_equip": [
+        "+3_AC_baked_in"
+      ]
+    },
+    {
+      "item_id": "itm_amulet_proof_charm",
+      "name": "Amulet of Proof Against Detection",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.1,
+      "value_cp": 350000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "cannot_be_scried_or_perceived_via_divination_magic"
+      ]
+    },
+    {
+      "item_id": "itm_robe_archmagi",
+      "name": "Robe of the Archmagi",
+      "type": "wondrous",
+      "rarity": "legendary",
+      "weight_kg": 1.5,
+      "value_cp": 30000000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 19,
+      "armor_ac_base": 15,
+      "effects_on_attune": [
+        "+2_spell_save_DC",
+        "+2_spell_attack",
+        "advantage_save_vs_spells",
+        "resist_force_psychic_damage",
+        "aligned_robe_only"
+      ]
+    },
+    {
+      "item_id": "itm_staff_power",
+      "name": "Staff of Power",
+      "type": "weapon",
+      "rarity": "very_rare",
+      "weight_kg": 2.0,
+      "value_cp": 6000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 17,
+      "damage_dice": "1d6",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+2_attack_damage",
+        "+2_AC",
+        "+2_spell_save_DC",
+        "cast_globe_invul_etc",
+        "retributive_strike_break_staff"
+      ],
+      "charges": {
+        "max": 20,
+        "current": 20,
+        "recharge": "dawn_2d8+4"
+      }
+    },
+    {
+      "item_id": "itm_cloak_arachnida",
+      "name": "Cloak of Arachnida",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 0.5,
+      "value_cp": 2000000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "spider_climb_at_will",
+        "cast_web_once_per_dawn",
+        "resist_poison",
+        "communicate_with_spiders"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_ring_invisibility",
+      "name": "Ring of Invisibility",
+      "type": "wondrous",
+      "rarity": "legendary",
+      "weight_kg": 0.05,
+      "value_cp": 16000000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 19,
+      "effects_on_attune": [
+        "become_invisible_at_will_attack_breaks_invisibility"
+      ]
+    },
+    {
+      "item_id": "itm_efreeti_bottle",
+      "name": "Efreeti Bottle",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 0.5,
+      "value_cp": 2500000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "effects_on_use": [
+        "one_in_eight_rolls_summon_efreeti_3_wishes",
+        "one_in_three_chance_aggressive"
+      ]
+    },
+    {
+      "item_id": "itm_deck_illusions",
+      "name": "Deck of Illusions",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "draw_random_card_summon_illusion_until_dispelled"
+      ]
+    },
+    {
+      "item_id": "itm_bag_devouring",
+      "name": "Bag of Devouring",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 7.5,
+      "value_cp": 2000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "effects_on_equip": [
+        "appears_as_bag_of_holding",
+        "living_things_inside_devoured_1d10_minutes"
+      ],
+      "curse_kind": "hungry_extradimensional"
+    },
+    {
+      "item_id": "itm_belt_dwarvenkind",
+      "name": "Belt of Dwarvenkind",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 1000000,
+      "equip_slot": "belt",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "+2_CON",
+        "advantage_persuasion_with_dwarves",
+        "speak_understand_dwarvish",
+        "darkvision_60ft",
+        "beard_grows"
+      ]
+    },
+    {
+      "item_id": "itm_gauntlets_ogre_power",
+      "name": "Gauntlets of Ogre Power",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.5,
+      "value_cp": 250000,
+      "equip_slot": "gloves",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "STR_19_while_attuned_min"
+      ]
+    },
+    {
+      "item_id": "itm_horn_valhalla_silver",
+      "name": "Horn of Valhalla (Silver)",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 1.0,
+      "value_cp": 350000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "1_use_per_long_rest_summon_2d4_berserkers_fight_for_caster_1hr"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_book_devouring_words",
+      "name": "Book of Devouring Words",
+      "type": "book",
+      "rarity": "very_rare",
+      "weight_kg": 2.0,
+      "value_cp": 4000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 17,
+      "effects_on_equip": [
+        "reading_grants_+1_INT_max20",
+        "one_random_memory_consumed_per_long_rest_attuned"
+      ],
+      "curse_kind": "memory_eater"
+    },
+    {
+      "item_id": "itm_oathbreaker_mantle",
+      "name": "Oathbreaker Mantle",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 1.0,
+      "value_cp": 6000000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "+2_DC_to_save_against_your_compulsion_effects",
+        "cannot_be_attuned_while_under_existing_oath"
+      ],
+      "notes": "Cursed-trade: while attuned, you cannot swear new oaths."
+    },
+    {
+      "item_id": "itm_amulet_planes",
+      "name": "Amulet of the Planes",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "weight_kg": 0.1,
+      "value_cp": 6000000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 17,
+      "effects_on_attune": [
+        "cast_plane_shift_once_per_dawn_DC15_INT_check_or_random_destination"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_holy_avenger",
+      "name": "Holy Avenger",
+      "type": "weapon",
+      "rarity": "legendary",
+      "weight_kg": 1.5,
+      "value_cp": 36000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 19,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+3_attack_damage",
+        "+2d10_radiant_to_fiends_undead",
+        "20ft_aura_aligned_allies_advantage_save_vs_spells_and_charm"
+      ]
+    },
+    {
+      "item_id": "itm_vorpal_sword",
+      "name": "Vorpal Sword",
+      "type": "weapon",
+      "rarity": "legendary",
+      "weight_kg": 1.5,
+      "value_cp": 24000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 19,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+3_attack_damage",
+        "crit_severs_head_if_creature_has_one"
+      ]
+    },
+    {
+      "item_id": "itm_hammer_thunderbolts",
+      "name": "Hammer of Thunderbolts",
+      "type": "weapon",
+      "rarity": "legendary",
+      "weight_kg": 2.0,
+      "value_cp": 24000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 19,
+      "damage_dice": "1d8",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile",
+        "thrown"
+      ],
+      "effects_on_attune": [
+        "+1_attack_damage",
+        "crit_giant_stunned_or_dead",
+        "throw_to_summon_thunderbolt_4d6"
+      ]
+    },
+    {
+      "item_id": "itm_crown_kings",
+      "name": "Crown of Kings",
+      "type": "wondrous",
+      "rarity": "legendary",
+      "weight_kg": 0.5,
+      "value_cp": 20000000,
+      "equip_slot": "helm",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 19,
+      "effects_on_attune": [
+        "lawful_alignment_required",
+        "+2_CHA_max22",
+        "detect_thoughts_at_will",
+        "mass_charm_DC18_3_per_dawn"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_cube_force",
+      "name": "Cube of Force",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 1.0,
+      "value_cp": 1000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "10ft_cube_force_field_6_uses",
+        "various_permeability"
+      ],
+      "charges": {
+        "max": 36,
+        "current": 36,
+        "recharge": "dawn_1d6+10"
+      }
+    },
+    {
+      "item_id": "itm_iron_flask",
+      "name": "Iron Flask",
+      "type": "wondrous",
+      "rarity": "legendary",
+      "weight_kg": 0.5,
+      "value_cp": 20000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 19,
+      "effects_on_use": [
+        "bind_extraplanar_creature_DC17_CHA_save_command_in_flask",
+        "summon_servitor"
+      ]
+    },
+    {
+      "item_id": "itm_orb_dragonkind",
+      "name": "Orb of Dragonkind",
+      "type": "wondrous",
+      "rarity": "artifact",
+      "weight_kg": 2.0,
+      "value_cp": 100000000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 21,
+      "effects_on_attune": [
+        "+1_max_HP_per_level",
+        "advantage_save_vs_fear_dragonborn_dragon_fear",
+        "command_dragons_DC18",
+        "draws_dragon_attention"
+      ]
+    },
+    {
+      "item_id": "itm_staff_magi",
+      "name": "Staff of the Magi",
+      "type": "weapon",
+      "rarity": "legendary",
+      "weight_kg": 2.0,
+      "value_cp": 60000000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 19,
+      "damage_dice": "1d6",
+      "damage_type": "bludgeoning",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+2_attack_damage",
+        "+2_spell_attack",
+        "DC+2",
+        "cast_dispel_magic_fireball_lightning_bolt_etc",
+        "retributive_strike"
+      ],
+      "charges": {
+        "max": 50,
+        "current": 50,
+        "recharge": "dawn_4d6+2"
+      }
+    },
+    {
+      "item_id": "itm_artifact_book_of_vile_darkness",
+      "name": "Book of Vile Darkness",
+      "type": "book",
+      "rarity": "artifact",
+      "weight_kg": 3.0,
+      "value_cp": 0,
+      "equip_slot": null,
+      "tinting_class": "bone_relic",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 21,
+      "effects_on_attune": [
+        "reading_grants_evil_spellcasting",
+        "major_curse_progression",
+        "reality-ruin"
+      ],
+      "curse_kind": "corruption_amplifier",
+      "deicidal": true,
+      "notes": "One of the world's foundational evil tomes."
+    },
+    {
+      "item_id": "itm_artifact_eye_vecna",
+      "name": "Eye of Vecna",
+      "type": "wondrous",
+      "rarity": "artifact",
+      "weight_kg": 0.05,
+      "value_cp": 0,
+      "equip_slot": null,
+      "tinting_class": "bone_relic",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 21,
+      "effects_on_attune": [
+        "replace_one_eye_truesight_60ft",
+        "cast_clairvoyance_disintegrate_etc",
+        "permanent_corruption_track"
+      ],
+      "curse_kind": "vecnan_corruption",
+      "deicidal": true,
+      "notes": "Bind to face; lose own eye permanently."
+    },
+    {
+      "item_id": "itm_artifact_axe_dwarvish",
+      "name": "Axe of the Dwarvish Lords",
+      "type": "weapon",
+      "rarity": "artifact",
+      "weight_kg": 2.0,
+      "value_cp": 0,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 21,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "+3_attack_damage",
+        "DC+2_to_dispel",
+        "summon_lord_of_judgement_1_per_dawn",
+        "speak_dwarvish_at_will",
+        "craft_at_3x_speed"
+      ],
+      "notes": "Lost artifact."
+    },
+    {
+      "item_id": "itm_artifact_wand_orcus",
+      "name": "Wand of Orcus",
+      "type": "weapon",
+      "rarity": "artifact",
+      "weight_kg": 1.5,
+      "value_cp": 0,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 21,
+      "damage_dice": "2d8",
+      "damage_type": "necrotic",
+      "effects_on_attune": [
+        "+3_attack_damage",
+        "crit_dead",
+        "summon_undead_at_will",
+        "corruption_per_long_rest",
+        "attracts_Orcus_attention"
+      ],
+      "deicidal": true,
+      "notes": "The Demon Prince of Undeath's regalia."
+    },
+    {
+      "item_id": "itm_scroll_magic_missile",
+      "name": "Scroll of Magic Missile",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 7500,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "cast_magic_missile_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_cure_wounds",
+      "name": "Scroll of Cure Wounds",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 7500,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "cast_cure_wounds_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_detect_magic",
+      "name": "Scroll of Detect Magic",
+      "type": "consumable",
+      "rarity": "common",
+      "weight_kg": 0.05,
+      "value_cp": 7500,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 12,
+      "effects_on_use": [
+        "cast_detect_magic_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_invisibility",
+      "name": "Scroll of Invisibility",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 20000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "cast_invisibility_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_fireball",
+      "name": "Scroll of Fireball",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 40000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "cast_fireball_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_counterspell",
+      "name": "Scroll of Counterspell",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 40000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "cast_counterspell_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_polymorph",
+      "name": "Scroll of Polymorph",
+      "type": "consumable",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "effects_on_use": [
+        "cast_polymorph_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_scrying",
+      "name": "Scroll of Scrying",
+      "type": "consumable",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 120000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "effects_on_use": [
+        "cast_scrying_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_disintegrate",
+      "name": "Scroll of Disintegrate",
+      "type": "consumable",
+      "rarity": "very_rare",
+      "weight_kg": 0.05,
+      "value_cp": 250000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 17,
+      "effects_on_use": [
+        "cast_disintegrate_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_scroll_contradiction_doom",
+      "name": "Scroll of Contradiction Doom",
+      "type": "consumable",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 180000,
+      "equip_slot": null,
+      "tinting_class": "verdigris_consumable",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "effects_on_use": [
+        "cast_contradiction_doom_from_scroll_at_inscribed_level",
+        "DC15_INT_if_above_caster_level",
+        "consumed_on_cast"
+      ]
+    },
+    {
+      "item_id": "itm_orig_thing_that_remembers",
+      "name": "The Thing That Remembers Being Held",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 600000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "salt_immersion",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "object_recalls_every_hand_that_held_it",
+        "attuned_user_dreams_of_previous_holders",
+        "insight_+2_with_objects_history"
+      ],
+      "soul_template": {
+        "kind": "witness",
+        "binding_dc": 14,
+        "binding_state": "unbound_seeking"
+      },
+      "memory_template": {
+        "max_entries": 5,
+        "persists": "forever_until_dispel"
+      }
+    },
+    {
+      "item_id": "itm_orig_truesilver_unsayable",
+      "name": "Truesilver Cipher Ring",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.05,
+      "value_cp": 400000,
+      "equip_slot": "ring",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "target_a_spoken_secret_during_short_rest_secret_becomes_unsayable_24hr",
+        "wearer_protected_from_compel-truth_spells_24hr",
+        "ring_dims_when_secret_is_kept"
+      ]
+    },
+    {
+      "item_id": "itm_orig_lattice_pin",
+      "name": "Lattice Pin",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "pin_a_property_in_place_for_8hrs",
+        "cannot_be_changed_by_lattice_shift_or_inversion_spells_8hr"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_orig_witness_bell",
+      "name": "Witness Bell",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 60000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "ring_once_per_scene_records_canonical_witness_of_present_moment",
+        "produces_inscribed_witness_paper_at_long_rest"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_orig_contradiction_compass",
+      "name": "Contradiction Compass",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.3,
+      "value_cp": 250000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "needle_points_to_nearest_creature_with_3+_contradictions_within_1mile",
+        "reveals_target_distance_in_paces"
+      ]
+    },
+    {
+      "item_id": "itm_orig_borrowed_face",
+      "name": "Borrowed Face",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.1,
+      "value_cp": 350000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "once_per_long_rest_wear_face_of_creature_dead_within_24hr_8hrs",
+        "face_returns_at_duration_end_or_unequip"
+      ]
+    },
+    {
+      "item_id": "itm_orig_unmemorable_cloak",
+      "name": "Unmemorable Cloak",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 100000,
+      "equip_slot": "cloak",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "passive_observers_fail_to_remember_specifics",
+        "casual_witnesses_recall_you_as_someone_else",
+        "investigation_or_compel-recall_breaks_effect"
+      ]
+    },
+    {
+      "item_id": "itm_orig_echo_horn",
+      "name": "Echo Horn",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 1.0,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "one_blow_recalls_last_sound_made_in_60ft_for_24hrs",
+        "battlefield_intel_tool"
+      ],
+      "charges": {
+        "max": 3,
+        "current": 3,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_orig_oath_chain",
+      "name": "Oath Chain",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.2,
+      "value_cp": 250000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "wearer_makes_one_oath_at_attune",
+        "oath_violation_4d8_psychic_immediate",
+        "oath_fulfillment_+2_inspiration"
+      ]
+    },
+    {
+      "item_id": "itm_orig_inverter_dagger",
+      "name": "Inverter Dagger",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 350000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 15,
+      "damage_dice": "1d4",
+      "damage_type": "piercing",
+      "weapon_properties": [
+        "finesse",
+        "light"
+      ],
+      "effects_on_attune": [
+        "once_per_dawn_strike_inverts_one_property_of_target_for_1_round"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "dawn"
+      }
+    },
+    {
+      "item_id": "itm_orig_forbid_blade",
+      "name": "Forbid-Blade",
+      "type": "weapon",
+      "rarity": "rare",
+      "weight_kg": 1.5,
+      "value_cp": 450000,
+      "equip_slot": "main_hand",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 15,
+      "damage_dice": "1d8",
+      "damage_type": "slashing",
+      "weapon_properties": [
+        "versatile"
+      ],
+      "effects_on_attune": [
+        "on_hit_target_DC15_WIS_save_one_action_category_forbidden_1_round"
+      ]
+    },
+    {
+      "item_id": "itm_orig_listener_circlet",
+      "name": "Listener's Circlet",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "weight_kg": 0.2,
+      "value_cp": 150000,
+      "equip_slot": "helm",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "wear_to_hear_unspoken_thoughts_within_30ft_omission_only"
+      ]
+    },
+    {
+      "item_id": "itm_orig_marking_brand",
+      "name": "Marking Brand",
+      "type": "tool",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 250000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "effects_on_use": [
+        "brand_target_creature_or_object_permanent_witness_mark_visible_to_attuned_scrying"
+      ],
+      "charges": {
+        "max": 10,
+        "current": 10,
+        "recharge": "never"
+      }
+    },
+    {
+      "item_id": "itm_orig_name_locket",
+      "name": "Name Locket",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.1,
+      "value_cp": 300000,
+      "equip_slot": "amulet",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "effects_on_attune": [
+        "learn_one_truename_per_long_rest_within_60ft_INT_check_vs_CHA_save"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_orig_memory_jar",
+      "name": "Memory Jar",
+      "type": "wondrous",
+      "rarity": "rare",
+      "weight_kg": 0.5,
+      "value_cp": 400000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 15,
+      "effects_on_use": [
+        "store_one_specific_memory_extracted_voluntarily_from_donor",
+        "preserves_until_smashed_or_drunk",
+        "drunk_by_recipient_to_acquire_memory_as_own"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "never"
+      }
+    },
+    {
+      "item_id": "itm_orig_resonance_armor",
+      "name": "Resonance Armor",
+      "type": "armor",
+      "rarity": "rare",
+      "weight_kg": 9.0,
+      "value_cp": 500000,
+      "equip_slot": "armor",
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 15,
+      "subtype": "medium",
+      "armor_ac_base": 14,
+      "armor_dex_cap": 2,
+      "effects_on_attune": [
+        "+1_AC_per_witness_within_30ft_max_+3",
+        "minimum_3_witnesses_to_activate"
+      ]
+    },
+    {
+      "item_id": "itm_orig_borrowed_steed_token",
+      "name": "Token of the Borrowed Steed",
+      "type": "trinket",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 80000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": false,
+      "attunement_ceremony": null,
+      "identification_dc": 13,
+      "effects_on_use": [
+        "summon_riding_horse_for_8_hours_horse_returns_to_origin_after",
+        "not_combat_warhorse_just_riding"
+      ],
+      "charges": {
+        "max": 1,
+        "current": 1,
+        "recharge": "long_rest"
+      }
+    },
+    {
+      "item_id": "itm_orig_witness_quill",
+      "name": "Witness Quill",
+      "type": "tool",
+      "rarity": "uncommon",
+      "weight_kg": 0.05,
+      "value_cp": 60000,
+      "equip_slot": null,
+      "tinting_class": "vellum_mundane",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "short_rest",
+      "identification_dc": 13,
+      "effects_on_attune": [
+        "writes_only_truth_that_writer_personally_witnessed",
+        "refuses_to_write_false_claims",
+        "useful_in_witness_inscription_rite"
+      ]
+    },
+    {
+      "item_id": "itm_orig_artifact_unmaker_chisel",
+      "name": "The Unmaker's Chisel",
+      "type": "tool",
+      "rarity": "artifact",
+      "weight_kg": 1.0,
+      "value_cp": 0,
+      "equip_slot": null,
+      "tinting_class": "bone_relic",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "sworn_oath",
+      "identification_dc": 21,
+      "effects_on_attune": [
+        "one_canonical_truth_unmade_per_year",
+        "canon-event_each_use",
+        "wielder_marked_by_world"
+      ],
+      "deicidal": true,
+      "soul_template": {
+        "kind": "echo",
+        "binding_dc": 20,
+        "binding_state": "perpetually_listening"
+      },
+      "memory_template": {
+        "max_entries": 99999,
+        "persists": "world_persistence"
+      },
+      "notes": "Artifact of Inversions subschool. Required for Unmake A Truth (L9) without devastating canon-cost."
+    },
+    {
+      "item_id": "itm_orig_artifact_first_witness_stone",
+      "name": "The First Witness Stone",
+      "type": "wondrous",
+      "rarity": "artifact",
+      "weight_kg": 2.0,
+      "value_cp": 0,
+      "equip_slot": null,
+      "tinting_class": "bone_relic",
+      "bound_to_you": false,
+      "regional_origin_id": null,
+      "attunement_required": true,
+      "attunement_ceremony": "blood_consecration",
+      "identification_dc": 21,
+      "effects_on_attune": [
+        "all_canon-events_within_1_mile_recorded_with_full_witness",
+        "records_become_canonical_history",
+        "wielder_becomes_first_witness"
+      ],
+      "deicidal": true,
+      "soul_template": {
+        "kind": "echo",
+        "binding_dc": 21,
+        "binding_state": "never_alone"
+      },
+      "memory_template": {
+        "max_entries": 99999,
+        "persists": "world_persistence",
+        "records_all_within_1_mile": true
+      },
+      "notes": "A foundational artifact of civic-record traditions. Partially-broken in most regions."
+    },
+    {
+      "item_id": "item_bell_marked_charm",
+      "name": "Bell-Marked Charm",
+      "type": "wondrous",
+      "rarity": "rare",
+      "regional_pack_id": "greywake",
+      "description_short": "A small brass disc the size of a coin, stamped with the Civic Bell Court's seal on one face and salt-immersed on the other.",
+      "description_long": "A small brass disc with two stamps — a Bell Court canon-seal on the obverse and a salt-rime ring on the reverse. Cool to the touch; warms slightly when its bearer is named in any nearby ledger entry. Bearers report a faint ringing at the inner ear when within twenty paces of the dry fountain.",
+      "magical": true,
+      "requires_attunement": true,
+      "attunement_ceremony": "salt_immersion",
+      "attunement_slot_cost": 1,
+      "effects_on_attune_structured": [
+        {
+          "effect_kind": "stat_modifier",
+          "magnitude_int": 1,
+          "condition_target": "presence",
+          "duration_in_world_hours": null
+        },
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "bell_court_proximity_detection_30ft",
+          "duration_in_world_hours": null
+        }
+      ],
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "spell_cast",
+          "spell_id": "spell_harden_contradiction",
+          "charges_per_use": 1,
+          "magnitude_int": null
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "long_rest_in_bell_court_precinct",
+      "weight_lb": 0.05,
+      "value_cp": 1200,
+      "weapon_properties": [],
+      "witness_payload": {
+        "soul_kind": "bound",
+        "soul_source_event_id": "event_charm_attuned_during_salt_vigil",
+        "soul_intensity": 4,
+        "provenance_chain": [
+          {
+            "holder_id": "fac_civic_bell_court_treasury",
+            "held_from_day": -200,
+            "held_until_day": -45,
+            "transfer_kind": "gifted",
+            "transfer_event_id": "event_charm_minted_for_civic_ceremony"
+          }
+        ]
+      },
+      "crafting": {
+        "recipe_id": "recipe_bell_marked_charm",
+        "intermediate_steps": [
+          "recipe_bell_marked_charm_step_a_practicing_water_vial",
+          "recipe_bell_marked_charm_step_b_forge"
+        ],
+        "primary_craft_station": "loc_bell_forge"
+      },
+      "tags": [
+        "slice_eligible",
+        "faction_aligned_bell_court",
+        "witness_bearing",
+        "attunement_required"
+      ]
+    },
+    {
+      "item_id": "item_marrow_wax_seal_of_ilyra",
+      "name": "Marrow-Wax Seal of Ilyra",
+      "type": "wondrous",
+      "rarity": "very_rare",
+      "regional_pack_id": "greywake",
+      "description_short": "A small wax seal — drowned-red wax over an iron core — bearing the personal sigil of Marrow-Saint Ilyra. Cannot be melted by ordinary fire.",
+      "description_long": "A finger-sized seal of marrow-wax pressed into an iron core. The drowned-red wax bears Marrow-Saint Ilyra's personal sigil — a salt-ring around a vertical line. Cool to the touch even when held over flame; the marrow does not render unless the holder is rendering the marrow's source. Sworn (not attuned): the bond is permanent and broken only by the seal's destruction or by death.",
+      "magical": true,
+      "requires_attunement": true,
+      "attunement_ceremony": "sworn_oath",
+      "attunement_slot_cost": 1,
+      "effects_on_attune_structured": [
+        {
+          "effect_kind": "stat_modifier",
+          "magnitude_int": 2,
+          "condition_target": "will",
+          "duration_in_world_hours": null
+        },
+        {
+          "effect_kind": "condition_apply",
+          "condition_target": "bonded_to_marrow_saint_ilyra",
+          "magnitude_int": null,
+          "duration_in_world_hours": null
+        },
+        {
+          "effect_kind": "save_advantage",
+          "condition_target": "saves_against_drowned_red_conditions",
+          "magnitude_int": null
+        }
+      ],
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "call_marrow_saint_to_current_scene",
+          "charges_per_use": 1
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "never_until_resworn",
+      "weight_lb": 0.1,
+      "value_cp": 0,
+      "value_note": "not for sale; sworn-gift only",
+      "weapon_properties": [],
+      "witness_payload": {
+        "soul_kind": "fragment",
+        "soul_source_event_id": "event_ilyra_personal_oath",
+        "soul_intensity": 8,
+        "provenance_chain": [
+          {
+            "holder_id": "npc_marrow_saint_ilyra",
+            "held_from_day": -1200,
+            "held_until_day": null,
+            "transfer_kind": "gifted",
+            "transfer_event_id": null
+          }
+        ]
+      },
+      "tags": [
+        "slice_eligible",
+        "faction_aligned_drowned_church",
+        "witness_bearing",
+        "sworn",
+        "bonds_to_npc",
+        "deicidal_potential_post_slice"
+      ]
+    },
+    {
+      "item_id": "item_listening_childs_pebble",
+      "name": "The Listening Child's Pebble",
+      "type": "trinket",
+      "rarity": "legendary",
+      "regional_pack_id": "greywake",
+      "description_short": "A small smooth pebble. Warm. Cannot be lost.",
+      "description_long": "An almost-perfectly-round pebble the size of a fingernail. The Listening Child gave it to you. It is warm in your pocket. It does not chip. It does not weather. If you set it down it is back in your pocket within a scene; if you drop it intentionally it is back within a turn. There is no inscription on it. There is no sound when you hold it to your ear.",
+      "magical": true,
+      "requires_attunement": false,
+      "attunement_ceremony": null,
+      "attunement_slot_cost": 0,
+      "effects_passive_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "auto_return_to_player_inventory_on_drop_or_loss"
+        },
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "creation_stat_increment_threshold_witness",
+          "magnitude_int": 1
+        }
+      ],
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "pose_question_to_the_listening_child_remotely",
+          "charges_per_use": 1
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "long_rest_anywhere",
+      "weight_lb": 0.01,
+      "value_cp": 0,
+      "value_note": "not for sale; ungiftable; canon-event-only acquisition",
+      "weapon_properties": [],
+      "witness_payload": {
+        "soul_kind": "echo",
+        "soul_source_event_id": "event_practicing_water_spoken_at_fountain",
+        "soul_intensity": 10,
+        "provenance_chain": [
+          {
+            "holder_id": "npc_the_listening_child",
+            "held_from_day": null,
+            "held_until_day": null,
+            "transfer_kind": "gifted",
+            "transfer_event_id": "event_listening_child_gifts_pebble"
+          }
+        ]
+      },
+      "acquisition_method": "canon_event_only",
+      "tags": [
+        "slice_eligible",
+        "canon_event_acquired",
+        "witness_bearing",
+        "unloseable",
+        "legendary"
+      ]
+    },
+    {
+      "item_id": "item_vial_of_practiced_name_water",
+      "name": "Vial of Practiced-Name Water",
+      "type": "consumable",
+      "rarity": "rare",
+      "regional_pack_id": "greywake",
+      "description_short": "A small glass vial holding clear water that hums faintly when held close to the ear.",
+      "description_long": "A finger-length vial of clear water gathered at the dry fountain during a successful Hear-the-Fountain casting. The water is practicing — there is no clearer term — and the practice is audible at very close range. Drink to gain temporary fluency in unspoken names; pour onto an object to allow Compose to target that object regardless of distance.",
+      "magical": true,
+      "requires_attunement": false,
+      "attunement_slot_cost": 0,
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "condition_apply",
+          "condition_target": "practicing_water_drunk",
+          "magnitude_int": 1,
+          "duration_in_world_hours": 1
+        },
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "enable_remote_compose_target"
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "never_consumable",
+      "weight_lb": 0.05,
+      "value_cp": 350,
+      "value_note": "tradeable; Drowned Church will pay premium",
+      "weapon_properties": [],
+      "witness_payload": null,
+      "is_intermediate": true,
+      "intermediate_for_recipe_ids": [
+        "recipe_bell_marked_charm",
+        "recipe_marrow_wax_seal_replica"
+      ],
+      "tags": [
+        "slice_eligible",
+        "intermediate",
+        "consumable",
+        "ritual_ingredient"
+      ]
+    },
+    {
+      "item_id": "item_salt_rime_shard",
+      "name": "Salt-Rime Shard",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "regional_pack_id": "greywake",
+      "description_short": "A small angular crystal of salt-rime, gathered from the dry fountain or any Greywake surface where the rime has accreted.",
+      "description_long": "Salt that has formed in defiance of weather. Brittle, sharp at the edges, oddly warm in the hand. Used in salt-immersion ceremonies, in Salt-Mark casting, and as a binding agent in marrow-wax preparation. Decays outside Greywake — crumbles to ordinary salt within three turns of leaving the region.",
+      "magical": true,
+      "requires_attunement": false,
+      "attunement_slot_cost": 0,
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "fuel_salt_immersion_ceremony"
+        },
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "fuel_salt_mark_spell_cast"
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "never_consumable",
+      "weight_lb": 0.02,
+      "value_cp": 60,
+      "weapon_properties": [],
+      "witness_payload": null,
+      "decay_states": [
+        {
+          "decay_kind": "region_locked",
+          "decay_trigger": "leaves_region_greywake",
+          "decay_outcome": "becomes_ordinary_salt_within_3_turns"
+        }
+      ],
+      "tags": [
+        "slice_eligible",
+        "consumable",
+        "ritual_ingredient",
+        "region_locked"
+      ]
+    },
+    {
+      "item_id": "item_witness_bell",
+      "name": "Witness Bell",
+      "type": "tool",
+      "rarity": "rare",
+      "regional_pack_id": "greywake",
+      "description_short": "A small handbell of brass-and-bone. Rings only in the presence of a witnessed canon event within thirty paces.",
+      "description_long": "A handbell of mottled brass and a single curved sliver of bone for the clapper. Silent in transit. Rings — sharp, brief, unignorable — whenever a canon-progression event is committed within thirty paces of the bearer. The bell cannot be silenced and cannot be moved while ringing; it will ring in the bearer's pocket until released.",
+      "magical": true,
+      "requires_attunement": true,
+      "attunement_ceremony": "short_rest",
+      "attunement_slot_cost": 1,
+      "effects_on_attune_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "announce_canon_event_within_30ft"
+        },
+        {
+          "effect_kind": "stat_modifier",
+          "magnitude_int": 1,
+          "condition_target": "sense"
+        }
+      ],
+      "charges_max": null,
+      "charges_recover": null,
+      "weight_lb": 0.5,
+      "value_cp": 900,
+      "weapon_properties": [],
+      "witness_payload": {
+        "soul_kind": "echo",
+        "soul_intensity": 5
+      },
+      "tags": [
+        "slice_eligible",
+        "investigative_tool",
+        "witness_bearing",
+        "attunement_required"
+      ]
+    },
+    {
+      "item_id": "item_drowned_amber_pendant",
+      "name": "Drowned-Amber Pendant",
+      "type": "wondrous",
+      "rarity": "uncommon",
+      "regional_pack_id": "greywake",
+      "description_short": "A pendant of drowned-amber on a wet leather cord. The amber holds something small that does not decompose.",
+      "description_long": "A walnut-sized piece of drowned-amber strung on a salt-stained leather cord. The amber holds a single small thing — a fingerbone, an inscribed coin, a flake of paper — that has been inside the amber long enough that the thing has stopped trying to be itself. Worn by Drowned Church initiates; signals doctrinal allegiance.",
+      "magical": true,
+      "requires_attunement": false,
+      "attunement_slot_cost": 0,
+      "effects_passive_structured": [
+        {
+          "effect_kind": "stat_modifier",
+          "magnitude_int": 1,
+          "condition_target": "faith_drowned_church_visible_to_observers"
+        }
+      ],
+      "weight_lb": 0.1,
+      "value_cp": 240,
+      "weapon_properties": [],
+      "witness_payload": {
+        "soul_kind": "fragment",
+        "soul_intensity": 2
+      },
+      "tags": [
+        "slice_eligible",
+        "faction_aligned_drowned_church",
+        "social_signal",
+        "witness_bearing"
+      ]
+    },
+    {
+      "item_id": "item_tide_league_scrip_bundle_25",
+      "name": "Tide League Scrip Bundle (25)",
+      "type": "currency_token",
+      "rarity": "common",
+      "regional_pack_id": "greywake",
+      "description_short": "A tied bundle of 25 salt-scrip notes — Tide League issue, redeemable in tide-cycles.",
+      "description_long": "A canvas-tied bundle of 25 salt-scrip notes. Each note is a small rectangle of salt-fixed parchment stamped with the Tide League weighing-pan sigil. Redeemable at Tide League offices for goods at face value, or tradeable to other factions at exchange rates that vary by tide-cycle.",
+      "magical": false,
+      "requires_attunement": false,
+      "attunement_slot_cost": 0,
+      "weight_lb": 0.2,
+      "value_cp": 250,
+      "value_in_scrip": 25,
+      "weapon_properties": [],
+      "stackable": true,
+      "stack_size_max": 999,
+      "tags": [
+        "slice_eligible",
+        "currency",
+        "tide_league_issued"
+      ]
+    },
+    {
+      "item_id": "item_bell_court_inkwell_stamp",
+      "name": "Bell Court Inkwell-Stamp",
+      "type": "tool",
+      "rarity": "uncommon",
+      "regional_pack_id": "greywake",
+      "description_short": "A small brass inkwell fitted with a stamp head. Bell Court issue. Stamps a canon-mark on parchment that the Court will recognize.",
+      "description_long": "A finger-sized brass inkwell with a hinged stamp head. The stamp leaves a small canon-mark on parchment — a circle around a vertical bar — that the Bell Court treats as an authorized minor witness mark. Issued by the Bell Court to junior clerks; can be acquired through quest, theft, or purchase from a Bell Court informant.",
+      "magical": false,
+      "requires_attunement": false,
+      "attunement_slot_cost": 0,
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "issue_bell_court_minor_witness_mark",
+          "charges_per_use": 1
+        }
+      ],
+      "charges_max": 25,
+      "charges_recover": "refill_at_bell_court_precinct",
+      "weight_lb": 0.3,
+      "value_cp": 180,
+      "weapon_properties": [],
+      "tags": [
+        "slice_eligible",
+        "faction_aligned_bell_court",
+        "tool"
+      ]
+    },
+    {
+      "item_id": "item_meteoric_iron_dagger",
+      "name": "Meteoric Iron Dagger",
+      "type": "weapon",
+      "rarity": "rare",
+      "regional_pack_id": "greywake",
+      "description_short": "A short dagger of meteoric iron, hammered cold. Cuts through wards.",
+      "description_long": "A thin double-edged dagger forged from meteoric iron — the metal still slightly warm to the touch from the cold-hammering. Ward-cutting: bypasses contradiction wards and salt-circle wards at the cost of a Ruin +1 to the wielder per use. Greywake-forged; one of three known to exist in the region.",
+      "magical": true,
+      "requires_attunement": true,
+      "attunement_ceremony": "blood_consecration",
+      "attunement_slot_cost": 1,
+      "effects_on_attune_structured": [
+        {
+          "effect_kind": "damage_resist",
+          "condition_target": "psychic_warding_resistance"
+        }
+      ],
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "bypass_contradiction_or_salt_ward",
+          "magnitude_int": 1
+        },
+        {
+          "effect_kind": "meter_delta",
+          "condition_target": "ruin",
+          "magnitude_int": 1,
+          "duration_in_world_hours": null
+        }
+      ],
+      "damage_dice": "1d4+1",
+      "damage_type": "piercing",
+      "weight_lb": 0.5,
+      "value_cp": 1800,
+      "weapon_properties": [
+        "finesse",
+        "light",
+        "thrown",
+        "witness_marked"
+      ],
+      "witness_payload": {
+        "soul_kind": "fragment",
+        "soul_intensity": 3
+      },
+      "tags": [
+        "slice_eligible",
+        "weapon",
+        "ward_cutter",
+        "ruin_inducing",
+        "attunement_required"
+      ]
+    },
+    {
+      "item_id": "item_compose_chalk",
+      "name": "Compose-Chalk",
+      "type": "consumable",
+      "rarity": "uncommon",
+      "regional_pack_id": "greywake",
+      "description_short": "A short stick of compressed marrow-and-salt chalk. Drawn lines hold a Compose target for the rite's duration.",
+      "description_long": "A stub of dense pale chalk — pressed marrow, fine salt, and a binding agent the Drowned Church does not disclose. Drawn lines hold their shape under rain and are visible to Drowned Church members regardless of distance. Used to mark the boundary of a Compose ritual; one stick supports one ritual.",
+      "magical": true,
+      "requires_attunement": false,
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "establish_compose_ritual_boundary",
+          "charges_per_use": 1
+        }
+      ],
+      "charges_max": 1,
+      "charges_recover": "never_consumable",
+      "weight_lb": 0.1,
+      "value_cp": 120,
+      "weapon_properties": [],
+      "tags": [
+        "slice_eligible",
+        "consumable",
+        "ritual_ingredient",
+        "faction_aligned_drowned_church"
+      ]
+    },
+    {
+      "item_id": "item_field_journal_blank",
+      "name": "Field Journal (blank)",
+      "type": "book",
+      "rarity": "common",
+      "regional_pack_id": "greywake",
+      "description_short": "A salt-stained leather field journal with 80 blank pages. Writes player-authored entries into the Tale Log.",
+      "description_long": "An ordinary field journal — leather cover, ribbon bookmark, 80 numbered blank pages. Writing in the journal at end-of-scene commits the entry to the player's Tale Log, with the journal voice (Caveat font, brass margin marks). Used by all three factions as a discreet record; not factional itself.",
+      "magical": false,
+      "requires_attunement": false,
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "trigger_event",
+          "trigger_event_kind": "commit_tale_log_entry_from_player_input"
+        }
+      ],
+      "charges_max": 80,
+      "charges_recover": "page_consumed_per_entry",
+      "weight_lb": 0.8,
+      "value_cp": 90,
+      "weapon_properties": [],
+      "tags": [
+        "slice_eligible",
+        "narrative_tool",
+        "neutral"
+      ]
+    }
+  ]
+}

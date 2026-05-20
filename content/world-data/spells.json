@@ -1,0 +1,6234 @@
+{
+  "spells": [
+    {
+      "spell_id": "eldritch_blast",
+      "name": "Eldritch Blast",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "A beam of crackling force strikes a target within range. Ranged spell attack; on hit, 1d10 force damage. Beams increase at 5th/11th/17th level (2/3/4 beams). SRD baseline; slice-required. Slice flag.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "damage_dice": "1d10",
+      "damage_type": "force",
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "fire_bolt",
+      "name": "Fire Bolt",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Hurl a mote of fire. Ranged spell attack; 1d10 fire damage on hit; ignites flammable objects not worn or carried.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "damage_dice": "1d10",
+      "damage_type": "fire",
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "ray_of_frost",
+      "name": "Ray of Frost",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Frigid beam strikes target. Ranged spell attack; 1d8 cold damage and target's speed -10 ft until end of next turn.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "damage_dice": "1d8",
+      "damage_type": "cold",
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "chill_touch",
+      "name": "Chill Touch",
+      "level": 0,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Spectral skeletal hand reaches across the gap. Ranged spell attack; 1d8 necrotic damage; target cannot regain HP until your next turn.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "damage_dice": "1d8",
+      "damage_type": "necrotic",
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "sacred_flame",
+      "name": "Sacred Flame",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Flame-like radiance descends on target. DEX save; on fail, 1d8 radiant damage. Cover does not benefit the target.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "1d8",
+      "damage_type": "radiant",
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "mage_hand",
+      "name": "Mage Hand",
+      "level": 0,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Spectral, floating hand at point within range. Can manipulate objects, open doors, retrieve items in pouches. 10 lb limit. Cannot attack, activate magic items, or carry more than 10 lb.",
+      "save_type": null,
+      "attack_kind": null,
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "prestidigitation",
+      "name": "Prestidigitation",
+      "level": 0,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "10 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Minor magical effect. Create instantaneous harmless sensory effect, light or snuff a small flame, clean/soil object, chill/warm food, color/mark/flavor object. Three effects active simultaneously.",
+      "save_type": null,
+      "attack_kind": null,
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "thaumaturgy",
+      "name": "Thaumaturgy",
+      "level": 0,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Minor wonder, sign of supernatural power. Booming voice, flame-flicker, door tremor, eye-color change, ground tremor, instrument self-sound. Three effects active simultaneously. Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "minor_illusion",
+      "name": "Minor Illusion",
+      "level": 0,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": true,
+        "m_text": "a bit of fleece",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Sound or image of an object within range. Sound: from whisper to a scream. Image: object no larger than 5-ft cube. INT(Investigation) check vs caster's spell save DC to disbelieve on physical interaction or close inspection.",
+      "save_type": null,
+      "attack_kind": null,
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "guidance",
+      "name": "Guidance",
+      "level": 0,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Touch a willing creature. Once before spell ends, target rolls a d4 and adds it to one ability check of its choice.",
+      "save_type": null,
+      "attack_kind": null,
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "mage_armor",
+      "name": "Mage Armor",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 8
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "piece of cured leather",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a willing unarmored creature. Until 8 hours pass or armor is donned, target's AC = 13 + DEX mod. Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect; duration fixed at 8 hours."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "shield",
+      "name": "Shield",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "1 reaction (when hit or targeted by magic missile)",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "+5 AC including against the triggering attack; no damage from magic missile. Until start of caster's next turn.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "hex",
+      "name": "Hex",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 bonus action",
+      "range": "90 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "petrified eye of newt",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Curse a target within range. While hexed, attack rolls against target deal extra 1d6 necrotic damage; target has disadvantage on chosen ability check (CHA at L1; one stat per cast). Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": "1d6",
+      "damage_type": "necrotic",
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2: duration up to 8 hr concentration. L3: duration up to 24 hr concentration. L4+: 24 hr."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "hellish_rebuke",
+      "name": "Hellish Rebuke",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 reaction (when damaged by a creature you can see)",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Point at creature that damaged you. Target makes DEX save; takes 2d10 fire damage on fail, half on success. Slice flag.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "2d10",
+      "damage_type": "fire",
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d10 fire damage per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "magic_missile",
+      "name": "Magic Missile",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Three darts of magical force. Each dart hits creature of choice within range (no attack roll, no save), 1d4+1 force damage per dart.",
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": "1d4+1",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1 dart per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "cure_wounds",
+      "name": "Cure Wounds",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch creature. Target regains HP = 1d8 + spellcasting modifier. Cannot affect undead or constructs. Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": "1d8",
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d8 healing per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "healing_word",
+      "name": "Healing Word",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 bonus action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "bard",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Creature regains HP = 1d4 + spellcasting modifier. Cannot affect undead or constructs.",
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": "1d4",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d4 healing per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "detect_magic",
+      "name": "Detect Magic",
+      "level": 1,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": true,
+      "description_template": "Sense magic within 30 ft. If detected, action to see faint aura around any visible source and learn its school. Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "slice_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect; ritual-castable for no fatigue cost."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "identify",
+      "name": "Identify",
+      "level": 1,
+      "school": "divination",
+      "casting_time": "1 minute",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a pearl worth 100 gp",
+        "m_consumed": false,
+        "m_cost_gp": 100
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": true,
+      "description_template": "Touch an object. Learn properties, command words, charges, whether under a spell. Touching a creature: know any active spells, attuned magic items.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "charm_person",
+      "name": "Charm Person",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Target humanoid makes WIS save (with advantage if combat). On fail, charmed: regards caster as friendly acquaintance for 1 hour. Target aware of being charmed when spell ends.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1 target per slot level above 1; targets must be within 30 ft of each other."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "sleep",
+      "name": "Sleep",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "90 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "pinch of fine sand, rose petals, or a cricket",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Roll 5d8; that many HP-worth of creatures (lowest HP first) within 20-ft sphere fall unconscious 1 minute. Undead and charm-immune unaffected.",
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": "5d8",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +2d8 per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "burning_hands",
+      "name": "Burning Hands",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (15-ft cone)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Sheet of flame from outstretched hands. Each creature in 15-ft cone: DEX save, 3d6 fire damage on fail, half on success. Ignites unattended flammables.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "3d6",
+      "damage_type": "fire",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d6 fire damage per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "thunderwave",
+      "name": "Thunderwave",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (15-ft cube)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "bard",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Wave of thunderous force. Each creature in 15-ft cube: CON save, 2d8 thunder damage and pushed 10 ft on fail; half damage, no push on success. Unsecured objects in area also pushed; thunder audible up to 300 ft.",
+      "save_type": "con",
+      "attack_kind": null,
+      "damage_dice": "2d8",
+      "damage_type": "thunder",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d8 per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "bless",
+      "name": "Bless",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "sprinkling of holy water",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Bless up to 3 creatures within range. For duration, when target rolls attack roll or save, roll d4 and add to result.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1 target per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "sanctuary",
+      "name": "Sanctuary",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "1 bonus action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "small silver mirror",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Ward a creature. Until end of next turn, any creature attacking or targeting ward with hostile spell: WIS save; on fail, target different creature. If warded attacks or casts hostile spell, sanctuary ends.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "find_familiar",
+      "name": "Find Familiar",
+      "level": 1,
+      "school": "conjuration",
+      "casting_time": "1 hour",
+      "range": "10 ft",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "10 gp of charcoal, incense, herbs",
+        "m_consumed": true,
+        "m_cost_gp": 10
+      },
+      "classes_allowed": [
+        "wizard"
+      ],
+      "concentration": false,
+      "ritual_eligible": true,
+      "description_template": "Summon a familiar (Tiny celestial, fey, or fiend). Telepathic link within 100 ft. Familiar can deliver touch spells. Resummonable at no further cost if dismissed; permanent at canon-bind once.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "comprehend_languages",
+      "name": "Comprehend Languages",
+      "level": 1,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "pinch of soot and salt",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": true,
+      "description_template": "Understand the literal meaning of any spoken language heard, or any written language touched. 1 minute per word for reading. Does not decode ciphers or hidden meanings.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "inflict_wounds",
+      "name": "Inflict Wounds",
+      "level": 1,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Make a melee spell attack. On hit, 3d10 necrotic damage.",
+      "save_type": null,
+      "attack_kind": "melee",
+      "damage_dice": "3d10",
+      "damage_type": "necrotic",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1d10 per slot level above 1."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "darkness",
+      "name": "Darkness",
+      "level": 2,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": true,
+        "m_text": "bat fur and a drop of pitch",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "15-ft sphere of magical darkness from point or object. Magical darkness defeats nonmagical light; even darkvision cannot see through. Slice flag.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "slice_eligible",
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "misty_step",
+      "name": "Misty Step",
+      "level": 2,
+      "school": "conjuration",
+      "casting_time": "1 bonus action",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Briefly surrounded by silvery mist; teleport up to 30 ft to an unoccupied space you can see.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "hold_person",
+      "name": "Hold Person",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "small straight piece of iron",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Choose humanoid within range. WIS save; on fail, paralyzed for duration. Save at end of each turn.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: +1 target per slot level above 2; targets within 30 ft of each other."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "suggestion",
+      "name": "Suggestion",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 8
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": true,
+        "m_text": "snake's tongue and either bit of honeycomb or drop of sweet oil",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Suggest a reasonable course of action (1-2 sentences) to a creature that can hear and understand. WIS save; on fail, target follows for duration. Activity must not be obviously harmful.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "invisibility",
+      "name": "Invisibility",
+      "level": 2,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "eyelash encased in gum arabic",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Touch a creature. Becomes invisible until spell ends. Anything carried also invisible. Ends if target attacks or casts a spell.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: +1 target per slot level above 2."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "scorching_ray",
+      "name": "Scorching Ray",
+      "level": 2,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Three rays of fire. Make ranged spell attack with each. On hit, 2d6 fire damage per ray.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "damage_dice": "2d6",
+      "damage_type": "fire",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: +1 ray per slot level above 2."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "see_invisibility",
+      "name": "See Invisibility",
+      "level": 2,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "talc and silver powder",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "See invisible creatures and objects as faintly visible; see into the Ethereal Plane. Duration 1 hour.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "mirror_image",
+      "name": "Mirror Image",
+      "level": 2,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Three illusory duplicates appear in your space. When attacked, attacker rolls d20; on 1-3 of 6, 4 of 6, or 5-6 of 6 corresponding to remaining duplicates (3/2/1), illusion takes hit and is destroyed.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "lesser_restoration",
+      "name": "Lesser Restoration",
+      "level": 2,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "End one disease, or one condition: blinded, deafened, paralyzed, or poisoned, on a touched creature.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "spiritual_weapon",
+      "name": "Spiritual Weapon",
+      "level": 2,
+      "school": "evocation",
+      "casting_time": "1 bonus action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Floating spectral weapon appears within range. Bonus action to move 20 ft and make melee spell attack against creature in 5 ft. On hit, 1d8 + spellcasting mod force damage.",
+      "save_type": null,
+      "attack_kind": "melee",
+      "damage_dice": "1d8",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: +1d8 per two slot levels above 2."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "zone_of_truth",
+      "name": "Zone of Truth",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "bard",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Create 15-ft radius zone. Creatures entering or starting turn there: CHA save; on fail, cannot say deliberate lies. Aware of zone; can refuse to speak.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "silence",
+      "name": "Silence",
+      "level": 2,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric",
+        "ranger"
+      ],
+      "concentration": true,
+      "ritual_eligible": true,
+      "description_template": "20-ft radius silence sphere at point. No sound created within or passing through. Creatures inside deafened; spellcasting requiring verbal components fails.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "detect_thoughts",
+      "name": "Detect Thoughts",
+      "level": 2,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "copper piece",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Read surface thoughts of creature within 30 ft (action to probe). Target WIS save resists deeper probe. If pierces deeper, target becomes aware and may break the link.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "alter_self",
+      "name": "Alter Self",
+      "level": 2,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Change form: aquatic adaptation, change appearance (within race), or natural weapons (+1 attack, 1d6 damage).",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "animal_messenger",
+      "name": "Animal Messenger",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "morsel of food",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "bard",
+        "druid",
+        "ranger"
+      ],
+      "concentration": false,
+      "ritual_eligible": true,
+      "description_template": "Tiny beast carries simple message up to 25 words to destination within 24 hours' travel.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "fireball",
+      "name": "Fireball",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "150 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "tiny ball of bat guano and sulfur",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "20-ft radius sphere from point. Each creature: DEX save, 8d6 fire damage on fail, half on success. Ignites flammables.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "8d6",
+      "damage_type": "fire",
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: +1d6 fire damage per slot level above 3."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "lightning_bolt",
+      "name": "Lightning Bolt",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (100-ft line)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "bit of fur and amber/glass rod",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Stroke of lightning in 100-ft line, 5 ft wide. Each creature: DEX save, 8d6 lightning damage on fail, half on success. Ignites flammables.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "8d6",
+      "damage_type": "lightning",
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: +1d6 per slot level above 3."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "counterspell",
+      "name": "Counterspell",
+      "level": 3,
+      "school": "abjuration",
+      "casting_time": "1 reaction (when creature you see casts a spell)",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Interrupt spell. Spell of L3 or lower auto-fails. L4+ spell: ability check (DC = 10 + spell's level). Reality-altering: triggers Authority response if used against a canon-creation spell.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: auto-counter spells up to slot level used."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "dispel_magic",
+      "name": "Dispel Magic",
+      "level": 3,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "End any spell of L3 or lower on target. L4+ spell: ability check (DC = 10 + spell's level).",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: auto-dispel spells up to slot level used."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "fly",
+      "name": "Fly",
+      "level": 3,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "wing feather",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Touch a willing creature. Flying speed 60 ft for duration. If concentration broken while airborne, target falls.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: +1 target per slot level above 3."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "haste",
+      "name": "Haste",
+      "level": 3,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "shaving of licorice root",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Willing creature: speed doubled, +2 AC, advantage on DEX saves, additional action each turn (limited to Attack/Dash/Disengage/Hide/Use Object). When spell ends, target cannot move or take actions until end of next turn.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "slow",
+      "name": "Slow",
+      "level": 3,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "drop of molasses",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Up to 6 creatures in 40-ft cube. WIS save; on fail, speed halved, -2 AC and DEX save, no reactions. On its turn, target can take action OR bonus action, not both. Spellcasting roll DC 11+spell level fails on >11.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "No upcast effect."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "animate_dead",
+      "name": "Animate Dead",
+      "level": 3,
+      "school": "necromancy",
+      "casting_time": "1 minute",
+      "range": "10 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "drop of blood, bit of flesh, pinch of bone dust",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a Medium or Small humanoid corpse or bone pile. Becomes skeleton or zombie under your control 24 hours (recast required at 24h to re-bind). Counts as Animate Dead canon-progression event (Ruin +1 stat-credit toward threshold).",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L4+: +1 corpse per slot level above 3."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "clairvoyance",
+      "name": "Clairvoyance",
+      "level": 3,
+      "school": "divination",
+      "casting_time": "10 minutes",
+      "range": "1 mile",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "focus worth 100 gp",
+        "m_consumed": false,
+        "m_cost_gp": 100
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Create invisible sensor at chosen location within 1 mile. See or hear (choose) from sensor.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "speak_with_dead",
+      "name": "Speak with Dead",
+      "level": 3,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "10 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "burning incense",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Grant semblance of life to corpse. Ask up to 5 questions in 10 minutes. Corpse must have mouth and not be undead. Answers terse, repetitive, or evasive based on what it knew.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "major_image",
+      "name": "Major Image",
+      "level": 3,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "bit of fleece",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Image of object/creature/visible phenomenon up to 20-ft cube. Sight, sound, smell, temperature. INT(Investigation) check to disbelieve on interaction.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "revivify",
+      "name": "Revivify",
+      "level": 3,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "diamonds worth 300 gp",
+        "m_consumed": true,
+        "m_cost_gp": 300
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a creature died within the last minute. Returns to life with 1 HP. Cannot restore lost body parts. Cannot return creatures dead of old age or that do not want to return. Reality-altering: this is a canon-event in many regions.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 0,
+        "creation": 1,
+        "scaling_rule": "L4+: no mechanical change but Notice +1 per slot level above 3. Authority cost mandatory."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "polymorph",
+      "name": "Polymorph",
+      "level": 4,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "caterpillar cocoon",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Target makes WIS save (willing target chooses to fail). Transforms into beast of CR <= target's level/CR. Stats replace target's except INT/WIS/CHA. Reverts when reduced to 0 HP or concentration broken.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "dimension_door",
+      "name": "Dimension Door",
+      "level": 4,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "500 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Teleport self (and one willing creature touching you of equal size) up to 500 ft to spot you can see, visualize, or describe by direction-and-distance. Misfire if destination occupied: 4d6 force damage, no teleport.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "greater_invisibility",
+      "name": "Greater Invisibility",
+      "level": 4,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Touch creature. Becomes invisible. Anything carried also invisible. Concentrate up to 1 minute. Unlike Invisibility, does NOT end on attack or spell cast.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "banishment",
+      "name": "Banishment",
+      "level": 4,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "item distasteful to target",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Target CHA save. On fail, banished. Native to current plane: incapacitated in pocket dimension. Native to another plane: returned there permanently if concentration held 1 minute.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0,
+        "scaling_rule": "L5+: +1 target per slot level above 4."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "locate_creature",
+      "name": "Locate Creature",
+      "level": 4,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "bit of fur from bloodhound",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Sense direction to specific creature known to caster or general type within 1000 ft. Lead/copper running water blocks. Concentrate up to 1 hour.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "freedom_of_movement",
+      "name": "Freedom of Movement",
+      "level": 4,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "leather strap bound around the arm",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "druid",
+        "ranger",
+        "bard",
+        "ranger"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touched creature. Difficult terrain doesn't cost extra movement; spells/effects that reduce speed or paralyze have no effect; spend 5 ft to escape nonmagical restraints; underwater movement and attack at no disadvantage.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "phantasmal_killer",
+      "name": "Phantasmal Killer",
+      "level": 4,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Tap into target's nightmares. WIS save; on fail, frightened and takes 4d10 psychic damage. Save again each turn; same effect on fail; spell ends on success.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "damage_dice": "4d10",
+      "damage_type": "psychic",
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L5+: +1d10 per slot level above 4."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "conjure_minor_elementals",
+      "name": "Conjure Minor Elementals",
+      "level": 4,
+      "school": "conjuration",
+      "casting_time": "1 minute",
+      "range": "90 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "druid"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Summon elemental creatures totaling CR 2 or below within range. Roll d100 for behavior (DM table). Creatures friendly to you and allies unless concentration broken.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "cone_of_cold",
+      "name": "Cone of Cold",
+      "level": 5,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (60-ft cone)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "crystal or glass cone",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Each creature in 60-ft cone: CON save, 8d8 cold damage on fail, half on success. Killed creatures become frozen statues until thawed.",
+      "save_type": "con",
+      "attack_kind": null,
+      "damage_dice": "8d8",
+      "damage_type": "cold",
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L6+: +1d8 per slot level above 5."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "hold_monster",
+      "name": "Hold Monster",
+      "level": 5,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "90 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "small straight piece of iron",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Choose creature (not undead). WIS save; on fail, paralyzed. Save at end of each turn.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L6+: +1 target per slot level above 5."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "modify_memory",
+      "name": "Modify Memory",
+      "level": 5,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "bard",
+        "wizard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Target WIS save. On fail, you reshape one specific memory occurring within last 24 hours and lasting up to 10 minutes. Reality-altering, contradiction-prone — using it on key witnesses creates contradiction_ledger_entry.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2,
+        "scaling_rule": "L6+: events from past 7 days. L7+: past 30 days. L8+: past 1 year. L9: any time."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "raise_dead",
+      "name": "Raise Dead",
+      "level": 5,
+      "school": "necromancy",
+      "casting_time": "1 hour",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "diamond worth 500 gp",
+        "m_consumed": true,
+        "m_cost_gp": 500
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Return creature dead up to 10 days to life with 1 HP. -4 penalty to attack, save, ability check (reduces by 1 per long rest until 0).",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "commune",
+      "name": "Commune",
+      "level": 5,
+      "school": "divination",
+      "casting_time": "1 minute",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "incense and water",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": true,
+      "description_template": "Contact deity or divine intermediary. Ask 3 yes/no questions. Truthful answers. Each cast within 7 days: 25% cumulative chance of no answer.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "teleportation_circle",
+      "name": "Teleportation Circle",
+      "level": 5,
+      "school": "conjuration",
+      "casting_time": "1 minute",
+      "range": "10 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": true,
+        "m_text": "rare chalks and inks worth 50 gp",
+        "m_consumed": true,
+        "m_cost_gp": 50
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Inscribe permanent or temporary circle linking to known sigil sequence. Creatures stepping into circle within next round teleport to destination.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "scrying",
+      "name": "Scrying",
+      "level": 5,
+      "school": "divination",
+      "casting_time": "10 minutes",
+      "range": "self",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "focus worth 1000 gp",
+        "m_consumed": false,
+        "m_cost_gp": 1000
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric",
+        "druid"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Spy on chosen target. WIS save; modifiers based on knowledge of target. Sense within 10 ft of target. Sensor visible only to target who passed save.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "planar_binding",
+      "name": "Planar Binding",
+      "level": 5,
+      "school": "abjuration",
+      "casting_time": "1 hour",
+      "range": "60 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "jewel worth 1000 gp",
+        "m_consumed": true,
+        "m_cost_gp": 1000
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Bind celestial/elemental/fey/fiend to service. CHA save; on fail, bound 24 hours to obey commands. Reality-altering; Some regional cult institutions specifically forbid this; canonical pact-creation event.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2,
+        "scaling_rule": "L6+: 10 days. L7+: 30 days. L8+: 180 days. L9: 1 year and 1 day."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "disintegrate",
+      "name": "Disintegrate",
+      "level": 6,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "lodestone and pinch of dust",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Green ray. Creature: DEX save, 10d6+40 force damage on fail. Reduced to 0 HP: disintegrated to gray dust (can only be revived by True Resurrection or Wish). Affects Huge or smaller nonmagical objects.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "10d6+40",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0,
+        "scaling_rule": "L7+: +3d6 per slot level above 6."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "true_seeing",
+      "name": "True Seeing",
+      "level": 6,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "ointment worth 25 gp",
+        "m_consumed": true,
+        "m_cost_gp": 25
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touched creature gains true sight 120 ft for 1 hour: sees through magical darkness, illusions, transmuted forms; sees Ethereal Plane.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "imposed_eligible"
+      ],
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "finger_of_death",
+      "name": "Finger of Death",
+      "level": 7,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Negative energy bolt. Target CON save, 7d8+30 necrotic damage on fail. Humanoid killed rises 24 hours later as zombie under caster's command.",
+      "save_type": "con",
+      "attack_kind": null,
+      "damage_dice": "7d8+30",
+      "damage_type": "necrotic",
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 1
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "teleport",
+      "name": "Teleport",
+      "level": 7,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "10 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Self and up to 8 willing creatures within 10 ft, or single object, teleport to destination. Familiarity table modifies precision.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 1
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "plane_shift",
+      "name": "Plane Shift",
+      "level": 7,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "forked metal rod worth 250 gp attuned to target plane",
+        "m_consumed": false,
+        "m_cost_gp": 250
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Self and up to 8 willing creatures, or unwilling creature on failed CHA save, transported to another plane.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 1
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "mind_blank",
+      "name": "Mind Blank",
+      "level": 8,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touched creature immune to psychic damage, charm, mind-reading, and divination for 24 hours.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 0,
+        "creation": 0
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "incendiary_cloud",
+      "name": "Incendiary Cloud",
+      "level": 8,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "150 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "20-ft radius cloud of swirling flame. Heavily obscured. Each creature entering or starting turn there: DEX save, 10d8 fire damage on fail, half on success. Cloud moves 10 ft per turn in chosen direction.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "10d8",
+      "damage_type": "fire",
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 2
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "meteor_swarm",
+      "name": "Meteor Swarm",
+      "level": 9,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "1 mile",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Four 40-ft radius spheres of fire crash to ground at chosen points. Each creature in sphere: DEX save, 20d6 fire + 20d6 bludgeoning damage on fail, half on success. Ignites flammables. Canonical world-event.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "damage_dice": "40d6",
+      "damage_type": "fire/bludgeoning",
+      "cost_layer": {
+        "fatigue": 5,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 3
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "time_stop",
+      "name": "Time Stop",
+      "level": 9,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Briefly halt time for everyone but self. 1d4+1 turns of free actions. Spell ends if action affects creature other than self, or object worn/carried by another. Reality-altering at the highest level.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 5,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 3
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "wish",
+      "name": "Wish",
+      "level": 9,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "The mightiest spell. Duplicate any spell of L8 or lower without components. Or alter reality per DM negotiation. Uses beyond duplication: 33% chance never to cast again; STR drops to 3 for 2d4 days; cannot cast any spell for 2d4 days. Canon-event-creating; explicit Authority cost.",
+      "save_type": null,
+      "attack_kind": null,
+      "cost_layer": {
+        "fatigue": 6,
+        "notice": 4,
+        "corruption": 2,
+        "authority": 4,
+        "ruin": 3,
+        "creation": 3,
+        "scaling_rule": "L9 fixed. Always invokes canon-progression event."
+      },
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "listen_true",
+      "name": "Listen True",
+      "level": 0,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Cup your hand near (but not on) your ear. For the next minute, hear what subjects within 30 ft are NOT saying — refusals, omissions, the shape of unspoken sentences. Does not yield specific words. Reveals only that an omission is present and roughly toward what subject. Wild twist: target gets WIS save only if they are deliberately concealing something; otherwise no save.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_listening"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "half_memory",
+      "name": "Half-Memory",
+      "level": 0,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch object or place. Pull a single image from a witness this place once held — a face, a gesture, a word, a state. The image is hazy and not interrogable; you cannot 'zoom in' or ask follow-ups. Wild twist: the spell SHARES the memory with you. If the witnessed thing was traumatic, you experience a flash of the emotion at cast.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_memory_spells"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "mark_stay",
+      "name": "Mark Stay",
+      "level": 0,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": true,
+        "m_text": "a fingertip's worth of dust, ash, or salt",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Leave an invisible mark on object or place. Mark is detectable to scryers, Mark Stay casters, and creatures with True Seeing. Holds caster's name-signature. Mark persists until removed by Dispel Magic or until caster releases it. Wild twist: marks accumulate; a place with 3+ marks from same caster gets +1 to any divination targeting that place.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "speak_not",
+      "name": "Speak Not",
+      "level": 0,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Speak the forbidden category aloud (e.g., 'the name of the dead'). Target within 30 ft makes WIS save. On fail, for next turn, target cannot say words belonging to that category. Speech-based attacks/components fail. Target aware they cannot speak. Wild twist: if target's own faith forbids the category (cleric vs heresy, etc.), save is at disadvantage.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "borrowed_light",
+      "name": "Borrowed Light",
+      "level": 0,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Light from a place that already has light — a hearth in a tavern down the street, a candle in a temple, a torch in a tomb. Bright light 20-ft, dim light 20-ft more. Wild twist: at cast, you GLIMPSE the place light was borrowed from (1 second of vision). If the borrowed place loses its light source, your light goes out.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "trick_echo",
+      "name": "Trick Echo",
+      "level": 0,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Throw a sound. Choose any sound made within last 10 seconds within 30 ft of you, and any point within 60 ft. Sound seems to originate from chosen point. Listeners: WIS(Insight) check vs caster's spell save DC to disbelieve. Wild twist: 'borrowing' someone else's voice this way (e.g., to imitate them) creates a witness mark on that person (cantrip-tier; no canon-cost, but persistent).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_resonance"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "slip_sight",
+      "name": "Slip Sight",
+      "level": 0,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "For the next minute, casual observers fail to remember seeing you. They register your presence in the moment but cannot recall it after. Does not affect alert/searching observers; does not work against creatures actively looking for you. Wild twist: the LESS interesting your action while Slip Sight is active, the longer the forgetting holds — interesting acts (combat, speech, theft) collapse the effect.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "lattice_turn",
+      "name": "Lattice Turn",
+      "level": 0,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a small physical detail. Bend one property: heat ↔ cold (within 10 degrees), wet ↔ dry, smooth ↔ rough, heavy ↔ light (within 10% mass), bright ↔ dim. Inversion lasts up to a minute. Object's owner (if any) may make WIS save to feel the change. Wild twist: if you cast Lattice Turn on the same object twice in the same scene, the second cast costs 1 Fatigue (despite being a cantrip).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_lattice_shifts"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "witness_true",
+      "name": "Witness True",
+      "level": 0,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Compel target within range to reveal one single truth they hold and recall in this moment. CHA save resists. On fail, target says one true sentence; cannot exceed 12 words; cannot be about a memory the target does not believe. Target aware they revealed the truth. Wild twist: if you cast Witness True with NO witnesses (other than target) present, save DC +2. If 3+ witnesses present, save DC -2.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "name_pull",
+      "name": "Name Pull",
+      "level": 0,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Try to feel a target's name within range. INT check vs target's CHA save. On success, learn one name target uses (chosen-name, true-name, or used-name — random on a tie). On fail, gain nothing; target gains awareness someone tried to pull a name. Wild twist: this cantrip cannot be cast on the same target twice within the same long rest cycle; the target's name 'sets' against you for that window.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "inversion_touch",
+      "name": "Inversion Touch",
+      "level": 0,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch an object or willing creature. Invert one declared property for up to 1 minute: hunter ↔ hunted (purely descriptive in target's awareness), owner ↔ owned (subject feels confused which is which), spoken ↔ unspoken (last sentence target spoke now reads as withheld). No mechanical effect beyond perception shift. Wild twist: if cast at a moment when subject was actively performing the inverted property, the shift becomes a brief disorientation (-1 to next action).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "echo_call",
+      "name": "Echo Call",
+      "level": 0,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a place. The last sound made in this place (within last 10 minutes) replays once, audible only to you. Cannot capture sounds the place could not have heard. Wild twist: places that have hosted violent acts often produce ECHOES INCONSISTENT with the witness record — useful for detecting tampering, hauntings, or contradiction.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null
+    },
+    {
+      "spell_id": "compel_recall",
+      "name": "Compel Recall",
+      "level": 1,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Target WIS save. On fail, target recalls and speaks aloud a specific memory you describe (must be plausibly in their lived experience). Memory may be incomplete; target speaks what they actually remember, not what you wish. Target aware they were compelled. Twist: if target has Modify Memory active on the target memory, Modify Memory entry becomes visible to scrying.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1 target per slot level above 1; targets within 30 ft of each other."
+      }
+    },
+    {
+      "spell_id": "forbid_step",
+      "name": "Forbid Step",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a line of salt, ash, or chalk drawn across path",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Forbid a single direction or destination to one target you can see. WIS save. On fail, target cannot move in chosen direction for duration; forced to find alternate path. Target aware. Twist: if target's own oath or vow already forbids the direction, save at disadvantage.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: +1 target per slot level above 1."
+      }
+    },
+    {
+      "spell_id": "call_borrowed_blade",
+      "name": "Call Borrowed Blade",
+      "level": 1,
+      "school": "conjuration",
+      "casting_time": "1 bonus action",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Pull a weapon from a place that already has it (a tavern's hearth-poker, a temple's offering knife, a dead soldier's belt). For 10 turns, you wield a Simple weapon proficient with. Weapon returns to its place when spell ends. Twist: weapon's previous owner gains awareness it was borrowed; in some regions this triggers Notice +1.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_bolt",
+      "name": "Contradiction Bolt",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Ranged spell attack. On hit, 1d6 force damage. ADD +1d6 force damage per active belief in target's belief-ledger that contradicts a recent action target took. (State Manager queries belief vs event log; max +3d6.) Twist: this spell, by being NAMED what it is, makes the target briefly aware of their own contradictions during the strike — Insight check by target available next turn against caster.",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "1d6+X",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L2+: base +1d6 per slot level above 1; contradiction bonus unchanged."
+      }
+    },
+    {
+      "spell_id": "hum_of_witnesses",
+      "name": "Hum of Witnesses",
+      "level": 1,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (30-ft radius)",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "bard",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Low resonant hum surrounds you. Allies in radius gain +1 to attack/save when at least 3 other creatures are observing the combat (audience-as-power). Twist: if combat is in a place historically associated with mass-witness events (a square, a court, a market), bonus increases to +2.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_resonance"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "step_aside_from_memory",
+      "name": "Step Aside from Memory",
+      "level": 1,
+      "school": "illusion",
+      "casting_time": "1 reaction (when targeted)",
+      "range": "self",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Reaction when targeted by attack roll or save-spell. Caster makes WIS check vs attacker's INT (Investigation). On success, attacker forgets target was there for that exact moment — attack auto-misses or spell fails to acquire target. Single use per casting. Twist: this cannot be used on creatures that have a recorded memory of you (already a witness).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "inherit_voice",
+      "name": "Inherit Voice",
+      "level": 1,
+      "school": "necromancy",
+      "casting_time": "10 minutes",
+      "range": "touch",
+      "duration": {
+        "kind": "until_short_rest"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "hair, blood, or saliva from the target",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "bard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a body of a creature dead within last 24 hours. Inherit their voice (pitch, accent, vocal quirks). Speak as them until next short rest. Does not grant their memories or knowledge. Twist: if the dead person had any active Naming-spell on them, the spell transfers to the caster.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "smaller_than_a_thought",
+      "name": "Smaller than a Thought",
+      "level": 1,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": true,
+        "m_text": "a folded slip of paper",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch an object no larger than a dagger. For up to 1 hour, object is small enough to be unnoticed by casual senses — fits in any pocket, slides under any door, is overlooked at a glance. Detect by careful search. Twist: while shrunk, the object cannot affect the world (a dagger cannot cut). Reverts on caster's command or duration end.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_lattice_shifts"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "reverse_question",
+      "name": "Reverse Question",
+      "level": 1,
+      "school": "transmutation",
+      "casting_time": "1 reaction (when asked a question)",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "bard",
+        "warlock",
+        "wizard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Reaction when asked a question by a creature within 30 ft. Reverse the question back to the asker — they must answer it (with normal social/save consequences for the FORMAT of the original question — Charm-Person-style asker faces their own save). Twist: if asker was casting a divination on you when they asked, the divination redirects to themselves.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "witness_brand",
+      "name": "Witness Brand",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "ash, ink, or wax marked into target's skin or armor",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Brand a target (willing or restrained) with an invisible witness mark. Mark is visible to: caster, anyone who casts Detect Magic, anyone with True Seeing. Mark persists until removed. Useful for tracking debts, slaves, oaths. Twist: if target removes the mark, the WORLD remembers — Notice +1 in regions where they enter. Permanent records-cost.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "call_name",
+      "name": "Call Name",
+      "level": 1,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "bard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Speak a name aloud. If a creature with that name is within 60 ft, they MUST make WIS save. On fail, they are compelled to acknowledge they are the named one. Does not work on creatures using a chosen-name; works only on the true-name they were given. Twist: caster must KNOW the name beforehand (via Name Pull cantrip or other means) — bluffing the name with no info auto-fails.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "lend_breath",
+      "name": "Lend Breath",
+      "level": 1,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "druid",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a willing creature. For 1 minute, target can breathe in any medium (water, smoke, poisoned air) — your breath supports them. Caster loses 1 HP per turn while supporting; cannot be cast on self. Twist: if caster reaches 0 HP, both die; this is a Death-Bond cantrip in some traditions.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "compel_full_recall",
+      "name": "Compel Full Recall",
+      "level": 2,
+      "school": "divination",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a polished mirror or still water",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Target WIS save. On fail, target recalls a specific scene from their lived past (caster specifies time-window and topic) in full. Memory plays in target's mind 1d4 turns; target may speak or act on it. Useful for interrogation. Twist: the memory recalled is the most ACCURATE one matching the request, not the most flattering — target may relive trauma, shame, etc.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: target can be restrained from speaking; useful for forced testimony."
+      }
+    },
+    {
+      "spell_id": "forbid_naming",
+      "name": "Forbid Naming",
+      "level": 2,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "target's true-name spoken at cast",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Speak target's true-name (must know it). WIS save. On fail, target cannot speak their own name aloud for duration. Saves automatically when 3 cumulative attempts to speak fail. Useful for hiding identities. Twist: if target violates the forbidding (mouths the name, writes it), target takes 2d6 psychic damage and concentration breaks.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "borrowed_servant",
+      "name": "Borrowed Servant",
+      "level": 2,
+      "school": "conjuration",
+      "casting_time": "1 minute",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "coin worth at least 5 cp",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Pull a servant — a tavern girl carrying empty plates, a stable hand carrying tack, a temple acolyte carrying offerings — from where they were. They appear with whatever they carried, follow simple commands, return when spell ends. They retain their memory; they SAW where they went. Twist: borrowed servant remembers and may report — Notice +1, social_visible.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_lance",
+      "name": "Contradiction Lance",
+      "level": 2,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "100 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Ranged spell attack against creature within range. On hit, 3d6 force damage + 1d6 per current contradiction in target's contradiction_ledger (max +3d6). Targets with NO contradictions take only the base damage. Twist: if target has 5+ contradictions, additional damage type becomes psychic (mind-load of unresolved truth).",
+      "save_type": null,
+      "attack_kind": "ranged",
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "3d6+X",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L3+: base +1d6 per slot level above 2."
+      }
+    },
+    {
+      "spell_id": "resonant_silence",
+      "name": "Resonant Silence",
+      "level": 2,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard",
+        "cleric"
+      ],
+      "concentration": true,
+      "ritual_eligible": true,
+      "description_template": "Create 20-ft radius zone of focused silence — different from Silence in that ONLY creatures with witness-marks against caster are silenced in the zone. Witnesses speak; non-witnesses cannot. Reveals witness-ledger of attendees by sound-test. Twist: target gains awareness they are a witness against caster.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_resonance",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "forget_my_face",
+      "name": "Forget My Face",
+      "level": 2,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "bard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "All creatures who saw your face within last 10 minutes make WIS save. On fail, they cannot recall your face's specifics — they remember you were 'there' but not what you looked like. Doesn't affect witnesses with marks against you. Twist: cannot be cast on someone you've named (their memory of you is tied to your name; forget-spell breaks against the binding).",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "call_last_sight",
+      "name": "Call Last Sight",
+      "level": 2,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "the dead one's eyelashes or a coin closed in their eyes",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch corpse of creature dead within last 1 hour. See — once — what the corpse saw in its final 10 seconds before death. Useful for murder investigation, ambush analysis. Twist: if caster matches the dead's killer/predator, the corpse's last-sight INCLUDES the witnessing fact that the corpse 'recognized' the killer at death — Notice +2 if killer is a faction-member.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "lattice_dim",
+      "name": "Lattice Dim",
+      "level": 2,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 8
+      },
+      "components": {
+        "v": false,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "druid"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch an object up to large-size (10-ft cube). Reduce its perceived weight, color, or sound by 50% for 8 hours. Useful for stealthy heavy gear, dim-lit illusions, quieting noisy mechanisms. Twist: when duration ends, the property snaps back to NORMAL with a single moment of OVER-correction (object briefly feels heavier, brighter, louder than usual).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_lattice_shifts"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "invert_target",
+      "name": "Invert Target",
+      "level": 2,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Choose a creature; choose a relationship pair (predator/prey, hunter/quarry, accuser/accused, owner/owned). Target WIS save. On fail, target perceives the relationship as INVERTED for duration. A wolf seems prey to deer; a magistrate seems accused to their prisoner. Twist: useful in chase scenes — Target's awareness rebels against the inversion every turn but holds throughout the scene.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "inscribe_witness",
+      "name": "Inscribe Witness",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 minute",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "ink and a piece of cured leather or paper",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "bard",
+        "wizard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Inscribe an event onto a piece of paper/parchment/leather. Inscription is canonical: that EVENT IS NOW A FACT in the world's memory. Used to seal contracts, mark oaths, record births/deaths. Acts as durable witness against contradiction. Twist: writer must have BEEN A WITNESS to event personally; cannot inscribe events you only heard about.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "share_name",
+      "name": "Share Name",
+      "level": 2,
+      "school": "enchantment",
+      "casting_time": "1 minute",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Share your name with willing target. For duration, target may answer to your name; spells/effects targeting 'you-by-name' may target either. Useful for body-doubles, decoys. Twist: any witness-marks against you SPREAD to target during share — protected names spread debt.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "borrowed_strength",
+      "name": "Borrowed Strength",
+      "level": 2,
+      "school": "transmutation",
+      "casting_time": "1 action",
+      "range": "touch",
+      "duration": {
+        "kind": "n_turns",
+        "n": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a bit of bone, animal-hair, or muscle-fiber",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "druid",
+        "cleric",
+        "ranger"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch willing creature. Target gains +2 STR (max 22) for 10 turns. Twist: STR is BORROWED from the bone/hair source (or the creature it belonged to). If source-creature is alive, it loses 2 STR during the spell — useful as offering, dubious if non-consensual.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_lattice_shifts",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "compel_testify",
+      "name": "Compel Testify",
+      "level": 3,
+      "school": "divination",
+      "casting_time": "1 minute",
+      "range": "30 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a wax tablet or paper to be marked",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Target CHA save. On fail, target must testify aloud, truthfully, about a topic the caster specifies for 1 hour. Target may refuse to speak (silence is not lying) but cannot deceive. Civic and religious courts use derivatives of this spell. Twist: testimony becomes canonical witness — recorded as Inscribe-Witness-equivalent.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "forbid_action",
+      "name": "Forbid Action",
+      "level": 3,
+      "school": "abjuration",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a closed door, a sheathed blade, or a sealed scroll",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Name an action category (attack, lie, leave, draw weapon, take, etc.). Target WIS save. On fail, target cannot perform that category for duration. Performing forbidden act costs 5d6 psychic damage + concentration break on caster's behalf if target persists. Twist: forbidding can BACKFIRE — if target is in a situation where the forbidden action is required for survival, they may snap the forbidding at 3d6 psychic damage and the caster takes equal damage.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "call_borrowed_steed",
+      "name": "Call Borrowed Steed",
+      "level": 3,
+      "school": "conjuration",
+      "casting_time": "10 minutes",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 480
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a piece of rope, a knot of grass, or coin",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "druid"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Pull a riding-beast from a place that already had it (a stable, a field, a temple grounds). Beast appears within range; serves as mount; returns when spell ends or you dismount permanently. Twist: beast is REMEMBERED by its owner — borrowing without consent is theft in many regions (Notice +2, social_visible).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_storm",
+      "name": "Contradiction Storm",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft (20-ft radius)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Sphere of force-pulse at point. Each creature in radius: DEX save. Damage = 2d6 + 1d6 per contradiction in EACH target's individual ledger (max +3d6 per target). Twist: if 3+ targets each have 3+ contradictions, ALL targets ALSO take an additional 1d6 force damage from the cascade.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "2d6+X",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "recall_to_witnesses",
+      "name": "Recall to Witnesses",
+      "level": 3,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "self (60-ft radius)",
+      "duration": {
+        "kind": "n_turns",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Creatures within radius who witnessed any of your past actions in last 24 hours must each pass WIS save or briefly RELIVE one of those moments (caster chooses which moment per target). For 1 turn, target is dazed. Useful in interrogation scenes, courts, sieges. Twist: if a memory the caster recalls is publicly KNOWN to be a lie (per contradiction_ledger), the spell rebounds — caster takes 2d8 psychic.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_resonance",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "become_negligible",
+      "name": "Become Negligible",
+      "level": 3,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "bard",
+        "sorcerer"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "For 1 hour, you are MUNDANE to passive observers. People register your presence, do not notice you, do not remember you specifically. Cannot be tracked by mundane means; magical tracking has disadvantage. Acting hostile or memorably breaks the effect. Twist: any creature who has named you (Name Pull, Share Name, etc.) is IMMUNE — naming overrides negligibility.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "speak_to_recent_dead",
+      "name": "Speak to Recent Dead",
+      "level": 3,
+      "school": "necromancy",
+      "casting_time": "10 minutes",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "an item the dead person held in their last day",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "bard",
+        "cleric",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch the body of a creature dead within last 24 hours. Speak to them for up to 10 minutes. Dead does NOT know what they did not know in life; cannot lie because they have no will; answers terse and partial. Twist: each question costs caster 1 Fatigue beyond the cast's base. The dead's memories may include the SPELL that killed them — useful detective tool.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "inscribe_property",
+      "name": "Inscribe Property",
+      "level": 3,
+      "school": "enchantment",
+      "casting_time": "10 minutes",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "chisel, hammer, ink, or a sigil-ring",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "wizard",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Permanently mark an object as YOURS in the world's witness-record. Object's ownership reads as caster's to all divinations, all faction tribunals, all witness-bound contracts. Twist: object can have only ONE inscribed owner at a time; the previous owner's mark must be removed first (Dispel Magic at DC 17 OR caster releases) — theft via this spell creates a contradiction.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "speak_the_unspoken_name",
+      "name": "Speak the Unspoken Name",
+      "level": 3,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "warlock",
+        "cleric"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Caster speaks a name target has hidden (chosen-name, dead-name, true-name). Target makes CHA save with disadvantage. On fail, target's name-of-record becomes the spoken name for 24 hours — faction tribunals, witness-marks, and divinations all read by spoken-name. Twist: in regions with Bell-Court-style civic record systems, this spell is itself a CIVIC FORGERY (canon-event).",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "hum_the_underworld",
+      "name": "Hum the Underworld",
+      "level": 3,
+      "school": "necromancy",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "warlock",
+        "cleric",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Hum a deep tone. Up to 6 creatures within 30 ft make WIS save; on fail, they hear voices of their own RECENTLY DEAD speaking softly to them. Voices say things the dead would have said; not lies, not necessarily what they actually said. Targets are unsettled (Fatigue +1 for them at next turn). Twist: if any target has CHA <= 8 (low willpower), they spend their next turn following the voice — described by caster — toward a chosen direction.",
+      "save_type": "wis",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "trial_of_compels",
+      "name": "Trial of Compels",
+      "level": 4,
+      "school": "divination",
+      "casting_time": "1 minute",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a balance scale or pair of weighing stones",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Up to 6 creatures within range. Each makes CHA save independently. Failed: target must testify truthfully about a topic caster names; cross-testimony allowed. Spell registers contradictions automatically — any speaker contradicting another marks both with witness-marks. Twist: the cast becomes a recorded civic-tribunal event (canon-event); useful for adjudicating faction disputes.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "borrow_the_dead",
+      "name": "Borrow the Dead",
+      "level": 4,
+      "school": "conjuration",
+      "casting_time": "10 minutes",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "an item that belonged to the dead person and a coin worth 50 gp",
+        "m_consumed": true,
+        "m_cost_gp": 50
+      },
+      "classes_allowed": [
+        "wizard",
+        "cleric",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Pull a creature dead within last 7 days back into the world's space (not their body — a borrowed-presence). For up to 1 hour, dead is corporeal, speaks, holds objects. Returns to wherever they went when spell ends. Twist: dead's witness becomes part of YOUR witness-ledger for the conversation; they may speak truths that mark you to factions they were aligned with.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_geyser",
+      "name": "Contradiction Geyser",
+      "level": 4,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "60 ft (15-ft cone)",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Cone of contradiction-force from caster's hand. Each creature in cone makes DEX save. Damage: 5d6 + 1d6 per contradiction in target's ledger (max +5d6 per target). Twist: if the SUM of all targets' contradictions in cone is >= 10, the cone leaves behind a temporary CONTRADICTION-CHARGED ZONE — creatures entering for next 3 turns take 1d6 force damage.",
+      "save_type": "dex",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "5d6+X",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "unwitness_self",
+      "name": "Unwitness Self",
+      "level": 4,
+      "school": "illusion",
+      "casting_time": "1 action",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a black cloth or a closed locket",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "For 24 hours, your existence is reduced in the world's memory. All faction-awareness of you drops by 2 (minimum 0). All Notice scores against you are -2. Witnesses of your past acts find their memories of you weaker. Twist: spell does NOT remove canon-event credits or contradiction_ledger entries — only the social-record layer. If exposed during effect, all factions' Notice +3 immediately (counter-revelation).",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "transplant_memory",
+      "name": "Transplant Memory",
+      "level": 4,
+      "school": "necromancy",
+      "casting_time": "1 minute",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a vial of fresh blood from each of donor and recipient",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch two willing creatures (or one willing + one helpless). Move ONE specific memory from donor to recipient. Donor loses memory permanently (Dispel Magic does not restore). Recipient gains it as if their own. Twist: donor may suffer 1d8 Corruption damage from the transplant (memory is part of self). If memory is core-to-identity (a vow, a first love, a death), Corruption is 2d8.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_memory_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "greater_marking",
+      "name": "Greater Marking",
+      "level": 4,
+      "school": "enchantment",
+      "casting_time": "10 minutes",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a brand-iron, a tattoo needle and ink, or a sigil-ring",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "paladin",
+        "wizard",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Permanently mark target with a visible, magically-resistant brand. Brand identifies target as bearer of a specific debt, oath, faction, or status. Brand is +5 to faction-recognition checks. Removal: surgical (only Lesser Restoration or Remove Curse + Faith +3 cleric). Twist: this is what civic and religious institutions use to mark heretics, debtors, oath-breakers — common as a punishment, not a player-only spell.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "name_truth",
+      "name": "Name Truth",
+      "level": 5,
+      "school": "enchantment",
+      "casting_time": "1 minute",
+      "range": "touch",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 10
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "the target's true-name written on parchment in caster's blood",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Touch target whose true-name caster has discovered. Target's true-name is REVEALED to all creatures within 60 ft simultaneously. Target makes CHA save with disadvantage. On fail, name spreads as canonical truth — target's relationships, witness-marks, contracts all update to true-name. Twist: in regions where civic records use chosen-names, this spell forces civic correction (canon-event).",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "reclaim_borrowed",
+      "name": "Reclaim Borrowed",
+      "level": 5,
+      "school": "conjuration",
+      "casting_time": "1 action",
+      "range": "unlimited",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "All objects/creatures caster has borrowed via Borrowed-Things subschool spells in the past 7 days IMMEDIATELY return to their origins. Useful as escape; also useful for sudden honesty. Twist: any 'witnesses' of the previous borrowings now have a moment of clarity — Notice +1 per borrowing now exposed.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_doom",
+      "name": "Contradiction Doom",
+      "level": 5,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "120 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a list of target's known contradictions, written and consumed",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Target with 5+ contradictions in their ledger. Target makes CON save with disadvantage. On fail, takes 12d6 force damage. On success, takes 6d6. Twist: if target dies from this spell, their contradiction_ledger entries become PERMANENT canonical world-record — useful for ending heretic-cults via the spell that names their heresies.",
+      "save_type": "con",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "12d6",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "erase_record",
+      "name": "Erase Record",
+      "level": 5,
+      "school": "illusion",
+      "casting_time": "1 hour",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a written/painted/sculpted record of caster, destroyed at cast",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock",
+        "bard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Permanently erase ONE canonical record (a civic ledger entry, a temple birth-record, a faction-roster line) about caster from the world. Record cannot be restored by mundane means. Twist: erasing creates a contradiction (the civic ledger is now wrong); skilled investigators may detect the hole. Canon-event with major ripples.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "seance_long_dead",
+      "name": "Seance of the Long-Dead",
+      "level": 5,
+      "school": "necromancy",
+      "casting_time": "10 minutes",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "7 unworked stones, salt, and incense worth 100 gp",
+        "m_consumed": true,
+        "m_cost_gp": 100
+      },
+      "classes_allowed": [
+        "cleric",
+        "warlock",
+        "bard"
+      ],
+      "concentration": true,
+      "ritual_eligible": true,
+      "description_template": "Summon the echo of one creature dead more than 1 year. Echo speaks for up to 1 hour, answers questions. Knows nothing of events after their death; reports their own death and remembered life. Twist: echoes of creatures murdered may name their killer if asked — this spell is the foundation of some judicial systems in some regions.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_echoes",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "invert_status",
+      "name": "Invert Status",
+      "level": 5,
+      "school": "transmutation",
+      "casting_time": "1 minute",
+      "range": "60 ft",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "wizard"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Choose two creatures bound in a status-relationship (master/slave, captor/captive, owner/owned, husband/wife under coverture, lord/vassal). Both make CHA save (the one losing status has disadvantage). On both-fail, status INVERTS for 24 hours — witnesses-of-record acknowledge new relationship. Twist: most regions consider this canonical-altering; using it on a faction-bound pair triggers faction Notice +5. Canon-event.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "forbid_destiny",
+      "name": "Forbid Destiny",
+      "level": 6,
+      "school": "abjuration",
+      "casting_time": "1 hour",
+      "range": "touch",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 168
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "diamond worth 1000 gp set in lead",
+        "m_consumed": true,
+        "m_cost_gp": 1000
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Target a creature. For 1 week, target cannot fulfill ONE specific prophecy, vow, or oath caster names. Target aware. Reality bends to prevent the forbidden destiny. Twist: at end of week, REALITY OVERCOMPENSATES — destiny may occur in altered/worse form. Canon-event explicitly.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_forbiddings",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "call_the_almost_remembered",
+      "name": "Call the Almost-Remembered",
+      "level": 6,
+      "school": "conjuration",
+      "casting_time": "10 minutes",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 60
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a portrait of the called-upon, drawn from memory at cast",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Summon a partial-being from caster's memory — a person who never existed but who caster vividly imagined, or a person who existed but whose memory is fragmented. Partial-being can speak, hold objects, last for 1 hour. Twist: partial-being cannot lie about not-being-real if directly asked — knowing this can collapse the summon early.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_half_summon"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "contradiction_collapse",
+      "name": "Contradiction Collapse",
+      "level": 6,
+      "school": "evocation",
+      "casting_time": "1 action",
+      "range": "unlimited",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "the target's contradiction_ledger written out and burned",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Single creature with 7+ contradictions. CON save with disadvantage. On fail, target collapses — their contradictions ALL RESOLVE simultaneously, causing 18d6 psychic + 18d6 force damage. On success, half. Twist: target's contradiction_ledger is RESET to empty after spell — useful as cleansing for cooperating heretics, brutal as execution for hostile ones.",
+      "save_type": "con",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "36d6",
+      "damage_type": "psychic/force",
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "walking_unwitnessed",
+      "name": "Walking Unwitnessed",
+      "level": 6,
+      "school": "illusion",
+      "casting_time": "1 minute",
+      "range": "self",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 168
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": false
+      },
+      "classes_allowed": [
+        "wizard",
+        "bard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "For 1 week, caster is functionally INVISIBLE to all faction-record systems. Witness-marks do not stick. Civic records record nothing of caster's passage. Faction-awareness scores cannot increase. Twist: caster cannot take ACTIONS that would intrinsically require record (signing contracts, claiming property, voting in tribunals). Reality holds; the social fabric stays smooth around an unrecorded passage.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "major_transplant",
+      "name": "Major Memory Transplant",
+      "level": 6,
+      "school": "necromancy",
+      "casting_time": "1 hour",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "five diamonds, each worth 250 gp",
+        "m_consumed": true,
+        "m_cost_gp": 1250
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Move up to 5 SPECIFIC memories from donor (willing or helpless) to recipient. Donor permanently loses them. Recipient acquires them as their own. Useful for creating sleeper-witnesses, doubled-agents, false heirs. Twist: recipient's identity may DESTABILIZE — Corruption check (DC 17 CHA) or recipient gains 1d6 stacks of Corruption permanently. Canon-event.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_memory_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "imprint_legacy",
+      "name": "Imprint Legacy",
+      "level": 6,
+      "school": "enchantment",
+      "casting_time": "8 hours",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "caster's own blood and an item from caster's lineage",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "cleric",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch unborn or newly-born child (within first hour of life). Imprint caster's faction-allegiance, oath, or witness onto child as their LEGACY. Child grows up bearing the mark; all factional/divine institutions read child as caster's appointed bearer. Twist: child may grow to reject the imprint — at age of accountability (varies by region), child gets one CHA save vs DC 18 to break free. Major canon-event.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_marking_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 0
+      }
+    },
+    {
+      "spell_id": "call_true_name",
+      "name": "Call True Name",
+      "level": 7,
+      "school": "enchantment",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": false,
+        "m": false
+      },
+      "classes_allowed": [
+        "cleric",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Speak target's true-name aloud, OR caster has done deep divination to know it. Target makes CHA save with disadvantage. On fail, target's true-name becomes UNIVERSALLY known — every creature within 5 miles intuits target's name. Target's name-of-record updates across all institutions. Twist: this is the spell that makes underground rebellions visible to civic authorities. Canon-event, major political consequence.",
+      "save_type": "cha",
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_naming_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 1
+      }
+    },
+    {
+      "spell_id": "unmake_a_witness",
+      "name": "Unmake a Witness",
+      "level": 7,
+      "school": "necromancy",
+      "casting_time": "1 hour",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a thousand candles burned out",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch a creature (willing or restrained). Remove ALL memories the creature has of a SPECIFIC subject (a person, a place, an event). Creature still exists, still has skills, but the named subject is gone from them as if it never was. Twist: in regions with strong civic-record systems, this is the ULTIMATE divorce spell. Canon-event with social ripple. May trigger faction-investigation if subject was high-status.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_memory_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 2,
+        "ruin": 2,
+        "creation": 1
+      }
+    },
+    {
+      "spell_id": "greater_inversion",
+      "name": "Greater Inversion",
+      "level": 7,
+      "school": "transmutation",
+      "casting_time": "1 hour",
+      "range": "unlimited",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 720
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a coin minted in caster's name and consumed",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Invert a single declared TRUTH for 1 month. ('The civic court is the heretic institution.' 'The temple's doctrine is the civic law.' 'The dead are the alive.') Inverted truth becomes operational reality — institutions, witnesses, divinations all conform to inversion. Twist: this is canon-cost on the order of dying to cast. Spell costs 4 Authority + 3 Ruin + 3 Creation. May trigger world-mutation event.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 5,
+        "notice": 3,
+        "corruption": 3,
+        "authority": 4,
+        "ruin": 3,
+        "creation": 3,
+        "scaling_rule": "L7 fixed. Always invokes major canon-progression event. Considered a deicide-tier spell in some traditions."
+      }
+    },
+    {
+      "spell_id": "contradiction_collapse_zone",
+      "name": "Contradiction Collapse Zone",
+      "level": 8,
+      "school": "evocation",
+      "casting_time": "1 hour",
+      "range": "60 ft (60-ft radius)",
+      "duration": {
+        "kind": "n_scenes",
+        "n": 24
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a list of every contradiction in this region",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "60-ft radius zone for 24 hours. Within zone, all creatures with ANY contradictions in their ledger take 1d6 force damage per turn (no save). Creatures with 5+ contradictions take 3d6. Witnesses inside zone hear/see contradictions they did not previously know. Twist: at end of duration, EVERYONE in the zone has their contradiction_ledger snapshot recorded as canonical — the zone HARDENS truth.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_contradiction_burst"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "damage_dice": "3d6/turn",
+      "damage_type": "force",
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "imprint_oblivion",
+      "name": "Imprint Oblivion",
+      "level": 8,
+      "school": "illusion",
+      "casting_time": "1 day",
+      "range": "touch",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a name carved into stone and ground to dust",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Touch willing or helpless target. Erase target from all civic, religious, and faction records WITHIN 100 MILES. Witnesses' memories fade within 1d10 days; written records molder. Target still exists corporeally but is rec-orically GONE. Twist: target gains immunity to faction-tribunals; target also cannot inherit, marry-of-record, or be officially acknowledged. Some regions consider this a form of legal death.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_unbecoming",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "song_of_borrowed_centuries",
+      "name": "Song of Borrowed Centuries",
+      "level": 8,
+      "school": "conjuration",
+      "casting_time": "8 hours",
+      "range": "60 ft",
+      "duration": {
+        "kind": "concentration",
+        "max_minutes": 480
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a relic from the borrowed era, returned at end",
+        "m_consumed": false
+      },
+      "classes_allowed": [
+        "bard",
+        "warlock",
+        "wizard"
+      ],
+      "concentration": true,
+      "ritual_eligible": false,
+      "description_template": "Pull a chunk of time-borrowed reality (1-3 minutes from another century, era, or culture) into a 60-ft sphere. Within the sphere, period-appropriate beings, objects, and conditions briefly manifest. Useful for staging historical reproductions, alarming opponents with their own ancestors, or summoning extinct creatures. Twist: borrowed time MUST return — at spell end, anything in the sphere with the borrowed era goes back. Beings cannot stay. Items must return.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_borrowed_things",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 4,
+        "notice": 3,
+        "corruption": 0,
+        "authority": 3,
+        "ruin": 2,
+        "creation": 2
+      }
+    },
+    {
+      "spell_id": "witness_of_the_universe",
+      "name": "Witness of the Universe",
+      "level": 9,
+      "school": "divination",
+      "casting_time": "24 hours",
+      "range": "self",
+      "duration": {
+        "kind": "instant"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "every relic, every blood-binder, every truenamed thing within reach",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock",
+        "cleric",
+        "paladin"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "After 24 hours of preparation, caster gains a 1-minute window in which they can ask ONE question of the world's witness-record. World answers truthfully and exhaustively — including events caster did not witness, things hidden from caster, contradictions. Twist: caster gains 3d10 Corruption + 2d6 Notice across all factions; canon-event of the highest tier. Some practitioners consider this a deicide-adjacent spell.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_witness_spells",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 8,
+        "notice": 5,
+        "corruption": 4,
+        "authority": 4,
+        "ruin": 2,
+        "creation": 2,
+        "scaling_rule": "L9 fixed. Major canon-progression event. Considered cursed in some traditions."
+      }
+    },
+    {
+      "spell_id": "unmake_a_truth",
+      "name": "Unmake a Truth",
+      "level": 9,
+      "school": "transmutation",
+      "casting_time": "1 hour",
+      "range": "unlimited",
+      "duration": {
+        "kind": "permanent"
+      },
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a lie sustained for 10 years and made canonical",
+        "m_consumed": true
+      },
+      "classes_allowed": [
+        "wizard",
+        "sorcerer",
+        "warlock"
+      ],
+      "concentration": false,
+      "ritual_eligible": false,
+      "description_template": "Choose a single canonical truth in the world (a faction exists, a deity is named X, a region's history happened a certain way). Caster makes a series of CHA checks vs world-resistance DC (20 to 30 based on truth's depth). On success, truth is UNMADE — the world updates to reflect the new (or absent) reality. Twist: this is THE deicide-tier spell. Casting this is itself a canon-event of maximum severity. The world MAY refuse — DC scaling means most casters cannot cast this without preparation, allies, and willing canon-progression sacrifice.",
+      "save_type": null,
+      "attack_kind": null,
+      "domain_aligned": [
+        "subschool_inversions",
+        "imposed_eligible"
+      ],
+      "regional_school_id": null,
+      "regional_origin_id": null,
+      "regional_pantheon_alignment": null,
+      "cost_layer": {
+        "fatigue": 10,
+        "notice": 5,
+        "corruption": 5,
+        "authority": 5,
+        "ruin": 5,
+        "creation": 5,
+        "scaling_rule": "L9 fixed. Maximum canon-progression event. Considered apocalyptic by most institutions."
+      }
+    }
+  ]
+}

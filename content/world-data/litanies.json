@@ -1,0 +1,434 @@
+{
+  "litanies": [
+    {
+      "litany_id": "salt_litany_of_three_becoming",
+      "title": "The Salt Litany of Three Becoming",
+      "text_body": "three becomes one becomes none / and what was three remembers being one / and what was one remembers being three / and the witness keeps the count",
+      "mechanical_effect": "On full hearing: +1 path:silence credit; +1 Notice from The Unnamed; substrate_practicing_word exposure event seeded for listener.",
+      "voice_register": "unspecified",
+      "rite_kind": "Recited at the salt vigil; spoken by Marrow-Saints when the ",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_marrow_saint_ilyra",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Recited at the salt vigil; spoken by Marrow-Saints when the fountain answers. Hearing the full four lines exposes substrate_practicing_word for the listener for 1d4 in-world days.",
+      "tags": [],
+      "tone_tags": [
+        "counting",
+        "becoming",
+        "witness",
+        "drowned_church"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "wave_counters_count",
+      "title": "The Wave-Counter's Count",
+      "text_body": "one for the drowned / one for the named / one for the witness who keeps the count / and one we do not say",
+      "mechanical_effect": "On full hearing: +1 path:law credit; Helm Faith Meter +1 if listener is on civic business.",
+      "voice_register": "unspecified",
+      "rite_kind": "Opens Bell Court hearings concerning drowning deaths. The fo",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_bell_magistrate_orro",
+      "origin_institution": "civic_bell_court_greywake",
+      "canonical_use": "Opens Bell Court hearings concerning drowning deaths. The fourth line is whispered, not spoken; whispering it aloud is a Court taboo (taboo_amend_ledger-adjacent).",
+      "tags": [],
+      "tone_tags": [
+        "counting",
+        "law",
+        "drowned",
+        "bell_court",
+        "the_unspoken_fourth"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "what_the_fountain_refuses",
+      "title": "What the Fountain Refuses",
+      "text_body": "what is given cannot return / unless the giver is unmade also / and what is unmade is not given but remembered / and what is remembered cannot be given again",
+      "mechanical_effect": "On full hearing: +1 path:silence; clarity +1 on first hearing only; subsequent hearings have no effect.",
+      "voice_register": "unspecified",
+      "rite_kind": "Whispered by the Listening Child at the dry fountain. Crucia",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_the_listening_child",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Whispered by the Listening Child at the dry fountain. Crucial to understanding the slice's central crisis (the fountain leaking upward = something is being unmade and remembered, not given back).",
+      "tags": [],
+      "tone_tags": [
+        "fountain",
+        "unmade",
+        "inversion",
+        "drowned_church",
+        "listening_child"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "practicing_word",
+      "title": "Practicing Word",
+      "text_body": "first you ask / second you call / third the world answers in your voice / and the fourth answer is your own name returning",
+      "mechanical_effect": "On full hearing near practicing water: substrate_practicing_word exposure event committed via state_diff; Authority +0.5 weight toward next canon-progression; Notice +1 from The Unnamed.",
+      "voice_register": "unspecified",
+      "rite_kind": "Spoken (or stuttered) by The Butcher Who Repeats during the ",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_the_butcher_who_repeats",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Spoken (or stuttered) by The Butcher Who Repeats during the repetition. The litany is the substrate_practicing_word pattern in litany form. Hearing all four lines while in the presence of practicing water binds the speaker into the substrate's witness chain.",
+      "tags": [],
+      "tone_tags": [
+        "practicing",
+        "name",
+        "self_return",
+        "butcher",
+        "drowned_church"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "litany_of_the_marrow_saints_hand",
+      "title": "Litany of the Marrow-Saint's Hand",
+      "text_body": "this hand has been salt / this hand has been bone / this hand has held a child to the water / this hand has held the water to a child / and the hand knows which it was",
+      "mechanical_effect": "On full hearing: enables the next healing-ritual or recovery-rite cast by a Marrow-Saint to operate at +1 effective level; +1 path:mercy credit on the listener if witnessed.",
+      "voice_register": "unspecified",
+      "rite_kind": "Spoken by Marrow-Saints before laying hands on a body (livin",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_marrow_saint_ilyra",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Spoken by Marrow-Saints before laying hands on a body (living or drowned). Required by Drowned Church doctrine before any healing or recovery ritual. Refusal to speak it before laying hands is a doctrine_doc_salt_first_witness violation.",
+      "tags": [],
+      "tone_tags": [
+        "hand",
+        "memory",
+        "drowned_church",
+        "healing"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "salt_vigil_round",
+      "title": "The Salt-Vigil Round",
+      "text_body": "we keep the salt because the salt kept us / we keep the watch because the watch keeps the salt / we keep the name because the name keeps the watch / and when one of three breaks, the other two carry",
+      "mechanical_effect": "Witnessing a complete round (3+ singers) grants Inspiration token to one listener at GM/World Director discretion; +1 Drowned Church faction reputation if listener participates.",
+      "voice_register": "unspecified",
+      "rite_kind": "Sung in round (overlapping voices) at the weekly salt vigil.",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_marrow_saint_ilyra",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Sung in round (overlapping voices) at the weekly salt vigil. The round structure means each line is held by at least two singers at any moment. If a singer drops, the litany continues. The doctrinal point is that Greywake's faith does not depend on any single voice.",
+      "tags": [],
+      "tone_tags": [
+        "vigil",
+        "round",
+        "redundancy",
+        "drowned_church"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "listing_of_the_names_not_spoken",
+      "title": "The Listing of the Names Not Spoken",
+      "text_body": "the name we do not say of the Mother / the name we do not say of the Practicing Voice / the name we do not say of the Child Who Listens / the name we do not say of the one who will come after the Child / and the name we do not say because we do not yet know it",
+      "mechanical_effect": "On full hearing: substrate_naming_taboo exposure event seeded for the listener for 1 in-world day; Authority +0.3 weight toward next canon-progression; +1 path:silence.",
+      "voice_register": "unspecified",
+      "rite_kind": "Recited at the annual remembrance vigil and at canon-events ",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_marrow_saint_ilyra",
+      "origin_institution": "drowned_church_greywake",
+      "canonical_use": "Recited at the annual remembrance vigil and at canon-events of significance ≥ 4. The fifth line is the doctrinally crucial one — the Drowned Church explicitly leaves space for unnamed-as-yet divinities. This is how the Church accommodates The Unnamed without doctrinal crisis.",
+      "tags": [],
+      "tone_tags": [
+        "naming_taboo",
+        "drowned_church",
+        "the_unnamed",
+        "doctrinal_space"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "bell_and_inkwell",
+      "title": "Bell-and-Inkwell",
+      "text_body": "the bell strikes at the hour / the inkwell sits at the bench / between the bell and the inkwell the Court is the Court / and outside the bell and the inkwell the Court is nothing",
+      "mechanical_effect": "Players who hear this litany at session opening gain legal-fiction knowledge: actions outside Court-time and Court-place are not Court-jurisdictional. May open new dialogue surfaces with NPCs who care about this distinction (lawyers, smugglers, escaped debtors).",
+      "voice_register": "unspecified",
+      "rite_kind": "Daily opening of Bell Court sessions. Defines the Court's ju",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_bell_magistrate_orro",
+      "origin_institution": "civic_bell_court_greywake",
+      "canonical_use": "Daily opening of Bell Court sessions. Defines the Court's jurisdiction as temporal and spatial: only between the bell-strike and the inkwell does Court law apply. Outside those bounds, Court has no claim. (This is the Court's own self-limiting doctrine; it is also why street-level Greywake events often go uncounted.)",
+      "tags": [],
+      "tone_tags": [
+        "bell_court",
+        "jurisdiction",
+        "law",
+        "opening"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "witness_clause",
+      "title": "The Witness Clause",
+      "text_body": "the witness names what the witness saw / the witness does not name what the witness believes / the witness does not name what the witness wishes / and what the witness wished is for the witness alone",
+      "mechanical_effect": "If sworn before testifying, the witness's testimony is treated as canonical observation (event.severity may be elevated); refusing to swear leaves testimony as belief (rumor-track instead of canon-track).",
+      "voice_register": "unspecified",
+      "rite_kind": "Spoken by a witness before testimony in Bell Court. The lega",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_bell_magistrate_orro",
+      "origin_institution": "civic_bell_court_greywake",
+      "canonical_use": "Spoken by a witness before testimony in Bell Court. The legal formula constrains testimony to observation, excluding inference and desire. The fourth line is a small mercy — the witness keeps their interior.",
+      "tags": [],
+      "tone_tags": [
+        "bell_court",
+        "law",
+        "testimony",
+        "interiority"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "what_the_ledger_records",
+      "title": "What the Ledger Records",
+      "text_body": "what the ledger records is what was / what the ledger does not record is not / what the ledger misspells was misspelled / and what the ledger crossed out was crossed out, not removed",
+      "mechanical_effect": "On full hearing: listeners who attempt to amend the visitor ledger receive Bell Court hostile-action prompt with +1 severity. Crossed-out names become legible to the listener for 1 in-world day (they can read what was 'removed').",
+      "voice_register": "unspecified",
+      "rite_kind": "Recited by Bell Court scribes when sealing the daily ledger.",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_bell_magistrate_orro",
+      "origin_institution": "civic_bell_court_greywake",
+      "canonical_use": "Recited by Bell Court scribes when sealing the daily ledger. The doctrinal force: the Court treats the visitor ledger as canonically authoritative even where it errs. The fourth line is what permits the contradiction ledger to coexist with civic law: a cross-out is itself a record.",
+      "tags": [],
+      "tone_tags": [
+        "bell_court",
+        "ledger",
+        "memory_vs_record",
+        "contradiction"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "salt_holds_scrip_promises",
+      "title": "Salt Holds, Scrip Promises",
+      "text_body": "salt holds where the day held / scrip promises what tomorrow may hold / the third speculation is the price / and the price is the salt and the promise together",
+      "mechanical_effect": "If the player hears this litany on the day they trade scrip, the salt-scrip exchange rate is shown to them transparently at full precision (not bucketed). Otherwise scrip values are shown bucketed.",
+      "voice_register": "unspecified",
+      "rite_kind": "Opening of Tide League trading day. Recited by the senior Br",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_venn_hook",
+      "origin_institution": "merchant_tide_league_greywake",
+      "canonical_use": "Opening of Tide League trading day. Recited by the senior Broker present. The litany names the League's pricing principle: the canonical price is set by the third speculation (per doc_third_speculation_is_canon), and that price is the combined value of salt-held and scrip-promised.",
+      "tags": [],
+      "tone_tags": [
+        "tide_league",
+        "trade",
+        "scrip",
+        "speculation"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "the_third_speculation",
+      "title": "The Third Speculation",
+      "text_body": "the first speculation is a hope / the second speculation is a counter / the third speculation is the price / and the fourth speculation is the lie that breaks the market",
+      "mechanical_effect": "If a player publicly names four or more speculations on Tide League goods within a single scene, salt-scrip volatility_modifier increases by 0.15 (state_diff committed by State Manager). The litany is the Court's-eye-view warning of this consequence.",
+      "voice_register": "unspecified",
+      "rite_kind": "Closing of Tide League trading day. Recited as a warning to ",
+      "faction_origin": "",
+      "first_heard_default_npc": "npc_venn_hook",
+      "origin_institution": "merchant_tide_league_greywake",
+      "canonical_use": "Closing of Tide League trading day. Recited as a warning to apprentices: the canonical price is the third, not the fourth. Speculation beyond the third is doctrinally forbidden (taboo_speculate_after_third). The litany makes the rule remembered.",
+      "tags": [],
+      "tone_tags": [
+        "tide_league",
+        "speculation",
+        "market_warning",
+        "the_fourth_lie"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "litany_id": "litany_what_remains_after_naming",
+      "faction_origin": "fac_drowned_church",
+      "rite_kind": "vigil_of_listening",
+      "title": "What Remains After Naming",
+      "text_body": "what is named does not always remain / what is unnamed has been remaining always",
+      "voice_register": "marrow_saint_intoned",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_during_vigil_of_listening",
+          "spoken_at_dry_fountain"
+        ],
+        "faith_delta": {
+          "deity_id": "deity_the_unnamed",
+          "amount": 1
+        },
+        "path_delta": {
+          "axis": "listener",
+          "amount": 1
+        },
+        "substrate_exposure": "substrate_naming_taboo"
+      },
+      "tags": [
+        "slice_eligible",
+        "vigil",
+        "the_unnamed"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_clerks_compline",
+      "faction_origin": "fac_civic_bell_court",
+      "rite_kind": "what_the_ledger_records",
+      "title": "Clerk's Compline",
+      "text_body": "we close at the seventh bell / what was entered remains entered / what was struck has the weight of the struck",
+      "voice_register": "bell_court_clerk_recitative",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_at_bell_court_precinct",
+          "civic_day_ending"
+        ],
+        "faction_awareness_delta": {
+          "faction_id": "fac_civic_bell_court",
+          "trust": 1
+        }
+      },
+      "tags": [
+        "slice_eligible",
+        "civic",
+        "closing"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_witness_clause_short",
+      "faction_origin": "fac_civic_bell_court",
+      "rite_kind": "witness_clause",
+      "title": "Witness Clause (short form)",
+      "text_body": "this witness records / this witness does not embellish / this witness's record is admissible",
+      "voice_register": "bell_court_self_swearing",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_before_giving_testimony",
+          "player_acts_as_witness"
+        ],
+        "advantage_on_next_check": "presence_for_civic_credibility",
+        "ledger_entry_made": true
+      },
+      "tags": [
+        "slice_eligible",
+        "civic",
+        "testimony"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_what_the_warrant_does_not_say",
+      "faction_origin": "fac_civic_bell_court",
+      "rite_kind": "what_the_ledger_records",
+      "title": "What the Warrant Does Not Say",
+      "text_body": "the warrant names what it names / what the warrant does not name is not therefore innocent / it is the warrant that is silent",
+      "voice_register": "orro_off_record",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_when_warrant_filed",
+          "player_is_subject_of_warrant"
+        ],
+        "investigation_advantage": true,
+        "contradiction_ledger_entry_kind": "warrant_silence"
+      },
+      "tags": [
+        "slice_eligible",
+        "civic",
+        "off_record"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_third_speculation_close",
+      "faction_origin": "fac_merchant_tide_league",
+      "rite_kind": "third_speculation",
+      "title": "Third Speculation (closing)",
+      "text_body": "the third speculation closes at twenty-five / the third speculation has always closed at twenty-five / what closes at twenty-five does not deepen the market",
+      "voice_register": "broker_recitative",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_at_market_close",
+          "scrip_speculation_within_25_percent"
+        ],
+        "faction_awareness_delta": {
+          "faction_id": "fac_merchant_tide_league",
+          "trust": 1
+        },
+        "scrip_cap_enforcement": "soft_25_pct"
+      },
+      "tags": [
+        "slice_eligible",
+        "economic",
+        "cap_enforcement"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_courier_oath",
+      "faction_origin": "fac_merchant_tide_league",
+      "rite_kind": "salt_scrip_oath",
+      "title": "Courier's Oath",
+      "text_body": "the envelope is sealed / what is sealed will be moved as sealed / the moving is what the league pays for",
+      "voice_register": "broker_to_new_courier",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_at_acceptance_of_courier_assignment"
+        ],
+        "binding_oath": "tide_league_sealed_transit",
+        "violation_consequence": "scrip_blacklist + faction_trust -3"
+      },
+      "tags": [
+        "slice_eligible",
+        "economic",
+        "binding_oath"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_audit_acceptance",
+      "faction_origin": "fac_merchant_tide_league",
+      "rite_kind": "salt_scrip_oath",
+      "title": "Audit Acceptance",
+      "text_body": "the records are open / what the records show is what the league shows / what the league does not show is not the records' fault",
+      "voice_register": "broker_during_bell_court_audit",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_at_start_of_bell_court_audit",
+          "tide_league_member_speaking"
+        ],
+        "audit_intensity": "reduced_to_low"
+      },
+      "tags": [
+        "slice_eligible",
+        "economic",
+        "audit"
+      ],
+      "schema_version": "v2"
+    },
+    {
+      "litany_id": "litany_the_weighing",
+      "faction_origin": "fac_merchant_tide_league",
+      "rite_kind": "salt_scrip_oath",
+      "title": "The Weighing",
+      "text_body": "everything weighs / most things weigh something specific / the broker holds the scale",
+      "voice_register": "venn_hook_signature",
+      "mechanical_effect": {
+        "trigger_conditions": [
+          "spoken_before_a_transaction",
+          "broker_present"
+        ],
+        "negotiation_advantage": true,
+        "passive_effect": "venn_hook_recognizes_player_as_serious"
+      },
+      "tags": [
+        "slice_eligible",
+        "economic",
+        "venn_signature",
+        "broker"
+      ],
+      "schema_version": "v2"
+    }
+  ]
+}

@@ -1,0 +1,416 @@
+{
+  "recipes": [
+    {
+      "recipe_id": "salt_iron_dagger",
+      "name": "Salt-Iron Dagger",
+      "materials": [
+        {
+          "material_id": "mat_salt_iron",
+          "quantity": 2
+        },
+        {
+          "material_id": "mat_salt_reagent",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_salt_iron_dagger",
+      "primary_station_id": "forge_anvil_t1",
+      "time_in_world_hours": 1.0,
+      "tags": [],
+      "craft_track": "forging",
+      "skill_check": "str",
+      "dc": 12
+    },
+    {
+      "recipe_id": "vial_of_practicing_water",
+      "name": "Vial of Practiced-Name Water (intermediate)",
+      "materials": [
+        {
+          "material_id": "mat_salt_reagent",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_practicing_water",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_vial_practiced_name_water",
+      "primary_station_id": "field_kit_t0",
+      "time_in_world_hours": 0.125,
+      "tags": [],
+      "craft_track": "alchemy",
+      "skill_check": "int",
+      "dc": 10
+    },
+    {
+      "recipe_id": "bell_marked_charm",
+      "name": "Bell-Marked Charm",
+      "materials": [
+        {
+          "material_id": "mat_bell_tin",
+          "quantity": 1
+        },
+        {
+          "material_id": "item_vial_practiced_name_water",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_bell_marked_charm",
+      "primary_station_id": "bell_forge_t2",
+      "time_in_world_hours": 1.0,
+      "tags": [],
+      "craft_track": "forging",
+      "skill_check": "str",
+      "dc": 13
+    },
+    {
+      "recipe_id": "drowned_bronze_buckler",
+      "name": "Drowned Bronze Buckler",
+      "materials": [
+        {
+          "material_id": "mat_drowned_bronze",
+          "quantity": 3
+        },
+        {
+          "material_id": "mat_salt_reagent",
+          "quantity": 2
+        }
+      ],
+      "produces_item_id": "item_drowned_bronze_buckler",
+      "primary_station_id": "forge_anvil_t1",
+      "time_in_world_hours": 1.5,
+      "tags": [],
+      "craft_track": "forging",
+      "skill_check": "str",
+      "dc": 14
+    },
+    {
+      "recipe_id": "potion_of_salt_sleep",
+      "name": "Potion of Salt-Sleep",
+      "materials": [
+        {
+          "material_id": "mat_salt_reagent",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_butchers_salt",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_oil_reagent",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_potion_salt_sleep",
+      "primary_station_id": "lab_bench_t1",
+      "time_in_world_hours": 0.25,
+      "tags": [],
+      "craft_track": "alchemy",
+      "skill_check": "int",
+      "dc": 11
+    },
+    {
+      "recipe_id": "purgative_tincture",
+      "name": "Purgative Tincture",
+      "materials": [
+        {
+          "material_id": "mat_lime_reagent",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_fountain_water",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_marrow_wax_trace",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_purgative_tincture",
+      "primary_station_id": "field_kit_t0",
+      "time_in_world_hours": 0.25,
+      "tags": [],
+      "craft_track": "alchemy",
+      "skill_check": "wis",
+      "dc": 13
+    },
+    {
+      "recipe_id": "unrecorded_ink",
+      "name": "Unrecorded Ink",
+      "materials": [
+        {
+          "material_id": "mat_unrecorded_ink_base",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_practicing_water",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_butchers_salt",
+          "quantity": 1
+        }
+      ],
+      "produces_item_id": "item_unrecorded_ink",
+      "primary_station_id": "saltwater_still_t2",
+      "time_in_world_hours": 1.0,
+      "tags": [],
+      "craft_track": "alchemy",
+      "skill_check": "int",
+      "dc": 15
+    },
+    {
+      "recipe_id": "recipe_drowned_amber_pendant",
+      "name": "Drowned-Amber Pendant",
+      "produces_item_id": "item_drowned_amber_pendant",
+      "craft_track": "tinkering",
+      "primary_station_id": "loc_drowned_cathedral_antechamber",
+      "alternative_station_ids": [],
+      "materials": [
+        {
+          "material_id": "mat_drowned_amber",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_leather_cord_salt_cured",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_small_relic_fragment",
+          "quantity": 1,
+          "is_witness_bearing": true
+        }
+      ],
+      "dc": 13,
+      "skill_check": "grace + mind",
+      "time_in_world_hours": 2,
+      "branching_outcomes": {
+        "crit_success": "yields pendant + witness_payload soul_intensity=4 (bonus); inherited relic's provenance preserved cleanly",
+        "above_dc_5": "yields pendant + witness_payload soul_intensity=3 (standard)",
+        "at_dc": "yields pendant + witness_payload soul_intensity=2; relic provenance partially distorted",
+        "below_dc_5": "yields pendant but witness_payload=null; relic effectively erased; relic material lost",
+        "fumble": "amber cracks during binding; relic released into substrate; produces NO pendant; Ruin +1; contradiction_ledger entry: cracked_amber_release"
+      },
+      "witness_inheritance": {
+        "from_material": "mat_small_relic_fragment",
+        "carried_field": "soul_source_event_id",
+        "intensity_modifier": -1
+      },
+      "invisible_work": null,
+      "tags": [
+        "slice_eligible",
+        "drowned_church_aligned",
+        "tinkering",
+        "witness_bearing"
+      ]
+    },
+    {
+      "recipe_id": "recipe_marrow_wax_candle_minor",
+      "name": "Marrow-Wax Candle (minor)",
+      "produces_item_id": "item_marrow_wax_candle_minor",
+      "craft_track": "alchemy",
+      "primary_station_id": "loc_drowned_cathedral_antechamber",
+      "alternative_station_ids": [],
+      "materials": [
+        {
+          "material_id": "mat_marrow_rendered",
+          "quantity": 1,
+          "is_witness_bearing": true,
+          "consent_required_at_acquisition": true
+        },
+        {
+          "material_id": "mat_beeswax_pure",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_wick_linen",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_salt_rime_shard",
+          "quantity": 1
+        }
+      ],
+      "dc": 12,
+      "skill_check": "mind + will",
+      "time_in_world_hours": 4,
+      "branching_outcomes": {
+        "crit_success": "yields candle + when lit, restores 1d4 Clarity to anyone in scene; witness_payload soul_intensity=3",
+        "above_dc_5": "yields candle + when lit, restores 1d2 Clarity; witness_payload soul_intensity=2",
+        "at_dc": "yields candle; functional but Clarity restoration is 0; witness_payload soul_intensity=1",
+        "below_dc_5": "yields candle that burns but produces faint smoke that smells of marrow; gives nearby NPCs Notice +1 of the player's Drowned Church alignment",
+        "fumble": "rendering reverts during cooling; marrow fragments back to non-witness-bearing state; loses 1 mat_marrow_rendered; producer gains Ruin +1 (the unrendering)"
+      },
+      "witness_inheritance": {
+        "from_material": "mat_marrow_rendered",
+        "carried_field": "soul_source_event_id",
+        "intensity_modifier": 0,
+        "consent_layer": "if consent_given_at_acquisition=false, this recipe causes faith_drowned_church -2 and accrues a contradiction_ledger entry: unconsenting_rendering"
+      },
+      "invisible_work": {
+        "performed_at": "loc_drowned_cathedral_antechamber",
+        "faction_awareness_delta": {
+          "faction_id": "fac_drowned_church",
+          "trust": 1,
+          "fear": 0
+        },
+        "faith_delta": {
+          "deity_id": "deity_umberlee",
+          "amount": 1
+        }
+      },
+      "tags": [
+        "slice_eligible",
+        "drowned_church_aligned",
+        "alchemy",
+        "witness_bearing",
+        "consent_gated"
+      ]
+    },
+    {
+      "recipe_id": "recipe_iron_witness_token",
+      "name": "Iron Witness Token",
+      "produces_item_id": "item_iron_witness_token",
+      "craft_track": "forging",
+      "primary_station_id": "loc_bell_forge",
+      "alternative_station_ids": [
+        "loc_bell_court_precinct"
+      ],
+      "materials": [
+        {
+          "material_id": "mat_iron_pure",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_meteoric_iron_pinch",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_bell_court_seal_wax",
+          "quantity": 1,
+          "consumed_in_minting": true
+        }
+      ],
+      "dc": 14,
+      "skill_check": "body + mind",
+      "time_in_world_hours": 3,
+      "branching_outcomes": {
+        "crit_success": "yields token that ALSO carries witness_marked property; can be used as a portable witness anchor at any scene (1 use); intensity=4",
+        "above_dc_5": "yields functional witness token; standard intensity=3",
+        "at_dc": "yields functional token with reduced range (30ft → 15ft); intensity=2",
+        "below_dc_5": "yields visually correct token that does not announce events; intensity=0; appears functional until use",
+        "fumble": "iron warps during quenching; loses 1 mat_iron_pure; Bell Court seal_wax is fully consumed without producing a token; smith gains a small burn (Clarity -1, transient)"
+      },
+      "witness_inheritance": null,
+      "invisible_work": {
+        "performed_at": "loc_bell_forge",
+        "faction_awareness_delta": {
+          "faction_id": "fac_civic_bell_court",
+          "trust": -1,
+          "fear": 1
+        },
+        "notes": "Bell-Forge crafting of Bell Court materials WITHOUT writ is doctrinally permitted by absence but practically tracked. Doing this at the Bell Court Precinct station (alternative) avoids the awareness penalty but requires a Bell Court writ to access the press."
+      },
+      "tags": [
+        "slice_eligible",
+        "civic_aligned",
+        "forging",
+        "cross_faction_caution"
+      ]
+    },
+    {
+      "recipe_id": "recipe_salt_rime_amulet",
+      "name": "Salt-Rime Amulet",
+      "produces_item_id": "item_salt_rime_amulet",
+      "craft_track": "ritual",
+      "primary_station_id": "loc_dry_fountain",
+      "alternative_station_ids": [],
+      "materials": [
+        {
+          "material_id": "mat_salt_rime_shard",
+          "quantity": 3
+        },
+        {
+          "material_id": "mat_silver_wire_thin",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_vial_of_practiced_name_water",
+          "quantity": 1,
+          "consumed_in_minting": true
+        }
+      ],
+      "dc": 15,
+      "skill_check": "will + grace",
+      "time_in_world_hours": 1,
+      "branching_outcomes": {
+        "crit_success": "yields amulet with passive: wearer gains advantage on Will saves against drowned_red conditions; lasts indefinitely; intensity=4",
+        "above_dc_5": "yields amulet with same passive; intensity=3",
+        "at_dc": "yields amulet with passive that activates only within region_greywake; intensity=2",
+        "below_dc_5": "yields amulet whose passive degrades 1/day; functional ~7 days; intensity=1",
+        "fumble": "salt-rime crumbles during binding; loses all 3 mat_salt_rime_shard; silver wire intact; Vial of Practiced-Name Water is consumed; producer gains condition salt-rimed (level 1, 1-day duration)"
+      },
+      "witness_inheritance": null,
+      "invisible_work": {
+        "performed_at": "loc_dry_fountain",
+        "faction_awareness_delta": {
+          "faction_id": "fac_drowned_church",
+          "trust": 1,
+          "fear": 0
+        },
+        "faith_delta": {
+          "deity_id": "deity_the_unnamed",
+          "amount": 1
+        },
+        "notes": "Recipe MUST be performed at loc_dry_fountain; the fountain's substrate is load-bearing. Alternative stations are not available — the amulet will not form elsewhere."
+      },
+      "tags": [
+        "slice_eligible",
+        "drowned_church_aligned",
+        "ritual",
+        "region_locked_crafting_site"
+      ]
+    },
+    {
+      "recipe_id": "recipe_drowned_cathedral_fishskin_prayer",
+      "name": "Fish-Skin Prayer Slip",
+      "produces_item_id": "item_fishskin_prayer_slip",
+      "craft_track": "scribing",
+      "primary_station_id": "loc_drowned_cathedral_antechamber",
+      "alternative_station_ids": [],
+      "materials": [
+        {
+          "material_id": "mat_dried_fishskin_small",
+          "quantity": 1
+        },
+        {
+          "material_id": "mat_drowned_red_ink_vial",
+          "quantity": 1,
+          "partial_consumption_units": 1
+        },
+        {
+          "material_id": "mat_marrow_wax_drop",
+          "quantity": 1
+        }
+      ],
+      "dc": 11,
+      "skill_check": "mind + presence",
+      "time_in_world_hours": 1,
+      "branching_outcomes": {
+        "crit_success": "yields prayer slip + Drowned Church reads it as authentic prayer; faith_unnamed +1 to player at next vigil; intensity=2",
+        "above_dc_5": "yields prayer slip + Drowned Church reads as authentic; intensity=1",
+        "at_dc": "yields prayer slip; doctrinally acceptable but not noted by Marrow-Saint",
+        "below_dc_5": "yields prayer slip; doctrinally questionable wording; if displayed at antechamber, faith_unnamed -1 to player",
+        "fumble": "fish-skin tears during inscription; ink runs; prayer slip unusable; Drowned Church initiates who witness the failure regard player coolly (trust -1)"
+      },
+      "witness_inheritance": null,
+      "invisible_work": null,
+      "tags": [
+        "slice_eligible",
+        "drowned_church_aligned",
+        "scribing",
+        "low_dc"
+      ]
+    }
+  ]
+}

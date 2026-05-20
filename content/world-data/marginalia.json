@@ -1,0 +1,251 @@
+{
+  "marginalia": [
+    {
+      "marginalia_id": "marg_fountain_three_drops",
+      "text": "Marrow-Saint Ilyra named the salt litany. The fountain answered with three drops above the surface, then stopped.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "rite",
+      "tone_tags": [
+        "fountain",
+        "litany",
+        "drowned_church",
+        "answered_event"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_scrip_for_unmade_dagger",
+      "text": "Venn Hook offered 8 scrip for the dagger you have not made yet. He does not ask whether you have salt-iron. He assumes.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "social_conflict",
+      "tone_tags": [
+        "tide_league",
+        "speculation",
+        "presumption",
+        "venn_hook"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_misspelled_ledger",
+      "text": "Bell-Magistrate Orro recorded your name in the visitor ledger. He misspelled it. The misspelling is the canonical entry.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "faction_action",
+      "tone_tags": [
+        "bell_court",
+        "ledger",
+        "memory_vs_record",
+        "name"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_three_witnesses_at_fountain",
+      "text": "The fountain leaked upward. Three bystanders looked. One was Bell Court; one was Drowned Church; one was you. The Bell Court witness will file a report by night.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "environment_anomaly",
+      "tone_tags": [
+        "fountain",
+        "witness_count",
+        "inversion",
+        "consequence_seeded"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_charm_spoke_twice",
+      "text": "Bell-Marked Charm attuned: salt-immersion ritual completed. Slot 0 bound. The charm spoke twice on the second submersion. You did not understand it.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "item_event",
+      "tone_tags": [
+        "attunement",
+        "item_soul",
+        "drowned_church",
+        "not_understood"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_listening_child_answered_before",
+      "text": "The Listening Child answered a question. You had not yet asked it. The Bell Court scribe nearby did not write it down because no question was on record.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "npc_speech_anomaly",
+      "tone_tags": [
+        "listening_child",
+        "temporal_inversion",
+        "bell_court_blindspot",
+        "unrecorded"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_butcher_stopped_repeating",
+      "text": "The Butcher Who Repeats did not repeat in your presence today. He said one thing once. He looked surprised by the silence after.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "npc_speech_anomaly",
+      "tone_tags": [
+        "butcher",
+        "anomaly",
+        "single_utterance",
+        "bond_marker"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_scrip_value_shifted",
+      "text": "Salt-scrip moved from 0.85 to 0.72 between morning and midday. No one named the cause aloud. The Tide League's chalkboard does not show the morning value.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "faction_action",
+      "tone_tags": [
+        "tide_league",
+        "scrip",
+        "volatility",
+        "erased_evidence"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_bell_struck_off_hour",
+      "text": "The Bell Court bell struck once outside its recorded hour. The scribes pretended not to hear. The bell does not.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "environment_anomaly",
+      "tone_tags": [
+        "bell_court",
+        "taboo_violation_off_hour",
+        "denial",
+        "the_bell_does_not_pretend"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_litany_overlapped",
+      "text": "Two singers held the third line of the salt-vigil round when the fourth dropped out. The round continued. No one looked at the singer who dropped.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "rite",
+      "tone_tags": [
+        "drowned_church",
+        "redundancy",
+        "the_unobserved_failure",
+        "round"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_weather_omen_salt_dust",
+      "text": "Salt-dust fell south of the market today instead of north. The fishermen noticed; the bookkeepers did not. The fishermen are usually right about this.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "weather_omen",
+      "tone_tags": [
+        "weather",
+        "salt",
+        "professional_knowledge",
+        "asymmetric_attention"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_canon_progression_held",
+      "text": "Authority would have advanced today, except you refused the offered name. Authority does not advance on refusal; the credit is held against the next canon-event you do not refuse.",
+      "trigger_kind": "canon_progression_event",
+      "trigger_event_kind": "canon_progression_event",
+      "tone_tags": [
+        "canon_progression",
+        "asi_sacrifice_held",
+        "refusal",
+        "Khojen_path"
+      ],
+      "schema_version": "v1"
+    },
+    {
+      "marginalia_id": "marg_canon_progression_authority_5",
+      "trigger_kind": "canon_progression_event",
+      "trigger_condition": "player.authority >= 5 (first time crossing threshold)",
+      "text": "Something in the room — the room itself — adjusts to the weight you have begun to carry. The candles do not flicker. The candles know.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_canon_progression_ruin_5",
+      "trigger_kind": "canon_progression_event",
+      "trigger_condition": "player.ruin >= 5 (first time crossing threshold)",
+      "text": "The cuff of the left sleeve has gone the colour the rust would be if rust were warm. The cuff is not rust. The cuff is salt-touched, set into the weave like a stain that has decided.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_canon_progression_creation_5",
+      "trigger_kind": "canon_progression_event",
+      "trigger_condition": "player.creation >= 5 (first time crossing threshold)",
+      "text": "A line is drawn on a piece of paper and the paper is not the same paper. The line is also not a line. This is acceptable.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_item_bell_marked_charm_first_warm",
+      "trigger_kind": "item_event",
+      "trigger_condition": "item_bell_marked_charm warms for the first time (proximity to Bell Court ledger entry)",
+      "text": "The charm in the pocket — small, brass, salt-stamped — is warm against the thigh. Something has been entered into a ledger somewhere very close.",
+      "display_context": "inline_during_scene"
+    },
+    {
+      "marginalia_id": "marg_item_pebble_returns",
+      "trigger_kind": "item_event",
+      "trigger_condition": "item_listening_childs_pebble returns after intentional drop",
+      "text": "The pebble is back in the pocket. The drop did not take. The pebble is not a thing that is lost.",
+      "display_context": "inline_during_scene"
+    },
+    {
+      "marginalia_id": "marg_weather_salt_haze_thick",
+      "trigger_kind": "weather_omen",
+      "trigger_condition": "salt_haze intensity reaches 4+ (slice maximum)",
+      "text": "The haze on the market today carries grit that settles on the tongue. The grit tastes like the spoken syllables of someone who has not spoken yet.",
+      "display_context": "inline_at_scene_open"
+    },
+    {
+      "marginalia_id": "marg_weather_fountain_silver",
+      "trigger_kind": "weather_omen",
+      "trigger_condition": "scene at dry fountain + day_phase=evening_silver_reflection",
+      "text": "The standing-water that is not standing has caught the late silver light. The fountain is not reflecting. The fountain is being addressed.",
+      "display_context": "inline_at_scene_open"
+    },
+    {
+      "marginalia_id": "marg_faction_action_drowned_vigil_observed",
+      "trigger_kind": "faction_action",
+      "trigger_condition": "fac_drowned_church performs salt_vigil_evening with player observing",
+      "text": "The salt-vigil is exactly what was described. Exactness is the unsettling part.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_faction_action_bell_court_audit_open",
+      "trigger_kind": "faction_action",
+      "trigger_condition": "fac_civic_bell_court ledger_audit_open_session with player present",
+      "text": "Three clerks at three desks reading three ledgers aloud at three different rates. The reading does not synchronize. It does not need to.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_social_conflict_refused_by_marrow_saint",
+      "trigger_kind": "social_conflict",
+      "trigger_condition": "Marrow-Saint Ilyra refuses to acknowledge player (faith_drowned_church <= -3)",
+      "text": "She looked through, not at. The looking-through was deliberate. It is not the same as being unseen.",
+      "display_context": "player_journal_at_end_of_scene"
+    },
+    {
+      "marginalia_id": "marg_social_conflict_orro_off_record_offer",
+      "trigger_kind": "social_conflict",
+      "trigger_condition": "Bell-Magistrate Orro sets inkwell aside (off-record marker)",
+      "text": "He set the inkwell down. The conversation is off the record now. The conversation was never going to be on it.",
+      "display_context": "inline_during_scene"
+    },
+    {
+      "marginalia_id": "marg_npc_speech_listening_child_quotes",
+      "trigger_kind": "npc_speech_anomaly",
+      "trigger_condition": "The Listening Child speaks (any utterance)",
+      "text": "The child speaks the way one repeats something already said. The thing already said has not yet been said.",
+      "display_context": "inline_during_scene"
+    },
+    {
+      "marginalia_id": "marg_npc_speech_butcher_provenance_revealed",
+      "trigger_kind": "npc_speech_anomaly",
+      "trigger_condition": "Butcher Who Repeats discloses the provenance of the cuts (sec_butcher_contradiction_revealed)",
+      "text": "He said it the way one says something for the third time. It was the first time it had been said aloud to anyone.",
+      "display_context": "player_journal_at_end_of_scene"
+    }
+  ]
+}
