@@ -62,3 +62,8 @@ export type {
   RarityTier,
   RarityTierId,
 } from './items-5e-types';
+export {
+  loadConditions5e,
+  getCondition5e,
+  evaluateConditions5e,
+} from './condition-effects-5e';
