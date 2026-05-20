@@ -31,6 +31,10 @@ const npcsPath = join(contentDir, "world-data", "npcs.json");
 const RESERVED_TARGETS = new Set(["DONE", "END"]);
 
 const KNOT_REGEX = /^\s*={2,}\s*(\w+)\s*={0,}\s*$/;
+// Single leading `=` (not `==` or more) followed by a stitch name. Ink
+// stitches live inside the most recent `===` knot; we record them as
+// `Knot.stitch` so dotted diverts can be resolved fully.
+const STITCH_REGEX = /^\s*=\s+(\w+)\s*=?\s*$/;
 // -> target with optional dotted stitch (foo.bar). Skip the function-
 // return marker `->->` by requiring the target to start with a letter
 // or underscore.
@@ -63,12 +67,19 @@ function parseInk(filePath) {
   const lines = stripComments(readFileSync(filePath, "utf-8")).split("\n");
   const knots = [];
   const diverts = [];
+  let currentKnot = null;
 
   lines.forEach((line, idx) => {
     const lineNo = idx + 1;
     const knot = line.match(KNOT_REGEX);
     if (knot) {
-      knots.push(knot[1]);
+      currentKnot = knot[1];
+      knots.push(currentKnot);
+      return;
+    }
+    const stitch = line.match(STITCH_REGEX);
+    if (stitch && currentKnot) {
+      knots.push(`${currentKnot}.${stitch[1]}`);
       return;
     }
     DIVERT_REGEX.lastIndex = 0;
@@ -129,9 +140,10 @@ for (const [filePath, parsed] of fileParses) {
   const relPath = relative(rootDir, filePath);
   for (const { target, line } of parsed.diverts) {
     if (RESERVED_TARGETS.has(target)) continue;
-    // `knot.stitch` resolves if either component is defined.
-    const head = target.split(".")[0];
-    if (allKnots.has(target) || allKnots.has(head)) continue;
+    // Both bare knots (`-> knot`) and fully-qualified stitches
+    // (`-> knot.stitch`) must appear in allKnots. Dotted targets
+    // require the FULL name — a knot head alone no longer counts.
+    if (allKnots.has(target)) continue;
     errors.push(`${relPath}:${line}: -> ${target} (not defined)`);
   }
 }
