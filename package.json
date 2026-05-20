@@ -30,6 +30,10 @@
     "typescript": "^5.8.3",
     "vitest": "^3.0.0"
   },
+  "optionalDependencies": {
+    "@esbuild/win32-x64": "0.25.12",
+    "@rollup/rollup-win32-x64-msvc": "4.60.4"
+  },
   "engines": {
     "node": ">=20.0.0"
   }
