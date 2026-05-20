@@ -822,11 +822,162 @@ the player reads, per-tone tale typography, in-world meters, title
 particles coalescing into letters, a death rite with letter-by-letter
 epitaph + audio fade, and a stone-register legacy view.
 
+## 2026-05-20 (Session 7) — Wave 1: Tabletop-depth refactor (additive units)
+
+Context: user asked us to step back and add real tabletop depth — DnD
+5e mechanics layered on top of the existing 9-stat cosmic-horror
+system, a true character sheet, full inventory with rarity / forging,
+and a fix for the story engine. Original Phase 7/8 work (Sentry,
+streaming, Lens, Witness Briefing) deferred to Phase 11 so depth
+lands first.
+
+Three decisions locked before dispatch (see
+`docs/RESTRUCTURE_PLAN.md`):
+
+1. **Layered 5e** — keep the 9 stats; add advantage / disadvantage,
+   action economy, dice expressions, item rarity, attunement, the
+   SRD conditions, proficiency bonus, hit dice, saving throws,
+   conditional spell slots on top.
+2. **Story engine issues to fix** — command parser misroutes, Ink
+   scene routing, narrative/mechanics desync. LLM fallback
+   aggressiveness is fine.
+3. **Execution** — hybrid. Six additive units dispatched in parallel
+   via worktree-isolated background agents; the foundation work
+   (schema, reducer rewrites, screen wiring) serialises as Phase
+   7–11.
+
+### Wave 1 units landed
+
+All six PRs merged into `claude/codebase-audit-plan-n0dx0`. Sentinel
+strategies (sentinel-fenced CSS appends, additive-only re-exports)
+prevented most collisions; the engine `index.ts` and `styles.css`
+appends each needed one local rebase to resolve overlapping append
+points.
+
+| # | Unit | PR | Adds | New tests |
+|---|---|---|---|---|
+| 1 | Dice expression engine | #1 | 304 | 20 |
+| 2 | Item rarity + forging | #4 | 1264 | 33 |
+| 3 | 5e condition catalog + resolver | #5 | 1802 | 33 |
+| 4 | CharacterSheetPanel | #3 | 863 | 6 |
+| 5 | InventoryPanel | #2 | 643 | 9 |
+| 6 | Design docs + authoring guides | #6 | 1093 | 0 |
+
+**~5,969 additions, ~101 new tests, zero CI failures, zero review
+threads.** Engine tests went 76 → 109 (5 specs added); web tests
+went 10 → 25 (2 specs added).
+
+### Wave 1 follow-up: story-engine bugfixes (#7)
+
+Unit 6's documentation pass surfaced three concrete reducer bugs
+while compiling `docs/STORY_ENGINE_AUDIT.md`. Small enough to land
+surgically before Phase 8d's systemic work.
+
+- `moveReducer.ts:92` — operator-precedence bug; Silent Passage
+  fired on any strong/critical success regardless of `isSneak`.
+- `combatReducer.ts:49-55` — silent retaliation on failure band;
+  damage applied without tale mention.
+- `combatReducer.ts:56-61` — Graze decremented
+  `/npcs/<idx>/stats/body` (permanent ability score) instead of
+  `/hp`. Every partial-success in combat permanently weakened the
+  NPC's stat block.
+
+Plus 4 new regression specs (`reducer-bugfixes.spec.ts`) sweeping
+50–200 seeds per case. 113/113 engine tests green.
+
+### Verify
+
+- `npm run typecheck` ✅ across packages + apps/web + api.
+- `npm --prefix packages/engine test` ✅ — 113/113 (76 pre-existing +
+  4 Wave 1 specs adding 33+22+11+33 = 99 new across dice / forging
+  / rarity / conditions, 5 reducer-bugfix; the 76 baseline already
+  included reducers.spec which still passes).
+- `npm --prefix apps/web test` ✅ — 25/25 (10 baseline + 6
+  character-sheet + 9 inventory).
+- `npm run build:packages` ✅.
+- `npm run build` ✅. Bundle leak grep → 0.
+
+### Known integration debt for Phase 7
+
+- **Type mirrors to consolidate.** Unit 2 ships
+  `packages/engine/src/items-5e-types.ts` (byte-identical mirror of
+  `packages/types/src/items-5e.ts`); Unit 3 inlines a copy of
+  `conditions-5e` contracts inside
+  `packages/engine/src/condition-effects-5e.ts`. Both forced by the
+  Wave 1 invariant "do not edit `packages/types/src/index.ts`" +
+  `@first-perception/types` having no subpath exports. Phase 7
+  deletes both mirrors and re-points the engine to canonical types.
+- **Test environment divergence.** Unit 4 ships a hand-rolled DOM
+  shim inside `character-sheet-panel.spec.ts`; Unit 5 adds
+  `happy-dom` to `apps/web` devDeps. Phase 8a picks one.
+- **Story engine — synthetic-jump drift.** Unit 6's static pass found
+  zero dead `-> name` jumps across 64 knots / 54 targets. The real
+  drift risk is in synthetic suffixes like `dialogue_${npcId}`,
+  `combat_${encounterId}`, `consequence_${consequenceId}` that the
+  Ink runtime constructs from runtime ids. Phase 8c owns the
+  validator.
+
+### Phase 7–11 forward queue
+
+These were planned to ship as Phase 7 / 8 (Sentry, streaming, Lens)
+but now run after the tabletop-depth foundation lands. Order is
+dependency-driven, not vibes; each phase's outputs unblock the next.
+
+- **Phase 7 — Schema foundation + type-mirror consolidation.**
+  Extend `Player` with `proficiencyBonus`, `hitDice` (current/max),
+  `savingThrowProficiencies`, `attunementSlots`, optional
+  `spellSlots`. Extend `Item` with `rarity: RarityTierId`,
+  `magical: boolean`, `attunement: AttunementRequirement`,
+  optional `requires`. Merge Unit 2's `items-5e.ts` and Unit 3's
+  `conditions-5e.ts` types into canonical `Item` / `Condition` via
+  `packages/types/src/index.ts`. Delete the engine mirrors. Update
+  `createGameFromCreation` + `buildStats`. The content-loading
+  pattern in the engine gets a real loader (replacing Unit 2's
+  frozen-const fallback).
+- **Phase 8a — UI wiring + tab redesign.** Wire
+  `CharacterSheetPanel` and `InventoryPanel` into `GameplayScreen`
+  as new tabs "The Sheet" (replaces "The Vessel" as primary
+  character view) and "The Trove" (inventory). Unify the test
+  environment (pick `happy-dom`; remove the DOM shim). Pass real
+  proficiency / hit dice / AC values from the post-Phase-7 Player.
+- **Phase 8b — Command parser fix.** Tighten
+  `packages/llm-client/src/IntentClassifier.ts` regex map at L70 +
+  hints at L80; tighten the LLM JSON prompt at L61; add the
+  parser-regression spec set. Verb synonyms `pick up` / `grab` /
+  `pocket` / `cut` / `pay` / `whisper` / `bind` should route to the
+  intended reducer instead of `narrative_only`.
+- **Phase 8c — Ink synthetic-jump validator.** Build
+  `scripts/validate-content.mjs` (the `package.json` already
+  references it but it's missing on disk). Walks every scene,
+  collects every static and synthetic jump construction site,
+  verifies the target knot exists or is a known-safe template.
+  Wired into `npm run verify`.
+- **Phase 8d — RollBand enum + cross-reducer consistency.**
+  Introduce `RollBand` (`critical-fail` / `miss` / `partial` /
+  `success` / `critical-success`); every reducer must classify into
+  one band per turn; every emitted tale entry must come from a
+  band-appropriate template. Add `tale-band-consistency.spec.ts`.
+  Catches the rest of the narrative/mechanics desync class
+  systemically. Bugs from the Wave 1 follow-up (#7) are precedent
+  fixtures.
+- **Phase 9 — Forging UI + combat rewrite.** New "The Anvil" view
+  surfaces inventory materials, valid recipes, smith roll
+  prompts, success / partial / failure prose. Combat reducer
+  rewritten to use `parseDiceExpression` + `rollDice` (Unit 1) and
+  5e action economy (action + bonus action + reaction); decision
+  on per-day vs. focus-cost recharge model carries through.
+- **Phase 10 — Spell / ability system.** Scope limited to postures
+  / forms that explicitly grant casting. Spell slots, prepared
+  lists, save DCs derived from the new proficiency bonus + relevant
+  9-stat. Skipped if no posture is finalised as a caster by Phase 9.
+- **Phase 11 — Original Phase 7+8 deliverables.** Sentry wiring,
+  streaming LLM tokens through the SSE proxy, bundle budget gate in
+  CI, "The Lens" settings drawer, Witness Briefing first-run
+  overlay, accessibility hardening, contextual tab reveals.
+
 ### What's still ahead
 
-- **Phase 7** — Sentry + streaming LLM tokens + bundle budget in CI.
-- **Phase 8** — "The Lens" settings drawer, the Witness Briefing
-  first-run overlay, accessibility hardening, contextual tab reveals.
+- **Phase 7** — see above.
 
 ## Build Commands
 
