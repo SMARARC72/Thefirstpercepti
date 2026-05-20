@@ -22,7 +22,8 @@
     "verify": "npm run typecheck && npm run test && npm run build && npm run test:e2e",
     "deploy": "node scripts/deploy.mjs",
     "db:migrate": "node scripts/db-migrate.mjs",
-    "clean": "rm -rf apps/web/dist packages/engine/dist && npm --prefix packages/engine run clean"
+    "clean": "rm -rf apps/web/dist packages/engine/dist && npm --prefix packages/engine run clean",
+    "test:coverage": "npm --prefix packages/persistence run test:coverage && npm --prefix packages/llm-client run test:coverage && npm --prefix packages/narrative run test:coverage && npm --prefix packages/engine run test:coverage && npm --prefix apps/web run test:coverage"
   },
   "devDependencies": {
     "typescript": "^5.8.3",

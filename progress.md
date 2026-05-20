@@ -493,6 +493,98 @@ refer to what happened in earlier turns.
   per location; per-call limits would need either multiple cache keys
   or a richer cache value. Defer.
 
+## 2026-05-20 (Session 5) — Phase 4: Test coverage
+
+**Goal:** Stop relying on the one big legacy spec file. Every reducer, every
+repo, the narrative pre-warm path, the LLM client + classifier all need
+dedicated specs so future refactors get caught instead of slipping through.
+
+### Changes
+
+1. **Engine reducer specs.** New `packages/engine/tests/reducers.spec.ts`
+   (14 specs) covering every reducer in `packages/engine/src/reducers/`:
+   move (success path, hidden exit rejection, no-exit feedback), rest,
+   combat (target + surrender), dialogue, investigation, item (inspect +
+   drop), condition (tick + no-op), death (gameOver + no-op). Shared
+   fixture in `packages/engine/tests/fixtures.ts` builds `GameState`
+   with controllable seeds so rolls stay deterministic. Asserts
+   structural effects (patches, narrative non-empty, suggestions
+   present) without locking in authored prose.
+
+2. **Persistence repo specs.** New
+   `packages/persistence/src/HttpRepository.test.ts` (8 specs) stubs
+   `fetch` to verify request URL/method/body for saves, world events,
+   NPC memory; checks header propagation; asserts `HttpRepositoryError`
+   on 503. New `packages/persistence/src/LocalStorageRepository.test.ts`
+   (6 specs) installs a `MemoryStorage` shim onto `globalThis.localStorage`
+   to round-trip save slots, legacies, and verify the
+   `forgetOldMemories` filter respects the `isCoreMemory` / importance
+   gates.
+
+3. **NarrativeEngine integration spec.** New
+   `packages/narrative/src/NarrativeEngine.test.ts` (4 specs) verifies
+   `prepareWorldMemory` actually populates the recall cache from a
+   `MemoryRepository`, falls back gracefully when no repo is provided,
+   swallows repo errors so a persistence outage cannot block a turn,
+   and uses the generic fallback when zero events exist.
+
+4. **Coverage tooling.** Added `@vitest/coverage-v8` to every test
+   workspace (persistence, llm-client, narrative, engine, web) and a
+   `test:coverage` script. Root `npm run test:coverage` runs the
+   v8 reporter across all five. Thresholds are **not enforced in CI
+   yet** — current numbers (engine 56.14% lines, persistence 28.68%
+   lines — the latter inflated by the un-mockable PostgresRepository
+   that needs a real Postgres) make a CI gate premature. Phase 5
+   polish will pick a defensible floor once we settle on how to mock
+   `pg`.
+
+5. **Playwright smoke refresh.**
+   `apps/web/tests/smoke.mjs`: dropped the now-stale sql.js / WASM
+   error suppression; added a soft "title-screen exit path" check after
+   the gameplay loop; tolerates `/api/health` 503s (preview server
+   doesn't run serverless functions, so the localStorage fallback fires
+   — expected, not a regression). Death-and-legacy still needs a
+   purpose-built dev hook to force HP→0 deterministically; deferred to
+   Phase 5.
+
+### Test counts
+
+| Workspace      | Before | After | Delta |
+|----------------|-------:|------:|------:|
+| persistence    |      4 |    18 |   +14 |
+| llm-client     |     35 |    35 |     0 |
+| narrative      |      6 |    10 |    +4 |
+| engine         |      9 |    23 |   +14 |
+| web            |     10 |    10 |     0 |
+| **Total**      |     64 |    96 |  **+32** |
+
+### Coverage (advisory baseline)
+
+| Workspace        | Lines   | Branches | Funcs   |
+|------------------|--------:|---------:|--------:|
+| engine           | 56.14%  | 63.49%   | 51.14%  |
+| persistence      | 28.68%  | 80.80%   | 51.80%  |
+
+Engine: the lower number is the historical `CharacterCreation`,
+`RulesEngine`, `StateEngine`, `WorldSimulation` modules — they're
+exercised by the integration spec but every code path is not. Reducer
+files now sit between 60–100% lines.
+
+Persistence: 28.68% looks bad but the runtime impls
+(`MemoryRepository`, `HttpRepository`, `LocalStorageRepository`) are
+fully exercised. `PostgresRepository` (~330 LOC of pg-driver glue)
+needs either a pg-mem mock or an integration test against a real
+Postgres — Phase 5 decision point.
+
+### Verify
+
+- `npm run typecheck` ✅ — persistence + llm-client + narrative +
+  engine + web + api
+- `npm test` ✅ — **96/96**
+- `npm run test:coverage` ✅ — runs end to end; thresholds advisory
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main 175.24 kB / vendor 455.80 kB (unchanged)
+
 ## Build Commands
 
 ```bash
