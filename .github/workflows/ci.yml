@@ -40,6 +40,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Voice eval + adversarial guard (Phase 17)
+        run: npm run voice:eval
+
       - name: Compile narrative content
         run: npm run content:compile
 
