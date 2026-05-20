@@ -59,6 +59,13 @@ regressions are caught early and budgets stay honest.
 > - **Witness Briefing** — `OnboardingOverlay` upgraded from a one-line input tip to a proper first-run modal that grounds the player in the cosmic-horror premise (the Shattering, the Witness role, the reincarnation/legacy loop) AND the input mechanics. Single scannable screen with two body paragraphs + "I bear witness." dismiss button. `aria-modal="true"` + `role="dialog"` for assistive tech. Reuses the existing `game.onboardingDismissed` plumbing so it never re-shows for the same character.
 >
 > Bundle `main.js` 213.84 → **214.62 kB** raw (+0.78 kB — Witness Briefing copy + the anvil-contextual filter), `main.css` 48.85 → **48.93 kB** (+0.08 kB — briefing paragraph spacing tweak). All within budget. Test count unchanged at 262 (the Phase 11 work was UI copy / infra config / scripts, none of which warranted new specs over what was already covered).
+>
+> **Phase 11b (same date) — streaming typewriter + Lens drawer:**
+>
+> - **Streaming tale entries** — `TalePanel.buildEntry` now uses the existing `TypewriterText` component for the *newest* entry per render cycle. Settings-aware via `document.documentElement.dataset.textSpeed` (0 = instant); reduced-motion-aware (skips the effect entirely). Older entries on initial paint render statically. A new entry mid-type cancels the previous typewriter and backfills its body to the full text. Universal benefit — covers LLM merges, Ink scenes, reducer-generated tale entries, and the Briefing copy in one place. When future end-to-end LLM streaming integration lands, the typewriter becomes a no-op for already-chunked text.
+> - **"The Lens" settings drawer** — `SettingsModal` morphs from a centred-modal layout to a right-anchored slide-in drawer. The `.modal-backdrop` overlay still dims the rest of the screen; a new `.settings-drawer-backdrop` variant turns off the grid-centring so the drawer can stretch to the right edge. New `.settings-drawer` CSS block (~70 lines) with `drawer-slide-in` keyframe animation, sticky header, scroll body. Reduced-motion respect (`[data-reduced-motion="true"] .settings-drawer { animation: none; }`). Escape key now closes the drawer (was missing previously); `keydown` listener is scoped to the instance and removed on destroy.
+>
+> Bundle `main.js` 214.62 → **217.19 kB** raw (+2.57 kB — TypewriterText wiring + drawer Escape handler + container markup), `main.css` 48.93 → **49.83 kB** (+0.90 kB — drawer CSS block). All assets still within budget (220 / 55 / 470 kB). Test count unchanged at 262.
 
 ## Tests
 

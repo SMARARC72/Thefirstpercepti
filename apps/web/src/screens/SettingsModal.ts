@@ -13,6 +13,9 @@ interface SettingsModalProps {
 export class SettingsModal {
   private props: SettingsModalProps;
   private element: HTMLElement | null = null;
+  // Escape-to-close + keep the listener scoped to this instance so the
+  // drawer doesn't leak handlers after destroy.
+  private keyHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(props: SettingsModalProps) {
     this.props = props;
@@ -20,16 +23,20 @@ export class SettingsModal {
 
   render(): HTMLElement {
     const backdrop = document.createElement("div");
-    backdrop.className = "modal-backdrop";
+    // `modal-backdrop` keeps the dim layer + click-outside behaviour the
+    // existing CSS already provides. The inner container morphs to a
+    // right-anchored slide-in drawer via `.settings-drawer`.
+    backdrop.className = "modal-backdrop settings-drawer-backdrop";
     backdrop.setAttribute("role", "dialog");
     backdrop.setAttribute("aria-modal", "true");
-    backdrop.setAttribute("aria-label", "Settings");
+    backdrop.setAttribute("aria-label", "Settings \u2014 The Lens");
 
-    const modal = document.createElement("div");
-    modal.className = "modal settings-modal";
+    const drawer = document.createElement("aside");
+    drawer.className = "settings-drawer";
+    drawer.setAttribute("role", "document");
 
     const header = document.createElement("div");
-    header.className = "modal-header";
+    header.className = "drawer-header";
     const title = document.createElement("h2");
     title.textContent = "The Lens";
     title.title = "Settings";
@@ -40,10 +47,10 @@ export class SettingsModal {
     closeBtn.addEventListener("click", () => this.props.onClose());
     header.appendChild(title);
     header.appendChild(closeBtn);
-    modal.appendChild(header);
+    drawer.appendChild(header);
 
     const body = document.createElement("div");
-    body.className = "modal-body";
+    body.className = "drawer-body";
 
     body.appendChild(this.buildSection("Accessibility", this.buildAccessibility()));
     body.appendChild(this.buildSection("Audio", this.buildAudio()));
@@ -52,12 +59,18 @@ export class SettingsModal {
     body.appendChild(this.buildSection("Save Slots", this.buildSaveSlots()));
     body.appendChild(this.buildSection("Data", this.buildData()));
 
-    modal.appendChild(body);
-    backdrop.appendChild(modal);
+    drawer.appendChild(body);
+    backdrop.appendChild(drawer);
 
     backdrop.addEventListener("click", (e) => {
       if (e.target === backdrop) this.props.onClose();
     });
+
+    // Escape closes the drawer \u2014 standard a11y for modal dialogs.
+    this.keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") this.props.onClose();
+    };
+    document.addEventListener("keydown", this.keyHandler);
 
     queueMicrotask(() => {
       closeBtn.focus();
@@ -293,6 +306,10 @@ export class SettingsModal {
   }
 
   destroy(): void {
+    if (this.keyHandler) {
+      document.removeEventListener("keydown", this.keyHandler);
+      this.keyHandler = null;
+    }
     this.element = null;
   }
 }

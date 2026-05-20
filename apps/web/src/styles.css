@@ -851,6 +851,68 @@ dd {
   padding: 1rem 1.25rem;
 }
 
+/* ── The Lens — settings drawer ──
+ * Anchored to the right edge, slides in over the gameplay surface.
+ * The `.modal-backdrop` overlay still dims the rest of the screen;
+ * the `.settings-drawer-backdrop` variant just turns off the
+ * grid centring so the drawer can stretch to the right edge.
+ */
+.settings-drawer-backdrop {
+  display: block;
+  padding: 0;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 92vw);
+  max-height: 100svh;
+  overflow: auto;
+  border-left: 1px solid var(--border-default);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  animation: drawer-slide-in var(--duration-normal) var(--ease-out) forwards;
+}
+
+@keyframes drawer-slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+[data-reduced-motion="true"] .settings-drawer {
+  animation: none;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--surface-elevated);
+  z-index: 1;
+}
+
+.drawer-header button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: var(--radius-md);
+}
+
+.drawer-body {
+  padding: 1rem 1.25rem 2rem;
+  flex: 1 1 auto;
+}
+
 .settings-section {
   margin-bottom: 1.5rem;
 }

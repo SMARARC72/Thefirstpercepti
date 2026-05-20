@@ -2,6 +2,7 @@ import gsap from "gsap";
 import type { GameState, TaleEntry } from "../game";
 import { CommandDock } from "./CommandDock";
 import { OnboardingOverlay } from "./OnboardingOverlay";
+import { TypewriterText } from "./TypewriterText";
 
 /** Map a 0..100 danger score to a CSS-friendly tier. Drives the
  * turn-pill ember-breathe animation (see styles.css). */
@@ -38,6 +39,12 @@ export class TalePanel {
   private onboarding: OnboardingOverlay | null = null;
   private renderedIds = new Set<string>();
   private recallPill: HTMLButtonElement | null = null;
+  // Single in-flight progressive renderer for the newest tale entry.
+  // Old entries are rendered statically (they've already been "seen").
+  // If a new entry arrives mid-type, the previous typewriter is destroyed
+  // and its body backfilled to the full text.
+  private activeTypewriter: TypewriterText | null = null;
+  private activeTypewriterEntryId: string | null = null;
 
   constructor(props: TalePanelProps) {
     this.props = props;
@@ -137,7 +144,7 @@ export class TalePanel {
     requestAnimationFrame(() => this.scrollToBottom());
   }
 
-  private buildEntry(entry: TaleEntry): HTMLElement {
+  private buildEntry(entry: TaleEntry, options: { progressive?: boolean } = {}): HTMLElement {
     const article = document.createElement("article");
     article.className = `tale-entry ${entry.tone}`;
     article.dataset.entryId = entry.id;
@@ -149,12 +156,61 @@ export class TalePanel {
     h3.textContent = entry.title;
 
     const body = document.createElement("p");
-    body.textContent = entry.body;
+    if (options.progressive && entry.body.length > 0) {
+      // Cancel any prior typewriter — the new entry takes the spotlight.
+      this.finishActiveTypewriter();
+      const writer = new TypewriterText({
+        text: entry.body,
+        speed: this.textSpeed(),
+        className: "tale-entry-body",
+        onComplete: () => {
+          if (this.activeTypewriterEntryId === entry.id) {
+            this.activeTypewriter = null;
+            this.activeTypewriterEntryId = null;
+          }
+        },
+      });
+      body.appendChild(writer.render());
+      this.activeTypewriter = writer;
+      this.activeTypewriterEntryId = entry.id;
+    } else {
+      body.textContent = entry.body;
+    }
 
     article.appendChild(turn);
     article.appendChild(h3);
     article.appendChild(body);
     return article;
+  }
+
+  /**
+   * Read the textSpeed setting from the DOM dataset main.ts maintains.
+   * Falls back to the default if absent or invalid; 0 → instant render.
+   */
+  private textSpeed(): number {
+    const raw = document.documentElement.dataset.textSpeed;
+    if (raw === undefined || raw === "") return 16;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0 ? n : 16;
+  }
+
+  /**
+   * If a typewriter is mid-flight, end it immediately and show the full
+   * text. Called when a new entry arrives or the panel is destroyed.
+   */
+  private finishActiveTypewriter(): void {
+    if (!this.activeTypewriter || !this.activeTypewriterEntryId) return;
+    const article = this.list?.querySelector<HTMLElement>(
+      `article[data-entry-id="${this.activeTypewriterEntryId}"]`
+    );
+    if (article) {
+      const fullText = this.props.game.tale.find((e) => e.id === this.activeTypewriterEntryId)?.body;
+      const body = article.querySelector("p");
+      if (body && fullText !== undefined) body.textContent = fullText;
+    }
+    this.activeTypewriter.destroy();
+    this.activeTypewriter = null;
+    this.activeTypewriterEntryId = null;
   }
 
   /** True if the reader is within ~80 px of the bottom — close enough
@@ -185,10 +241,13 @@ export class TalePanel {
     if (!this.list) return;
     const ordered = entries.slice().reverse();
     const wasAtBottom = this.isAtBottom();
+    const newEntries = ordered.filter((e) => !this.renderedIds.has(e.id));
+    // Only the very last new entry gets the typewriter; older ones in
+    // the same batch render statically (rare case — usually one per turn).
+    const progressiveId = newEntries[newEntries.length - 1]?.id;
     const newNodes: HTMLElement[] = [];
-    for (const entry of ordered) {
-      if (this.renderedIds.has(entry.id)) continue;
-      const node = this.buildEntry(entry);
+    for (const entry of newEntries) {
+      const node = this.buildEntry(entry, { progressive: entry.id === progressiveId });
       this.list.appendChild(node);
       this.renderedIds.add(entry.id);
       newNodes.push(node);
@@ -273,6 +332,9 @@ export class TalePanel {
   }
 
   destroy(): void {
+    this.activeTypewriter?.destroy();
+    this.activeTypewriter = null;
+    this.activeTypewriterEntryId = null;
     this.commandDock?.destroy();
     this.onboarding?.destroy();
     this.recallPill = null;
