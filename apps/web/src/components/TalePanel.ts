@@ -1,3 +1,4 @@
+import gsap from "gsap";
 import type { GameState, TaleEntry } from "../game";
 import { CommandDock } from "./CommandDock";
 import { OnboardingOverlay } from "./OnboardingOverlay";
@@ -18,12 +19,25 @@ interface TalePanelProps {
   onDraftChange: (value: string) => void;
 }
 
+/**
+ * Renders the unfolding tale. New entries slide in from below; if the
+ * reader has scrolled back when an entry arrives, a "↓ new" pill drops
+ * down and snaps focus to the bottom on click. The slow-reveal
+ * animation respects `prefers-reduced-motion`.
+ *
+ * The render pipeline is incremental: we track which entry ids are
+ * already in the DOM, render only new ones, and let CSS handle the
+ * styling. This keeps gsap targets stable (no full re-render per
+ * turn) so the animation reads cleanly.
+ */
 export class TalePanel {
   private props: TalePanelProps;
   private element: HTMLElement | null = null;
   private list: HTMLElement | null = null;
   private commandDock: CommandDock | null = null;
   private onboarding: OnboardingOverlay | null = null;
+  private renderedIds = new Set<string>();
+  private recallPill: HTMLButtonElement | null = null;
 
   constructor(props: TalePanelProps) {
     this.props = props;
@@ -63,7 +77,7 @@ export class TalePanel {
     titleGroup.appendChild(h2);
 
     // Turn pill carries a danger-tier dataset so CSS can pulse it as the
-    // world becomes more hostile. Computed from world.danger (0..100).
+    // world becomes more hostile.
     const turnPill = document.createElement("span");
     turnPill.className = "turn-pill";
     turnPill.textContent = `Turn ${this.props.game.turnCount} · the world still notices`;
@@ -78,8 +92,21 @@ export class TalePanel {
     this.list.className = "tale-list";
     this.list.setAttribute("aria-label", "Recent narrative events");
     this.list.setAttribute("aria-live", "polite");
-    this.renderEntries(this.props.game.tale);
     section.appendChild(this.list);
+
+    // Recall pill — visible only when the reader is scrolled back and
+    // new entries arrive. Click snaps the list to the bottom.
+    this.recallPill = document.createElement("button");
+    this.recallPill.type = "button";
+    this.recallPill.className = "tale-recall-pill";
+    this.recallPill.textContent = "Something just happened";
+    this.recallPill.title = "Jump to the newest entry";
+    this.recallPill.addEventListener("click", () => this.scrollToBottom());
+    section.appendChild(this.recallPill);
+
+    // First render — show every entry without animation since this is
+    // the player's first look at the panel.
+    this.renderInitial(this.props.game.tale);
 
     this.commandDock = new CommandDock({
       draft: this.props.commandDraft,
@@ -94,26 +121,109 @@ export class TalePanel {
     return section;
   }
 
-  private renderEntries(entries: TaleEntry[]): void {
+  private renderInitial(entries: TaleEntry[]): void {
     if (!this.list) return;
     this.list.innerHTML = "";
-    for (const entry of entries) {
-      const article = document.createElement("article");
-      article.className = `tale-entry ${entry.tone}`;
+    this.renderedIds.clear();
+    // Tale entries arrive newest-first (the store unshifts). For the
+    // reading direction we want oldest at the top and the newest near
+    // the dock, so we render reversed.
+    const ordered = entries.slice().reverse();
+    for (const entry of ordered) {
+      this.list.appendChild(this.buildEntry(entry));
+      this.renderedIds.add(entry.id);
+    }
+    // Land at the bottom on first paint.
+    requestAnimationFrame(() => this.scrollToBottom());
+  }
 
-      const turn = document.createElement("span");
-      turn.textContent = `Turn ${entry.turn}`;
+  private buildEntry(entry: TaleEntry): HTMLElement {
+    const article = document.createElement("article");
+    article.className = `tale-entry ${entry.tone}`;
+    article.dataset.entryId = entry.id;
 
-      const h3 = document.createElement("h3");
-      h3.textContent = entry.title;
+    const turn = document.createElement("span");
+    turn.textContent = `Turn ${entry.turn}`;
 
-      const body = document.createElement("p");
-      body.textContent = entry.body;
+    const h3 = document.createElement("h3");
+    h3.textContent = entry.title;
 
-      article.appendChild(turn);
-      article.appendChild(h3);
-      article.appendChild(body);
-      this.list.appendChild(article);
+    const body = document.createElement("p");
+    body.textContent = entry.body;
+
+    article.appendChild(turn);
+    article.appendChild(h3);
+    article.appendChild(body);
+    return article;
+  }
+
+  /** True if the reader is within ~80 px of the bottom — close enough
+   * that auto-scroll is non-disruptive. */
+  private isAtBottom(): boolean {
+    if (!this.list) return true;
+    const slack = 80;
+    return this.list.scrollTop + this.list.clientHeight + slack >= this.list.scrollHeight;
+  }
+
+  private scrollToBottom(behavior: ScrollBehavior = "smooth"): void {
+    if (!this.list) return;
+    this.list.scrollTo({ top: this.list.scrollHeight, behavior });
+    this.recallPill?.classList.remove("visible");
+  }
+
+  private reducedMotion(): boolean {
+    return (
+      document.documentElement.dataset.reducedMotion === "true" ||
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true
+    );
+  }
+
+  /** Append entries that haven't been rendered yet, animate them in,
+   * and either auto-scroll (if the reader was at the bottom) or flash
+   * the recall pill (if they were reading older content). */
+  private appendNew(entries: TaleEntry[]): void {
+    if (!this.list) return;
+    const ordered = entries.slice().reverse();
+    const wasAtBottom = this.isAtBottom();
+    const newNodes: HTMLElement[] = [];
+    for (const entry of ordered) {
+      if (this.renderedIds.has(entry.id)) continue;
+      const node = this.buildEntry(entry);
+      this.list.appendChild(node);
+      this.renderedIds.add(entry.id);
+      newNodes.push(node);
+    }
+
+    if (newNodes.length === 0) return;
+
+    if (!this.reducedMotion()) {
+      gsap.from(newNodes, {
+        opacity: 0,
+        y: 12,
+        duration: 0.6,
+        stagger: 0.08,
+        ease: "power2.out",
+      });
+    }
+
+    if (wasAtBottom) {
+      requestAnimationFrame(() => this.scrollToBottom());
+    } else {
+      this.recallPill?.classList.add("visible");
+    }
+  }
+
+  /** When tale entries are dropped (e.g. load from save), drop any DOM
+   * nodes that no longer correspond to a real entry id. */
+  private pruneStale(entries: TaleEntry[]): void {
+    if (!this.list) return;
+    const live = new Set(entries.map((e) => e.id));
+    for (const node of Array.from(this.list.children)) {
+      const id = (node as HTMLElement).dataset.entryId;
+      if (id && !live.has(id)) {
+        node.remove();
+        this.renderedIds.delete(id);
+      }
     }
   }
 
@@ -122,9 +232,28 @@ export class TalePanel {
       const oldTurn = this.props.game.turnCount;
       const oldTaleLength = this.props.game.tale.length;
       this.props.game = newProps.game;
-      if (this.list && (newProps.game.tale.length !== oldTaleLength || oldTurn !== newProps.game.turnCount)) {
-        this.renderEntries(newProps.game.tale);
+
+      if (this.list) {
+        // If the tale shrank or changed identity (e.g. a load), redo
+        // it. Otherwise incrementally append new entries.
+        const newTale = newProps.game.tale;
+        const grew = newTale.length > oldTaleLength || newTale.length === oldTaleLength && oldTurn !== newProps.game.turnCount;
+        const liveIds = new Set(newTale.map((e) => e.id));
+        let anyMissing = false;
+        for (const id of this.renderedIds) {
+          if (!liveIds.has(id)) {
+            anyMissing = true;
+            break;
+          }
+        }
+        if (anyMissing) {
+          this.pruneStale(newTale);
+          this.renderInitial(newTale);
+        } else if (grew) {
+          this.appendNew(newTale);
+        }
       }
+
       if (this.commandDock) {
         this.commandDock.update({
           feedback: newProps.game.lastFeedback,
@@ -146,6 +275,8 @@ export class TalePanel {
   destroy(): void {
     this.commandDock?.destroy();
     this.onboarding?.destroy();
+    this.recallPill = null;
+    this.renderedIds.clear();
     this.element = null;
   }
 }

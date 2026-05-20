@@ -501,6 +501,13 @@ function renderDeath(): void {
   const state = store.getState();
   const screen = new DeathScreen({
     game: state.game!,
+    onMount: () => {
+      // The audio fades to silence over ~2.5s in parallel with the
+      // visual ceremony. Errors are swallowed — the audio engine may
+      // never have been started (no user gesture before death) and we
+      // don't want that to mar the screen.
+      void audioEngine.fadeOut(2.5).catch(() => {});
+    },
     onNewRun: () => {
       const creation = blankCreation();
       const next = createInitialState();

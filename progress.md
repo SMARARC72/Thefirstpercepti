@@ -741,6 +741,93 @@ register) need bespoke gsap work and go in Phase 6b.
   gzipped CSS for the grimoire override layer.
 - Leak grep → 0 hits.
 
+## 2026-05-20 (Session 6 cont.) — Phase 6b: Cinematic ceremonies
+
+**Goal:** Land the four pieces deferred from 6.1 — title-particle coalesce,
+death rite, legacy stone register, slow-reveal tale + auto-scroll pill —
+without breaking the test surface or hurting headless smoke timing.
+
+### Changes
+
+1. **Title coalesce.** `TitleScreen` now wraps each character of "The
+   First Perception" in a `.title-letter` span (aria-hidden; the H1
+   carries the readable label). gsap scatters each letter to a random
+   offset + rotation + blur, then settles them with a `stagger: random`
+   over ~1 s. Eyebrow / lede / nav fade in once the letters have
+   landed, so the page looks like the title is *settling out of the
+   particles*. `prefers-reduced-motion` + the in-app
+   `data-reduced-motion` attribute skip the choreography.
+
+2. **Death rite.** `DeathScreen` now:
+   - Mounts a denser ash `ParticleCanvas` (density 5 vs the title's 3).
+   - Splits "The Record Closes" into `.title-letter` spans with a
+     sigil-gold underline that "carves" beneath the heading.
+   - Types the epitaph in letter-by-letter (~600 ms reveal at
+     ~15 ms/char) in italic sigil-gold.
+   - Calls `onMount?.()` after the DOM lands so the orchestrator can
+     decay master audio in parallel.
+   - Renames the actions: "Begin New Run" → "Awaken again", "Return to
+     Title" → "Close the volume".
+3. **Audio fade hook.** New `AudioEngine.fadeOut(durationSec = 2.5)`
+   ramps master volume to `-Infinity` and suspends the AudioContext.
+   `apps/web/src/main.ts` wires this into `renderDeath()` via the new
+   `onMount` prop — fire-and-forget, errors swallowed so a never-
+   started audio engine doesn't mar the screen.
+
+4. **Legacy as stone register.** `LegacyScreen` replaces the card
+   layout with a CSS grid of `.legacy-slab` tiles. Each slab is
+   keyboard-reachable (`tabindex="0"`), has the paper-grain overlay,
+   inset shadow + sigil rune top-right, and reveals a detail tray on
+   hover/focus-within (final location, region danger at death,
+   inheritance, advantage, altered factions). Header: "The Chain of
+   Lives" → "The Register"; empty state reads "The page is blank.
+   Nothing has died here yet." Action: "Return to Title" → "Close the
+   volume".
+
+5. **Slow-reveal tale + auto-scroll pill.** `TalePanel` rewritten to
+   render incrementally:
+   - Tracks `renderedIds: Set<string>`; first render seeds the set and
+     scrolls to bottom.
+   - On update, computes the diff — new entries get appended to the
+     DOM and animated in via `gsap.from({ y: 12, opacity: 0,
+     stagger: 0.08 })`.
+   - If the reader was within ~80 px of the bottom when the turn
+     resolves, auto-scrolls; otherwise drops a sticky
+     `.tale-recall-pill` ("Something just happened ↓") at the bottom
+     of the panel. Click snaps to bottom + dismisses the pill.
+   - A `pruneStale` path covers loads / state restores where the tale
+     contents shrink or replace.
+
+### Verify
+
+- `npm run typecheck` ✅ — persistence + llm-client + narrative +
+  engine + web + api
+- `npm test` ✅ — **96/96** (DOM changes are behind `aria-label`s and
+  don't touch the JS state surface the tests assert on)
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main **182.11 kB** / css **36.90 kB**
+  (vs Phase 6.1: 177.24 / 31.71). +4.87 kB JS for the four ceremonies
+  (mostly TalePanel rewrite + DeathScreen logic + LegacyScreen slabs);
+  +5.19 kB CSS (~+0.80 kB gzipped) for the new keyframes, slab styles,
+  recall pill, death glow + underline.
+- Leak grep → 0 hits.
+
+### Phase 6 complete
+
+Combined Phase 6 (6.1 + 6b) totals: **+8.12 kB JS, +11.69 kB CSS**
+across the surface. Tests still 96/96. The game now looks and reads
+as an artifact from the world — diegetic copy across every screen,
+type pairing settled on Cormorant + Inter, paper-grain texture where
+the player reads, per-tone tale typography, in-world meters, title
+particles coalescing into letters, a death rite with letter-by-letter
+epitaph + audio fade, and a stone-register legacy view.
+
+### What's still ahead
+
+- **Phase 7** — Sentry + streaming LLM tokens + bundle budget in CI.
+- **Phase 8** — "The Lens" settings drawer, the Witness Briefing
+  first-run overlay, accessibility hardening, contextual tab reveals.
+
 ## Build Commands
 
 ```bash

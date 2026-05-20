@@ -247,6 +247,19 @@ export class AudioEngine implements AudioSystem {
     this.masterVolume.volume.rampTo(gainToDb(volume), 0.3);
   }
 
+  /**
+   * Smoothly fade master volume to silence over `durationSec`, then
+   * suspend the AudioContext. Used by the death ceremony so the world
+   * literally dims with the player. Resolves when the fade and the
+   * suspend have both completed.
+   */
+  async fadeOut(durationSec = 2.5): Promise<void> {
+    // Tone.Volume.volume is an AudioParam; rampTo handles the curve.
+    this.masterVolume.volume.rampTo(-Infinity, durationSec);
+    await new Promise((r) => setTimeout(r, Math.ceil(durationSec * 1000) + 80));
+    this.stop();
+  }
+
   setMuted(muted: boolean): void {
     this.isMuted = muted;
     this.masterVolume.mute = muted;
