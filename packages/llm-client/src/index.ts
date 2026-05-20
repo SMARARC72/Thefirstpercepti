@@ -14,6 +14,15 @@ export { SafetyFilter } from "./SafetyFilter.js";
 export { CacheManager } from "./CacheManager.js";
 export { TokenCounter } from "./TokenCounter.js";
 
+// Intent classification (LLM-first parser with regex fallback).
+export { IntentClassifier, regexClassify } from "./IntentClassifier.js";
+export type {
+  ClassifiedIntent,
+  IntentClassifierOptions,
+  IntentDomain,
+  ReducerKind,
+} from "./IntentClassifier.js";
+
 // Context assembly.
 export { WorldContextAssembler } from "./WorldContextAssembler.js";
 export type { WorldContext } from "./WorldContextAssembler.js";

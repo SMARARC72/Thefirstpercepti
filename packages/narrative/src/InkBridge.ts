@@ -9,12 +9,14 @@ import type {
 } from "@first-perception/types";
 import type { NarrativeResult } from "./index.js";
 import { createGameStateBindings } from "./bindings/gameStateBindings";
+import { WorldMemoryCache } from "./WorldMemoryCache.js";
 
 export class InkBridge {
   private story: Story | null = null;
   private externalFunctions: Map<string, (...args: unknown[]) => unknown> = new Map();
   private gameState: GameState | null = null;
   private gameStateRef: { current: GameState | null } = { current: null };
+  private worldMemory: WorldMemoryCache = new WorldMemoryCache();
   private _journalBuffer: Array<{ label: string; detail: string }> = [];
   private _consequenceBuffer: string[] = [];
   private _gameBindingsRegistered = false;
@@ -36,6 +38,20 @@ export class InkBridge {
   bindGameState(state: GameState): void {
     this.gameState = state;
     this.gameStateRef.current = state;
+  }
+
+  /**
+   * Swap in a different WorldMemoryCache. Useful so the orchestrator
+   * can share one cache instance across many InkBridges or pre-warm
+   * the cache before the bridge runs Ink.
+   */
+  bindWorldMemory(cache: WorldMemoryCache): void {
+    this.worldMemory = cache;
+  }
+
+  /** Direct access for orchestrator pre-warming (`setRecall`, etc.). */
+  getWorldMemory(): WorldMemoryCache {
+    return this.worldMemory;
   }
 
   choosePath(path: string): void {
@@ -165,6 +181,20 @@ export class InkBridge {
     // Bind pure math helpers used in Ink scripts
     this.story.BindExternalFunction("min", (a: number, b: number) => Math.min(a, b));
     this.story.BindExternalFunction("max", (a: number, b: number) => Math.max(a, b));
+
+    // Living World externals — sync reads from the WorldMemoryCache.
+    // Async population happens in the orchestrator before continueStory().
+    this.story.BindExternalFunction("recall", (...args: unknown[]) => {
+      const locationId = String(args[0] ?? this.gameState?.currentLocationId ?? "");
+      if (!locationId) return "";
+      return this.worldMemory.getRecall(locationId);
+    });
+    this.story.BindExternalFunction("llm_generate", (...args: unknown[]) => {
+      const prompt = String(args[0] ?? "");
+      if (!prompt) return "";
+      return this.worldMemory.getLLMGeneration(prompt);
+    });
+
     this._gameBindingsRegistered = true;
   }
 

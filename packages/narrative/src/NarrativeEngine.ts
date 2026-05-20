@@ -5,15 +5,24 @@ import type {
   SuggestedAction,
 } from "@first-perception/types";
 import type { NarrativeResult } from "./index.js";
+import type { GameRepository, WorldEvent } from "@first-perception/persistence";
+import { WorldMemoryCache } from "./WorldMemoryCache.js";
 
 export class NarrativeEngine {
   private bridge: InkBridge;
   private currentKnot: string = "start";
   private stories: Record<string, Record<string, unknown>> = {};
   private loaded = false;
+  private worldMemory: WorldMemoryCache;
 
   constructor() {
     this.bridge = new InkBridge();
+    this.worldMemory = this.bridge.getWorldMemory();
+  }
+
+  /** Access the shared WorldMemoryCache. */
+  getWorldMemory(): WorldMemoryCache {
+    return this.worldMemory;
   }
 
   async initialize(): Promise<void> {
@@ -32,6 +41,34 @@ export class NarrativeEngine {
     this.currentKnot = sceneId;
     this.bridge.choosePath(sceneId);
     return this.bridge.continueStory() ?? this._emptyResult();
+  }
+
+  /**
+   * Pre-warm the WorldMemoryCache before the next Ink continuation.
+   * Reads recent world_event rows at the current location via repo and
+   * stores a short, narrative-ready summary. Safe to call without a
+   * repo — the cache just stays cold and Ink externals return their
+   * deterministic fallback. Best-effort: any error is swallowed so a
+   * persistence outage cannot block a turn.
+   */
+  async prepareWorldMemory(
+    gameState: GameState,
+    options: { repo?: GameRepository; recallLimit?: number } = {},
+  ): Promise<void> {
+    if (!options.repo) return;
+    const limit = options.recallLimit ?? 5;
+    try {
+      const events = await options.repo.getEventsAtLocation(
+        gameState.currentLocationId,
+        limit,
+      );
+      this.worldMemory.setRecall(
+        gameState.currentLocationId,
+        summarizeEvents(events),
+      );
+    } catch {
+      // Persistence outage — leave the cache cold so the fallback fires.
+    }
   }
 
   processCommand(command: string, gameState: GameState): NarrativeResult {
@@ -120,4 +157,25 @@ export class NarrativeEngine {
       tags: [],
     };
   }
+}
+
+/**
+ * Turn a list of WorldEvent rows into a single recall string the Ink
+ * runtime can splice into a passage. Caps at three events; if more
+ * exist, hints that the location holds more than this. Style stays
+ * cosmic-horror neutral so any scene can host it without rewriting.
+ */
+function summarizeEvents(events: readonly WorldEvent[]): string {
+  if (events.length === 0) return "Nothing in particular comes to memory here.";
+  const top = events
+    .slice()
+    .sort((a, b) => b.importance - a.importance || b.turnNumber - a.turnNumber)
+    .slice(0, 3);
+  const lines = top.map((e) => {
+    const trimmed = e.description.trim();
+    const single = trimmed.length > 140 ? trimmed.slice(0, 137) + "..." : trimmed;
+    return `— ${single}`;
+  });
+  const overflow = events.length > top.length ? "\n— (and more, half-remembered)" : "";
+  return `Something happened here, once.\n${lines.join("\n")}${overflow}`;
 }

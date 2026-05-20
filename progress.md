@@ -403,6 +403,96 @@ proxy that reads keys from server env vars and dispatches.
    from the request envelope → ANTHROPIC_API_KEY → MOONSHOT_API_KEY →
    503 with `code: "unavailable"`.
 
+## 2026-05-20 (Session 4 cont.) — Phase 3d: Living World wiring
+
+**Goal:** Get the parser, the Ink externals, and the WorldEvent writeback
+loop in place so future runs (and the LLM context assembler) can actually
+refer to what happened in earlier turns.
+
+### Changes
+
+1. **LLM-first intent classifier.** New
+   `packages/llm-client/src/IntentClassifier.ts`:
+   - Async `classify(command)` → `{verb, target, domain, reducer,
+     confidence, source}`. Always resolves. Calls the LLM at `model: fast`
+     with a strict JSON system prompt; falls back to regex on any error,
+     missing client, or sub-threshold confidence (default 0.55).
+   - LRU cache (default 200 entries) keyed by lowercased command text.
+   - Bounded by a default 800 ms abort; never blocks a turn.
+   - Companion `regexClassify(command)` for the pure-fallback path.
+
+2. **Orchestrator hookup.** `apps/web/src/main.ts` now awaits
+   `intentClassifier.classify(trimmed)` before dispatching reducers:
+   - When `intent.source !== "regex"` it dispatches by the classified
+     `reducer` field (the LLM picked it).
+   - When `intent.source === "regex"` it keeps the original
+     keyword-table dispatch so the locked-in test behaviour doesn't
+     drift.
+   - The classifier is constructed without a client by default and
+     re-wired with the proxy client when the Living World toggle flips
+     on (so a regex turn never hits the network).
+
+3. **Ink externals: `recall` + `llm_generate`.** New
+   `packages/narrative/src/WorldMemoryCache.ts` is the bridge between
+   the async persistence / LLM layer and Ink's synchronous external
+   calls. `InkBridge` binds two new functions:
+   - `recall(location_id)` → reads from cache, falls back to "Nothing
+     in particular comes to memory here." when cold.
+   - `llm_generate(prompt)` → reads from cache, falls back to a
+     deterministic fragment (hash → small pool) so authored content
+     never crashes when the LLM is offline.
+   Real async-aware Ink generation (cache pre-warm + async resume)
+   lands in Phase 6 immersion; the binding contract is locked now so
+   content authors can start using `~ temp x = recall("loc-fountain")`
+   today.
+
+4. **`NarrativeEngine.prepareWorldMemory(game, {repo})`.** Pre-warms
+   the recall cache for the current location by reading recent
+   `world_event` rows via the repo and summarizing them into a
+   three-event recall string ("Something happened here, once…"). Called
+   before every `processCommand`. Best-effort: persistence outages
+   leave the cache cold and the deterministic fallback fires instead.
+
+5. **WorldEvent writeback.** New `apps/web/src/data/worldEvents.ts`
+   holds `buildWorldEvent(game, command, result, campaignId)` +
+   `buildFactionWorldEvent(...)` + `deriveCampaignId(game)`. After each
+   resolved turn, `main.ts` persists the player's outcome via
+   `repo.recordEvent(...)`. When a TurnOrchestrator faction pulse
+   fires, that gets written as a second `WorldEvent` row so cross-run
+   faction memory compounds. Best-effort — wrapped in try/catch and
+   never blocks the save path.
+
+6. **Narrative package now depends on persistence.** `NarrativeEngine`
+   needs `GameRepository` + `WorldEvent` types for `prepareWorldMemory`.
+
+### Verify
+
+- `npm run typecheck` ✅ — persistence + llm-client + narrative +
+  engine + web + api
+- `npm test` ✅ — **64/64**: 35 llm-client (+8 IntentClassifier) +
+  6 narrative (new WorldMemoryCache) + 4 persistence + 9 engine + 10 web
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main 175.24 kB / vendor 455.80 kB (vs Phase 3c
+  166.39 kB main; +8.85 kB for the classifier + cache + writeback
+  helpers)
+- `grep "anthropic\|moonshot\|sk-ant\|pg-types\|postgres://" dist/main-*.js dist/vendor-*.js`
+  → 0 hits. The browser still holds no provider URLs, no keys, no
+  Postgres driver.
+
+### What's not in this push
+
+- **Async-aware `llm_generate` mid-Ink.** Ink externals are
+  synchronous; making `llm_generate` actually call the LLM mid-passage
+  needs either Ink AST pre-analysis (scan the next passage for
+  `llm_generate(...)` calls, batch them, await, then resume) or a
+  pause-resume control flow. Both are too disruptive for Phase 3d.
+  The binding is in place; the cache is in place; Phase 6 will wire
+  the orchestrator's pre-warm path.
+- **`recall(location_id, limit=5)` with a custom limit from Ink.** The
+  external currently ignores extra args. The cache stores one summary
+  per location; per-call limits would need either multiple cache keys
+  or a richer cache value. Defer.
+
 ## Build Commands
 
 ```bash

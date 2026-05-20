@@ -49,8 +49,10 @@ import {
   ProxyLLMClient,
   PromptBuilder,
   WorldContextAssembler,
+  IntentClassifier,
   type LLMClient,
 } from "@first-perception/llm-client";
+import { buildWorldEvent, buildFactionWorldEvent, deriveCampaignId } from "./data/worldEvents";
 
 declare global {
   interface Window {
@@ -84,6 +86,11 @@ let settingsModal: SettingsModal | null = null;
 const audioEngine = new AudioEngine();
 const narrativeEngine = new NarrativeEngine();
 let narrativeReady = false;
+
+// Intent classifier — uses the LLM proxy when enabled, falls back to
+// regex when not. Constructed once and re-wired with a client whenever
+// the Living World toggle flips.
+let intentClassifier = new IntentClassifier();
 
 function createBootState(): AppState {
   const next = createInitialState();
@@ -235,22 +242,39 @@ async function runCommand(command: string): Promise<void> {
 
   let game = state.game;
   const rng = new SeededRNG(game.seed + game.turnCount);
+
+  // LLM-first intent classification. Falls back to regex on any LLM
+  // error or when llmEnabled is off (the classifier is constructed
+  // without a client in that path). Always resolves quickly.
+  const intent = await intentClassifier.classify(trimmed);
   const { verb } = parseCommand(trimmed);
 
-  // Run mechanical reducer
+  // Run mechanical reducer. Prefer the classified reducer when the LLM
+  // returned high-confidence (intent.source === "llm" or "cache"); for
+  // the regex fallback we keep the original keyword dispatch so behaviour
+  // matches what the test suite already locks in.
   let actionResult: ActionResult | null = null;
+  const dispatch = intent.source === "regex" ? verb : intent.reducer;
 
-  if (["attack", "defend", "riposte", "surrender"].includes(verb)) {
+  if (intent.source !== "regex") {
+    if (intent.reducer === "combat") actionResult = combatReducer(game, trimmed, rng);
+    else if (intent.reducer === "move") actionResult = moveReducer(game, trimmed, rng);
+    else if (intent.reducer === "rest") actionResult = restReducer(game, trimmed, rng);
+    else if (intent.reducer === "item") actionResult = itemReducer(game, trimmed, rng);
+    else if (intent.reducer === "dialogue") actionResult = dialogueReducer(game, trimmed, rng);
+    else if (intent.reducer === "investigation") actionResult = investigationReducer(game, trimmed, rng);
+    // narrative_only → leave actionResult null; Ink + LLM handle it
+  } else if (["attack", "defend", "riposte", "surrender"].includes(dispatch)) {
     actionResult = combatReducer(game, trimmed, rng);
-  } else if (["go", "approach", "flee", "sneak"].includes(verb)) {
+  } else if (["go", "approach", "flee", "sneak"].includes(dispatch)) {
     actionResult = moveReducer(game, trimmed, rng);
-  } else if (["rest", "sleep", "recover"].includes(verb)) {
+  } else if (["rest", "sleep", "recover"].includes(dispatch)) {
     actionResult = restReducer(game, trimmed, rng);
-  } else if (["use", "equip", "consume", "inspect", "drop", "trade"].includes(verb)) {
+  } else if (["use", "equip", "consume", "inspect", "drop", "trade"].includes(dispatch)) {
     actionResult = itemReducer(game, trimmed, rng);
-  } else if (["speak", "ask", "bargain", "threaten", "lie"].includes(verb)) {
+  } else if (["speak", "ask", "bargain", "threaten", "lie"].includes(dispatch)) {
     actionResult = dialogueReducer(game, trimmed, rng);
-  } else if (["look", "examine", "read", "listen", "search"].includes(verb)) {
+  } else if (["look", "examine", "read", "listen", "search"].includes(dispatch)) {
     actionResult = investigationReducer(game, trimmed, rng);
   }
 
@@ -263,10 +287,16 @@ async function runCommand(command: string): Promise<void> {
     game = applyPatches(game, conditionResult.patches);
   }
 
-  // Get narrative from Ink
+  // Get narrative from Ink. Pre-warm the WorldMemoryCache first so any
+  // `recall(loc)` or `llm_generate(prompt)` externals the next passage
+  // hits can answer instantly from session-scoped cache instead of the
+  // deterministic fallback.
   let narrativeResult: import("@first-perception/narrative").NarrativeResult | null = null;
   if (narrativeReady) {
     try {
+      if (repo) {
+        await narrativeEngine.prepareWorldMemory(game, { repo });
+      }
       narrativeResult = narrativeEngine.processCommand(trimmed, game);
     } catch (err) {
       console.warn("Narrative error:", err);
@@ -346,6 +376,27 @@ async function runCommand(command: string): Promise<void> {
             },
             ...game.tale,
           ].slice(0, 20);
+
+          // Cross-run faction memory: write the pulse as a WorldEvent so
+          // future runs can recall it. Best-effort; never blocks the turn.
+          if (repo) {
+            try {
+              const pulse = llmResult.worldPulse;
+              const sourceFactionId = game.factions[0]?.id ?? "unknown";
+              const sourceFactionName = game.factions[0]?.name ?? "An offstage force";
+              await repo.recordEvent(
+                buildFactionWorldEvent({
+                  game,
+                  factionId: sourceFactionId,
+                  factionName: sourceFactionName,
+                  pulse,
+                  campaignId: deriveCampaignId(game),
+                }),
+              );
+            } catch (err) {
+              console.warn("Faction WorldEvent writeback failed:", err);
+            }
+          }
         }
         game.lastFeedback = `Turn ${game.turnCount} · ${llmResult.llmCallsMade} LLM calls · ${llmResult.latencyMs}ms`;
       }
@@ -420,6 +471,25 @@ async function runCommand(command: string): Promise<void> {
     }
   } catch {
     // Audio not critical
+  }
+
+  // ── World event writeback ──
+  // Persist what happened this turn so future runs (via recall) and
+  // the LLM context assembler can refer to it. Best-effort: the repo
+  // may be the localStorage fallback (session-scoped) or unavailable.
+  // Either way, save and turn flow must not block.
+  if (actionResult && repo) {
+    try {
+      const event = buildWorldEvent({
+        game,
+        command: trimmed,
+        result: actionResult,
+        campaignId: deriveCampaignId(game),
+      });
+      if (event) await repo.recordEvent(event);
+    } catch (err) {
+      console.warn("WorldEvent writeback failed:", err);
+    }
   }
 
   store.setState({ game, commandDraft: "" });
@@ -728,6 +798,8 @@ function initLLMLayer(enabled: boolean): void {
   if (!enabled) {
     turnOrchestrator = null;
     llmClient = null;
+    // Drop the classifier back to regex-only.
+    intentClassifier = new IntentClassifier();
     return;
   }
 
@@ -735,6 +807,9 @@ function initLLMLayer(enabled: boolean): void {
     llmClient = new ProxyLLMClient();
     promptBuilder = new PromptBuilder();
     contextAssembler = new WorldContextAssembler(repo ?? undefined);
+    // Re-wire the intent classifier with the new proxy client so
+    // free-text commands can be classified via /api/llm.
+    intentClassifier = new IntentClassifier({ client: llmClient });
     turnOrchestrator = new TurnOrchestrator({
       client: llmClient,
       builder: promptBuilder,
