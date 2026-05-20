@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative/scenes/notice_10.ink",
+  "compiledAt": "2026-05-20T23:06:18.805Z",
+  "storyContent": "// ============================================================================\n// NOTICE 10 — Convergence (Phase 18 / CONTENT-202)\n// ============================================================================\n// Multi-faction scene. Per faction-interactions.md: factions argue jurisdiction\n// in front of player. Player may align, broker (DC 18 Presence), or refuse.\n// Apotheosis-attempt eligible if Authority >= 9 (-> x12_apotheosis).\n// ============================================================================\n\n=== notice_10_convergence ===\nThe market closes around you without announcement.\n\n# sound:combat-sting\n# animation:pulse\n\nMarrow-Saint Ilyra arrives from the east, wrists rebound in red cord. Bell-Magistrate Orro arrives from the north, inkwell capped. Venn Hook arrives from the south, hook unconcealed for the first time you have seen.\n\nNone of the three address the others. Each addresses you.\n\nILYRA: \"The fountain has been practicing your name. We hold the room for the rehearsal.\"\n\nORRO: \"The Bell Court has accumulated a contradiction in your name beyond civic tolerance.\"\n\nVENN: \"The League records the convergence. Premium applies.\"\n\n{ get_player_stat(\"authority\") >= 9:\n    Something in the room — the room itself — adjusts to the weight you have begun to carry. The candles in the cathedral, two streets away, do not flicker. The candles know.\n    \n    * [Speak the name yourself] -> x12_apotheosis\n}\n\n* [Align with the Drowned Church] -> notice_10_align_church\n* [Align with the Bell Court] -> notice_10_align_court\n* [Attempt to broker] -> notice_10_broker\n* [Refuse all] -> notice_10_refuse\n\n=== notice_10_align_church ===\nYou speak in Ilyra's direction. The other two do not interrupt; the other two are listening.\n\n~ add_journal_entry(\"Convergence outcome\", \"Aligned with Drowned Church. Bell Court warrant likely; Tide League records the alignment.\")\n\n-> arrival\n\n=== notice_10_align_court ===\nYou speak in Orro's direction. He uncaps the inkwell. The other two register the uncapping.\n\n~ add_journal_entry(\"Convergence outcome\", \"Aligned with Bell Court. Drowned Church marks you; Tide League records the alignment.\")\n\n-> arrival\n\n=== notice_10_broker ===\n{ roll_check(\"presence\", 18) >= 18:\n    You speak between the three. The brokering holds long enough for each to step back without committing. Venn Hook smiles slowly.\n    ~ add_journal_entry(\"Convergence outcome\", \"Brokered. All three retreat without commitment. Tide League notes the brokering.\")\n- else:\n    The brokering does not hold. One of the three commits anyway; the other two adjust.\n}\n\n-> arrival\n\n=== notice_10_refuse ===\nYou refuse all three. The refusal is recorded by all three.\n\n{ get_player_stat(\"authority\") >= 9:\n    The refusal is the rehearsal. The room knows it. You know it.\n    -> x12_apotheosis\n- else:\n    The refusal closes the convergence without resolving it. Each faction departs along their arrival paths. The market reopens, slowly.\n    ~ add_journal_entry(\"Convergence outcome\", \"Refused all three. Convergence unresolved. Pressure persists.\")\n}\n\n-> arrival\n",
+  "metadata": {
+    "knots": [
+      "notice_10_convergence",
+      "notice_10_align_church",
+      "notice_10_align_court",
+      "notice_10_broker",
+      "notice_10_refuse"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

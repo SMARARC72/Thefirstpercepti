@@ -14,6 +14,17 @@ INCLUDE scenes/breach.ink
 INCLUDE scenes/dialogue_fennick.ink
 INCLUDE scenes/dialogue_foundling.ink
 INCLUDE scenes/dreams.ink
+
+// ── Phase 18 / Wave D-2: Greywake slice scenes ──────────────────────────────
+INCLUDE scenes/dry_fountain.ink
+INCLUDE scenes/notice_07.ink
+INCLUDE scenes/notice_08.ink
+INCLUDE scenes/notice_09.ink
+INCLUDE scenes/notice_10.ink
+INCLUDE scenes/bell_magistrate.ink
+INCLUDE scenes/marrow_saint.ink
+INCLUDE scenes/x12_apotheosis.ink
+
 INCLUDE systems/faction_reactions.ink
 INCLUDE systems/consequences.ink
 INCLUDE systems/legacy.ink

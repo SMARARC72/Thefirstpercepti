@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative/scenes/notice_09.ink",
+  "compiledAt": "2026-05-20T23:06:18.805Z",
+  "storyContent": "// ============================================================================\n// NOTICE 09 — Confrontation (Phase 18 / CONTENT-202)\n// ============================================================================\n// Faction agents intercept; named-by-not-yet-named condition fires.\n// Last stop before Convergence at 10.\n// ============================================================================\n\n=== notice_09_confrontation ===\nTwo Bell Court clerks intercept you at the precinct corner. One carries a closed ledger. The other carries nothing visible.\n\n# sound:combat-sting\n\nThe clerk with the ledger speaks: \"Three civic days. The Court has accumulated a contradiction in your name.\"\n\n{ roll_check(\"presence\", 14) >= 14:\n    You hold posture. The clerk with the ledger acknowledges the holding with the smallest nod the Court permits. \"You will be summoned by the seventh bell on the third day. Acknowledge.\"\n    ~ add_journal_entry(\"Notice 9 — Confrontation\", \"Bell Court will summon by the seventh bell on the third day.\")\n- else:\n    Your composure slips. The clerk with the ledger marks something in the margin. The other clerk does not move. \"Your acknowledgment is recorded. You will be summoned.\"\n    ~ add_journal_entry(\"Notice 9 — Confrontation\", \"Acknowledgment recorded under duress. Bell Court summons coming.\")\n}\n\n* [Acknowledge formally] -> notice_09_acknowledge\n* [Ask which contradiction] -> notice_09_ask\n* [Refuse the summons] -> notice_09_refuse\n\n=== notice_09_acknowledge ===\n\"Acknowledged.\" The ledger closes. The other clerk has not moved.\n\nThe clerks walk past you without further address. The precinct corner returns to ordinary daylight, slowly.\n\n-> arrival\n\n=== notice_09_ask ===\n\"Which contradiction is in my name?\"\n\nThe clerk with the ledger does not open it. \"The Court does not disclose strikings. If you have not been struck, this is a courtesy. If you have, it is procedure.\"\n\n-> notice_09_acknowledge\n\n=== notice_09_refuse ===\n\"Refusal is itself entered in the record.\" The ledger opens, briefly, and closes. The other clerk has stepped half a pace closer.\n\n~ add_journal_entry(\"Notice 9 — Refusal\", \"Refusal entered in Bell Court record. Warrant likely.\")\n\n-> arrival\n",
+  "metadata": {
+    "knots": [
+      "notice_09_confrontation",
+      "notice_09_acknowledge",
+      "notice_09_ask",
+      "notice_09_refuse"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

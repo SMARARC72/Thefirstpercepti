@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative/scenes/notice_07.ink",
+  "compiledAt": "2026-05-20T23:06:18.804Z",
+  "storyContent": "// ============================================================================\n// NOTICE 07 — Murmur (Phase 18 / CONTENT-202)\n// ============================================================================\n// First Notice-Ladder step. Faction starts asking after the player; no direct\n// action yet. Per Notice Ladder spec (R-82): stepped consequences at 7/8/9/10.\n// Triggered by faction_loyalty crossing 7. Plays as ambient market scene.\n// ============================================================================\n\n=== notice_07_murmur ===\nA boy at the fish-monger's stall mentions your name to the woman wrapping his order.\n\n# sound:ambient\n\nThe woman does not look up. She finishes wrapping. She glances at the alley toward the cathedral. The boy pays and leaves.\n\n{ get_player_stat(\"sense\") >= 3:\n    You hear the name a second time, half a street away, in the voice of someone you have not yet met.\n    ~ add_journal_entry(\"Notice 7 — Murmur\", \"Your name is being asked after. The asking has not yet reached you.\")\n- else:\n    Something has shifted in how the market holds you. You cannot name what.\n    ~ add_journal_entry(\"Notice 7 — Murmur\", \"The market holds you differently. You cannot name what.\")\n}\n\n-> arrival\n",
+  "metadata": {
+    "knots": [
+      "notice_07_murmur"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

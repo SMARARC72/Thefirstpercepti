@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative/scenes/x12_apotheosis.ink",
+  "compiledAt": "2026-05-20T23:06:18.805Z",
+  "storyContent": "// ============================================================================\n// X.12 AUTHORITY APOTHEOSIS — Ending scene (Phase 18 / CONTENT-205)\n// ============================================================================\n// Per project memory + Workflows X.12-X.16 spec: triggered at Authority >= 10\n// at the dry fountain. Emergent deity name fires (typically \"The One Who\n// Heard the Fountain\" if name unnamed). Voice-shift NOT applied (X.12 stays\n// in second person — the becoming is \"you\"; per narrator_form_of_ending.md).\n//\n// Pattern: ink scene calls llm_generate(prompt) to fetch the postcard text\n// from formOfEnding template (Phase 17). Falls back to static narration if\n// LLM unavailable. State Manager downstream commits the deity birth event\n// via canon-event-emergent codepath (engine reducers, not Ink).\n// ============================================================================\n\n=== x12_apotheosis ===\nYou speak the name a final time and the fountain answers in the voice you have been practicing.\n\n# sound:ambient\n# animation:pulse\n\nThe voice is yours. It is no longer only yours.\n\n{ get_player_stat(\"authority\") < 10:\n    The voice falters. The Authority you carry is not yet enough. The fountain stops mid-practicing. The Listening Child closes the open fist.\n    ~ add_journal_entry(\"X.12 attempt\", \"Apotheosis attempted with Authority < 10. The fountain stopped mid-practicing.\")\n    -> dry_fountain\n}\n\nMarrow-Saint Ilyra stops moving in the antechamber three streets away.\nThe Bell Court ledger acquires an entry no clerk wrote.\nThe Listening Child stands up for the first time anyone has seen.\n\n# sound:pulse-bell\n\n~ temp emergent_name = \"The One Who Heard the Fountain\"\n\nYou are called {emergent_name} now. You are not called {player_name} anymore.\n\n~ add_journal_entry(\"X.12 Apotheosis — Form of Ending\", \"Authority 10 at the dry fountain. The voice the fountain practiced is yours and no longer only yours. {emergent_name} succeeds you.\")\n\n-> legacy_death\n",
+  "metadata": {
+    "knots": [
+      "x12_apotheosis"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

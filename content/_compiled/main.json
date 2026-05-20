@@ -4629,6 +4629,2703 @@
         "done",
         null
       ],
+      "dry_fountain": [
+        [
+          "^The fountain is dry to the eye and leaks upward.",
+          "\n",
+          "#",
+          "^sound:pulse-bell",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "^Black seawater rises an inch above the lip of the topmost basin and dissolves into the air. The salt-rime on the lower stones is unbroken. There is no plumbing that should produce this.",
+          "\n",
+          "ev",
+          "str",
+          "^sense",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          2,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^A child sits at the upper basin lip. Pale clean clothes nobody has seen elsewhere. The child does not look at the fountain — looks up, past your left shoulder, at something nobody else can see.",
+                "\n",
+                {
+                  "->": ".^.^.^.19"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Look closely at the carved names",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Look closely at the water",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Reach for the one coin",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Speak to the Listening Child",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Cast Hear the Fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Step back to the market",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "dry_fountain_carved_lip"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "dry_fountain_black_water"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "dry_fountain_one_coin"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "dialogue_the_listening_child"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "dry_fountain_cast_hear"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "dry_fountain_carved_lip": [
+        "^You lean to read what has been carved into the basin's lip.",
+        "\n",
+        "ev",
+        "str",
+        "^mind",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Names. Arranged in an order you do not yet understand. Some you recognize. Some you do not. One of them — neither recognized nor unrecognized — has the cadence of yours.",
+              "\n",
+              "ev",
+              "str",
+              "^Carved lip",
+              "/str",
+              "str",
+              "^Names arranged in an order not understood. One has the cadence of yours.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The carving is worn. Fragments: \"...drowned...\", \"...practicing...\", \"...do not name aloud.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Carved lip",
+              "/str",
+              "str",
+              "^Fragments: drowned, practicing, do not name aloud.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "dry_fountain_black_water": [
+        [
+          "^You hold your hand near the surface that should not be there.",
+          "\n",
+          "ev",
+          "str",
+          "^sense",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          3,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^The water rises an inch above your palm without touching it. It is not wet. It is held in surface tension by something that is not water. The cold has the wrong cold's wrongness.",
+                "\n",
+                "ev",
+                "str",
+                "^Black water",
+                "/str",
+                "str",
+                "^Held by surface tension. Not wet. Wrong cold.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": ".^.^.^.12"
+                },
+                null
+              ]
+            }
+          ],
+          [
+            {
+              "->": ".^.b"
+            },
+            {
+              "b": [
+                "\n",
+                "^The water does not behave. You cannot make it behave by watching.",
+                "\n",
+                {
+                  "->": ".^.^.^.12"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Try to take a vial of it",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Step back",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "dry_fountain_vial"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "dry_fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "dry_fountain_vial": [
+        "ev",
+        "str",
+        "^item-bell-marked-charm",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "str",
+        "^item-vial-of-practiced-name-water",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "||",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You hold an empty vial at the lip. The water enters slowly and against the curvature. The vial hums faintly against the heel of your hand.",
+              "\n",
+              "ev",
+              "str",
+              "^Practicing water",
+              "/str",
+              "str",
+              "^Vial filled at the dry fountain.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Without a proper vessel, the water refuses you. It dissolves into the air before it reaches your fingers.",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "dry_fountain_one_coin": [
+        "^A single coin lies in the upper basin. Nobody removes it.",
+        "\n",
+        "ev",
+        "str",
+        "^will",
+        "/str",
+        14,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        14,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Your hand stops half an inch above the coin. Not by your decision.",
+              "\n",
+              "ev",
+              "str",
+              "^The one coin",
+              "/str",
+              "str",
+              "^Your hand stops above it. Not by your decision.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You reach for the coin and find your hand is already at your side. You do not remember moving it. The coin has not been touched.",
+              "\n",
+              "ev",
+              "str",
+              "^The one coin",
+              "/str",
+              "str",
+              "^Reached, but the hand returned. The coin has not been touched.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "dry_fountain_cast_hear": [
+        "ev",
+        "str",
+        "^authority",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        1,
+        "<",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You attempt to address the fountain. The fountain does not address you back. Your weight is not yet right for the rite.",
+              "\n",
+              {
+                "->": "dry_fountain"
+              },
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "^You speak the name and the fountain practices it back.",
+        "\n",
+        "#",
+        "^sound:ambient",
+        "/#",
+        "ev",
+        "str",
+        "^will",
+        "/str",
+        12,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        12,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The practicing is at your inner ear, not your outer. The Listening Child does not look at you. Authority weighs differently in your chest now, a fraction heavier.",
+              "\n",
+              "ev",
+              "str",
+              "^Hear the Fountain",
+              "/str",
+              "str",
+              "^The fountain practiced the name back.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": "faction_reaction"
+              },
+              {
+                "->": ".^.^.^.27"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^You speak; the fountain does not answer. Salt-rime on the lower stones has shifted at the western edge. The Listening Child does not look up.",
+              "\n",
+              "ev",
+              "str",
+              "^Hear the Fountain",
+              "/str",
+              "str",
+              "^Cast attempted; the fountain did not answer.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.27"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "dialogue_the_listening_child": [
+        [
+          "^The child does not look at you. The child looks past your left shoulder, at something nobody else can see.",
+          "\n",
+          "^CHILD: \"The fountain is leaking the wrong direction.\"",
+          "\n",
+          "^The child pauses. The cadence is of citation — as if quoting something not yet said.",
+          "\n",
+          "^CHILD: \"That is not unusual.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Ask the child their name",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Speak the words \"practicing water\"",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about The Unnamed",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Step back",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "child_ask_name"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "child_practicing_water"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "child_unnamed"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "dry_fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "child_ask_name": [
+        "^CHILD: \"That is a child who sits here.\"",
+        "\n",
+        "^The child does not elaborate. The hands remain folded.",
+        "\n",
+        {
+          "->": "dialogue_the_listening_child"
+        },
+        null
+      ],
+      "child_practicing_water": [
+        [
+          "^The child does not look at you. The child opens one fist.",
+          "\n",
+          "#",
+          "^sound:pulse-bell",
+          "/#",
+          "^A small pebble sits in the open palm, warm in the afternoon.",
+          "\n",
+          "^CHILD: \"This belongs to whoever practices. The water is practicing.\"",
+          "\n",
+          "^The child extends the hand.",
+          "\n",
+          "^CHILD: \"Take it.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Take the pebble",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Decline",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "child_take_pebble"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "child_decline_pebble"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "child_take_pebble": [
+        "^You take it. The child closes the fist. The fist is empty now. The pebble is in your pocket.",
+        "\n",
+        "^CHILD: \"It will not be lost. That is part of what it is.\"",
+        "\n",
+        "ev",
+        "str",
+        "^The Listening Child's pebble",
+        "/str",
+        "str",
+        "^The child gifted the pebble after the words 'practicing water' were spoken at the fountain.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "child_decline_pebble": [
+        "^The child closes the fist. The fist is not empty now.",
+        "\n",
+        "^CHILD: \"Then the practicing is not yet yours.\"",
+        "\n",
+        {
+          "->": "dry_fountain"
+        },
+        null
+      ],
+      "child_unnamed": [
+        "^CHILD: \"The one who is not yet named is listening to the rehearsal. The listening is not the same as the naming. The naming is later.\"",
+        "\n",
+        {
+          "->": "dialogue_the_listening_child"
+        },
+        null
+      ],
+      "notice_07_murmur": [
+        "^A boy at the fish-monger's stall mentions your name to the woman wrapping his order.",
+        "\n",
+        "#",
+        "^sound:ambient",
+        "/#",
+        "^The woman does not look up. She finishes wrapping. She glances at the alley toward the cathedral. The boy pays and leaves.",
+        "\n",
+        "ev",
+        "str",
+        "^sense",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You hear the name a second time, half a street away, in the voice of someone you have not yet met.",
+              "\n",
+              "ev",
+              "str",
+              "^Notice 7 — Murmur",
+              "/str",
+              "str",
+              "^Your name is being asked after. The asking has not yet reached you.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.17"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^Something has shifted in how the market holds you. You cannot name what.",
+              "\n",
+              "ev",
+              "str",
+              "^Notice 7 — Murmur",
+              "/str",
+              "str",
+              "^The market holds you differently. You cannot name what.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.17"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_08_acknowledgment": [
+        [
+          "^A Drowned Church initiate stops in front of you in the alley between the cathedral and the market.",
+          "\n",
+          "#",
+          "^sound:location-danger",
+          "/#",
+          "^The initiate does not speak first. The initiate waits for you to acknowledge them, and then says: \"The Marrow-Saint has been told.\"",
+          "\n",
+          "ev",
+          "str",
+          "^will",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          12,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^You hold the initiate's gaze. The initiate's eyes are the same colour as the standing water in the antechamber. Nothing else moves.",
+                "\n",
+                {
+                  "->": ".^.^.^.17"
+                },
+                null
+              ]
+            }
+          ],
+          [
+            {
+              "->": ".^.b"
+            },
+            {
+              "b": [
+                "\n",
+                "^The initiate's gaze takes a small piece of your composure. You feel the loss after the initiate has walked past.",
+                "\n",
+                {
+                  "->": ".^.^.^.17"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Notice 8 — Acknowledgment",
+          "/str",
+          "str",
+          "^A Drowned Church initiate has named that you have been named. The Marrow-Saint has been told.",
+          "/str",
+          {
+            "x()": "add_journal_entry",
+            "exArgs": 2
+          },
+          "pop",
+          "/ev",
+          "\n",
+          "ev",
+          "str",
+          "^Follow the initiate toward the cathedral",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Continue your previous path",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "dialogue_marrow_saint_ilyra"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "notice_09_confrontation": [
+        [
+          "^Two Bell Court clerks intercept you at the precinct corner. One carries a closed ledger. The other carries nothing visible.",
+          "\n",
+          "#",
+          "^sound:combat-sting",
+          "/#",
+          "^The clerk with the ledger speaks: \"Three civic days. The Court has accumulated a contradiction in your name.\"",
+          "\n",
+          "ev",
+          "str",
+          "^presence",
+          "/str",
+          14,
+          {
+            "x()": "roll_check",
+            "exArgs": 2
+          },
+          14,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^You hold posture. The clerk with the ledger acknowledges the holding with the smallest nod the Court permits. \"You will be summoned by the seventh bell on the third day. Acknowledge.\"",
+                "\n",
+                "ev",
+                "str",
+                "^Notice 9 — Confrontation",
+                "/str",
+                "str",
+                "^Bell Court will summon by the seventh bell on the third day.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": ".^.^.^.18"
+                },
+                null
+              ]
+            }
+          ],
+          [
+            {
+              "->": ".^.b"
+            },
+            {
+              "b": [
+                "\n",
+                "^Your composure slips. The clerk with the ledger marks something in the margin. The other clerk does not move. \"Your acknowledgment is recorded. You will be summoned.\"",
+                "\n",
+                "ev",
+                "str",
+                "^Notice 9 — Confrontation",
+                "/str",
+                "str",
+                "^Acknowledgment recorded under duress. Bell Court summons coming.",
+                "/str",
+                {
+                  "x()": "add_journal_entry",
+                  "exArgs": 2
+                },
+                "pop",
+                "/ev",
+                "\n",
+                {
+                  "->": ".^.^.^.18"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Acknowledge formally",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask which contradiction",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Refuse the summons",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "notice_09_acknowledge"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "notice_09_ask"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "notice_09_refuse"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "notice_09_acknowledge": [
+        "^\"Acknowledged.\" The ledger closes. The other clerk has not moved.",
+        "\n",
+        "^The clerks walk past you without further address. The precinct corner returns to ordinary daylight, slowly.",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_09_ask": [
+        "^\"Which contradiction is in my name?\"",
+        "\n",
+        "^The clerk with the ledger does not open it. \"The Court does not disclose strikings. If you have not been struck, this is a courtesy. If you have, it is procedure.\"",
+        "\n",
+        {
+          "->": "notice_09_acknowledge"
+        },
+        null
+      ],
+      "notice_09_refuse": [
+        "^\"Refusal is itself entered in the record.\" The ledger opens, briefly, and closes. The other clerk has stepped half a pace closer.",
+        "\n",
+        "ev",
+        "str",
+        "^Notice 9 — Refusal",
+        "/str",
+        "str",
+        "^Refusal entered in Bell Court record. Warrant likely.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_10_convergence": [
+        [
+          "^The market closes around you without announcement.",
+          "\n",
+          "#",
+          "^sound:combat-sting",
+          "/#",
+          "#",
+          "^animation:pulse",
+          "/#",
+          "^Marrow-Saint Ilyra arrives from the east, wrists rebound in red cord. Bell-Magistrate Orro arrives from the north, inkwell capped. Venn Hook arrives from the south, hook unconcealed for the first time you have seen.",
+          "\n",
+          "^None of the three address the others. Each addresses you.",
+          "\n",
+          "^ILYRA: \"The fountain has been practicing your name. We hold the room for the rehearsal.\"",
+          "\n",
+          "^ORRO: \"The Bell Court has accumulated a contradiction in your name beyond civic tolerance.\"",
+          "\n",
+          "^VENN: \"The League records the convergence. Premium applies.\"",
+          "\n",
+          "ev",
+          "str",
+          "^authority",
+          "/str",
+          {
+            "x()": "get_player_stat",
+            "exArgs": 1
+          },
+          9,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Something in the room — the room itself — adjusts to the weight you have begun to carry. The candles in the cathedral, two streets away, do not flicker. The candles know.",
+                "\n",
+                "ev",
+                "str",
+                "^Speak the name yourself",
+                "/str",
+                "/ev",
+                {
+                  "*": ".^.c-0",
+                  "flg": 20
+                },
+                {
+                  "->": ".^.^.^.27"
+                },
+                {
+                  "c-0": [
+                    "^ ",
+                    {
+                      "->": "x12_apotheosis"
+                    },
+                    "\n",
+                    {
+                      "#f": 5
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Align with the Drowned Church",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Align with the Bell Court",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Attempt to broker",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Refuse all",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "notice_10_align_church"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "notice_10_align_court"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "notice_10_broker"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "notice_10_refuse"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "notice_10_align_church": [
+        "^You speak in Ilyra's direction. The other two do not interrupt; the other two are listening.",
+        "\n",
+        "ev",
+        "str",
+        "^Convergence outcome",
+        "/str",
+        "str",
+        "^Aligned with Drowned Church. Bell Court warrant likely; Tide League records the alignment.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_10_align_court": [
+        "^You speak in Orro's direction. He uncaps the inkwell. The other two register the uncapping.",
+        "\n",
+        "ev",
+        "str",
+        "^Convergence outcome",
+        "/str",
+        "str",
+        "^Aligned with Bell Court. Drowned Church marks you; Tide League records the alignment.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_10_broker": [
+        "ev",
+        "str",
+        "^presence",
+        "/str",
+        18,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        18,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^You speak between the three. The brokering holds long enough for each to step back without committing. Venn Hook smiles slowly.",
+              "\n",
+              "ev",
+              "str",
+              "^Convergence outcome",
+              "/str",
+              "str",
+              "^Brokered. All three retreat without commitment. Tide League notes the brokering.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The brokering does not hold. One of the three commits anyway; the other two adjust.",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "notice_10_refuse": [
+        "^You refuse all three. The refusal is recorded by all three.",
+        "\n",
+        "ev",
+        "str",
+        "^authority",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        9,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The refusal is the rehearsal. The room knows it. You know it.",
+              "\n",
+              {
+                "->": "x12_apotheosis"
+              },
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^The refusal closes the convergence without resolving it. Each faction departs along their arrival paths. The market reopens, slowly.",
+              "\n",
+              "ev",
+              "str",
+              "^Convergence outcome",
+              "/str",
+              "str",
+              "^Refused all three. Convergence unresolved. Pressure persists.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "dialogue_bell_magistrate_orro": [
+        [
+          "^Orro is at the central desk, ledger open, writing.",
+          "\n",
+          "#",
+          "^sound:location-safe",
+          "/#",
+          "^Two clerks at side desks. The brass bell hangs silent above the door.",
+          "\n",
+          "ev",
+          "str",
+          "^bonded_to_marrow_saint_ilyra",
+          "/str",
+          {
+            "x()": "has_condition",
+            "exArgs": 1
+          },
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^Orro looks up before you reach the desk. He has noticed something he does not name aloud.",
+                "\n",
+                {
+                  "->": ".^.^.^.14"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "^ORRO: \"Approach the desk if your matter is urgent. Otherwise the clerks will take your statement.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Approach the desk",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Speak to a clerk instead",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "orro_approach"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "orro_clerk"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "orro_approach": [
+        [
+          "^ORRO: \"Bell-Magistrate Orro. You are not on today's docket. State your matter. Speak in complete sentences if you can. The clerks transcribe.\"",
+          "\n",
+          "^The clerks' pens are poised.",
+          "\n",
+          "ev",
+          "str",
+          "^Ask about the ledger",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about The Unnamed",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about the Drowned Church",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about civic warrants",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about Bell-Magistrate Orro personally",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "orro_ledger"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "orro_unnamed"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "orro_church"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "orro_warrant"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "orro_personal"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "orro_ledger": [
+        "^ORRO: \"The Bell Court's ledger records what the Bell Court witnesses. Names are entered. Names are sometimes struck. A struck name is no longer a name in this jurisdiction.\"",
+        "\n",
+        "ev",
+        "str",
+        "^mind",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        3,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^He pauses, briefly. \"What becomes of the weight that name carried — that is a separate question this Court does not entertain on the docket.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Orro on the ledger",
+              "/str",
+              "str",
+              "^Struck names lose name-status in jurisdiction. Carried-weight is off-docket.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "orro_approach"
+        },
+        null
+      ],
+      "orro_unnamed": [
+        [
+          "^Orro sets the inkwell aside. The conversation has moved off-record.",
+          "\n",
+          "#",
+          "^sound:ambient",
+          "/#",
+          "^ORRO: \"The Bell Court considers The Unnamed a category, not a person. The category is 'weight that should have been struck but was not.' Your Drowned Church friends will tell you otherwise. You will form your own assessment.\"",
+          "\n",
+          "^ORRO: \"If you tell me what you assess, I will not enter it. I am offering the conversation off-record.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Orro off-record",
+          "/str",
+          "str",
+          "^Orro is willing to discuss The Unnamed off-record.",
+          "/str",
+          {
+            "x()": "add_journal_entry",
+            "exArgs": 2
+          },
+          "pop",
+          "/ev",
+          "\n",
+          "ev",
+          "str",
+          "^Share your assessment",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Decline politely",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "orro_share_assessment"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "orro_decline_assessment"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "orro_share_assessment": [
+        "^You speak. Orro listens without writing.",
+        "\n",
+        "ev",
+        "str",
+        "^drowned_church",
+        "/str",
+        {
+          "x()": "get_faction_trust",
+          "exArgs": 1
+        },
+        5,
+        ">",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^He nods, slightly. \"Then we understand each other in different directions.\"",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^He considers. \"Then we may understand each other in similar directions. The inkwell stays aside.\"",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "orro_personal_ledger_unlock"
+        },
+        null
+      ],
+      "orro_decline_assessment": [
+        "^ORRO: \"Acknowledged. The offer stands until you leave the precinct.\"",
+        "\n",
+        "^The inkwell remains aside until you turn to go.",
+        "\n",
+        {
+          "->": "orro_approach"
+        },
+        null
+      ],
+      "orro_church": [
+        "^ORRO: \"The Drowned Church operates within civic tolerance. Marrow-Saint Ilyra is a competent religious official. The Bell Court has filed no warrant against her.\"",
+        "\n",
+        "^ORRO: \"I would not advise informing her of any conversation we have here.\"",
+        "\n",
+        {
+          "->": "orro_approach"
+        },
+        null
+      ],
+      "orro_warrant": [
+        "^ORRO: \"A warrant is filed when the Court adjudicates necessity. Necessity requires a contradiction in the open ledger exceeding three civic days. You can request a copy of any warrant filed naming you.\"",
+        "\n",
+        "^ORRO: \"You cannot request a copy of a warrant filed naming a struck name. The latter request is itself contradictory.\"",
+        "\n",
+        {
+          "->": "orro_approach"
+        },
+        null
+      ],
+      "orro_personal": [
+        "^ORRO: \"The Bell Court does not personalize its magistrates. I am the senior magistrate. That is the relevant fact.\"",
+        "\n",
+        "ev",
+        "str",
+        "^mind",
+        "/str",
+        17,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        17,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^He pauses. The inkwell goes aside.",
+              "\n",
+              "^ORRO: \"If your question is whether I keep a private ledger of cases this Court could not adjudicate — that question is also off-record. It is not yes or no. It is one I would prefer not to answer here.\"",
+              "\n",
+              {
+                "->": "orro_personal_ledger_unlock"
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^His expression does not change. The inkwell stays in his hand.",
+              "\n",
+              {
+                "->": "orro_approach"
+              },
+              {
+                "->": ".^.^.^.13"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        null
+      ],
+      "orro_personal_ledger_unlock": [
+        "^ORRO: \"Do not name the ledger to anyone, including me, in this precinct. If you have a contradiction the Court cannot adjudicate that you believe should be adjudicable — tell me at the canal walk on Tuesday evening, after seventh bell. Not here.\"",
+        "\n",
+        "ev",
+        "str",
+        "^Orro — personal ledger",
+        "/str",
+        "str",
+        "^Exists. Conversation moves to canal walk, Tuesday after seventh bell. Quest unlocked.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "orro_clerk": [
+        "^A junior clerk looks up. The clerk does not introduce themselves. The Bell Court does not personalize its juniors either.",
+        "\n",
+        "^CLERK: \"Statement?\"",
+        "\n",
+        {
+          "->": "arrival"
+        },
+        null
+      ],
+      "dialogue_marrow_saint_ilyra": [
+        [
+          "^The Drowned Cathedral antechamber is knee-deep in standing water that should not be there.",
+          "\n",
+          "#",
+          "^sound:location-danger",
+          "/#",
+          "^Marrow-Saint Ilyra is at a niche, lighting a marrow-wax candle. Her wrists are bound with red cord.",
+          "\n",
+          "^ILYRA: \"You came as we hoped someone might. Stay where the water is shallowest.\"",
+          "\n",
+          "ev",
+          "str",
+          "^Approach",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Stay at the threshold",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "ilyra_approach"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "ilyra_threshold"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "ilyra_approach": [
+        [
+          "^The water parts around your boots and rejoins behind you, slowly.",
+          "\n",
+          "^ILYRA: \"I am Marrow-Saint Ilyra. The candle is for someone who did not finish their vigil. You have not been listed yet. Tell me who has not yet named you.\"",
+          "\n",
+          "ev",
+          "str",
+          "^drowned_church",
+          "/str",
+          {
+            "x()": "get_faction_trust",
+            "exArgs": 1
+          },
+          3,
+          ">=",
+          "/ev",
+          [
+            {
+              "->": ".^.b",
+              "c": true
+            },
+            {
+              "b": [
+                "\n",
+                "^She does not look at the candle when she speaks of it. Her eyes are the same colour as the standing water.",
+                "\n",
+                {
+                  "->": ".^.^.^.13"
+                },
+                null
+              ]
+            }
+          ],
+          "nop",
+          "\n",
+          "ev",
+          "str",
+          "^Ask about the Drowned Church",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-0",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about The Unnamed",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-1",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about marrow-wax",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-2",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about Bell-Magistrate Orro",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-3",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about the dry fountain",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-4",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Ask about salt-immersion",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-5",
+            "flg": 20
+          },
+          "ev",
+          "str",
+          "^Leave",
+          "/str",
+          "/ev",
+          {
+            "*": ".^.c-6",
+            "flg": 20
+          },
+          {
+            "c-0": [
+              "^ ",
+              {
+                "->": "ilyra_church"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-1": [
+              "^ ",
+              {
+                "->": "ilyra_unnamed"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-2": [
+              "^ ",
+              {
+                "->": "ilyra_marrow_wax"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-3": [
+              "^ ",
+              {
+                "->": "ilyra_orro"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-4": [
+              "^ ",
+              {
+                "->": "ilyra_fountain"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-5": [
+              "^ ",
+              {
+                "->": "ilyra_salt_immersion"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ],
+            "c-6": [
+              "^ ",
+              {
+                "->": "arrival"
+              },
+              "\n",
+              {
+                "#f": 5
+              }
+            ]
+          }
+        ],
+        null
+      ],
+      "ilyra_threshold": [
+        "^ILYRA: \"The threshold is a position. The Drowned Church accepts positions.\"",
+        "\n",
+        "^She lights another candle without turning. The flame's wrong-gold catches the water.",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_church": [
+        "^ILYRA: \"The Drowned Church does not refuse anyone the water. The water refuses some. That is a different relation. We listen for what the city tries to forget. Sometimes the city is grateful for the listening.\"",
+        "\n",
+        "^ILYRA: \"There are three rites that matter here. Salt-immersion is for what you bring. Marrow-wax is for what you leave behind. Composing is for what you cannot yet say.\"",
+        "\n",
+        "ev",
+        "str",
+        "^Drowned Church doctrine",
+        "/str",
+        "str",
+        "^Salt-immersion / marrow-wax / Composing. The water refuses some.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_unnamed": [
+        "^ILYRA: \"The Unnamed is not a god. The Unnamed is what becomes a god.\"",
+        "\n",
+        "^She pauses. The bound wrists do not move.",
+        "\n",
+        "^ILYRA: \"The fountain is rehearsing the name. We are not yet the rehearsal. We hold the room.\"",
+        "\n",
+        "ev",
+        "str",
+        "^will",
+        "/str",
+        18,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        18,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^She looks at you directly for the first time. The water around her ankles stops moving for the duration of the look.",
+              "\n",
+              "^ILYRA: \"When the rehearsal becomes the speaking, someone will be in the room first. Someone has to be. Do not assume I am offering you the position.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Ilyra — candidacy",
+              "/str",
+              "str",
+              "^She believes she may be the successor. Does not yet name you as candidate.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.17"
+              },
+              null
+            ]
+          }
+        ],
+        [
+          {
+            "->": ".^.b"
+          },
+          {
+            "b": [
+              "\n",
+              "^She does not elaborate. The water resumes its slow parting and rejoining.",
+              "\n",
+              {
+                "->": ".^.^.^.17"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_marrow_wax": [
+        "^ILYRA: \"The candles are rendered from those who fell on vigil. Many of them asked. Some of them did not. The Drowned Church does not pretend either way. The candles work.\"",
+        "\n",
+        "ev",
+        "str",
+        "^will",
+        "/str",
+        15,
+        {
+          "x()": "roll_check",
+          "exArgs": 2
+        },
+        15,
+        ">=",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^She continues without prompting.",
+              "\n",
+              "^ILYRA: \"You wonder if I have rendered. Yes. I have rendered three. I knew each of them. I would render again if asked. I would not render unasked. Do not ask me to clarify the difference.\"",
+              "\n",
+              "ev",
+              "str",
+              "^Ilyra — marrow",
+              "/str",
+              "str",
+              "^She has personally rendered three. Will not render unasked. Will not clarify the difference under question.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": ".^.^.^.12"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_orro": [
+        "^ILYRA: \"Orro is competent and careful. Competence is not the same as jurisdiction. He knows this. He keeps a private ledger.\"",
+        "\n",
+        "^ILYRA: \"I will not approach him. If you do, do not tell him I said so.\"",
+        "\n",
+        "ev",
+        "str",
+        "^Ilyra on Orro",
+        "/str",
+        "str",
+        "^Suspects his private ledger. Will not approach him.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_fountain": [
+        "^ILYRA: \"The fountain practices. We do not interrupt. Some who listen long enough begin to practice with it.\"",
+        "\n",
+        "^ILYRA: \"If you find yourself answering it, come back here. Bring whatever the fountain gave you.\"",
+        "\n",
+        "ev",
+        "str",
+        "^item-listening-childs-pebble",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^Her eyes go to your pocket where the pebble warms against your hand. She does not name what she has seen.",
+              "\n",
+              {
+                "->": ".^.^.^.11"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "ilyra_salt_immersion": [
+        "^ILYRA: \"Bring the salt-rime to me. I will read what it weighs. What you carry that is not yours will be set aside. What you carry that is yours will be salt-marked. Some of it will be marked you cannot remove. Sit with that before you ask.\"",
+        "\n",
+        "ev",
+        "str",
+        "^item-salt-rime-shard",
+        "/str",
+        {
+          "x()": "has_item",
+          "exArgs": 1
+        },
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^She has noticed the salt-rime in your possession without your having shown it. Her gaze returns to the candle.",
+              "\n",
+              {
+                "->": ".^.^.^.9"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        {
+          "->": "ilyra_approach"
+        },
+        null
+      ],
+      "x12_apotheosis": [
+        "^You speak the name a final time and the fountain answers in the voice you have been practicing.",
+        "\n",
+        "#",
+        "^sound:ambient",
+        "/#",
+        "#",
+        "^animation:pulse",
+        "/#",
+        "^The voice is yours. It is no longer only yours.",
+        "\n",
+        "ev",
+        "str",
+        "^authority",
+        "/str",
+        {
+          "x()": "get_player_stat",
+          "exArgs": 1
+        },
+        10,
+        "<",
+        "/ev",
+        [
+          {
+            "->": ".^.b",
+            "c": true
+          },
+          {
+            "b": [
+              "\n",
+              "^The voice falters. The Authority you carry is not yet enough. The fountain stops mid-practicing. The Listening Child closes the open fist.",
+              "\n",
+              "ev",
+              "str",
+              "^X.12 attempt",
+              "/str",
+              "str",
+              "^Apotheosis attempted with Authority < 10. The fountain stopped mid-practicing.",
+              "/str",
+              {
+                "x()": "add_journal_entry",
+                "exArgs": 2
+              },
+              "pop",
+              "/ev",
+              "\n",
+              {
+                "->": "dry_fountain"
+              },
+              {
+                "->": ".^.^.^.19"
+              },
+              null
+            ]
+          }
+        ],
+        "nop",
+        "\n",
+        "^Marrow-Saint Ilyra stops moving in the antechamber three streets away.",
+        "\n",
+        "^The Bell Court ledger acquires an entry no clerk wrote.",
+        "\n",
+        "^The Listening Child stands up for the first time anyone has seen.",
+        "\n",
+        "#",
+        "^sound:pulse-bell",
+        "/#",
+        "ev",
+        "str",
+        "^The One Who Heard the Fountain",
+        "/str",
+        "/ev",
+        {
+          "temp=": "emergent_name"
+        },
+        "^You are called ",
+        "ev",
+        {
+          "VAR?": "emergent_name"
+        },
+        "out",
+        "/ev",
+        "^ now. You are not called ",
+        "ev",
+        {
+          "VAR?": "player_name"
+        },
+        "out",
+        "/ev",
+        "^ anymore.",
+        "\n",
+        "ev",
+        "str",
+        "^X.12 Apotheosis — Form of Ending",
+        "/str",
+        "str",
+        "^Authority 10 at the dry fountain. The voice the fountain practiced is yours and no longer only yours. ",
+        "ev",
+        {
+          "VAR?": "emergent_name"
+        },
+        "out",
+        "/ev",
+        "^ succeeds you.",
+        "/str",
+        {
+          "x()": "add_journal_entry",
+          "exArgs": 2
+        },
+        "pop",
+        "/ev",
+        "\n",
+        {
+          "->": "legacy_death"
+        },
+        null
+      ],
       "faction_reaction": [
         "ev",
         "str",
@@ -5283,7 +7980,7 @@
   "listDefs": {},
   "_metadata": {
     "sourceFile": "narrative/main.ink",
-    "compiledAt": "2026-05-19T23:31:14.271Z",
+    "compiledAt": "2026-05-20T23:06:18.797Z",
     "knots": [
       "arrival",
       "arrival_look",
@@ -5337,6 +8034,50 @@
       "dream_light",
       "dream_deep",
       "dream_awake",
+      "dry_fountain",
+      "dry_fountain_carved_lip",
+      "dry_fountain_black_water",
+      "dry_fountain_vial",
+      "dry_fountain_one_coin",
+      "dry_fountain_cast_hear",
+      "dialogue_the_listening_child",
+      "child_ask_name",
+      "child_practicing_water",
+      "child_take_pebble",
+      "child_decline_pebble",
+      "child_unnamed",
+      "notice_07_murmur",
+      "notice_08_acknowledgment",
+      "notice_09_confrontation",
+      "notice_09_acknowledge",
+      "notice_09_ask",
+      "notice_09_refuse",
+      "notice_10_convergence",
+      "notice_10_align_church",
+      "notice_10_align_court",
+      "notice_10_broker",
+      "notice_10_refuse",
+      "dialogue_bell_magistrate_orro",
+      "orro_approach",
+      "orro_ledger",
+      "orro_unnamed",
+      "orro_share_assessment",
+      "orro_decline_assessment",
+      "orro_church",
+      "orro_warrant",
+      "orro_personal",
+      "orro_personal_ledger_unlock",
+      "orro_clerk",
+      "dialogue_marrow_saint_ilyra",
+      "ilyra_approach",
+      "ilyra_threshold",
+      "ilyra_church",
+      "ilyra_unnamed",
+      "ilyra_marrow_wax",
+      "ilyra_orro",
+      "ilyra_fountain",
+      "ilyra_salt_immersion",
+      "x12_apotheosis",
       "faction_reaction",
       "fc_hostile",
       "fc_friendly",
