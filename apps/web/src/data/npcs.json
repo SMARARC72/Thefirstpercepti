@@ -1,104 +1,177 @@
 [
   {
-    "id": "npc-sister-mourn",
-    "name": "Sister Mourn",
-    "role": "field archivist",
-    "description": "A woman who catalogs disasters with the patience of someone who has already seen the ending.",
-    "disposition": "curious",
-    "wants": "proof that the fountain is remembering names",
+    "id": "npc-marrow-saint-ilyra",
+    "name": "Marrow-Saint Ilyra",
+    "role": "Marrow-Saint of the Drowned Church",
+    "description": "A thin woman of indeterminate middle age in salt-stiffened black robes. Speaks softly. Her hands are bound at the wrists with a length of red cord — voluntary, she tells anyone who asks, a vow against gesture. Eyes the same colour as the standing water in the antechamber. She is not unkind. She is not safe.",
+    "disposition": "watchful_devout",
+    "wants": "To hear The Unnamed name a successor in the dry fountain. Believes she may be the successor. Will not say this aloud.",
     "secrets": [
       {
-        "id": "sec-fountain-memory",
-        "content": "The fountain repeats names only after someone has paid to erase them.",
+        "id": "sec-ilyra-candidacy",
+        "content": "Ilyra believes she is the apotheosis candidate The Unnamed will choose. She will assist a player she reads as 'a vessel' (high Authority + Drowned Church Faith) toward this end — including arranging for the player's death at a moment that serves her succession.",
         "revealed": false,
-        "topicId": "fountain",
-        "difficulty": 8
+        "topicId": "the_unnamed",
+        "difficulty": 18
       },
       {
-        "id": "sec-archive-vault",
-        "content": "She can provide access to the Archive's restricted vault in exchange for genuine fountain water.",
+        "id": "sec-ilyra-marrow-source",
+        "content": "The marrow used to render Drowned Church candles comes from pilgrims who 'fell on vigil'. Ilyra has personally rendered three. She does not regret this and will not lie about it under salt-oath.",
         "revealed": false,
-        "topicId": "archive",
-        "difficulty": 12
+        "topicId": "marrow_wax",
+        "difficulty": 15
       }
     ],
-    "locationId": "loc-fountain",
-    "factionId": "fac-drowned-court",
-    "tags": ["archivist", "fountain", "quest-giver"],
+    "locationId": "loc-drowned-cathedral",
+    "factionId": "fac-drowned-church",
+    "tags": [
+      "named-slice-npc",
+      "faction-anchor",
+      "theological",
+      "recruitable-via-bond",
+      "dangerous-with-authority"
+    ],
     "alive": true,
     "dialogueState": {}
   },
   {
-    "id": "npc-fennick",
-    "name": "Fennick the Tongue",
-    "role": "broker of harmful information",
-    "description": "A man who sells secrets he has not yet stolen. His laughter sounds like pages tearing.",
-    "disposition": "wary",
-    "wants": "a secret he can sell twice",
+    "id": "npc-bell-magistrate-orro",
+    "name": "Bell-Magistrate Orro",
+    "role": "Senior Magistrate of the Civic Bell Court",
+    "description": "A man of late middle age in dark robes pinned with two small brass discs — one engraved with his licensure, one blank (the blank disc signals to those who know it as private mourning for cases unadjudicated). Carries a brass-handled inkwell. Walks with a slight forward lean, as if always about to commit to record. Speaks in complete sentences.",
+    "disposition": "professionally_patient_privately_doubting",
+    "wants": "A clean civic record. Three contradictions floating in the open ledger longer than three civic days is, to him, an offense against order.",
     "secrets": [
       {
-        "id": "sec-fountain-door",
-        "content": "There is a door under the fountain that has been opening itself for three hundred years.",
+        "id": "sec-orro-doubt-private",
+        "content": "Orro keeps a personal ledger of cases the Bell Court could not adjudicate. He has not shown it to anyone. Player can learn of its existence at difficulty 17, see it at difficulty 22.",
         "revealed": false,
-        "topicId": "fountain",
-        "difficulty": 10
+        "topicId": "bell_magistrate_orro",
+        "difficulty": 17
       },
       {
-        "id": "sec-breach-connection",
-        "content": "The fountain's door opens into the Breach, but not into the Breach as a place — into the Breach as a when.",
+        "id": "sec-orro-disliked-ilyra",
+        "content": "Orro and Marrow-Saint Ilyra have an old professional dispute over the Composing rite — Orro believes it is a contradiction-generation rite and should be illegal. Neither has filed.",
         "revealed": false,
-        "topicId": "breach",
-        "difficulty": 16
-      }
-    ],
-    "locationId": "loc-market",
-    "factionId": "fac-umbral-covenant",
-    "tags": ["broker", "market", "secrets"],
-    "alive": true,
-    "dialogueState": {}
-  },
-  {
-    "id": "npc-foundling",
-    "name": "The Foundling",
-    "role": "unclaimed witness",
-    "description": "A child who followed something home from the Breach. They are not afraid enough for their own good.",
-    "disposition": "afraid",
-    "wants": "someone to believe what followed them home",
-    "secrets": [
-      {
-        "id": "sec-breach-child",
-        "content": "The door under the fountain opens into a 'when', not a place. Time moves differently on the other side.",
-        "revealed": false,
-        "topicId": "breach",
+        "topicId": "drowned_church",
         "difficulty": 14
       }
     ],
-    "locationId": "loc-breach",
-    "factionId": null,
-    "tags": ["child", "witness", "breach"],
+    "locationId": "loc-bell-court-precinct",
+    "factionId": "fac-civic-bell-court",
+    "tags": [
+      "named-slice-npc",
+      "faction-anchor",
+      "law",
+      "recruitable-via-quest",
+      "internally-conflicted"
+    ],
     "alive": true,
     "dialogueState": {}
   },
   {
-    "id": "npc-keeper",
-    "name": "The Bell Keeper",
-    "role": "archive custodian",
-    "description": "A keeper who was buried three days ago, but whose bells still ring. Some keepers do not stay buried.",
-    "disposition": "neutral",
-    "wants": "someone to catalog the bells that ring backwards",
+    "id": "npc-venn-hook",
+    "name": "Venn Hook",
+    "role": "Tide League Broker",
+    "description": "A wiry man of indeterminate age, late forties or sixty depending on the angle. Left hand replaced with a long brass weighing-hook — functional, articulated, used as a measuring device with three small chain-graduations. Speaks slowly, smiles slowly, listens fast. Tide League dark-blue tunic; salt-scrip pinned over the heart like a campaign medal.",
+    "disposition": "amused_transactional",
+    "wants": "Stable salt-scrip valuation. Privately: enough scrip to leave Greywake before the next major Shattering aftershock.",
     "secrets": [
       {
-        "id": "sec-bells-time",
-        "content": "The bells ring backwards when someone is about to arrive who has already been here.",
+        "id": "sec-venn-arrival",
+        "content": "Venn Hook is not native to Greywake. He arrived with the second post-Shattering tide-cycle and inherited the broker position from a predecessor whose name was struck from the Bell Court ledger. He does not know what happened to her.",
         "revealed": false,
-        "topicId": "bells",
+        "topicId": "venn_hook",
+        "difficulty": 13
+      },
+      {
+        "id": "sec-venn-manipulations",
+        "content": "Venn has fudged three transit records in the last cycle to favor Tide League margins by ~5%. Bell Court audit could detect this at investigation DC 17.",
+        "revealed": false,
+        "topicId": "tide_league",
+        "difficulty": 17
+      }
+    ],
+    "locationId": "loc-tide-league-brokers-office",
+    "factionId": "fac-merchant-tide-league",
+    "tags": [
+      "named-slice-npc",
+      "faction-anchor",
+      "economic",
+      "recruitable-via-bond",
+      "self-preservation-first"
+    ],
+    "alive": true,
+    "dialogueState": {}
+  },
+  {
+    "id": "npc-the-listening-child",
+    "name": "The Listening Child",
+    "role": "(no role — does not have one)",
+    "description": "A child of perhaps eight, dressed in pale clean clothes nobody has ever seen elsewhere. Sits at the lip of the dry fountain. Does not look at the fountain; looks UP, toward something nobody else can see. Hands folded. Does not speak first. When addressed, answers in single sentences that always sound like quotations of something that has not been said yet. Adults in Greywake refuse to discuss the child. The child appears every day. Nobody knows where the child sleeps.",
+    "disposition": "still_attentive",
+    "wants": "(unstated)",
+    "secrets": [
+      {
+        "id": "sec-child-canon-status",
+        "content": "The Listening Child is not a person in the conventional sense. The child is a canon-event-emergent NPC — a witness anchor produced by the dry fountain's substrate-naming process. The child cannot be killed (death attempts simply cause the child to be elsewhere the next scene). The child can be 'gifted' by player at canon-event triggers.",
+        "revealed": false,
+        "topicId": "the_listening_child",
+        "difficulty": 19
+      },
+      {
+        "id": "sec-child-gift-pebble",
+        "content": "The Listening Child carries a small smooth pebble in a closed fist. The pebble can be 'gifted' to the player at the moment the player first speaks 'practicing water' aloud at the fountain (a substrate-aware utterance). Yields item-listening-childs-pebble (acquisition_method=gifted_only).",
+        "revealed": false,
+        "topicId": "the_listening_child",
         "difficulty": 12
       }
     ],
-    "locationId": "loc-archive",
-    "factionId": "fac-luminous-archive",
-    "tags": ["keeper", "bells", "archive", "dead"],
-    "alive": false,
+    "locationId": "loc-dry-fountain",
+    "factionId": null,
+    "tags": [
+      "named-slice-npc",
+      "canon-event-emergent",
+      "uncategorizable",
+      "tonal-anchor",
+      "cannot-be-killed-in-slice"
+    ],
+    "alive": true,
+    "dialogueState": {}
+  },
+  {
+    "id": "npc-butcher-who-repeats",
+    "name": "The Butcher Who Repeats",
+    "role": "Marrow-Butcher (Drowned Church-adjacent)",
+    "description": "A large man behind a market stall hung with cuts that are not from any animal common to the region. Has been performing the same five-minute cycle of motions for as long as anyone has watched — wraps a cut, weighs it, marks the paper, sets it down, wraps another cut, weighs it, marks the paper, sets it down. Will not break the cycle to speak. Will not eat. Will not blink at intervals shorter than five minutes. If addressed, will answer at the next pause in the cycle without affect. The cycle never produces a sale.",
+    "disposition": "absent_repeating",
+    "wants": "(contradiction-bearing — the Butcher exists in a state where 'wanting' has been thinned to a recurring observation)",
+    "secrets": [
+      {
+        "id": "sec-butcher-contradiction",
+        "content": "The Butcher Who Repeats is a contradiction-bearing NPC. He died once during a Drowned Church ritual and was returned in a state where his own continuity has been thinned. The five-minute cycle is a stabilizing pattern — breaking the cycle (player intervention) risks dispersing him into the substrate.",
+        "revealed": false,
+        "topicId": "the_butcher_who_repeats",
+        "difficulty": 17
+      },
+      {
+        "id": "sec-butcher-provenance-of-cuts",
+        "content": "The cuts on the Butcher's stall are not from animals. They are the rendered tissue of canon-progression events — when a name is struck in this region, a cut appears on the Butcher's stall by morning. The Bell Court is aware but cannot adjudicate this without first naming it.",
+        "revealed": false,
+        "topicId": "the_butcher_who_repeats",
+        "difficulty": 19
+      }
+    ],
+    "locationId": "loc-greywake-market-district",
+    "factionId": "fac-drowned-church",
+    "tags": [
+      "named-slice-npc",
+      "contradiction-bearing",
+      "drowned-church-adjacent",
+      "stabilization-pattern",
+      "do-not-disrupt-cycle"
+    ],
+    "alive": true,
     "dialogueState": {}
   }
 ]
