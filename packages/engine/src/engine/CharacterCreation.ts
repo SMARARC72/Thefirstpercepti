@@ -504,6 +504,13 @@ export class CharacterCreationEngine {
       createdAt: Date.now(),
       actionsTaken: 0,
       timePlayed: 0,
+      // 5e defaults for a level-1 character. Phase 10 (posture casters)
+      // populates spellSlots; combat reducer consumes/resets actionEconomy.
+      proficiencyBonus: 2,
+      hitDice: { current: 1, max: 1, die: 'd8' },
+      savingThrowProficiencies: [],
+      attunementSlots: { used: 0, max: 3 },
+      actionEconomy: { action: true, bonusAction: true, reaction: true },
     };
 
     // 6. Generate starting items

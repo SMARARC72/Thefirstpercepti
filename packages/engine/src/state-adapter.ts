@@ -158,6 +158,10 @@ function newItemToOld(n: Item): OldItem {
 }
 
 export function oldPlayerToNewPlayer(old: OldPlayer): Player {
+  // The engine-internal Player now carries the 5e schema fields directly,
+  // so the converter passes them through. Older snapshots that pre-date
+  // the bridge growth may arrive without them; fall back to the same
+  // defaults CharacterCreation seeds.
   return {
     id: old.id,
     name: old.name,
@@ -174,10 +178,12 @@ export function oldPlayerToNewPlayer(old: OldPlayer): Player {
     conditions: old.conditions.map(oldConditionToNew),
     inventory: old.inventory.map(oldItemToNew),
     tags: [],
-    proficiencyBonus: 2,
-    hitDice: { current: 1, max: 1, die: 'd8' },
-    savingThrowProficiencies: [],
-    attunementSlots: { used: 0, max: 3 },
+    proficiencyBonus: old.proficiencyBonus ?? 2,
+    hitDice: old.hitDice ?? { current: 1, max: 1, die: 'd8' },
+    savingThrowProficiencies: old.savingThrowProficiencies ?? [],
+    attunementSlots: old.attunementSlots ?? { used: 0, max: 3 },
+    spellSlots: old.spellSlots,
+    actionEconomy: old.actionEconomy ?? { action: true, bonusAction: true, reaction: true },
   };
 }
 

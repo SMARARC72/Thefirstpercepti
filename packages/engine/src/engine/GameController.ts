@@ -574,6 +574,14 @@ The Shattered Reach awaits. What do you do?`;
       this.state.updatePlayer({ actionsTaken: playerForCounter.actionsTaken + 1 });
     }
 
+    // Turn-end: restore the action economy so the combat reducer's slot
+    // gate opens again next turn.
+    if (this.state.getPlayer()) {
+      this.state.updatePlayer({
+        actionEconomy: { action: true, bonusAction: true, reaction: true },
+      });
+    }
+
     // Build response
     const response: TurnResponse = {
       scene,
