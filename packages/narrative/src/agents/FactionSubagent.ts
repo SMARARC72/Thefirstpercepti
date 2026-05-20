@@ -6,7 +6,7 @@ import type {
   FactionMoveOutput,
 } from "@first-perception/llm-client";
 import { factionMoveTemplate } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 import { makeId } from "@first-perception/engine";
 
 export interface FactionActionResult {
@@ -22,13 +22,13 @@ export class FactionSubagent {
   private factionId: string;
   private client: KimiClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
 
   constructor(options: {
     factionId: string;
     client: KimiClient;
     builder: PromptBuilder;
-    repository?: SqliteRepository;
+    repository?: GameRepository;
   }) {
     this.factionId = options.factionId;
     this.client = options.client;

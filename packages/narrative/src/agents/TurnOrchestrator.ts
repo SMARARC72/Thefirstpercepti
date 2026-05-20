@@ -1,6 +1,6 @@
 import type { GameState, TaleEntry, SuggestedAction, StatePatch } from "@first-perception/types";
 import type { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 import { NPCSubagent } from "./NPCSubagent.js";
 import { GMNarrator } from "./GMNarrator.js";
 import { FactionSubagent } from "./FactionSubagent.js";
@@ -24,7 +24,7 @@ export interface TurnOrchestratorResult {
 export interface TurnOrchestratorOptions {
   client: KimiClient;
   builder: PromptBuilder;
-  repository?: SqliteRepository;
+  repository?: GameRepository;
   contextAssembler: WorldContextAssembler;
   maxLLMCallsPerTurn: number;
   maxLatencyMs: number;
@@ -43,7 +43,7 @@ export interface TurnOrchestratorOptions {
 export class TurnOrchestrator {
   private client: KimiClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
   private contextAssembler: WorldContextAssembler;
   private maxLLMCalls: number;
   private maxLatency: number;

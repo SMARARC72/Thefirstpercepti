@@ -40,7 +40,11 @@ import {
   LegacySystem,
   makeId,
 } from "@first-perception/engine";
-import { SqliteRepository, MINIMAL_SCHEMA } from "@first-perception/persistence";
+import {
+  HttpRepository,
+  LocalStorageRepository,
+  type GameRepository,
+} from "@first-perception/persistence";
 import { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
 
 declare global {
@@ -56,8 +60,10 @@ const STORE_NAME = "saves";
 const LEGACY_HISTORY_KEY = "the-first-perception.legacy-history";
 const API_KEY_STORAGE_KEY = "the-first-perception.moonshot-api-key";
 
-// ── LLM Layer Instances ──
-let sqliteRepo: SqliteRepository | null = null;
+// ── Persistence + LLM layer instances ──
+// repo prefers the server-backed HTTP API; falls back to localStorage if
+// the API is unreachable. Either implementation satisfies GameRepository.
+let repo: GameRepository | null = null;
 let llmClient: KimiClient | null = null;
 let promptBuilder: PromptBuilder | null = null;
 let contextAssembler: WorldContextAssembler | null = null;
@@ -743,11 +749,11 @@ function initLLMLayer(enabled: boolean, apiKey: string): void {
   try {
     llmClient = new KimiClient({ apiKey });
     promptBuilder = new PromptBuilder();
-    contextAssembler = new WorldContextAssembler(sqliteRepo ?? undefined);
+    contextAssembler = new WorldContextAssembler(repo ?? undefined);
     turnOrchestrator = new TurnOrchestrator({
       client: llmClient,
       builder: promptBuilder,
-      repository: sqliteRepo ?? undefined,
+      repository: repo ?? undefined,
       contextAssembler: contextAssembler,
       maxLLMCallsPerTurn: 8,
       maxLatencyMs: 5000,
@@ -763,14 +769,24 @@ function initLLMLayer(enabled: boolean, apiKey: string): void {
 
 // ── Boot Sequence ──
 async function boot(): Promise<void> {
-  // Initialize SQLite repository
+  // Try the server-backed HTTP repo first. If /api/health is unreachable
+  // (offline, deploy without Postgres, dev without env vars), fall back to
+  // a session-scoped localStorage repo so save slots still work locally.
+  // The world-event / NPC-memory writebacks won't compound across sessions
+  // in fallback mode; the UI will surface that in Phase 7.
   try {
-    sqliteRepo = new SqliteRepository();
-    await sqliteRepo.init();
-    await sqliteRepo.runSchema(MINIMAL_SCHEMA);
-  } catch (err) {
-    console.warn("SQLite repository failed to initialize:", err);
-    sqliteRepo = null;
+    const http = new HttpRepository();
+    await http.init();
+    repo = http;
+  } catch {
+    try {
+      const local = new LocalStorageRepository();
+      await local.init();
+      repo = local;
+    } catch (err) {
+      console.warn("All persistence backends unavailable:", err);
+      repo = null;
+    }
   }
 
   // Initialize LLM layer if configured

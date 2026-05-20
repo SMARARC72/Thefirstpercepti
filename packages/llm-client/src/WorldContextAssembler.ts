@@ -1,5 +1,5 @@
 import type { GameState, LocationNode, NpcState, FactionState } from "@first-perception/types";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 
 export interface WorldContext {
   campaign: {
@@ -51,9 +51,9 @@ export interface WorldContext {
 }
 
 export class WorldContextAssembler {
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
 
-  constructor(repository?: SqliteRepository) {
+  constructor(repository?: GameRepository) {
     this.repository = repository;
   }
 

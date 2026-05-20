@@ -8,7 +8,7 @@ import type {
   NPCDialogueOutput,
 } from "@first-perception/llm-client";
 import { npcActionTemplate, npcDialogueTemplate } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 import { makeId } from "@first-perception/engine";
 
 export interface NPCActionResult {
@@ -26,13 +26,13 @@ export class NPCSubagent {
   private npcId: string;
   private client: KimiClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
 
   constructor(options: {
     npcId: string;
     client: KimiClient;
     builder: PromptBuilder;
-    repository?: SqliteRepository;
+    repository?: GameRepository;
   }) {
     this.npcId = options.npcId;
     this.client = options.client;

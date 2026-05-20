@@ -223,6 +223,95 @@ future loader change that drops exits is caught immediately.
 - `npm run content:compile` ✅
 - `npm run build` ✅ — main 221.84 kB / vendor 455.80 kB
 
+## 2026-05-20 (Session 4) — Phase 3b: Persistence on Vercel + Supabase Postgres
+
+**Goal:** Replace the browser sql.js layer with a Postgres-backed server tier
+and the necessary client glue, so the Living World can actually persist across
+runs.
+
+### Changes
+
+1. **Schema.** `database/schema.postgres.sql` ships a focused 6-table baseline
+   — `save_snapshot`, `world_event`, `npc_memory`, `rumor`, `agent_log`,
+   `legacy_record` — with the indexes needed for the runtime queries (location
+   recall, importance-ordered NPC memory, recent events, player-known rumors).
+   Idempotent (`IF NOT EXISTS`) so `db:migrate` can rerun.
+
+2. **`packages/persistence` rewritten.** sql.js wrapper deleted in full.
+   Replaced with:
+   - `GameRepository` interface (narrow, only what's actually called)
+   - `PostgresRepository` — server-side, uses `pg.Pool` (exported from
+     `@first-perception/persistence/server`)
+   - `HttpRepository` — browser-side, calls `/api/*` serverless functions
+   - `LocalStorageRepository` — browser fallback when the API is unreachable
+     (saves + legacies persist; world events / NPC memories are
+     session-scoped because cross-run memory genuinely needs the server)
+   - `MemoryRepository` — for tests and SSR / non-browser
+
+   The package now has dual exports: `@first-perception/persistence`
+   (browser-safe) and `@first-perception/persistence/server` (Node-only,
+   pulls in `pg`). The browser entry never reaches the server entry, so
+   `pg` cannot leak into the web bundle.
+
+3. **Serverless API at `/api/`.** 11 Vercel functions, all using the shared
+   `getRepo()` singleton + `withErrors` wrapper:
+   - `GET/POST /api/saves`, `DELETE /api/saves/:id`
+   - `GET/POST /api/world-events`
+   - `GET/POST /api/npc-memories`,
+     `POST /api/npc-memories/:id/recall`, `POST /api/npc-memories/forget`
+   - `GET/POST /api/rumors`, `POST /api/rumors/:id/known`,
+     `POST /api/rumors/propagate`
+   - `GET/POST /api/agent-logs`
+   - `GET/POST /api/legacies`
+   - `GET /api/health` (used by `HttpRepository.init()` as a DB ping)
+
+4. **Migration script.** `scripts/db-migrate.mjs` reads
+   `POSTGRES_URL_NON_POOLING` (preferred) or `POSTGRES_URL`, applies the
+   schema, then verifies the six tables exist. Includes a tiny no-dep
+   `.env.local` loader. `npm run db:migrate` (`-- --dry-run` to preview).
+
+5. **Web boot wiring.** `apps/web/src/main.ts` tries `HttpRepository` first,
+   falls back to `LocalStorageRepository` if `/api/health` fails, leaves
+   `repo = null` only if both fail. `WorldContextAssembler` and
+   `TurnOrchestrator` now take a `GameRepository` instead of a concrete
+   `SqliteRepository` — matching changes in `FactionSubagent`,
+   `NPCSubagent`, `TurnOrchestrator`, `WorldContextAssembler`.
+
+6. **Vercel config.** API routes live at `/api/` (project root); Vercel
+   auto-detects them. `api/tsconfig.json` typechecks them under
+   `module: NodeNext` so `.js`-suffixed relative imports work as intended
+   for Node serverless functions.
+
+7. **Env handling.** `apps/web/.env.example` is the committed template;
+   `apps/web/.env.local` (gitignored) holds real credentials for local
+   migration. **The Supabase credentials shared in chat must be rotated**
+   (`SUPABASE_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`,
+   `POSTGRES_PASSWORD`) — instructions in `docs/POSTGRES_SETUP.md`.
+
+8. **Docs.** `docs/POSTGRES_SETUP.md` covers: provisioning via Vercel +
+   Supabase integration, local migration, fallback semantics, credential
+   rotation, backups, and how to add future migrations.
+
+### Verify
+
+- `npm install` ✅ — `pg`, `@types/pg` added; 102 packages, 0 vulns
+- `npm run typecheck` ✅ — persistence + engine + web + `api/`
+- `npm test` ✅ — **23/23**: 4 persistence + 9 engine + 10 web
+- `npm run build:packages` ✅ — all 7 packages
+- `npm run build` ✅ — **main 167.68 kB / vendor 455.80 kB** (was
+  221.84 kB main; sql.js elimination saved ~54 kB raw / ~18 kB gzipped)
+- `grep "pg\|sql\.js\|sqljs" apps/web/dist/assets/main-*.js` → 0 hits.
+  `pg` does not leak into the browser bundle.
+
+### What did NOT run yet
+
+`npm run db:migrate` against the real Supabase instance is blocked from
+this sandbox — outbound TCP to ports 5432 and 6543 both time out. The
+migration script and connection string have been smoke-tested via the
+env loader; the failure is purely the sandbox's egress policy. Run
+`npm run db:migrate` from your local machine (or from a Vercel build
+hook once deployed) and the six tables will appear in Supabase.
+
 ## Build Commands
 
 ```bash
