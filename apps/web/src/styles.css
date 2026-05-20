@@ -2084,3 +2084,179 @@ dd {
   font-variant-numeric: tabular-nums;
 }
 /* ===== END CharacterSheetPanel (Wave 1 Unit 4) ===== */
+/* ===== BEGIN InventoryPanel (Wave 1 Unit 5) ===== */
+/* Slot-grid inventory with rarity-tier borders. Lives apart from
+ * StatusPanel's plain list so Phase 8a can swap the host without
+ * disturbing legacy code. Tokens here are scoped to .inventory-panel
+ * so they cannot leak into other surfaces. */
+.inventory-panel {
+  --rarity-common: #c8b89a;      /* bone */
+  --rarity-uncommon: #6f8a5f;    /* moss */
+  --rarity-rare: #4f8a8a;        /* teal */
+  --rarity-very-rare: #4a3a6a;   /* twilight */
+  --rarity-legendary: #b8932a;   /* sigil-gold */
+  --rarity-artifact: #a83a1f;    /* ember */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--ink-800, var(--surface-elevated));
+  padding: var(--space-4);
+  font-family: var(--font-grimoire, var(--font-body));
+  color: var(--bone-200, var(--text-primary));
+}
+
+.inventory-empty {
+  margin: 0;
+  padding: var(--space-3) 0;
+  color: var(--whisper-fg, var(--text-secondary));
+  font-style: italic;
+  text-align: center;
+}
+
+.inventory-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  /* 4 cols wide; auto-narrows to 2 on small viewports via the media query
+   * below. minmax floor keeps a tile readable in the cramped case. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.inventory-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(243, 238, 224, 0.03);
+  /* Border colour comes from the per-tile --slot-tier custom property
+   * so we author one rule and let the tier paint itself. */
+  border: 1px solid var(--slot-tier, var(--rarity-common));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
+  transition: transform var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    box-shadow var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.inventory-slot:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    0 0 10px color-mix(in srgb, var(--slot-tier, var(--rarity-common)) 35%, transparent);
+}
+
+.inventory-slot-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.inventory-slot-name {
+  margin: 0;
+  font-size: var(--text-base, 0.95rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--bone-100, var(--text-primary));
+}
+
+.inventory-slot-glyphs {
+  display: inline-flex;
+  gap: var(--space-1);
+  font-size: var(--text-sm, 0.85rem);
+  line-height: 1;
+}
+
+.inventory-glyph-equipped { color: var(--sigil-400, var(--gold-400)); }
+.inventory-glyph-attune   { color: var(--ember-400, var(--gold-400)); }
+
+.inventory-slot-tier {
+  margin: 0;
+  font-size: var(--text-xs, 0.7rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slot-tier, var(--rarity-common));
+  /* Slight desaturation so darker tiers stay legible on ink-800. */
+  filter: saturate(0.85);
+}
+
+.inventory-slot-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle, rgba(202, 211, 196, 0.08));
+}
+
+.inventory-slot-weight {
+  font-size: var(--text-xs, 0.7rem);
+  color: var(--text-tertiary, #6b6f7a);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-slot-action {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--bone-100, var(--text-primary));
+  font-family: inherit;
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    background var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.inventory-slot-action:hover:not(:disabled) {
+  border-color: var(--sigil-400, var(--gold-400));
+  background: rgba(245, 217, 130, 0.08);
+}
+
+.inventory-slot-action[data-action="unequip"] {
+  border-color: var(--border-crimson, rgba(255, 107, 107, 0.35));
+}
+
+.inventory-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.inventory-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0_5, 0.15rem);
+}
+
+.inventory-stat-label {
+  font-size: var(--text-xs, 0.7rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #6b6f7a);
+}
+
+.inventory-stat-value {
+  font-family: var(--font-grimoire, var(--font-body));
+  font-size: var(--text-md, 1.05rem);
+  color: var(--sigil-300, var(--gold-300));
+  font-variant-numeric: tabular-nums;
+}
+/* ===== END InventoryPanel (Wave 1 Unit 5) ===== */
