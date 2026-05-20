@@ -496,6 +496,35 @@ export interface DCComponent {
 // ENTITY TYPES
 // =============================================================================
 
+/** 5e hit-die size */
+export type HitDie = 'd6' | 'd8' | 'd10' | 'd12';
+
+/** Hit-dice pool — total hit dice the character has earned, plus how many remain to spend on a short rest. */
+export interface HitDicePool {
+  current: number;
+  max: number;
+  die: HitDie;
+}
+
+/** Attunement slot tracker — 5e limits a single character to 3 attuned magic items by default. */
+export interface AttunementSlots {
+  used: number;
+  max: number;
+}
+
+/** Per-level spell slot pool. Posture-driven casting (Phase 10) populates this; combat reducer ignores it. */
+export interface SpellSlotLevel {
+  current: number;
+  max: number;
+}
+
+/** 5e action economy — slots still available this turn. */
+export interface ActionEconomy {
+  action: boolean;
+  bonusAction: boolean;
+  reaction: boolean;
+}
+
 /** A player character */
 export interface Player {
   /** Unique entity ID */
@@ -550,6 +579,18 @@ export interface Player {
   actionsTaken: number;
   /** Total time played in ms */
   timePlayed: number;
+  /** 5e proficiency bonus — drives attack/save bonuses. */
+  proficiencyBonus: number;
+  /** 5e hit-dice pool for short-rest healing. */
+  hitDice: HitDicePool;
+  /** Core stats this character is proficient in for saves. */
+  savingThrowProficiencies: CoreStat[];
+  /** Attunement slot tracker. */
+  attunementSlots: AttunementSlots;
+  /** Spell-slot pool keyed by level. Posture-driven casting (Phase 10) populates this. */
+  spellSlots?: Record<number, SpellSlotLevel>;
+  /** Combat reducer reads + writes this; turn-end resets. */
+  actionEconomy?: ActionEconomy;
 }
 
 /** A non-player character */

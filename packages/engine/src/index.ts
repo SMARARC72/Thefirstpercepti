@@ -29,6 +29,7 @@ export {
   getCurrentLocation,
   getNpcsAtLocation,
   rollD20,
+  rollD20WithBand,
   buildActionResult,
   makeTaleEntry,
   makeSuggestion,

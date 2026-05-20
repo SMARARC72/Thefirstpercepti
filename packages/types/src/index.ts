@@ -157,6 +157,20 @@ export interface SpellSlotLevel {
   max: number;
 }
 
+/**
+ * 5e action economy — what slots remain available this turn.
+ *
+ * Each turn the player has up to one action, one bonus action, and one
+ * reaction. Combat verbs consume a slot; turn-end restores them. Optional
+ * on the canonical type so older fixtures and snapshots remain valid;
+ * reducers treat a missing field as "all slots available".
+ */
+export interface ActionEconomy {
+  action: boolean;
+  bonusAction: boolean;
+  reaction: boolean;
+}
+
 export interface Player {
   id: UUID;
   name: string;
@@ -178,6 +192,7 @@ export interface Player {
   savingThrowProficiencies: ReadonlyArray<CoreStat>;
   attunementSlots: AttunementSlots;
   spellSlots?: Record<number, SpellSlotLevel>;
+  actionEconomy?: ActionEconomy;
 }
 
 // =============================================================================
