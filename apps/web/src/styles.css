@@ -1834,3 +1834,253 @@ dd {
 .tale-recall-pill::after {
   content: " ↓";
 }
+
+/* ===== BEGIN CharacterSheetPanel (Wave 1 Unit 4) ===== */
+/* Grimoire-register character sheet. Two-column at >=768px, single
+   column below. The modifier on each ability tile is the dominant
+   element — it is what players read at the table. */
+.character-sheet-panel {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-gold, var(--border-default));
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(
+      circle at top left,
+      var(--sigil-glow, rgba(216, 169, 58, 0.06)) 0%,
+      transparent 55%
+    ),
+    var(--ink-800, var(--surface-elevated));
+  color: var(--text-primary);
+  font-family: var(--font-grimoire, var(--font-body));
+}
+
+.character-sheet-panel h2 {
+  margin: 0 0 0.5rem;
+  color: var(--sigil-300, var(--gold-400));
+  font-family: var(--font-grimoire, var(--font-display));
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide, 0.05em);
+  text-shadow: 0 0 6px var(--sigil-glow, transparent);
+}
+
+.csp-section-heading {
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+}
+
+/* ── Identity strip ─────────────────────────────────────────────── */
+.csp-identity {
+  display: grid;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-gold, var(--border-default));
+}
+
+.csp-identity-name {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-tight, -0.02em);
+  text-transform: none;
+}
+
+.csp-identity-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+
+.csp-identity-meta dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-identity-meta dd {
+  margin: 0 0 0.4rem;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ── Two-column body ───────────────────────────────────────────── */
+.csp-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .csp-body {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.csp-column {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* ── Ability score 3x3 grid ────────────────────────────────────── */
+.csp-ability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csp-ability-tile {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.65rem 0.5rem;
+  border: 1px solid var(--border-gold, var(--border-default));
+  border-radius: var(--radius-md);
+  background: rgba(216, 169, 58, 0.04);
+  text-align: center;
+}
+
+.csp-ability-name {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-ability-mod {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--sigil-300, var(--gold-400));
+  text-shadow: 0 0 10px var(--sigil-glow, transparent);
+}
+
+.csp-ability-score {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Combat callouts row ───────────────────────────────────────── */
+.csp-callouts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.csp-callout {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+}
+
+.csp-callout dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-callout dd {
+  margin: 0;
+  color: var(--sigil-300, var(--gold-400));
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Saving throws list ────────────────────────────────────────── */
+.csp-save-list {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csp-save-row {
+  display: grid;
+  grid-template-columns: 1.2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.csp-save-row.is-proficient {
+  border-color: var(--border-gold, var(--border-default));
+  background: rgba(216, 169, 58, 0.05);
+}
+
+.csp-save-sigil {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+.csp-save-row.is-proficient .csp-save-sigil {
+  color: var(--sigil-400, var(--gold-500));
+  text-shadow: 0 0 6px var(--sigil-glow, transparent);
+}
+
+.csp-save-name {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-transform: capitalize;
+}
+
+.csp-save-value {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Status footer ─────────────────────────────────────────────── */
+.csp-status-meters {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.csp-status-meter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.csp-status-meter dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-status-meter dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+/* ===== END CharacterSheetPanel (Wave 1 Unit 4) ===== */
