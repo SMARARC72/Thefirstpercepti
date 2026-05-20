@@ -1,0 +1,56 @@
+[
+  {
+    "id": "common",
+    "label": "Common",
+    "order": 0,
+    "attunementRequired": false,
+    "bonusMagic": 0,
+    "colorTokenCss": "--rarity-common",
+    "description": "Bone-flute knapping; market-counter goods. No sigil. No song."
+  },
+  {
+    "id": "uncommon",
+    "label": "Uncommon",
+    "order": 1,
+    "attunementRequired": false,
+    "bonusMagic": 1,
+    "colorTokenCss": "--rarity-uncommon",
+    "description": "Patterned to the second sight. Hums when a witness is near."
+  },
+  {
+    "id": "rare",
+    "label": "Rare",
+    "order": 2,
+    "attunementRequired": "sometimes",
+    "bonusMagic": 2,
+    "colorTokenCss": "--rarity-rare",
+    "description": "Sigil-cut by named smiths. Lineage-tracked in three guilds."
+  },
+  {
+    "id": "very_rare",
+    "label": "Very Rare",
+    "order": 3,
+    "attunementRequired": "sometimes",
+    "bonusMagic": 3,
+    "colorTokenCss": "--rarity-very-rare",
+    "description": "A relic with a single recorded incident. Trade is logged."
+  },
+  {
+    "id": "legendary",
+    "label": "Legendary",
+    "order": 4,
+    "attunementRequired": true,
+    "bonusMagic": 3,
+    "colorTokenCss": "--rarity-legendary",
+    "description": "Two of these are known. Both wars were lost or won by their bearer."
+  },
+  {
+    "id": "artifact",
+    "label": "Artifact",
+    "order": 5,
+    "attunementRequired": true,
+    "bonusMagic": 4,
+    "colorTokenCss": "--rarity-artifact",
+    "description": "The world made it. Reasons unrecorded. Attunement is not a choice."
+  }
+]
