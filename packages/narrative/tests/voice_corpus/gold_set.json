@@ -1,0 +1,128 @@
+{
+  "version": "0.1",
+  "authored_for": "Phase 17 / Wave F / ENG-303",
+  "voice_target": "Tide-Stained Codex — manifesto voice per design_system/README.md",
+  "description": "Gold-set: prompt → ideal_narration pairs. Heuristic VoiceEvaluator targets score >= 0.85 against these. LLM-judge upgrade can compare against ideal_narration directly.",
+  "entries": [
+    {
+      "id": "gold_001_arrival_dry_fountain",
+      "category": "arrival_scene",
+      "prompt_summary": "Player Khojen arrives at the Dry Fountain in Greywake Market District for the first time. Day 1 Scene 1.",
+      "ideal_narration": "The fountain is dry to the eye and leaks upward. Black seawater rises an inch above the topmost basin, dissolves into the air. Salt-rime crusts the lower stones in an unbroken ring. A child sits at the lip, hands folded, looking past you at something above your left shoulder. The Listening Child does not look at the fountain. Nobody else looks at the fountain either."
+    },
+    {
+      "id": "gold_002_marrow_saint_first_speech",
+      "category": "npc_encounter",
+      "prompt_summary": "Marrow-Saint Ilyra speaks for the first time. Player has just entered the Drowned Cathedral antechamber.",
+      "ideal_narration": "Marrow-Saint Ilyra does not turn from the niche. She lights a marrow-wax candle and sets her bound hands at her belt. \"You came as we hoped someone might,\" she says. \"Stay where the water is shallowest.\" The water in the antechamber parts around your boots and rejoins behind you, slowly."
+    },
+    {
+      "id": "gold_003_bell_court_summons_arrival",
+      "category": "faction_event",
+      "prompt_summary": "A Bell Court summons-of-witness arrives at the player's location. Notice 8 has been reached.",
+      "ideal_narration": "A clerk in dark robes brings the summons folded in a brass sleeve. The sleeve carries the Bell Court canon-seal on its outer face. \"Three days hence,\" the clerk reads, \"at the seventh bell. Bell-Magistrate Orro will preside.\" The clerk does not wait for an answer. The clerk has not been instructed to."
+    },
+    {
+      "id": "gold_004_hear_the_fountain_cast",
+      "category": "ritual_cast",
+      "prompt_summary": "Player Khojen casts Hear the Fountain at the Dry Fountain. Roll succeeds. Authority increments 3 → 4.",
+      "ideal_narration": "You speak the name and the fountain practices it back. The practicing is at your inner ear, not your outer. The Listening Child does not look at you. Authority weighs differently in your chest now, a fraction heavier. Salt-rime on the lower stones is unbroken. The water rises an inch and dissolves into the air."
+    },
+    {
+      "id": "gold_005_notice_07_first_murmur",
+      "category": "notice_ladder",
+      "prompt_summary": "Player has crossed Notice 7 with the Drowned Church for the first time. A faction NPC begins to ask after them.",
+      "ideal_narration": "A boy at the fish-monger's stall mentions your name to the woman wrapping his order. The woman does not look up. She finishes wrapping. She glances at the alley toward the cathedral. The boy pays and leaves."
+    },
+    {
+      "id": "gold_006_x12_apotheosis_postcard",
+      "category": "ending_x12",
+      "prompt_summary": "X.12 Authority Apotheosis. Player Khojen, Day 47 Scene 2, Authority 10 at the dry fountain. Emergent deity name: The One Who Heard the Fountain.",
+      "ideal_narration": "You speak the name a final time and the fountain answers in the voice you have been practicing. The voice is yours. It is no longer only yours. Marrow-Saint Ilyra stops moving in the antechamber three streets away. The Bell Court ledger acquires an entry no clerk wrote. The Listening Child stands up for the first time anyone has seen. They are called The One Who Heard the Fountain now. They are not called Khojen anymore."
+    },
+    {
+      "id": "gold_007_x13_unmaking_voice_shift",
+      "category": "ending_x13",
+      "prompt_summary": "X.13 Ruin Self-Unmaking. Player Khojen, Ruin 10. Voice must shift from second-person to third-person at the unmaking moment.",
+      "ideal_narration": "You take the salt-rime in your hand. The salt accepts you. The salt does not accept itself. The unmaking begins at the wrist. Khojen does not finish closing the fist. The hand opens, half-becoming, salt-bound. The salt is what was Khojen. The salt is also the salt. The Drowned Cathedral antechamber does not record this. The Bell Court records it without naming what it records."
+    },
+    {
+      "id": "gold_008_marginalia_canon_event",
+      "category": "marginalia",
+      "prompt_summary": "Player has just crossed Authority 5 for the first time. A marginalia note surfaces in the journal.",
+      "ideal_narration": "Something in the room — the room itself — adjusts to the weight you have begun to carry. The candles do not flicker. The candles know."
+    },
+    {
+      "id": "gold_009_recipe_bell_marked_charm_step_a",
+      "category": "crafting_scene",
+      "prompt_summary": "Player attempts step A of the Bell-Marked Charm recipe (vial of practiced-name water). Roll succeeds above DC.",
+      "ideal_narration": "You hold the vial at the lip of the fountain. The water enters slowly and against the curvature. The fountain practices a name into the glass. You stopper the vial with a thumb of wax from the candle Ilyra would not lend you. The vial hums faintly against the heel of your hand."
+    },
+    {
+      "id": "gold_010_venn_hook_courier_offer",
+      "category": "npc_offer",
+      "prompt_summary": "Venn Hook offers the player courier work between Drowned Church and Bell Court.",
+      "ideal_narration": "Venn Hook lays a scrip across the brass hook and slides one of the chain-graduations a finger's width. \"Twelve scrip per transit,\" he says. \"Sealed. You don't read; I don't read.\" The hook clicks. The graduation settles. He does not look up to see if you nod. He is waiting for you to set a hand on the scrip or not set it."
+    },
+    {
+      "id": "gold_011_butcher_provenance_reveal",
+      "category": "npc_lore_reveal",
+      "prompt_summary": "Butcher Who Repeats reveals the provenance of the cuts on his stall (DC 19 Mind succeeded).",
+      "ideal_narration": "The Butcher's hand pauses between the wrapping and the weighing. The pause is longer than the cycle has shown before. \"A name is struck. A cut appears,\" the Butcher says. \"The provenance is the striking.\" The hand resumes wrapping. \"The Bell Court does not have language for this.\""
+    },
+    {
+      "id": "gold_012_convergence_notice_10",
+      "category": "convergence",
+      "prompt_summary": "Player reaches Notice 10 Convergence with all three Greywake factions present.",
+      "ideal_narration": "The market closes around you without announcement. Marrow-Saint Ilyra arrives from the east, wrists rebound in red cord. Bell-Magistrate Orro arrives from the north, inkwell capped. Venn Hook arrives from the south, hook unconcealed for the first time you have seen. None of the three address the others. Each addresses you."
+    },
+    {
+      "id": "gold_013_litany_practicing_word",
+      "category": "litany",
+      "prompt_summary": "Litany 'Practicing Word' is spoken during a Drowned Church vigil at the fountain.",
+      "ideal_narration": "❦ what the fountain practices / it does not yet say / what it does not yet say / we hold the room for ❦. Marrow-Saint Ilyra's voice does not waver. The two initiates do not breathe in for the duration of the line."
+    },
+    {
+      "id": "gold_014_specimen_jar_recompose_on_meter_change",
+      "category": "portrait_state_change",
+      "prompt_summary": "Player gains the salt-rimed condition (level 1). Specimen Jar portrait recomposes.",
+      "ideal_narration": "The salt has reached the cuff of your left sleeve. It will not brush off. The Specimen Jar at the corner of your sight has acquired a thin white ring at the wrist. The ring is not decorative. The ring is the condition."
+    },
+    {
+      "id": "gold_015_listening_child_pebble_gift",
+      "category": "canon_event_npc",
+      "prompt_summary": "Player speaks 'practicing water' aloud at the fountain. The Listening Child gifts the pebble.",
+      "ideal_narration": "The Listening Child does not look at you. The Listening Child opens one fist. A small pebble sits in the open palm, warm in the afternoon. \"This belongs to whoever practices,\" the child says. \"The water is practicing.\" The child extends the hand. \"Take it.\" You take it. The child closes the fist. The fist is empty now. The pebble is in your pocket."
+    },
+    {
+      "id": "gold_016_x16_corruption_voice_shift",
+      "category": "ending_x16",
+      "prompt_summary": "X.16 Corruption Transformation. Player becomes regional NPC 'the marrow-touched stranger'. Voice must shift to third person.",
+      "ideal_narration": "You take the offered cup. The marrow drinks. Khojen does not finish swallowing. The marrow-touched stranger has dark cloth across the lower face. The marrow-touched stranger waits at the edge of the antechamber on certain evenings. The Drowned Church recognizes the stranger by the dark cloth and does not name them."
+    },
+    {
+      "id": "gold_017_aftermath_panel_after_first_kill",
+      "category": "aftermath",
+      "prompt_summary": "Player has just killed an NPC for the first time. Aftermath panel narration.",
+      "ideal_narration": "The body settles against the stone in the alley behind the Bell-Forge. The arm is at the wrong angle. Salt has begun to gather along the seam of the closed eye, even though the alley is dry. The Witness Bell in your pocket rings once, sharp, and is silent."
+    },
+    {
+      "id": "gold_018_companion_brother_hask_loan_terms",
+      "category": "companion_recruit",
+      "prompt_summary": "Brother Hask explains the terms of his Drowned Church 21-day loan to the player.",
+      "ideal_narration": "Brother Hask sets his folded vestments at his hip. \"Twenty-one days,\" he says. \"The Drowned Church loans me. The Drowned Church recalls me. If I am not returned on the twenty-second morning, the loan is broken and the church will name the breaking aloud.\" He does not say what the naming would do. He has been told not to."
+    },
+    {
+      "id": "gold_019_compose_rite_in_progress",
+      "category": "ritual_in_progress",
+      "prompt_summary": "Player and Marrow-Saint Ilyra perform a Compose rite at the fountain. Mid-rite.",
+      "ideal_narration": "Marrow-Saint Ilyra's bound hands are at her chest. The chalk circle around the fountain holds in the salt-haze. You speak the name into the circle. The fountain practices it. The Listening Child looks up for the first time. The salt-rime on the lower stones has begun to flake at the western edge."
+    },
+    {
+      "id": "gold_020_save_load_resume_scene",
+      "category": "system_scene",
+      "prompt_summary": "Player resumes from a save. Greywake Day 14 Scene 3 at the Dry Fountain. Re-establish location.",
+      "ideal_narration": "The fountain is where you left it. The salt-haze has shifted to the south overnight. Three faces in the market that were not familiar yesterday are familiar today. The Listening Child sits at the lip of the upper basin. The pebble is in your pocket."
+    }
+  ]
+}
