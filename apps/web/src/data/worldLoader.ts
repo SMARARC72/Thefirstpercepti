@@ -10,12 +10,14 @@ import type {
   Item,
   LockRequirement,
   SkillCheck,
+  ForgeRecipe,
 } from "@first-perception/types";
 import locationsData from "./locations.json";
 import factionsData from "./factions.json";
 import npcsData from "./npcs.json";
 import conditionsData from "./conditions.json";
 import itemsData from "./items.json";
+import forgingRecipesData from "./forging-recipes.json";
 
 export interface WorldData {
   locations: LocationNode[];
@@ -24,6 +26,7 @@ export interface WorldData {
   npcs: NpcState[];
   conditions: Condition[];
   items: Item[];
+  forgingRecipes: ForgeRecipe[];
 }
 
 // Raw JSON shapes — fields match the on-disk content/world-data/*.json files.
@@ -258,6 +261,15 @@ function mapConditions(raw: RawCondition[]): Condition[] {
   }));
 }
 
+// Raw recipe shape is identical to ForgeRecipe — the JSON authors the
+// canonical shape directly. The mapper deep-clones so callers can mutate
+// the result without surprising the JSON-cache singleton vite hands back.
+type RawForgeRecipe = ForgeRecipe;
+
+function mapForgingRecipes(raw: RawForgeRecipe[]): ForgeRecipe[] {
+  return raw.map((r) => ({ ...r, inputs: r.inputs.map((i) => ({ ...i })) }));
+}
+
 function mapItems(raw: RawItem[]): Item[] {
   return raw.map((i) => ({
     id: i.id,
@@ -284,7 +296,12 @@ export function loadWorldData(): WorldData {
   const npcs = mapNpcs(npcsData as RawNpc[]);
   const conditions = mapConditions(conditionsData as RawCondition[]);
   const items = mapItems(itemsData as RawItem[]);
-  return { locations, regions, factions, npcs, conditions, items };
+  const forgingRecipes = mapForgingRecipes(forgingRecipesData as RawForgeRecipe[]);
+  return { locations, regions, factions, npcs, conditions, items, forgingRecipes };
+}
+
+export function loadForgingRecipes(): ForgeRecipe[] {
+  return mapForgingRecipes(forgingRecipesData as RawForgeRecipe[]);
 }
 
 export function pickStartLocation(seed: number, locations: LocationNode[]): LocationNode {

@@ -11,6 +11,9 @@ import { JournalPanel } from "../components/JournalPanel";
 import { TabNav } from "../components/TabNav";
 import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
 import { createInventoryPanel } from "../components/InventoryPanel";
+import { createAnvilPanel } from "../components/AnvilPanel";
+import { loadForgingRecipes } from "../data/worldLoader";
+import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
 
 interface GameplayScreenProps {
@@ -29,6 +32,19 @@ export class GameplayScreen {
   private element: HTMLElement | null = null;
   private tabNav: TabNav | null = null;
   private panelInstances: Array<{ destroy: () => void }> = [];
+  // Recipes are content-static; loaded once per screen instance so a
+  // re-render on each game-state tick doesn't re-walk the JSON map.
+  private readonly recipes = loadForgingRecipes();
+  private readonly anvilLogger = getLogger();
+
+  private handleForge = (recipeId: string): void => {
+    // Phase 9b ships the UI only. The engine-side dispatch (rolling
+    // the smith check, applying consumed inputs, producing the
+    // outcome item) is the parallel agent's responsibility. Until
+    // that lands we log the intent so e2e + manual play can confirm
+    // wiring without crashing on a missing reducer.
+    this.anvilLogger.info("anvil.forge.intent", { recipeId });
+  };
 
   constructor(props: GameplayScreenProps) {
     this.props = props;
@@ -50,6 +66,7 @@ export class GameplayScreen {
       { id: "fate", label: "What Waits", title: "Fate — recent rolls" },
       { id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" },
       { id: "trove", label: "The Trove", title: "Inventory — what the pack holds" },
+      { id: "anvil", label: "The Anvil", title: "Forging — materials, recipes, and the smith's roll" },
       { id: "status", label: "The Vessel", title: "Status — body and mind" },
       { id: "world", label: "The Known", title: "World — map and region" },
       { id: "factions", label: "The Powers", title: "Factions" },
@@ -242,6 +259,16 @@ export class GameplayScreen {
         el.classList.add("mobile-panel", "panel");
         return el;
       }
+      case "anvil": {
+        const el = createAnvilPanel({
+          player: game.player,
+          recipes: this.recipes,
+          onForge: this.handleForge,
+        });
+        el.id = "panel-anvil";
+        el.classList.add("mobile-panel", "panel");
+        return el;
+      }
       case "status": {
         const p = new StatusPanel({ game });
         this.panelInstances.push(p);
@@ -319,6 +346,13 @@ export class GameplayScreen {
         );
         this.refreshFunctionalPanel("panel-trove", () =>
           createInventoryPanel({ player: game.player }),
+        );
+        this.refreshFunctionalPanel("panel-anvil", () =>
+          createAnvilPanel({
+            player: game.player,
+            recipes: this.recipes,
+            onForge: this.handleForge,
+          }),
         );
       }
 
