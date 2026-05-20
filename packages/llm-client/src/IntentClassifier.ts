@@ -155,10 +155,16 @@ const DOMAIN_HINTS: Array<{ keywords: string[]; domain: IntentDomain }> = [
   { keywords: ["order", "threaten", "command", "lead"], domain: "intrigue" },
 ];
 
-/** Whole-word membership check: does `key` contain `word` as a discrete token? */
+/**
+ * Stem-prefix membership check: does `key` contain `word` as the start
+ * of a token? Anchored at the leading word boundary so `talk` does NOT
+ * match inside `stalk`, but a trailing `\w*` lets `attack` match
+ * `attacking`/`attacks`/`attacker` — same shape for `speak → speaker`,
+ * `name → named`, etc. (Codex review on PR #9.)
+ */
 function containsWord(key: string, word: string): boolean {
   const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`\\b${escaped}\\b`).test(key);
+  return new RegExp(`\\b${escaped}\\w*\\b`).test(key);
 }
 
 /**

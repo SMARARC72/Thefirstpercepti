@@ -179,6 +179,35 @@ describe("regexClassify — Phase 8b misroute fixes", () => {
   });
 });
 
+describe("regexClassify — Codex review follow-up: domain hint suffix tolerance", () => {
+  // The original Phase 8b fix tightened DOMAIN_HINTS to word boundaries
+  // to stop "stalk" leaking into "talk". That accidentally killed
+  // inflected forms ("attacking", "speaking", "named"), which Codex's
+  // PR #9 review flagged. The containsWord helper now uses a
+  // stem-prefix pattern (`\\bword\\w*\\b`) so suffixes match but
+  // leading-letter false positives still do not.
+
+  it("matches inflected combat verbs ('attacking', 'attacks')", () => {
+    expect(regexClassify("attacking the warden").domain).toBe("combat");
+    expect(regexClassify("attacks the warden").domain).toBe("combat");
+  });
+
+  it("matches inflected social verbs ('speaking', 'talks')", () => {
+    expect(regexClassify("speaking to sister mourn").domain).toBe("social");
+    expect(regexClassify("she talks to the priest").domain).toBe("social");
+  });
+
+  it("matches inflected lore verbs ('named', 'reading')", () => {
+    expect(regexClassify("named the book").domain).toBe("lore");
+    expect(regexClassify("reading the inscription").domain).toBe("lore");
+  });
+
+  it("still protects 'stalk' from matching 'talk' (leading word boundary holds)", () => {
+    expect(regexClassify("stalk the priestess").domain).toBe("stealth");
+    expect(regexClassify("stalking the priestess").domain).toBe("stealth");
+  });
+});
+
 describe("IntentClassifier — Phase 8b LLM-prompt regression", () => {
   it("passes jsonMode=true through to the LLM client and embeds the schema in the system prompt", async () => {
     const calls: ChatCall[] = [];
