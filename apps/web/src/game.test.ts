@@ -44,7 +44,9 @@ describe("createGameFromCreation", () => {
     expect(game.player.conditions[0].name).toBeTruthy();
     expect(Array.isArray(game.npcs)).toBe(true);
     expect(game.npcs.length).toBeGreaterThan(0);
-    expect(game.npcs[0].locationId).toBe(game.currentLocationId);
+    // Updated Phase 15: assert some NPC is at the player's starting location
+    // (was: npcs[0] coupling — brittle when the start-location picker varies)
+    expect(game.npcs.some((n) => n.locationId === game.currentLocationId)).toBe(true);
     expect(Array.isArray(game.suggestedActions)).toBe(true);
     expect(game.suggestedActions.length).toBeGreaterThan(0);
     expect(game.suggestedActions[0]).toHaveProperty("label");
