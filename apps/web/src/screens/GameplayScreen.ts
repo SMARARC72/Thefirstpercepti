@@ -37,6 +37,19 @@ export class GameplayScreen {
   private readonly recipes = loadForgingRecipes();
   private readonly anvilLogger = getLogger();
 
+  /**
+   * The Anvil tab appears only when the player carries at least one item
+   * whose id matches an input materialId of any known recipe. Below that
+   * threshold the forge has nothing to do; hiding the tab removes a dead
+   * surface for new characters.
+   */
+  private shouldShowAnvil(game: GameState): boolean {
+    if (this.recipes.length === 0) return false;
+    if (!game.player.inventory || game.player.inventory.length === 0) return false;
+    const inventoryIds = new Set(game.player.inventory.map((i) => i.id));
+    return this.recipes.some((r) => r.inputs.some((inp) => inventoryIds.has(inp.materialId)));
+  }
+
   private handleForge = (recipeId: string): void => {
     // Phase 9b ships the UI only. The engine-side dispatch (rolling
     // the smith check, applying consumed inputs, producing the
@@ -61,7 +74,7 @@ export class GameplayScreen {
     // Tab labels are diegetic — the underlying GameTab ids stay stable so
     // store / persistence / tests are unaffected; only what the player
     // reads changes. Tooltips carry the literal meaning for clarity.
-    const tabs: { id: GameTab; label: string; title?: string }[] = [
+    const allTabs: { id: GameTab; label: string; title?: string }[] = [
       { id: "tale", label: "The Unfolding", title: "Tale — narrative log" },
       { id: "fate", label: "What Waits", title: "Fate — recent rolls" },
       { id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" },
@@ -74,6 +87,11 @@ export class GameplayScreen {
       { id: "codex", label: "Names of Things", title: "Codex — what you've named" },
       { id: "journal", label: "The Witness", title: "Journal — what you noted" },
     ];
+    // Contextual reveals: only show The Anvil when the player holds at
+    // least one material that matches a known recipe input. Phase 11
+    // minimal scope; other contextual hides (Codex, Journal, etc.) can
+    // follow once the journal/codex content surfaces stabilise.
+    const tabs = allTabs.filter((t) => t.id !== "anvil" || this.shouldShowAnvil(game));
 
     this.tabNav = new TabNav({
       tabs,

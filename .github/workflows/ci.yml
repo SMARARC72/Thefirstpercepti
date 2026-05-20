@@ -37,11 +37,17 @@ jobs:
       - name: Compile narrative content
         run: npm run content:compile
 
+      - name: Validate Ink scene routing
+        run: npm run content:validate
+
       - name: Run tests
         run: npm test
 
       - name: Build web app
         run: npm --prefix apps/web run build
+
+      - name: Bundle budget gate
+        run: npm run bundle:check
 
       - name: Install Playwright browsers
         run: npx --prefix apps/web playwright install --with-deps chromium

@@ -480,23 +480,28 @@
   font-weight: 800;
 }
 
-/* ── Onboarding ── */
+/* ── Onboarding — Witness Briefing ── */
 .onboarding-overlay {
   flex-shrink: 0;
   border: 1px solid var(--border-gold);
   border-radius: var(--radius-md);
   background: var(--gold-glow);
-  padding: 1rem;
+  padding: 1.15rem 1.15rem 1rem;
 }
 
 .onboarding-overlay h2 {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.6rem;
   font-size: var(--text-md);
+  line-height: 1.25;
 }
 
-.onboarding-overlay p:last-child {
-  margin-bottom: 0;
+.onboarding-overlay p + p {
+  margin-top: 0.55rem;
   color: var(--text-secondary);
+}
+
+.onboarding-overlay .primary-action {
+  margin-top: 0.85rem;
 }
 
 /* ── Tale ── */
