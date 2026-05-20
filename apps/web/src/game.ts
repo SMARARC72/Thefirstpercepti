@@ -2,8 +2,7 @@ export const SAVE_KEY = "the-first-perception.save.v1";
 
 import { loadWorldData, pickStartLocation } from "./data/worldLoader";
 
-export type { Screen } from "@first-perception/types";
-export type GameTab = "tale" | "fate" | "status" | "world" | "factions" | "npcs" | "codex" | "journal";
+export type { Screen, GameTab } from "@first-perception/types";
 export type CreationStepIndex = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type CharacterForm =

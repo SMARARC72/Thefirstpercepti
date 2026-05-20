@@ -1120,6 +1120,118 @@ Phase 9 will need to grow the two-way bridge between the engine-
 internal Player and the canonical Player so combat reducers can
 read `proficiencyBonus` + write back `hitDice.current` on rests.
 
+---
+
+## 2026-05-20 (Session 8 cont.) — Phase 8a: Panel wiring + test env standardisation
+
+Wires the two Wave 1 panels into `GameplayScreen` as new mobile
+tabs, simplifies both panels to read canonical Player + Item
+fields now that Phase 7 has shipped them, and standardises the
+apps/web test environment on happy-dom (removing the hand-rolled
+DOM shim Unit 4 had to ship as a Wave 1 work-around).
+
+### What landed
+
+**Tab surface.** `GameTab` extended in
+`packages/types/src/index.ts` with two new ids: `"sheet"` and
+`"trove"`. Apps/web stopped duplicating the union and now
+re-exports `GameTab` from the canonical types package
+(`apps/web/src/game.ts`). Single source of truth.
+
+**GameplayScreen wiring** (`apps/web/src/screens/GameplayScreen.ts`):
+- Two new tab entries between Fate and Status:
+  - `{ id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" }`
+  - `{ id: "trove", label: "The Trove", title: "Inventory — what the pack holds" }`
+- New `renderMobilePanel` cases call the functional
+  `createCharacterSheetPanel({ player })` and
+  `createInventoryPanel({ player })` factories, set
+  `id="panel-sheet"` / `id="panel-trove"` so the existing
+  `syncMobilePanels` machinery picks them up, and add `panel` +
+  `mobile-panel` classes for the styles.css rules.
+- New private helper `refreshFunctionalPanel(panelId, build)`:
+  when `game` changes in `update()`, the helper finds the panel
+  by id and swaps it with a freshly-built one, preserving the
+  `active-panel` class. The class-based panels still go through
+  their `update()` methods in `panelInstances`; the functional
+  panels go through this swap instead. Two code paths but a clear
+  rule for which is which.
+
+**CharacterSheetPanel simplified**
+(`apps/web/src/components/CharacterSheetPanel.ts`):
+- Reads `proficiencyBonus`, `hitDice.current`, `hitDice.max`,
+  `hitDice.die`, and `savingThrowProficiencies` directly from
+  `player`. Optional props are now overrides, not the only way to
+  pass them.
+- The `playerMaxHitDice` unsafe cast (Wave 1's optional-property
+  workaround) is gone.
+- The "Lineage" identity row that duplicated "Form" is removed
+  — Phase 7 didn't add a lineage field and the dupe was awkward.
+- The "Stillness/ruin meters arrive in Phase 7" placeholder comment
+  is gone (Phase 7 shipped; the comment was a dead promise).
+- The hit-die label is now `${current}/${max} ${die}` rather than
+  hardcoded `d8`.
+
+**InventoryPanel simplified**
+(`apps/web/src/components/InventoryPanel.ts`):
+- The `LocalRarityId` alias is gone; the panel now imports
+  `RarityTierId` from `@first-perception/types`.
+- The `getItemRarity` prop now defaults to `(item) => item.rarity`
+  (was `() => "common"` as a placeholder). Phase 7 made rarity a
+  required Item field, so the heuristic fallback is dead weight.
+- `attunementUsed` / `attunementMax` default to
+  `player.attunementSlots.used` / `.max`.
+- `requiresAttunement` now checks `item.attunement?.required`
+  first; the legendary/artifact heuristic stays as a secondary
+  signal, but the description-text "attune" keyword scan is gone
+  (was a brittle Wave 1 workaround; canonical data now drives it).
+
+**Test environment standardisation.**
+`apps/web/tests/character-sheet-panel.spec.ts` rewritten:
+- Removed the 196-line hand-rolled DOM shim (Wave 1 Unit 4 had to
+  ship this because happy-dom wasn't a devDep at the time).
+- Added `// @vitest-environment happy-dom` at the file head,
+  matching `apps/web/tests/inventory-panel.spec.ts` (Unit 5).
+- Spec body now uses real `HTMLElement`, real `querySelector` with
+  attribute selectors, real `classList`. Reads like normal DOM
+  code.
+- Added two new specs:
+  - "reads hit-die from Player.hitDice rather than assuming d8" —
+    locks in the new hit-die rendering.
+  - "reads savingThrowProficiencies from Player when no prop
+    override is passed" — locks in the canonical-field-reading
+    behavior.
+- File shrank from 372 lines to ~155 lines.
+
+### Verify
+
+- `npm run typecheck` — clean.
+- `npm run build:packages` — clean.
+- `npm test` — 18 + 35 + 10 + 113 + **27** = **203 tests passing**
+  (+2 from new specs; engine count unchanged at 113).
+- `npm run build` — 1077 → **1079** modules (+2 for the two
+  functional panels now reachable from the bundle); 2.95 s.
+- Bundle delta vs Phase 7 baseline:
+  - `main.js` 193.08 → **202.21 kB** raw (**+9.13 kB**, +2.56 kB gzip)
+  - `vendor.js` 455.80 kB — unchanged
+  - `main.css` 44.75 kB — unchanged
+- Leak grep — 0 hits across all four sentinels.
+
+The +9.13 kB bump is exactly what the punch list and
+BASELINE_METRICS predicted: the panel components were tree-shaken
+before wiring; now they ship. Phase 11's bundle budget gate will
+anchor against the post-Phase-8 floor, not the pre-Phase-7 floor,
+to avoid penalising legitimate feature work.
+
+### Notes for next session
+
+- I did NOT add a GameplayScreen-level smoke spec for the new
+  tabs because the wiring is exercised by the panel specs + the
+  existing tab-sync flow. Phase 11's e2e pass is the natural home
+  for "user clicks The Sheet, sees ability scores" coverage.
+- Phase 8b (parser misroutes) and 8c (Ink scene routing +
+  scripts/validate-content.mjs) and 8d (RollBand enum) can run in
+  any order now; none of them touch each other's files.
+
 ## Build Commands
 
 ```bash

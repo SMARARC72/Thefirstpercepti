@@ -14,6 +14,16 @@ regressions are caught early and budgets stay honest.
 > `packages/engine/src/items-5e-types.ts` deleted, the inline `Condition5e*` block at
 > the top of `packages/engine/src/condition-effects-5e.ts` replaced with an
 > import-and-re-export from `@first-perception/types`.
+>
+> **Phase 8a update (same date):** `CharacterSheetPanel` + `InventoryPanel` wired
+> into `GameplayScreen` as the new tabs "The Sheet" and "The Trove". Bundle delta:
+> `main.js` 193.08 → 202.21 kB raw (+9.13 kB), gzip 55.47 → 58.03 kB (+2.56 kB) —
+> the two panel components land in the bundle (they were tree-shaken before
+> wiring; this is the expected Phase 8a tilt). `vendor.js` + `main.css` unchanged.
+> Test count 25 → 27 apps/web (added two specs for canonical-field reading;
+> hand-rolled DOM shim in `tests/character-sheet-panel.spec.ts` replaced with
+> happy-dom, standardising the apps/web test environment). Leak grep still 0.
+> 1077 → 1079 modules through vite.
 
 ## Tests
 

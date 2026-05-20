@@ -2,13 +2,12 @@ import type { Player } from "@first-perception/types";
 
 export interface CharacterSheetPanelProps {
   player: Player;
-  // Phase 8a will pass these — for Wave 1 we default them so the
-  // component renders standalone without `Player` schema changes.
+  armorClass?: number;
+  passivePerception?: number;
+  // Optional overrides; default to the canonical Player fields.
   proficiencyBonus?: number;
   hitDiceCurrent?: number;
   hitDiceMax?: number;
-  armorClass?: number;
-  passivePerception?: number;
   savingThrowProficiencies?: ReadonlyArray<keyof Player["stats"]>;
 }
 
@@ -62,13 +61,10 @@ function renderIdentityStrip(player: Player): HTMLElement {
   section.appendChild(name);
 
   const dl = el("dl", "csp-identity-meta");
-  // Lineage is not yet on the Player type (Phase 7 adds it); we render
-  // the closest stand-in available so the strip never has empty rows.
   const rows: Array<[string, string]> = [
     ["Form", player.formLabel || titleCase(player.form)],
     ["Posture", player.postureLabel || titleCase(player.posture)],
     ["Domain", titleCase(player.domain)],
-    ["Lineage", player.formLabel || titleCase(player.form)],
   ];
   for (const [k, v] of rows) {
     const dt = el("dt", undefined, k);
@@ -114,6 +110,7 @@ function renderCombatCallouts(
   proficiencyBonus: number,
   hitDiceCurrent: number,
   hitDiceMax: number,
+  hitDie: string,
 ): HTMLElement {
   const section = el("section", "csp-callouts");
   section.setAttribute("aria-label", "Combat callouts");
@@ -123,7 +120,7 @@ function renderCombatCallouts(
     ["Armor Class", String(ac)],
     ["Passive Perception", String(passivePerception)],
     ["Proficiency Bonus", formatModifier(proficiencyBonus)],
-    ["Hit Dice", `${hitDiceCurrent}/${hitDiceMax} d8`],
+    ["Hit Dice", `${hitDiceCurrent}/${hitDiceMax} ${hitDie}`],
   ];
   for (const [label, value] of callouts) {
     const cell = el("div", "csp-callout");
@@ -182,9 +179,6 @@ function renderStatusFooter(player: Player): HTMLElement {
   section.appendChild(heading);
 
   const list = el("dl", "csp-status-meters");
-  // Match StatusPanel: HP + Focus are the canonical meters Player
-  // exposes today. Stillness/ruin meters arrive in Phase 7 alongside
-  // the schema extension.
   const meters: Array<[string, string]> = [
     ["Health", `${player.hp} / ${player.maxHp}`],
     ["Focus", `${player.focus} / ${player.maxFocus}`],
@@ -203,19 +197,13 @@ function renderStatusFooter(player: Player): HTMLElement {
 
 export function createCharacterSheetPanel(props: CharacterSheetPanelProps): HTMLElement {
   const { player } = props;
-  const proficiencyBonus = props.proficiencyBonus ?? 2;
-  // `Player` does not carry maxHitDice yet (Phase 7), so the optional
-  // chain reads a field that may exist post-extension without forcing
-  // a schema change here.
-  const playerMaxHitDice =
-    typeof (player as unknown as { maxHitDice?: number }).maxHitDice === "number"
-      ? (player as unknown as { maxHitDice: number }).maxHitDice
-      : undefined;
-  const hitDiceMax = props.hitDiceMax ?? 1;
-  const hitDiceCurrent = props.hitDiceCurrent ?? playerMaxHitDice ?? 1;
+  const proficiencyBonus = props.proficiencyBonus ?? player.proficiencyBonus;
+  const hitDiceCurrent = props.hitDiceCurrent ?? player.hitDice.current;
+  const hitDiceMax = props.hitDiceMax ?? player.hitDice.max;
+  const hitDie = player.hitDice.die;
   const armorClass = props.armorClass ?? 10 + modifier(player.stats.grace);
   const passivePerception = props.passivePerception ?? 10 + modifier(player.stats.sense);
-  const proficiencies = (props.savingThrowProficiencies ?? []) as ReadonlyArray<StatKey>;
+  const proficiencies = (props.savingThrowProficiencies ?? player.savingThrowProficiencies) as ReadonlyArray<StatKey>;
 
   const root = document.createElement("section");
   root.className = "character-sheet-panel";
@@ -230,7 +218,7 @@ export function createCharacterSheetPanel(props: CharacterSheetPanelProps): HTML
   const column = document.createElement("div");
   column.className = "csp-column csp-column-primary";
   column.appendChild(renderAbilityScores(player));
-  column.appendChild(renderCombatCallouts(armorClass, passivePerception, proficiencyBonus, hitDiceCurrent, hitDiceMax));
+  column.appendChild(renderCombatCallouts(armorClass, passivePerception, proficiencyBonus, hitDiceCurrent, hitDiceMax, hitDie));
 
   const aside = document.createElement("div");
   aside.className = "csp-column csp-column-secondary";

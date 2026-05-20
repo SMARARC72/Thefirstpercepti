@@ -9,6 +9,8 @@ import { NpcsPanel } from "../components/NpcsPanel";
 import { CodexPanel } from "../components/CodexPanel";
 import { JournalPanel } from "../components/JournalPanel";
 import { TabNav } from "../components/TabNav";
+import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
+import { createInventoryPanel } from "../components/InventoryPanel";
 import { updateVignette } from "../effects/vignette";
 
 interface GameplayScreenProps {
@@ -46,6 +48,8 @@ export class GameplayScreen {
     const tabs: { id: GameTab; label: string; title?: string }[] = [
       { id: "tale", label: "The Unfolding", title: "Tale — narrative log" },
       { id: "fate", label: "What Waits", title: "Fate — recent rolls" },
+      { id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" },
+      { id: "trove", label: "The Trove", title: "Inventory — what the pack holds" },
       { id: "status", label: "The Vessel", title: "Status — body and mind" },
       { id: "world", label: "The Known", title: "World — map and region" },
       { id: "factions", label: "The Powers", title: "Factions" },
@@ -226,6 +230,18 @@ export class GameplayScreen {
         el.classList.add("mobile-panel");
         return el;
       }
+      case "sheet": {
+        const el = createCharacterSheetPanel({ player: game.player });
+        el.id = "panel-sheet";
+        el.classList.add("mobile-panel", "panel");
+        return el;
+      }
+      case "trove": {
+        const el = createInventoryPanel({ player: game.player });
+        el.id = "panel-trove";
+        el.classList.add("mobile-panel", "panel");
+        return el;
+      }
       case "status": {
         const p = new StatusPanel({ game });
         this.panelInstances.push(p);
@@ -297,6 +313,13 @@ export class GameplayScreen {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
           }
         }
+
+        this.refreshFunctionalPanel("panel-sheet", () =>
+          createCharacterSheetPanel({ player: game.player }),
+        );
+        this.refreshFunctionalPanel("panel-trove", () =>
+          createInventoryPanel({ player: game.player }),
+        );
       }
 
       if (oldState.activeTab !== newProps.state.activeTab) {
@@ -304,6 +327,17 @@ export class GameplayScreen {
         this.syncMobilePanels(newProps.state.activeTab);
       }
     }
+  }
+
+  private refreshFunctionalPanel(panelId: string, build: () => HTMLElement): void {
+    if (!this.element) return;
+    const current = this.element.querySelector(`#${panelId}`);
+    if (!current) return;
+    const next = build();
+    next.id = panelId;
+    next.classList.add("mobile-panel", "panel");
+    if (current.classList.contains("active-panel")) next.classList.add("active-panel");
+    current.replaceWith(next);
   }
 
   private syncMobilePanels(activeTab: GameTab): void {

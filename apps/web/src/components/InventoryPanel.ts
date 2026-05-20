@@ -1,30 +1,16 @@
-import type { Player, Item } from "@first-perception/types";
-
-/**
- * Local rarity union mirrors the ids Unit 2 (item-rarity) will publish.
- * Wave 1 keeps this local because Unit 2's rarity field has not yet been
- * folded into the canonical `Item` type — Phase 7 reconciles. Until then
- * `getItemRarity` is the seam the host wires up.
- */
-export type LocalRarityId =
-  | "common"
-  | "uncommon"
-  | "rare"
-  | "very_rare"
-  | "legendary"
-  | "artifact";
+import type { Player, Item, RarityTierId } from "@first-perception/types";
 
 export interface InventoryPanelProps {
   player: Player;
   attunementUsed?: number;
   attunementMax?: number;
-  getItemRarity?: (item: Item) => LocalRarityId;
+  getItemRarity?: (item: Item) => RarityTierId;
   getItemWeight?: (item: Item) => number;
   onEquip?: (itemId: string) => void;
   onUnequip?: (slotId: string) => void;
 }
 
-const RARITY_TOKEN: Record<LocalRarityId, string> = {
+const RARITY_TOKEN: Record<RarityTierId, string> = {
   common: "--rarity-common",
   uncommon: "--rarity-uncommon",
   rare: "--rarity-rare",
@@ -33,7 +19,7 @@ const RARITY_TOKEN: Record<LocalRarityId, string> = {
   artifact: "--rarity-artifact",
 };
 
-const RARITY_LABEL: Record<LocalRarityId, string> = {
+const RARITY_LABEL: Record<RarityTierId, string> = {
   common: "Common",
   uncommon: "Uncommon",
   rare: "Rare",
@@ -42,20 +28,14 @@ const RARITY_LABEL: Record<LocalRarityId, string> = {
   artifact: "Artifact",
 };
 
-// Heuristic until Unit 2 lands: an item is "equipped" when `equipSlot` is set.
-// Phase 8a will pass real equipped-slot data via the wired callbacks.
 function isEquipped(item: Item): boolean {
   return typeof item.equipSlot === "string" && item.equipSlot.length > 0;
 }
 
-// Heuristic until attunement metadata is on the canonical Item type.
-// We surface the glyph when the item description name-drops attunement, OR
-// when its rarity returned by the host is legendary/artifact (5e canon:
-// most legendary items require attunement). Host code can override later.
-function requiresAttunement(item: Item, rarity: LocalRarityId): boolean {
+function requiresAttunement(item: Item, rarity: RarityTierId): boolean {
+  if (item.attunement?.required) return true;
   if (rarity === "legendary" || rarity === "artifact") return true;
-  const haystack = `${item.name} ${item.description}`.toLowerCase();
-  return haystack.includes("attune");
+  return false;
 }
 
 function effectSummary(item: Item): string {
@@ -71,9 +51,9 @@ function effectSummary(item: Item): string {
 export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
   const {
     player,
-    attunementUsed = 0,
-    attunementMax = 3,
-    getItemRarity = () => "common" as LocalRarityId,
+    attunementUsed = player.attunementSlots?.used ?? 0,
+    attunementMax = player.attunementSlots?.max ?? 3,
+    getItemRarity = (item: Item) => item.rarity,
     getItemWeight = () => 1,
     onEquip = () => {},
     onUnequip = () => {},

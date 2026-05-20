@@ -764,7 +764,17 @@ export interface AudioCue {
 
 export type Screen = "title" | "creation" | "gameplay" | "settings" | "legacy" | "game_over";
 
-export type GameTab = "tale" | "fate" | "status" | "world" | "factions" | "npcs" | "codex" | "journal";
+export type GameTab =
+  | "tale"
+  | "fate"
+  | "sheet"
+  | "trove"
+  | "status"
+  | "world"
+  | "factions"
+  | "npcs"
+  | "codex"
+  | "journal";
 
 export interface AppState {
   screen: Screen;
