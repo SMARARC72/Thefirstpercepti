@@ -47,3 +47,18 @@ export {
   type ParsedDice,
   type DiceRoll,
 } from './dice-expression';
+export {
+  compareRarity,
+  downgradeRarity,
+  getRarityTier,
+  loadRarityTiers,
+} from './item-rarity';
+export { attemptForge, loadForgingRecipes, validateRecipe } from './forging';
+export type {
+  AttunementRequirement,
+  ForgeOutcome,
+  ForgeOutcomeKind,
+  ForgeRecipe,
+  RarityTier,
+  RarityTierId,
+} from './items-5e-types';
