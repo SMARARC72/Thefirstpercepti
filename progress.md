@@ -312,6 +312,97 @@ env loader; the failure is purely the sandbox's egress policy. Run
 `npm run db:migrate` from your local machine (or from a Vercel build
 hook once deployed) and the six tables will appear in Supabase.
 
+## 2026-05-20 (Session 4 cont.) — Phase 3c: Claude + Kimi via `/api/llm` proxy
+
+**Goal:** Get LLM keys out of the browser. The web client must never hold a
+provider API key. All Claude and Kimi traffic goes through a Vercel serverless
+proxy that reads keys from server env vars and dispatches.
+
+### Changes
+
+1. **`LLMClient` interface.** New abstract surface (`complete`, `stream`,
+   `chat`) lives at `packages/llm-client/src/LLMClient.ts`. All narrative
+   subagents now accept this interface instead of the concrete
+   `KimiClient` — `TurnOrchestrator`, `NPCSubagent`, `GMNarrator`,
+   `FactionSubagent` were all updated.
+
+2. **Two server-side adapters.** Both implement `LLMClient`:
+   - `AnthropicClient` — `packages/llm-client/src/AnthropicClient.ts`.
+     Talks to `api.anthropic.com/v1/messages`. Translates our
+     OpenAI-shaped `LLMRequest` into Anthropic's `system + messages`
+     format. Streaming parses `message_start` / `content_block_delta` /
+     `message_delta` / `message_stop` SSE events. Tier map:
+     `fast → claude-haiku-4-5-20251001`, `balanced → claude-sonnet-4-6`,
+     `deep → claude-opus-4-7`. Circuit breaker + retry + 4xx short-circuit.
+   - `MoonshotClient` — `packages/llm-client/src/MoonshotClient.ts`.
+     Replaces the old `KimiClient`; OpenAI-compatible wire, so the
+     adapter is thin. `export const KimiClient = MoonshotClient` keeps
+     one phase of import compatibility for anything I missed.
+
+3. **`ProxyLLMClient`.** Browser-side `LLMClient` that POSTs envelopes
+   to `/api/llm` and reads SSE from `/api/llm/stream`. Surfaces the
+   chosen provider + failover breadcrumb via `lastMeta` so callers can
+   attribute latency. Configurable `provider` override (`auto` | `claude`
+   | `kimi`).
+
+4. **Dual exports.** `@first-perception/llm-client` now exposes the
+   browser-safe surface only. Server adapters live at
+   `@first-perception/llm-client/server`. Keeps Anthropic + Moonshot
+   URLs out of the web bundle.
+
+5. **Two serverless functions.** Both share `api/_lib/llm-router.ts`
+   for provider resolution + tier-to-model normalization:
+   - `POST /api/llm` — non-streaming completion. Returns the standard
+     `ApiResponse<LLMResponse>` envelope. Auto-failover (Claude → Kimi)
+     for transient primary errors when `provider === "auto"`. Decorates
+     response with `x-llm-provider` and `x-llm-failover-from` headers.
+   - `POST /api/llm/stream` — SSE proxy. Forwards token chunks framed
+     as `data: {json}\n\n` lines. No mid-stream failover (would scramble
+     output); callers wanting durability use the non-streaming route.
+
+6. **Browser-side cleanup.** `apps/web/src/main.ts` swapped
+   `KimiClient({ apiKey })` → `new ProxyLLMClient()`. Deleted
+   `loadApiKey`, `saveApiKey`, `API_KEY_STORAGE_KEY`, and the boot-time
+   `localStorage.getItem("the-first-perception.moonshot-api-key")`
+   plumbing. `SettingsModal` lost its `apiKey` prop, `onApiKeyChange`
+   callback, the password input, and the "Moonshot API Key" label;
+   replaced with a single explanatory note that points the player at
+   the server config.
+
+7. **Tests.** New `ProxyLLMClient.test.ts` (4 specs) stubs `fetch` to
+   verify: POST envelope shape, response unwrapping, failover meta
+   propagation via response headers, SSE chunk parsing + final usage
+   capture, and `ProxyLLMError` on non-2xx. `tests/llm-client.test.ts`
+   updated to import `MoonshotClient` + `AnthropicClient` from the
+   server entry (browser entry no longer re-exports them).
+
+### Verify
+
+- `npm run typecheck` ✅ — persistence + engine + web + api
+- `npm test` ✅ — **50/50** (27 llm-client + 4 persistence + 9 engine
+  + 10 web). +27 specs net.
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main 166.39 kB / vendor 455.80 kB (vs Phase 3b's
+  167.68 kB main). Effectively flat — `ProxyLLMClient` is roughly the
+  same size as the deleted `KimiClient`.
+- `grep "api\.anthropic\.com\|api\.moonshot\.cn\|ANTHROPIC_API_KEY\|MOONSHOT_API_KEY\|sk-ant" dist/main-*.js`
+  → **0 hits**. No provider URLs, no key patterns reach the browser
+  bundle.
+
+### What's required to actually exercise the proxy
+
+1. Set `ANTHROPIC_API_KEY` and/or `MOONSHOT_API_KEY` in Vercel Project
+   Settings → Environment Variables. `apps/web/.env.example` already
+   lists them; copy to `.env.local` for local dev.
+2. With at least one key set, `npm run dev` (Vite) + `vercel dev`
+   (Vercel CLI) on the same port lets the browser hit `/api/llm`
+   locally. Vite's dev server doesn't run serverless functions; pair
+   it with `vercel dev` for the full stack.
+3. Enable "Living World (LLM)" in the in-game Settings drawer. The
+   proxy resolution order is: explicit `claude` / `kimi` override
+   from the request envelope → ANTHROPIC_API_KEY → MOONSHOT_API_KEY →
+   503 with `code: "unavailable"`.
+
 ## Build Commands
 
 ```bash

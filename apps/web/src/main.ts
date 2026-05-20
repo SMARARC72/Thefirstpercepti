@@ -45,7 +45,12 @@ import {
   LocalStorageRepository,
   type GameRepository,
 } from "@first-perception/persistence";
-import { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
+import {
+  ProxyLLMClient,
+  PromptBuilder,
+  WorldContextAssembler,
+  type LLMClient,
+} from "@first-perception/llm-client";
 
 declare global {
   interface Window {
@@ -58,13 +63,12 @@ const DB_NAME = "the-first-perception";
 const DB_VERSION = 1;
 const STORE_NAME = "saves";
 const LEGACY_HISTORY_KEY = "the-first-perception.legacy-history";
-const API_KEY_STORAGE_KEY = "the-first-perception.moonshot-api-key";
 
 // ── Persistence + LLM layer instances ──
 // repo prefers the server-backed HTTP API; falls back to localStorage if
 // the API is unreachable. Either implementation satisfies GameRepository.
 let repo: GameRepository | null = null;
-let llmClient: KimiClient | null = null;
+let llmClient: LLMClient | null = null;
 let promptBuilder: PromptBuilder | null = null;
 let contextAssembler: WorldContextAssembler | null = null;
 let turnOrchestrator: TurnOrchestrator | null = null;
@@ -173,26 +177,6 @@ function loadLegacyHistory(): Legacy[] {
     return raw ? (JSON.parse(raw) as Legacy[]) : [];
   } catch {
     return [];
-  }
-}
-
-function loadApiKey(): string {
-  try {
-    return localStorage.getItem(API_KEY_STORAGE_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-function saveApiKey(key: string): void {
-  try {
-    if (key) {
-      localStorage.setItem(API_KEY_STORAGE_KEY, key);
-    } else {
-      localStorage.removeItem(API_KEY_STORAGE_KEY);
-    }
-  } catch {
-    // ignore
   }
 }
 
@@ -331,7 +315,10 @@ async function runCommand(command: string): Promise<void> {
   }
 
   // ── Living World LLM Layer ──
-  const llmEnabled = state.settings.llmEnabled && turnOrchestrator && loadApiKey();
+  // turnOrchestrator is only constructed if settings.llmEnabled is true
+  // AND the proxy initialized successfully (see initLLMLayer). No
+  // per-user api keys; the /api/llm proxy reads keys from server env.
+  const llmEnabled = state.settings.llmEnabled && turnOrchestrator !== null;
   if (llmEnabled) {
     try {
       const llmResult = await turnOrchestrator!.processTurn(game, trimmed);
@@ -601,13 +588,8 @@ function openSettings(): void {
       saveAppState(store.getState());
       // Re-init LLM layer if toggled
       if ("llmEnabled" in partial) {
-        initLLMLayer(nextSettings.llmEnabled, loadApiKey());
+        initLLMLayer(nextSettings.llmEnabled);
       }
-    },
-    apiKey: loadApiKey(),
-    onApiKeyChange: (key) => {
-      saveApiKey(key);
-      initLLMLayer(state.settings.llmEnabled, key);
     },
     onSaveState: async (slotId) => {
       const s = store.getState();
@@ -739,15 +721,18 @@ document.addEventListener(
 
 // ── LLM Layer Initialization ──
 
-function initLLMLayer(enabled: boolean, apiKey: string): void {
-  if (!enabled || !apiKey) {
+// LLM keys live in Vercel env vars and are read server-side by
+// /api/llm + /api/llm/stream. The browser only needs the proxy client,
+// which forwards LLMRequest envelopes. Nothing in the bundle holds a key.
+function initLLMLayer(enabled: boolean): void {
+  if (!enabled) {
     turnOrchestrator = null;
     llmClient = null;
     return;
   }
 
   try {
-    llmClient = new KimiClient({ apiKey });
+    llmClient = new ProxyLLMClient();
     promptBuilder = new PromptBuilder();
     contextAssembler = new WorldContextAssembler(repo ?? undefined);
     turnOrchestrator = new TurnOrchestrator({
@@ -789,11 +774,11 @@ async function boot(): Promise<void> {
     }
   }
 
-  // Initialize LLM layer if configured
+  // Initialize LLM layer if configured. API keys live in Vercel env;
+  // the proxy reads them server-side.
   const loadedState = loadAppState();
   const settings = loadedState?.settings ?? createInitialState().settings;
-  const apiKey = loadApiKey();
-  initLLMLayer(settings.llmEnabled, apiKey);
+  initLLMLayer(settings.llmEnabled);
 
   const [slots] = await Promise.all([
     getSaveSlots(),

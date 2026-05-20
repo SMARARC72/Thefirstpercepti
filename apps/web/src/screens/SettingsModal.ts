@@ -8,8 +8,6 @@ interface SettingsModalProps {
   onLoadState: (slotId: string) => void;
   onDeleteSlot: (slotId: string) => void;
   onSettingsChange: (settings: Partial<AppState["settings"]>) => void;
-  apiKey: string;
-  onApiKeyChange: (key: string) => void;
 }
 
 export class SettingsModal {
@@ -213,21 +211,10 @@ export class SettingsModal {
     enabledWrap.appendChild(document.createTextNode("Enable Living World (LLM)"));
     grid.appendChild(enabledWrap);
 
-    const keyLabel = document.createElement("label");
-    keyLabel.textContent = "Moonshot API Key";
-    const keyInput = document.createElement("input");
-    keyInput.type = "password";
-    keyInput.placeholder = "sk-...";
-    keyInput.value = this.props.apiKey;
-    keyInput.addEventListener("change", () => {
-      this.props.onApiKeyChange(keyInput.value.trim());
-    });
-    grid.appendChild(keyLabel);
-    grid.appendChild(keyInput);
-
     const note = document.createElement("p");
     note.className = "settings-note";
-    note.textContent = "Requires a Moonshot API key. Costs ~¥0.50–10.00 per session. Falls back to static narrative when disabled or unavailable.";
+    note.textContent =
+      "The Living World layer streams generative narrative from Claude (primary) or Kimi (fallback) via the /api/llm proxy. Provider keys live in the server environment. Falls back to static narrative when disabled or the proxy is unreachable.";
     grid.appendChild(note);
 
     return grid;

@@ -1,5 +1,5 @@
 import type { GameState, TaleEntry, SuggestedAction, StatePatch } from "@first-perception/types";
-import type { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
+import type { LLMClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
 import type { GameRepository } from "@first-perception/persistence";
 import { NPCSubagent } from "./NPCSubagent.js";
 import { GMNarrator } from "./GMNarrator.js";
@@ -22,7 +22,7 @@ export interface TurnOrchestratorResult {
 }
 
 export interface TurnOrchestratorOptions {
-  client: KimiClient;
+  client: LLMClient;
   builder: PromptBuilder;
   repository?: GameRepository;
   contextAssembler: WorldContextAssembler;
@@ -41,7 +41,7 @@ export interface TurnOrchestratorOptions {
  * When budget is exceeded or LLM unavailable, falls back to static narrative.
  */
 export class TurnOrchestrator {
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
   private repository?: GameRepository;
   private contextAssembler: WorldContextAssembler;
@@ -308,7 +308,7 @@ export class TurnOrchestrator {
   }
 
   private _isClientHealthy(): boolean {
-    // KimiClient doesn't expose circuit state directly, but we can infer from
+    // LLMClient implementations don't expose circuit state directly, but we can infer from
     // whether the client exists. If API key is missing, complete() will fail fast.
     return true; // Actual failures are caught per-call
   }

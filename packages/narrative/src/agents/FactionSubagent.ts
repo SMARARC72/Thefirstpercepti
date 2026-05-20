@@ -1,6 +1,6 @@
 import type { GameState, FactionState, TaleEntry } from "@first-perception/types";
 import type {
-  KimiClient,
+  LLMClient,
   PromptBuilder,
   FactionMoveContext,
   FactionMoveOutput,
@@ -20,13 +20,13 @@ export interface FactionActionResult {
 
 export class FactionSubagent {
   private factionId: string;
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
   private repository?: GameRepository;
 
   constructor(options: {
     factionId: string;
-    client: KimiClient;
+    client: LLMClient;
     builder: PromptBuilder;
     repository?: GameRepository;
   }) {

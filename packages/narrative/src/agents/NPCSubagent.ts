@@ -1,6 +1,6 @@
 import type { GameState, NpcState, TaleEntry } from "@first-perception/types";
 import type {
-  KimiClient,
+  LLMClient,
   PromptBuilder,
   NPCActionContext,
   NPCActionOutput,
@@ -24,13 +24,13 @@ export interface NPCActionResult {
 
 export class NPCSubagent {
   private npcId: string;
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
   private repository?: GameRepository;
 
   constructor(options: {
     npcId: string;
-    client: KimiClient;
+    client: LLMClient;
     builder: PromptBuilder;
     repository?: GameRepository;
   }) {

@@ -1,7 +1,7 @@
 {
   "name": "@first-perception/llm-client",
   "version": "2.0.0",
-  "description": "LLM client for procedural narrative generation: Kimi/Moonshot API, prompt pipeline, safety, caching.",
+  "description": "Provider-agnostic LLM client: Claude + Kimi adapters, browser proxy, prompt pipeline, safety, caching.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
     }
   },
   "scripts": {
