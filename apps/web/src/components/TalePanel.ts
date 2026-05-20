@@ -2,6 +2,15 @@ import type { GameState, TaleEntry } from "../game";
 import { CommandDock } from "./CommandDock";
 import { OnboardingOverlay } from "./OnboardingOverlay";
 
+/** Map a 0..100 danger score to a CSS-friendly tier. Drives the
+ * turn-pill ember-breathe animation (see styles.css). */
+function dangerTier(danger: number): "low" | "mid" | "high" | "extreme" {
+  if (danger >= 80) return "extreme";
+  if (danger >= 55) return "high";
+  if (danger >= 30) return "mid";
+  return "low";
+}
+
 interface TalePanelProps {
   game: GameState;
   commandDraft: string;
@@ -45,15 +54,21 @@ export class TalePanel {
     const titleGroup = document.createElement("div");
     const eyebrow = document.createElement("p");
     eyebrow.className = "eyebrow";
-    eyebrow.textContent = "Narrative log";
+    eyebrow.textContent = "The Witness records";
+    eyebrow.title = "Narrative log";
     const h2 = document.createElement("h2");
-    h2.textContent = "The Tale";
+    h2.textContent = "The Unfolding";
+    h2.title = "Tale";
     titleGroup.appendChild(eyebrow);
     titleGroup.appendChild(h2);
 
+    // Turn pill carries a danger-tier dataset so CSS can pulse it as the
+    // world becomes more hostile. Computed from world.danger (0..100).
     const turnPill = document.createElement("span");
     turnPill.className = "turn-pill";
-    turnPill.textContent = `Turn ${this.props.game.turnCount}`;
+    turnPill.textContent = `Turn ${this.props.game.turnCount} · the world still notices`;
+    turnPill.title = `Turn ${this.props.game.turnCount}`;
+    turnPill.dataset.danger = dangerTier(this.props.game.world.danger);
 
     heading.appendChild(titleGroup);
     heading.appendChild(turnPill);
@@ -116,8 +131,12 @@ export class TalePanel {
           suggestions: newProps.game.suggestedActions,
         });
       }
-      const turnPill = this.element?.querySelector(".turn-pill");
-      if (turnPill) turnPill.textContent = `Turn ${newProps.game.turnCount}`;
+      const turnPill = this.element?.querySelector(".turn-pill") as HTMLElement | null;
+      if (turnPill) {
+        turnPill.textContent = `Turn ${newProps.game.turnCount} · the world still notices`;
+        turnPill.title = `Turn ${newProps.game.turnCount}`;
+        turnPill.dataset.danger = dangerTier(newProps.game.world.danger);
+      }
     }
     if (newProps.commandDraft !== undefined && this.commandDock) {
       this.commandDock.update({ draft: newProps.commandDraft });

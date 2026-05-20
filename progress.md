@@ -670,6 +670,77 @@ the obvious extractables out of the 899-line `apps/web/src/main.ts`.
 - `grep` for leaks → 0 hits, as expected
 - `apps/web/src/main.ts` 899 → **826 lines** (−73)
 
+## 2026-05-20 (Session 6) — Phase 6 (part 1): Occult-grimoire surface
+
+**Goal:** Stop reading like a SaaS dashboard. Land the high-leverage
+visual + diegetic changes without touching the test surface. The
+cinematic ceremonies (title coalesce, death rite, legacy stone
+register) need bespoke gsap work and go in Phase 6b.
+
+### Changes
+
+1. **Grimoire token layer** added to `packages/ui-system/src/styles.css`.
+   Imports Cormorant Garamond on top of Inter + Cinzel. New tokens:
+   ember (warm punctuation), sigil-gold (revelation), bone (parchment
+   body), ink (deeper void), whisper (desaturated voice). New
+   `--grimoire-grain` SVG-noise data URL applied via `.grimoire-grain`.
+   New `ember-breathe` keyframe with reduced-motion respect.
+
+2. **Tale rendering refinements** in `apps/web/src/styles.css`:
+   - Tale-panel gets the soft paper grain scoped to reading area.
+   - Cormorant for tale body + heading; Inter for chrome.
+   - Per-tone: **danger** glows ember + ember halo at right margin;
+     **warning** italicizes body + sigil-gold heading; **success**
+     adds a sigil-gold left edge; **cosmic** twilight italic;
+     **whisper** indents + dims.
+   - Soft turn dividers (centered hairline `·`) between entries.
+   - Quick-action chips render as italic inner thoughts (em-dash
+     prefix, sigil-gold hover).
+   - Tab labels join Cormorant; active tab tints sigil-gold + glow.
+
+3. **Status meter reskin** — `Meter` accepts `kind` + `diegeticLabel`.
+   CSS targets `.meter[data-kind=...]`: HP = wax seal (ember radial),
+   focus = candle (sigil-gold vertical gradient), danger = tide line.
+   Meter labels join Cormorant italic.
+
+4. **Turn pill** carries `data-danger` (low/mid/high/extreme) from
+   `world.danger`. CSS pulses with `ember-breathe` at ≥55, faster at
+   ≥80.
+
+5. **Diegetic copy sweep** — every literal label is renamed in-world
+   with the original preserved as `title` tooltip:
+   - Tabs: Tale → "The Unfolding"; Status → "The Vessel"; etc.
+   - CommandDock: "Submit" → "Speak it"; placeholder → "Speak. The
+     world is listening."
+   - GameplayScreen: Save → "Bind", Load → "Recall", Title →
+     "Withdraw".
+   - TitleScreen: Begin → "Awaken", Continue → "Resume the watch",
+     Settings → "The Lens", Legacy → "The Register".
+
+6. **`Meter` HTML** got a `.meter-fill` class on the inner span so the
+   per-kind CSS reliably attaches.
+
+7. **`README.md` rewritten** for the new identity.
+
+### Deferred to Phase 6b (cinematic ceremonies)
+
+- Title-particle coalescing
+- Death ceremony (ash drift, audio decay, epitaph reveal, "The Record
+  Closes" with glow)
+- Legacy stone register
+- Slow-reveal text on tale entries + auto-scroll "↓ new" pill
+
+### Verify
+
+- `npm run typecheck` ✅
+- `npm test` ✅ — 96/96 (no regressions; tests assert behaviour, not
+  prose)
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main **177.24 kB** / css **31.71 kB**
+  (vs Phase 5: 175.99 / 25.21). +1.25 kB JS, +6.5 kB CSS, +1.3 kB
+  gzipped CSS for the grimoire override layer.
+- Leak grep → 0 hits.
+
 ## Build Commands
 
 ```bash

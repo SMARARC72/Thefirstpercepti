@@ -29,7 +29,8 @@ export class CommandDock {
 
     const label = document.createElement("label");
     label.htmlFor = "command-input";
-    label.textContent = "Command";
+    label.textContent = "Speak";
+    label.title = "Command";
 
     const row = document.createElement("div");
     row.className = "command-row";
@@ -38,7 +39,7 @@ export class CommandDock {
     this.input.id = "command-input";
     this.input.type = "text";
     this.input.autocomplete = "off";
-    this.input.placeholder = "Type what you do next...";
+    this.input.placeholder = "Speak. The world is listening.";
     this.input.value = this.props.draft;
     this.input.addEventListener("input", (e) => {
       this.props.onDraftChange((e.target as HTMLInputElement).value);
@@ -47,7 +48,8 @@ export class CommandDock {
     const submit = document.createElement("button");
     submit.type = "submit";
     submit.className = "primary-action";
-    submit.textContent = "Submit";
+    submit.textContent = "Speak it";
+    submit.title = "Submit command";
 
     row.appendChild(this.input);
     row.appendChild(submit);

@@ -40,15 +40,18 @@ export class GameplayScreen {
 
     main.appendChild(this.renderHeader(game));
 
-    const tabs: { id: GameTab; label: string }[] = [
-      { id: "tale", label: "Tale" },
-      { id: "fate", label: "Fate" },
-      { id: "status", label: "Status" },
-      { id: "world", label: "World" },
-      { id: "factions", label: "Factions" },
-      { id: "npcs", label: "NPCs" },
-      { id: "codex", label: "Codex" },
-      { id: "journal", label: "Journal" },
+    // Tab labels are diegetic — the underlying GameTab ids stay stable so
+    // store / persistence / tests are unaffected; only what the player
+    // reads changes. Tooltips carry the literal meaning for clarity.
+    const tabs: { id: GameTab; label: string; title?: string }[] = [
+      { id: "tale", label: "The Unfolding", title: "Tale — narrative log" },
+      { id: "fate", label: "What Waits", title: "Fate — recent rolls" },
+      { id: "status", label: "The Vessel", title: "Status — body and mind" },
+      { id: "world", label: "The Known", title: "World — map and region" },
+      { id: "factions", label: "The Powers", title: "Factions" },
+      { id: "npcs", label: "The Met", title: "NPCs you have crossed" },
+      { id: "codex", label: "Names of Things", title: "Codex — what you've named" },
+      { id: "journal", label: "The Witness", title: "Journal — what you noted" },
     ];
 
     this.tabNav = new TabNav({
@@ -140,17 +143,20 @@ export class GameplayScreen {
 
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
-    saveBtn.textContent = "Save";
+    saveBtn.textContent = "Bind";
+    saveBtn.title = "Save the current run";
     saveBtn.addEventListener("click", () => this.props.onSave());
 
     const loadBtn = document.createElement("button");
     loadBtn.type = "button";
-    loadBtn.textContent = "Load";
+    loadBtn.textContent = "Recall";
+    loadBtn.title = "Load the last save";
     loadBtn.addEventListener("click", () => this.props.onLoad());
 
     const newBtn = document.createElement("button");
     newBtn.type = "button";
-    newBtn.textContent = "Title";
+    newBtn.textContent = "Withdraw";
+    newBtn.title = "Return to the title";
     newBtn.addEventListener("click", () => this.props.onNewGame());
 
     const settingsBtn = document.createElement("button");

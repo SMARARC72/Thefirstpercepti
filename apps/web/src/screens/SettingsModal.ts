@@ -31,7 +31,8 @@ export class SettingsModal {
     const header = document.createElement("div");
     header.className = "modal-header";
     const title = document.createElement("h2");
-    title.textContent = "Settings";
+    title.textContent = "The Lens";
+    title.title = "Settings";
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
     closeBtn.setAttribute("aria-label", "Close settings");

@@ -1,7 +1,9 @@
 import type { GameTab } from "../game";
 
 interface TabNavProps {
-  tabs: { id: GameTab; label: string }[];
+  /** title shows as a native tooltip — used for diegetic labels that
+   * benefit from a literal translation. Optional. */
+  tabs: { id: GameTab; label: string; title?: string }[];
   active: GameTab;
   onChange: (tab: GameTab) => void;
   position?: "bottom" | "top";
@@ -35,6 +37,7 @@ export class TabNav {
       btn.setAttribute("aria-controls", `panel-${tab.id}`);
       btn.dataset.tab = tab.id;
       btn.textContent = tab.label;
+      if (tab.title) btn.title = tab.title;
       btn.className = tab.id === this.props.active ? "active" : "";
       btn.addEventListener("click", () => this.props.onChange(tab.id));
       this.buttons.set(tab.id, btn);

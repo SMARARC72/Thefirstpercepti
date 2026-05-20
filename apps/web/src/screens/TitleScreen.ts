@@ -55,23 +55,27 @@ export class TitleScreen {
     const beginBtn = document.createElement("button");
     beginBtn.className = "primary-action";
     beginBtn.type = "button";
-    beginBtn.textContent = "Begin";
+    beginBtn.textContent = "Awaken";
+    beginBtn.title = "Begin a new run";
     beginBtn.addEventListener("click", () => this.props.onBegin());
 
     const continueBtn = document.createElement("button");
     continueBtn.type = "button";
-    continueBtn.textContent = "Continue";
+    continueBtn.textContent = "Resume the watch";
+    continueBtn.title = "Continue the last save";
     continueBtn.disabled = !this.props.hasSave;
     continueBtn.addEventListener("click", () => this.props.onContinue());
 
     const settingsBtn = document.createElement("button");
     settingsBtn.type = "button";
-    settingsBtn.textContent = "Settings";
+    settingsBtn.textContent = "The Lens";
+    settingsBtn.title = "Settings";
     settingsBtn.addEventListener("click", () => this.props.onSettings());
 
     const legacyBtn = document.createElement("button");
     legacyBtn.type = "button";
-    legacyBtn.textContent = "Legacy";
+    legacyBtn.textContent = "The Register";
+    legacyBtn.title = "Legacy — past lives";
     legacyBtn.addEventListener("click", () => this.props.onLegacy());
 
     nav.appendChild(beginBtn);

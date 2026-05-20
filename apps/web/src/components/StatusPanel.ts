@@ -26,19 +26,35 @@ export class StatusPanel {
     const titleGroup = document.createElement("div");
     const eyebrow = document.createElement("p");
     eyebrow.className = "eyebrow";
-    eyebrow.textContent = "Character";
+    eyebrow.textContent = "What you are made of";
+    eyebrow.title = "Character";
     const h2 = document.createElement("h2");
-    h2.textContent = "Status";
+    h2.textContent = "The Vessel";
+    h2.title = "Status";
     titleGroup.appendChild(eyebrow);
     titleGroup.appendChild(h2);
     heading.appendChild(titleGroup);
     section.appendChild(heading);
 
-    const hpMeter = new Meter({ label: "Health", value: this.props.game.player.hp, max: this.props.game.player.maxHp, color: "crimson" });
+    const hpMeter = new Meter({
+      label: "Health",
+      diegeticLabel: "Wax seal",
+      kind: "hp",
+      value: this.props.game.player.hp,
+      max: this.props.game.player.maxHp,
+      color: "crimson",
+    });
     this.meters.set("hp", hpMeter);
     section.appendChild(hpMeter.render());
 
-    const focusMeter = new Meter({ label: "Focus", value: this.props.game.player.focus, max: this.props.game.player.maxFocus, color: "teal" });
+    const focusMeter = new Meter({
+      label: "Focus",
+      diegeticLabel: "Candle",
+      kind: "focus",
+      value: this.props.game.player.focus,
+      max: this.props.game.player.maxFocus,
+      color: "teal",
+    });
     this.meters.set("focus", focusMeter);
     section.appendChild(focusMeter.render());
 

@@ -1291,3 +1291,282 @@ dd {
     display: none !important;
   }
 }
+
+/* ============================================================================
+ * GRIMOIRE OVERRIDE LAYER — Phase 6 (Immersion & diegetic UI)
+ * ============================================================================
+ * Layered on top of the void/teal/gold base. Refines tale tone typography,
+ * adds soft turn dividers, restyles status meters as in-world objects, and
+ * makes suggestion chips read as italic inner thoughts.
+ *
+ * Reachable from any consumer via the shared tokens declared in
+ * ui-system/src/styles.css under "OCCULT GRIMOIRE LAYER".
+ * ========================================================================== */
+
+.tale-panel {
+  /* Layer the paper grain only inside the tale, where the player reads
+   * for stretches. Heading rails, dock, and rails stay clean. */
+  position: relative;
+}
+.tale-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grimoire-grain);
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+.tale-panel > * { position: relative; z-index: 1; }
+
+/* Tale body sits Cormorant for the reading run; UI chrome around it
+ * stays Inter so meters/buttons keep their dense readability. */
+.tale-entry h3 {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--bone-100);
+}
+.tale-entry p {
+  font-family: var(--font-grimoire);
+  font-weight: 400;
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--bone-200);
+  /* Subtle ink-bleed on long-form prose. */
+  text-shadow: 0 0 1px rgba(243, 238, 224, 0.06);
+}
+.tale-entry span {
+  /* "Turn N" eyebrow — quieter than before, still parsable. */
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+}
+
+/* Per-tone typography. Pre-existing tone rules (border-color) stay above; */
+/* these layer atmospheric weight without removing the color signal.       */
+.tale-entry.danger h3 {
+  color: var(--ember-300);
+  text-shadow: 0 0 14px var(--ember-glow);
+}
+.tale-entry.danger p {
+  color: var(--bone-100);
+}
+.tale-entry.danger::after {
+  /* A soft ember halo at the right margin to telegraph weight without
+   * pulling text out of register. */
+  content: "";
+  position: absolute;
+  inset: -1px -1px -1px auto;
+  width: 3px;
+  background: linear-gradient(180deg, transparent 0%, var(--ember-glow-strong) 50%, transparent 100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  pointer-events: none;
+}
+.tale-entry.warning h3 { color: var(--sigil-300); }
+.tale-entry.warning p  { font-style: italic; color: var(--bone-200); }
+
+.tale-entry.success h3 { color: var(--sigil-400); }
+.tale-entry.success::before {
+  /* Sigil-gold edge — quiet, ceremonial. */
+  content: "";
+  position: absolute;
+  inset: -1px auto -1px -1px;
+  width: 2px;
+  background: var(--sigil-glow);
+  pointer-events: none;
+}
+
+.tale-entry.cosmic h3 {
+  color: var(--twilight-400);
+  letter-spacing: 0.05em;
+}
+.tale-entry.cosmic p {
+  font-style: italic;
+  color: var(--twilight-400);
+}
+
+/* Whisper tone — lower-importance prose, indented + dimmed. */
+.tale-entry.whisper {
+  border-left: 2px solid var(--border-subtle);
+  background: transparent;
+  margin-left: 1.5rem;
+}
+.tale-entry.whisper p {
+  font-style: italic;
+  color: var(--whisper-fg);
+  font-size: 0.98rem;
+}
+
+/* Quiet (default) keeps the bone palette; just ensure relative positioning
+ * so the danger/success edge accents anchor correctly. */
+.tale-entry { position: relative; }
+
+/* Soft turn dividers between consecutive entries. A 1px hairline + a tiny
+ * glyph make the reading flow easier to scan without screaming structure. */
+.tale-entry + .tale-entry {
+  margin-top: 0.5rem;
+}
+.tale-entry + .tale-entry::before {
+  content: "·";
+  position: absolute;
+  top: -0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--bone-600);
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  opacity: 0.7;
+}
+
+/* ── Turn pill — diegetic. Pulses faster as danger rises (Phase 6b can wire
+ *    the data-attr from JS; CSS handles the visuals). ────────────────────── */
+.turn-pill {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-400);
+  border: 1px solid var(--border-subtle);
+  background: var(--ink-800);
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+}
+.turn-pill[data-danger="high"] {
+  border-color: var(--ember-700);
+  color: var(--ember-300);
+  animation: ember-breathe 3.4s ease-in-out infinite;
+}
+.turn-pill[data-danger="extreme"] {
+  border-color: var(--ember-500);
+  color: var(--ember-400);
+  animation: ember-breathe 2.0s ease-in-out infinite;
+}
+
+/* ── Suggestion chips — italic inner thoughts, not buttons that yell. ────── */
+.quick-actions button {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  font-size: 0.98rem;
+  color: var(--bone-200);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.85rem;
+  transition:
+    border-color var(--duration-fast) var(--ease-smooth),
+    color var(--duration-fast) var(--ease-smooth),
+    background var(--duration-fast) var(--ease-smooth);
+}
+.quick-actions button::before {
+  content: "— ";
+  color: var(--bone-600);
+}
+.quick-actions button:hover,
+.quick-actions button:focus-visible {
+  color: var(--sigil-300);
+  border-color: var(--border-gold);
+  background: rgba(216, 169, 58, 0.04);
+  outline: none;
+}
+
+/* ── Command dock heading — sigil-gold eyebrow, Cormorant placeholder. ───── */
+.command-dock textarea,
+.command-dock input[type="text"] {
+  font-family: var(--font-grimoire);
+  font-size: 1.05rem;
+  color: var(--bone-100);
+  background: var(--ink-800);
+  border: 1px solid var(--border-subtle);
+}
+.command-dock textarea::placeholder,
+.command-dock input[type="text"]::placeholder {
+  font-style: italic;
+  color: var(--bone-600);
+}
+
+/* ── Status meters reskinned as in-world objects ─────────────────────────── */
+/*    HP → wax seal (warm ember disc), focus → candle (gold rising), danger
+ *    → tide line. These augment the existing .meter components; they do not
+ *    replace them, so accessibility / aria stays intact. */
+
+.meter[data-kind="hp"] .meter-fill,
+.meter--hp .meter-fill {
+  background: radial-gradient(circle at 30% 35%,
+    var(--ember-300) 0%,
+    var(--ember-500) 55%,
+    var(--ember-700) 100%);
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,0.4),
+    0 0 8px var(--ember-glow);
+}
+
+.meter[data-kind="focus"] .meter-fill,
+.meter--focus .meter-fill {
+  background: linear-gradient(180deg,
+    var(--sigil-300) 0%,
+    var(--sigil-500) 60%,
+    var(--sigil-700) 100%);
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,0.35),
+    0 0 6px var(--sigil-glow);
+}
+
+.meter[data-kind="danger"] .meter-fill,
+.meter--danger .meter-fill {
+  background: linear-gradient(90deg,
+    var(--ink-700) 0%,
+    var(--ember-700) 60%,
+    var(--ember-500) 95%);
+  /* Tide-line: thin top edge highlight implies water rising. */
+  box-shadow:
+    inset 0 1px 0 rgba(217,97,58,0.5),
+    inset 0 0 4px rgba(0,0,0,0.4);
+}
+
+/* Meter labels join Cormorant for tactile, in-world voice. */
+.meter-label {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--bone-400);
+}
+
+/* ── Tab nav — diegetic tabs; labels are renamed in TS but the style here
+ *    treats them more like an index in a bound volume. ─────────────────── */
+.tab-nav button {
+  font-family: var(--font-grimoire);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--bone-400);
+}
+.tab-nav button.active {
+  color: var(--sigil-300);
+  text-shadow: 0 0 8px var(--sigil-glow);
+}
+
+/* ── Panel headings — Cormorant + sigil eyebrow. ─────────────────────────── */
+.panel-heading h2 {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+}
+.panel-heading .eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sigil-700);
+}
+
+/* ── Save / Load buttons in the dock — diegetic copy fits a smaller serif. */
+.dock-actions button {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+}
