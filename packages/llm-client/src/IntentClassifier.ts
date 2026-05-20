@@ -58,35 +58,114 @@ export interface IntentClassifierOptions {
   systemPrompt?: string;
 }
 
+/**
+ * System prompt for the LLM-driven path. Carries an explicit schema
+ * description (field-by-field allowed values) so json-mode replies
+ * stay inside the enum. The prompt body matters even with
+ * `response_format: { type: "json_object" }`, because providers will
+ * happily emit `{}` if the schema is left ambiguous — embedding the
+ * schema cuts the parse-failure rate at zero extra tokens of latency.
+ */
 const DEFAULT_SYSTEM_PROMPT = `You are an intent classifier for a cosmic-horror text RPG.
-Given a player's free-text command, return JSON with these fields:
-  verb: a single lowercase verb token
-  target: the object/person/place the action is aimed at, lowercase, may be empty
-  domain: one of physical, social, metaphysical, combat, craft, stealth, lore, wilderness, intrigue
-  reducer: one of move, combat, rest, item, dialogue, investigation, narrative_only
-  confidence: 0.0..1.0 — how sure you are
-Return JSON only. No prose, no markdown.`;
 
+Given the player's free-text command, return a JSON object with EXACTLY these fields:
+  - verb: string, a single lowercase verb token (e.g. "attack", "examine").
+  - target: string, lowercase, may be "" if no clear target. Strip articles ("the", "a").
+  - domain: one of: "physical" | "social" | "metaphysical" | "combat" | "craft" | "stealth" | "lore" | "wilderness" | "intrigue".
+  - reducer: one of: "move" | "combat" | "rest" | "item" | "dialogue" | "investigation" | "narrative_only".
+  - confidence: number in [0.0, 1.0]. How sure you are.
+
+Reducer guidance:
+  - move          — the player wants to change location ("go to", "approach", "flee").
+  - combat        — the player is fighting ("attack", "strike", "shoot", "kill").
+  - rest          — the player is resting / sleeping / recovering / waiting.
+  - item          — the player is using/equipping/dropping an inventory item.
+  - dialogue      — the player is talking to an NPC ("talk to", "ask", "speak"). If the command pairs movement with talking ("go talk to the priest"), prefer dialogue.
+  - investigation — the player is examining / searching / listening / reading / picking a lock / forcing a door.
+  - narrative_only — when none of the above apply (pure flavour, ambiguous intent).
+
+Hard rules:
+  - Output JSON only. No prose, no markdown, no comments, no code fences.
+  - Use only the enum values listed above. Lowercase. No extra fields.
+  - If the input is empty or pure flavour, return reducer "narrative_only" with confidence <= 0.4.`;
+
+/**
+ * Exact first-word verb → reducer map. Order of keys here is the
+ * tie-break order in `regexClassify`. See PHRASE_OVERRIDES below for
+ * compound-phrase handling that runs before the first-word lookup.
+ *
+ * History (Phase 8b misroute audit):
+ *   - "break the lock" → narrative_only. Added break/pick/force/unlock/open to investigation.
+ *   - "go talk to the priest" → move. Now caught by PHRASE_OVERRIDES.
+ *   - "stalk the priestess" → domain=social (via "talk" substring). DOMAIN_HINTS now matches on word boundaries.
+ */
 const REDUCER_VERBS: Record<ReducerKind, string[]> = {
   move: ["go", "approach", "flee", "sneak", "travel", "walk", "run", "head"],
   combat: ["attack", "fight", "strike", "defend", "riposte", "kill", "shoot"],
   rest: ["rest", "sleep", "recover", "wait"],
   item: ["use", "equip", "consume", "inspect", "drop", "trade", "take", "grab"],
-  dialogue: ["speak", "ask", "bargain", "threaten", "lie", "talk", "tell"],
-  investigation: ["look", "examine", "read", "listen", "search", "study", "watch"],
+  dialogue: ["speak", "ask", "bargain", "threaten", "lie", "talk", "tell", "greet"],
+  investigation: [
+    "look",
+    "examine",
+    "read",
+    "listen",
+    "search",
+    "study",
+    "watch",
+    "investigate",
+    "break",
+    "pick",
+    "force",
+    "unlock",
+    "open",
+  ],
   narrative_only: [],
 };
 
+/**
+ * Compound-phrase overrides scanned BEFORE the first-word reducer
+ * lookup. Each phrase is matched as whole words (word-boundary
+ * regex). First match wins. Use sparingly — these exist to catch
+ * common misroutes where a leading verb shadows the real intent.
+ */
+const PHRASE_OVERRIDES: Array<{ pattern: RegExp; reducer: ReducerKind }> = [
+  // Movement-then-dialogue: "go talk to the priest", "head over and ask the smith".
+  { pattern: /\b(go|head|walk|run|travel)\b[^.!?]*\b(talk|speak|ask|tell|bargain|greet)\b/, reducer: "dialogue" },
+  // "take a look/peek/glance" — looks like item-use but is investigation.
+  { pattern: /\btake\b[^.!?]*\b(a\s+)?(look|peek|glance)\b/, reducer: "investigation" },
+  // "approach and attack", "sneak up and stab" — leading move verb shadowing combat.
+  { pattern: /\b(approach|sneak|walk|run|head)\b[^.!?]*\b(and\s+)?(attack|strike|stab|kill|fight|shoot)\b/, reducer: "combat" },
+];
+
+/**
+ * Domain keyword hints scanned across the full command. Each keyword
+ * matches as a whole word (word boundary on both sides) — previously
+ * a plain substring scan, which leaked across word boundaries
+ * (e.g. "stalk" → "talk" → social). Order is priority; first match wins.
+ */
 const DOMAIN_HINTS: Array<{ keywords: string[]; domain: IntentDomain }> = [
   { keywords: ["attack", "fight", "strike", "kill", "blade"], domain: "combat" },
   { keywords: ["speak", "ask", "bargain", "tell", "talk"], domain: "social" },
-  { keywords: ["sneak", "hide", "flee", "creep"], domain: "stealth" },
+  { keywords: ["sneak", "hide", "flee", "creep", "stalk"], domain: "stealth" },
   { keywords: ["make", "repair", "build", "fix"], domain: "craft" },
   { keywords: ["read", "study", "remember", "lore", "name"], domain: "lore" },
   { keywords: ["look", "examine", "listen", "watch"], domain: "wilderness" },
   { keywords: ["ritual", "spirit", "veil", "summon"], domain: "metaphysical" },
   { keywords: ["order", "threaten", "command", "lead"], domain: "intrigue" },
 ];
+
+/**
+ * Stem-prefix membership check: does `key` contain `word` as the start
+ * of a token? Anchored at the leading word boundary so `talk` does NOT
+ * match inside `stalk`, but a trailing `\w*` lets `attack` match
+ * `attacking`/`attacks`/`attacker` — same shape for `speak → speaker`,
+ * `name → named`, etc. (Codex review on PR #9.)
+ */
+function containsWord(key: string, word: string): boolean {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escaped}\\w*\\b`).test(key);
+}
 
 /**
  * Classifies free-text commands into structured intents. Tries the LLM
@@ -230,17 +309,26 @@ export function regexClassify(command: string): ClassifiedIntent {
   const verb = parts[0] ?? "";
   const target = parts.slice(1).join(" ");
 
+  // 1. Compound-phrase overrides first — these catch the common cases where
+  //    a leading verb shadows the real intent (e.g. "go talk to the priest").
   let reducer: ReducerKind = "narrative_only";
-  for (const kind of Object.keys(REDUCER_VERBS) as ReducerKind[]) {
-    if (REDUCER_VERBS[kind].includes(verb)) {
-      reducer = kind;
-      break;
+  const override = PHRASE_OVERRIDES.find((r) => r.pattern.test(key));
+  if (override) {
+    reducer = override.reducer;
+  } else {
+    // 2. Fall back to first-word verb lookup.
+    for (const kind of Object.keys(REDUCER_VERBS) as ReducerKind[]) {
+      if (REDUCER_VERBS[kind].includes(verb)) {
+        reducer = kind;
+        break;
+      }
     }
   }
 
+  // 3. Domain hint scan — word-boundary match so "stalk" doesn't bleed into "talk".
   let domain: IntentDomain = "physical";
   for (const hint of DOMAIN_HINTS) {
-    if (hint.keywords.some((kw) => key.includes(kw))) {
+    if (hint.keywords.some((kw) => containsWord(key, kw))) {
       domain = hint.domain;
       break;
     }
