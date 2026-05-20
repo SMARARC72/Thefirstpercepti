@@ -33,6 +33,50 @@ export const RESULT_BANDS = [
   "critical_success",
 ] as const;
 
+/**
+ * Coarse 4-band roll classification. Maps to TaleTone via rollBandToTaleTone
+ * and from the finer-grained 7-band ResultBand via resultBandToRollBand.
+ *
+ * Phase 8d introduces this as the consistency layer between mechanical
+ * outcomes and narrative tone. Phase 9 will adopt it as the return type
+ * from rollD20 in the combat rewrite.
+ */
+export type RollBand = "disaster" | "failure" | "success" | "triumph";
+
+/**
+ * Map a coarse RollBand to its canonical narrative TaleTone.
+ *
+ * Note: TaleTone has 5 values (quiet | warning | danger | success | cosmic)
+ * but only 4 of them have a mechanical outcome (RollBand) counterpart.
+ * 'quiet' is reserved for passive / non-roll tale entries.
+ */
+export function rollBandToTaleTone(band: RollBand): TaleTone {
+  switch (band) {
+    case "disaster":
+      return "danger";
+    case "failure":
+      return "warning";
+    case "success":
+      return "success";
+    case "triumph":
+      return "cosmic";
+  }
+}
+
+/**
+ * Collapse the 7-band ResultBand into the coarse 4-band RollBand:
+ *   critical_failure | failure          -> disaster
+ *   partial_failure  | success_with_cost -> failure
+ *   clean_success    | strong_success   -> success
+ *   critical_success                    -> triumph
+ */
+export function resultBandToRollBand(r: ResultBand): RollBand {
+  if (r === "critical_failure" || r === "failure") return "disaster";
+  if (r === "partial_failure" || r === "success_with_cost") return "failure";
+  if (r === "clean_success" || r === "strong_success") return "success";
+  return "triumph"; // critical_success
+}
+
 export type Severity = "implicit" | "explicit" | "off_screen";
 
 export const SEVERITY_LEVELS = ["implicit", "explicit", "off_screen"] as const;

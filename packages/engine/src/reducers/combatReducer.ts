@@ -74,7 +74,8 @@ export function combatReducer(game: GameState, command: string, rng: SeededRNG):
         patches.push(patchReplace(`/npcs/${idx}/hp`, currentHp));
         if (currentHp <= 0) {
           patches.push(patchReplace(`/npcs/${idx}/alive`, false));
-          narrative.push(makeTaleEntry(game, 'Slain', `${npc.name} falls.`, 'danger'));
+          // RollBand/TaleTone invariant: success paths never emit 'danger'.
+          narrative.push(makeTaleEntry(game, 'Slain', `${npc.name} falls.`, 'quiet'));
           consequences.push({
             id: makeId('conseq'),
             type: 'world_event',
