@@ -24,9 +24,12 @@
     "deploy": "node scripts/deploy.mjs",
     "db:migrate": "node scripts/db-migrate.mjs",
     "clean": "rm -rf apps/web/dist packages/engine/dist && npm --prefix packages/engine run clean",
-    "test:coverage": "npm --prefix packages/persistence run test:coverage && npm --prefix packages/llm-client run test:coverage && npm --prefix packages/narrative run test:coverage && npm --prefix packages/engine run test:coverage && npm --prefix apps/web run test:coverage"
+    "test:coverage": "npm --prefix packages/persistence run test:coverage && npm --prefix packages/llm-client run test:coverage && npm --prefix packages/narrative run test:coverage && npm --prefix packages/engine run test:coverage && npm --prefix apps/web run test:coverage",
+    "gen:types": "node scripts/generate-types.mjs",
+    "gen:types:check": "node scripts/generate-types.mjs && git diff --exit-code packages/types/src/generated.ts"
   },
   "devDependencies": {
+    "json-schema-to-typescript": "^15.0.4",
     "typescript": "^5.8.3",
     "vitest": "^3.0.0"
   },
