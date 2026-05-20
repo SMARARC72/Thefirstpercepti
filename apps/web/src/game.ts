@@ -372,6 +372,7 @@ export function createGameFromCreation(creation: CreationState): GameState {
       hitDice: { current: 1, max: 1, die: "d8" },
       savingThrowProficiencies: [],
       attunementSlots: { used: 0, max: 3 },
+      spellSlots: posture === "witness" ? { 1: { current: 2, max: 2 } } : undefined,
     },
     currentLocationId: startLoc.id,
     locations,

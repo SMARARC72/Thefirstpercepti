@@ -171,6 +171,35 @@ function renderSavingThrows(
   return section;
 }
 
+function renderSpellSlots(player: Player): HTMLElement | null {
+  if (!player.spellSlots) return null;
+  const levels = Object.keys(player.spellSlots)
+    .map((k) => Number(k))
+    .filter((n) => Number.isFinite(n))
+    .sort((a, b) => a - b);
+  if (levels.length === 0) return null;
+
+  const section = el("section", "csp-spell-slots");
+  section.setAttribute("aria-label", "Glimpses");
+
+  const heading = el("h2", "csp-section-heading", "Glimpses");
+  section.appendChild(heading);
+
+  const list = el("ul", "csp-spell-slot-list");
+  for (const level of levels) {
+    const slot = player.spellSlots[level]!;
+    const row = el("li", "csp-spell-slot-row");
+    row.setAttribute("data-level", String(level));
+    const label = el("span", "csp-spell-slot-label", `Level ${level}`);
+    const value = el("strong", "csp-spell-slot-value", `${slot.current} / ${slot.max}`);
+    row.appendChild(label);
+    row.appendChild(value);
+    list.appendChild(row);
+  }
+  section.appendChild(list);
+  return section;
+}
+
 function renderStatusFooter(player: Player): HTMLElement {
   const section = el("section", "csp-status-footer");
   section.setAttribute("aria-label", "Vitality");
@@ -223,6 +252,8 @@ export function createCharacterSheetPanel(props: CharacterSheetPanelProps): HTML
   const aside = document.createElement("div");
   aside.className = "csp-column csp-column-secondary";
   aside.appendChild(renderSavingThrows(player, proficiencies, proficiencyBonus));
+  const slots = renderSpellSlots(player);
+  if (slots) aside.appendChild(slots);
   aside.appendChild(renderStatusFooter(player));
 
   body.appendChild(column);

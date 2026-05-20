@@ -47,6 +47,10 @@ regressions are caught early and budgets stay honest.
 > Bundle: `main.js` 202.21 → **203.83 kB** raw (+1.62 kB), gzip 58.03 → 58.68
 > (+0.65 kB). `vendor.js` + `main.css` unchanged. Leak grep still 0. Total
 > tests across all workspaces: 201 → **231** (+30).
+>
+> **Phase 9 update (same date — parallel batch):** combat reducer rewrite + Player bridge growth (PR #12) and Forging UI "The Anvil" tab (PR #11). Engine 127 → 142 (+14 combat-reducer specs + 1 Codex-P2 regression at `1aabb08` that locks in the full-object `actionEconomy` patch fix). apps/web 27 → 38 (+11 AnvilPanel specs). Bundle: `main.js` 203.83 → **213.09 kB** raw (+9.26 kB total — +6.18 from Anvil panel + helpers, +3.07 from combat rewrite); `main.css` 44.75 → **48.85 kB** (+4.10 kB from `.anvil-panel` block). vendor unchanged. Leak grep 0. Total tests: 231 → **256**.
+>
+> **Phase 10 update (same date):** posture-driven spell slots (minimal scope). `witness` posture seeds `spellSlots: { 1: { current: 2, max: 2 } }` at creation; all other postures stay `undefined`. CharacterSheetPanel renders a "Glimpses" section conditionally. Engine 142 → **145** (+3 `spell-slots.spec.ts` cases); apps/web 38 → **40** (+2 panel cases). Bundle `main.js` 213.09 → **213.84 kB** raw (+0.75 kB — just the conditional Glimpses renderer + the posture-gate helper). Total tests: 256 → **260**.
 
 ## Tests
 

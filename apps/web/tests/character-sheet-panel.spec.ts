@@ -161,4 +161,22 @@ describe("createCharacterSheetPanel", () => {
     expect(willRow?.classList.contains("is-proficient")).toBe(true);
     expect(bodyRow?.classList.contains("is-proficient")).toBe(false);
   });
+
+  it("omits the Glimpses section when Player has no spellSlots (default)", () => {
+    const node = createCharacterSheetPanel({ player: makePlayer() });
+    expect(node.querySelector(".csp-spell-slots")).toBeNull();
+  });
+
+  it("renders the Glimpses section with level rows when Player has spellSlots", () => {
+    const player = makePlayer({
+      spellSlots: { 1: { current: 2, max: 2 } },
+    });
+    const node = createCharacterSheetPanel({ player });
+    const section = node.querySelector(".csp-spell-slots");
+    expect(section).not.toBeNull();
+    const row = section!.querySelector('.csp-spell-slot-row[data-level="1"]');
+    expect(row).not.toBeNull();
+    expect(row!.querySelector(".csp-spell-slot-label")?.textContent).toBe("Level 1");
+    expect(row!.querySelector(".csp-spell-slot-value")?.textContent).toBe("2 / 2");
+  });
 });
