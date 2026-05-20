@@ -813,6 +813,7 @@ export type GameTab =
   | "fate"
   | "sheet"
   | "trove"
+  | "anvil"
   | "status"
   | "world"
   | "factions"
