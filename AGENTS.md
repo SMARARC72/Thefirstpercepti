@@ -6,6 +6,62 @@
 
 ---
 
+## Reconciliation Context (READ FIRST)
+
+This repo is the **canonical codebase** for **The First Perception**.
+A parallel design layer is maintained by Khoja in a separate Claude
+Desktop session — Living Codex hub, `schema_pack_v0.5.json`, ~580
+Greywake content records, 43 wireframes, manifesto/voice guardrails,
+30+ spec markdowns. The two tracks converged on every load-bearing
+design call (9-stat system, 5e overlay, Ink narrative, cosmic-horror
+tone, fountain motif) but diverged on stack, agent topology, content
+names, schema representation, and voice rules.
+
+**Determination — salvage this repo, port the design into it.** See
+`docs/RECONCILIATION_AUDIT.md` for the full per-component verdict
+matrix. The engineering roadmap from Phase 12 onward lives in
+`docs/ENGINEERING_PLAN.md`; the v1 slice ship criteria are in
+`docs/POLISH_CRITERIA.md`.
+
+### Critical coordination rule
+
+> **Phases 12–17 (the reconciliation core) are SINGLE TRACK ONLY.**
+> All work in either Claude Desktop OR Claude Code, **not both**.
+> Recommended: **Claude Desktop** (it has the live design context).
+
+If you've opened a Claude Code session and the most recent
+`progress.md` entry is still in the Phase 12–17 range, stop and
+verify with the user that you should be working here, not in
+Claude Desktop. Phases 18+ allow a hybrid cadence, but every
+session must start by re-reading this section + `docs/
+RECONCILIATION_AUDIT.md` Sec V (Determination + Migration Plan).
+
+### Reference set
+
+- **`docs/RECONCILIATION_AUDIT.md`** — repo × design audit, 19-component
+  verdict matrix, 14-phase migration plan, hard external gates.
+- **`docs/ENGINEERING_PLAN.md`** — Phase 12 → 25 ticket catalog,
+  critical path, parallel tracks, fragility points.
+- **`docs/POLISH_CRITERIA.md`** — 10 engineering + 8 content + 7 UI
+  binding criteria for v1 slice ship; explicit "NOT in v1" list;
+  Definition of Done gate before Phase 25.
+
+### Hard external gates (block specific phases)
+
+- **MYTHOLOGY_AUDIT_v0.4 §11 / §11b outside-review** — blocks Phase 19
+  substrate items. Khoja must engage outside reviewers.
+- **Steam Next Fest application** — 3+ month lead time. Apply during
+  Phase 22.
+- **Local-LLM fallback model selection** — needs voice-eval-suite
+  testing.
+
+### Deprecated tooling (do not run)
+
+- `scripts/sprint_sync.py` — replaced by the reconciliation flow.
+  ARD-008 superseded. The repo's `progress.md` is the cadence record.
+
+---
+
 ## Project Identity
 
 **The First Perception** is a cosmic-horror narrative RPG played in the

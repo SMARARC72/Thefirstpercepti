@@ -1371,6 +1371,97 @@ All three PRs surfaced the same Vercel project config bug — `thefirstpercepti-
   reveals. The bundle gate should anchor at the post-Phase-9
   floor (Phase 9 is the last big additive feature wave).
 
+---
+
+## 2026-05-20 (Session 8 cont. ³) — Phase 12 / Wave A: ARD cleanup + memory sync
+
+Completion of Wave A happened in the parallel Claude Desktop
+design folder (not in this Claude Code session). This entry
+records the **mirror landing** into the repo so any future
+Claude Code session reads the reconciliation context first.
+
+### What landed
+
+- `docs/RECONCILIATION_AUDIT.md` — compressed audit summary; 19-
+  component verdict matrix; determination (**salvage repo + port
+  design**); 14-phase migration plan summary; hard external gates.
+- `docs/ENGINEERING_PLAN.md` — Phase 12 → 25 ticket catalog with
+  per-phase ticket lists for Phases 12-18 detailed; abbreviated
+  scope for Phases 19-25; critical path + parallel tracks +
+  fragility points.
+- `docs/POLISH_CRITERIA.md` — slice scope (Greywake Market
+  District vertical slice); 10 engineering + 8 content + 7 UI
+  binding criteria; explicit "NOT in v1" list; Definition of Done
+  gate before Phase 25.
+- `AGENTS.md` gains a **Reconciliation Context (READ FIRST)**
+  section at the very top (above Project Identity) with the
+  critical single-track coordination rule for Phases 12-17
+  ("Recommended: Claude Desktop — it has the live design
+  context"), the reference set, hard external gates, and a
+  deprecation note for `scripts/sprint_sync.py` (ARD-008
+  superseded).
+
+### Determination summary (from RECONCILIATION_AUDIT)
+
+| | Repo wins | Design wins |
+|---|---|---|
+| Stack | Vite + TS (ARD-003 SUPERSEDED — no Godot) | — |
+| Agent topology | 4 agents (5 incl. Content Boundary Validator in Phase 16) | — |
+| Persistence | Postgres + GameRepository | — |
+| LLM runtime | Claude + Kimi proxy via `/api/llm` | — |
+| Deployment | Vercel | — |
+| Content canon | — | ~580 Greywake records |
+| Schema spec | — | schema_pack_v0.5.json (80 v0.5 additives); repo generates TS from it |
+| Manifesto / voice | — | 7 binding rules — port to validator chain + Narrator prompt |
+| Design system | — | palette + 8 motifs + brand bible + 11 JSX kit components |
+
+### Critical-path checkpoint
+
+```
+Phase 12 ARD cleanup ✅
+  → Phase 13 Schema reconciliation       ← NEXT (single-track only)
+    → Phase 15 Greywake content slice port
+      → Phase 18 Ink scenes
+        → Phase 23 Slice integration
+          → Phase 24 Demo prep
+            → Phase 25 v1 ship
+```
+
+### Next: Phase 13 — Schema reconciliation (SINGLE-TRACK)
+
+**Goal:** Generate TypeScript types from `schema_pack_v0.5.json`
+into `packages/types/src/generated.ts`; align with current
+`index.ts`; resolve diffs field-by-field.
+
+**Tickets (ENG-101..106) — see docs/ENGINEERING_PLAN.md:**
+1. ENG-101 — Add `json-schema-to-typescript` devDep + generator script.
+2. ENG-102 — Copy `schema_pack_v0.5.json` to `content/schemas/`;
+   generate `packages/types/src/generated.ts`.
+3. ENG-103 — Diff generated vs existing index.ts field-by-field.
+4. ENG-104 — Replace compatible entries; comment divergences.
+5. ENG-105 — Update test files for breaking changes; keep 272-spec
+   floor.
+6. ENG-106 — CI step: fail if generated.ts is stale.
+
+**Track recommendation: Claude Desktop** (it has schema_pack_v0.5.json
+live). Phase 13 should NOT start in Claude Code until either (a)
+Khoja confirms the switch or (b) the design folder doesn't have
+bandwidth this sprint and we explicitly transfer ownership.
+
+### What this Claude Code session WILL NOT do next
+
+Per the single-track rule:
+
+- Will not start Phase 13 (schema reconciliation) work autonomously.
+- Will not touch `schema_pack_v0.5.json` (it's not in this repo yet).
+- Will not begin Phase 14 (design system port) or Phase 15 (Greywake
+  content) without an explicit "you have the wheel" handoff from
+  Khoja.
+
+This session may continue to land small follow-ups in already-shipped
+phases (Phase 11b infra queue: Sentry, end-to-end LLM streaming, full
+WCAG sweep) since those don't touch the reconciliation core.
+
 ## Build Commands
 
 ```bash
