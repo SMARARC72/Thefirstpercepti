@@ -1,3 +1,5 @@
+import { getLogger } from "@first-perception/types";
+
 export class ContentLoader {
   private static readonly basePath = "/content/_compiled";
 
@@ -19,7 +21,7 @@ export class ContentLoader {
         try {
           result[name] = await ContentLoader.loadStory(name);
         } catch (err) {
-          console.warn(`Failed to load story ${name}:`, err);
+          getLogger().warn(`Failed to load story ${name}`, { story: name, error: err });
         }
       })
     );

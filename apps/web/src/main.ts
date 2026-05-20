@@ -2,6 +2,7 @@ import "@first-perception/ui-system/styles.css";
 import "./styles.css";
 
 import type { AppState, GameTab, GameState, ActionResult, StatePatch, Legacy } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import {
   blankCreation,
   clearSavedGame,
@@ -61,10 +62,10 @@ declare global {
   }
 }
 
-const DB_NAME = "the-first-perception";
-const DB_VERSION = 1;
-const STORE_NAME = "saves";
-const LEGACY_HISTORY_KEY = "the-first-perception.legacy-history";
+// IDB save-slot CRUD lives in ./data/idbSaves; legacy ledger in
+// ./data/legacyHistory. They were inlined here before the Phase 5 split.
+import { getSaveSlots, writeSaveSlot, deleteSaveSlot, readSaveSlot } from "./data/idbSaves";
+import { loadLegacyHistory, saveLegacyHistory } from "./data/legacyHistory";
 
 // ── Persistence + LLM layer instances ──
 // repo prefers the server-backed HTTP API; falls back to localStorage if
@@ -125,75 +126,8 @@ function createBootState(): AppState {
   };
 }
 
-// ── IndexedDB helpers ──
-
-async function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
-      }
-    };
-  });
-}
-
-async function getSaveSlots(): Promise<AppState["saveSlots"]> {
-  try {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const store_ = tx.objectStore(STORE_NAME);
-    const req = store_.getAll();
-    return new Promise((resolve, reject) => {
-      req.onsuccess = () => resolve(req.result as AppState["saveSlots"]);
-      req.onerror = () => reject(req.error);
-    });
-  } catch {
-    return [];
-  }
-}
-
-async function writeSaveSlot(slot: AppState["saveSlots"][number]): Promise<void> {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store_ = tx.objectStore(STORE_NAME);
-  store_.put(slot);
-  return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-async function deleteSaveSlot(id: string): Promise<void> {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store_ = tx.objectStore(STORE_NAME);
-  store_.delete(id);
-  return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-function loadLegacyHistory(): Legacy[] {
-  try {
-    const raw = localStorage.getItem(LEGACY_HISTORY_KEY);
-    return raw ? (JSON.parse(raw) as Legacy[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveLegacyHistory(history: Legacy[]): void {
-  try {
-    localStorage.setItem(LEGACY_HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
-  } catch {
-    // ignore
-  }
-}
+// IDB save-slot CRUD + legacy ledger moved to ./data/idbSaves and
+// ./data/legacyHistory respectively (Phase 5 decomposition).
 
 function autoSaveIfNeeded(state: AppState): void {
   if (!state.settings.autoSave || !state.game) return;
@@ -299,7 +233,7 @@ async function runCommand(command: string): Promise<void> {
       }
       narrativeResult = narrativeEngine.processCommand(trimmed, game);
     } catch (err) {
-      console.warn("Narrative error:", err);
+      getLogger().warn("Narrative error", { error: err });
     }
   }
 
@@ -394,14 +328,14 @@ async function runCommand(command: string): Promise<void> {
                 }),
               );
             } catch (err) {
-              console.warn("Faction WorldEvent writeback failed:", err);
+              getLogger().warn("Faction WorldEvent writeback failed", { error: err });
             }
           }
         }
         game.lastFeedback = `Turn ${game.turnCount} · ${llmResult.llmCallsMade} LLM calls · ${llmResult.latencyMs}ms`;
       }
     } catch (err) {
-      console.warn("Living World layer failed:", err);
+      getLogger().warn("Living World layer failed", { error: err });
       // Keep static narrative — graceful fallback
     }
   }
@@ -488,7 +422,7 @@ async function runCommand(command: string): Promise<void> {
       });
       if (event) await repo.recordEvent(event);
     } catch (err) {
-      console.warn("WorldEvent writeback failed:", err);
+      getLogger().warn("WorldEvent writeback failed", { error: err });
     }
   }
 
@@ -555,7 +489,7 @@ function renderCreation(): void {
           game.suggestedActions = result?.choices ?? game.suggestedActions;
           store.setState({ game });
         } catch (err) {
-          console.warn("Initial narrative error:", err);
+          getLogger().warn("Initial narrative error", { error: err });
         }
       }
     },
@@ -678,17 +612,11 @@ function openSettings(): void {
     },
     onLoadState: async (slotId) => {
       try {
-        const db = await openDB();
-        const tx = db.transaction(STORE_NAME, "readonly");
-        const st = tx.objectStore(STORE_NAME);
-        const req = st.get(slotId);
-        req.onsuccess = () => {
-          const slot = req.result as AppState["saveSlots"][number] | undefined;
-          if (slot?.data) {
-            const parsed = JSON.parse(slot.data) as AppState;
-            store.setState({ ...parsed, screen: "gameplay" });
-          }
-        };
+        const slot = await readSaveSlot(slotId);
+        if (slot?.data) {
+          const parsed = JSON.parse(slot.data) as AppState;
+          store.setState({ ...parsed, screen: "gameplay" });
+        }
       } catch {
         // ignore
       }
@@ -821,7 +749,7 @@ function initLLMLayer(enabled: boolean): void {
       maxActiveFactions: 2,
     });
   } catch (err) {
-    console.warn("Failed to initialize LLM layer:", err);
+    getLogger().warn("Failed to initialize LLM layer", { error: err });
     turnOrchestrator = null;
     llmClient = null;
   }
@@ -844,7 +772,7 @@ async function boot(): Promise<void> {
       await local.init();
       repo = local;
     } catch (err) {
-      console.warn("All persistence backends unavailable:", err);
+      getLogger().warn("All persistence backends unavailable", { error: err });
       repo = null;
     }
   }
@@ -860,7 +788,7 @@ async function boot(): Promise<void> {
     narrativeEngine.initialize().then(() => {
       narrativeReady = true;
     }).catch((err) => {
-      console.warn("Narrative engine failed to initialize:", err);
+      getLogger().warn("Narrative engine failed to initialize", { error: err });
     }),
   ]);
   store.setState({ saveSlots: slots });
@@ -868,7 +796,7 @@ async function boot(): Promise<void> {
 }
 
 boot().catch((err) => {
-  console.error("Boot failed:", err);
+  getLogger().error("Boot failed", err);
   appRoot!.innerHTML = `<div style="padding:2rem;color:#c9b8a8;font-family:system-ui">
     <h1>The First Perception</h1>
     <p>Failed to initialize. Try a hard refresh (Ctrl+Shift+R) or open in incognito mode.</p>

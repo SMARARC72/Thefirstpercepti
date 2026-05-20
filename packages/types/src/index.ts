@@ -743,3 +743,10 @@ export interface AppState {
   elapsedMs: number;
   saveSlots: SaveSlot[];
 }
+
+// =============================================================================
+// LOGGER (re-exported from ./logger)
+// =============================================================================
+export { getLogger, setLogger, resetLogger } from './logger.js';
+export type { Logger, LogLevel, LogContext } from './logger.js';
+

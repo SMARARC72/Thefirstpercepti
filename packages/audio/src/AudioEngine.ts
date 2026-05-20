@@ -9,6 +9,7 @@
 
 import * as Tone from "tone";
 import type { AudioCue, AudioLayer, GameState } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type { AudioSystem, AudioPreset } from "./index.js";
 import { buildChain, SynthChain, ToneNode } from "./PresetParser.js";
 
@@ -115,7 +116,7 @@ export class AudioEngine implements AudioSystem {
 
     const preset = this.presets.get(presetName);
     if (!preset) {
-      console.warn(`[AudioEngine] Preset not found: ${presetName}`);
+      getLogger().warn("[AudioEngine] Preset not found", { presetName });
       return;
     }
 

@@ -1,4 +1,5 @@
 import type { GameState, TaleEntry, SuggestedAction } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
   LLMClient,
   PromptBuilder,
@@ -78,7 +79,7 @@ export class GMNarrator {
         taleEntry,
       };
     } catch (err) {
-      console.warn("GMNarrator merge failed:", err);
+      getLogger().warn("GMNarrator merge failed", { error: err });
       // Fallback: return player narrative as-is
       return {
         text: options.playerNarrative,

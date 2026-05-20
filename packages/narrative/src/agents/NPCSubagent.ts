@@ -1,4 +1,5 @@
 import type { GameState, NpcState, TaleEntry } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
   LLMClient,
   PromptBuilder,
@@ -85,7 +86,7 @@ export class NPCSubagent {
 
       return result;
     } catch (err) {
-      console.warn(`NPCSubagent(${this.npcId}) decision failed:`, err);
+      getLogger().warn("NPCSubagent decision failed", { npcId: this.npcId, error: err });
       return null;
     }
   }
@@ -133,7 +134,7 @@ export class NPCSubagent {
 
       return output.dialogue;
     } catch (err) {
-      console.warn(`NPCSubagent(${this.npcId}) dialogue failed:`, err);
+      getLogger().warn("NPCSubagent dialogue failed", { npcId: this.npcId, error: err });
       return null;
     }
   }

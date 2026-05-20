@@ -585,6 +585,91 @@ Postgres — Phase 5 decision point.
 - `npm run build:packages` ✅
 - `npm run build` ✅ — main 175.24 kB / vendor 455.80 kB (unchanged)
 
+## 2026-05-20 (Session 5 cont.) — Phase 5: Polish & docs
+
+**Goal:** Stop the documentation drift before Phase 6's UI rewrite, replace
+direct `console.warn` / `console.error` calls with a pluggable sink so
+Phase 7's Sentry hook can drop in without touching call sites, and split
+the obvious extractables out of the 899-line `apps/web/src/main.ts`.
+
+### Changes
+
+1. **Pluggable logger.** New `packages/types/src/logger.ts` exports
+   `Logger` + `LogLevel` + `LogContext` types, a `ConsoleLogger`
+   default impl, and `getLogger()` / `setLogger()` / `resetLogger()`
+   helpers. Re-exported from `@first-perception/types`. Phase 7's
+   Sentry hook calls `setLogger(sentryLogger)` and every existing call
+   site benefits without changes.
+
+2. **Migrated all `console.warn` / `console.error` to the logger** in
+   shipped code:
+   - `packages/narrative/src/ContentLoader.ts` (1 site)
+   - `packages/narrative/src/agents/*.ts` (5 sites across NPCSubagent,
+     TurnOrchestrator, GMNarrator, FactionSubagent)
+   - `packages/audio/src/AudioEngine.ts` (1 site)
+   - `apps/web/src/main.ts` (9 sites — all narrative / LLM / writeback
+     / boot errors)
+
+   `console.log` sites (debug) were already removed in Phase 3a; what
+   remains in shipped code is the `ConsoleLogger` impl itself plus
+   `console.debug` inside the test runner harness — both intentional.
+
+3. **`apps/web/src/main.ts` decomposition.** Pulled two extractable
+   islands out:
+   - `apps/web/src/data/idbSaves.ts` — `openDB`, `getSaveSlots`,
+     `writeSaveSlot`, `deleteSaveSlot`, `readSaveSlot`. The old inline
+     `onLoadState` handler that reached into `db.transaction(...)`
+     directly was replaced with the new `readSaveSlot()` helper.
+   - `apps/web/src/data/legacyHistory.ts` — `loadLegacyHistory`,
+     `saveLegacyHistory`. The `MAX_LEGACIES = 20` cap is now a named
+     constant instead of a magic number.
+
+   `main.ts` went from 899 → 826 lines. `runCommand` and the screen
+   renderers are still inline; extracting them needs a shared
+   services-locator module, deferred to Phase 7 alongside the
+   streaming / Sentry refactor.
+
+4. **`AGENTS.md` fully reconciled.** Rewritten end-to-end. Drops every
+   stale section (sql.js, sqljs WASM, per-user API keys, the "death
+   handling test is failing" claim, etc.). New "Critical Conventions"
+   covers logging, the dual-export discipline, the per-turn state flow
+   diagram, the `recall` / `llm_generate` Ink externals. New "Known
+   Traps" reflects what's actually risky now (exits in JSON not code,
+   browser must not import `*/server`, `prepareWorldMemory` is
+   best-effort).
+
+5. **`LICENSE`** — MIT, repo-wide.
+
+6. **`CONTRIBUTING.md`** — branch naming, the verify gate, commit
+   style, workspace layout, the "never `console.log`" + "never import
+   `*/server` from `apps/web/**`" rules, how to run with `vercel dev`,
+   how to add a new package.
+
+### What's deferred
+
+- **Coverage gate in CI.** Numbers from Phase 4 (engine 56%,
+  persistence 28%) need either a pg-mem mock or a real test DB before
+  a defensible floor lands. Moved to Phase 7.
+- **`apps/web/src/main.ts` runCommand + renderer extraction.** Requires
+  a services-locator module to thread `repo`, `audioEngine`,
+  `narrativeEngine`, `turnOrchestrator`, `intentClassifier` through
+  the dispatch path. Phase 7.
+- **Bundle audit + tree-shake check.** Phase 7 brings the `200 kB
+  main chunk` CI budget, which subsumes this.
+- **README architecture diagram.** Phase 6 will rewrite the README as
+  part of the UI/identity pass.
+
+### Verify
+
+- `npm run typecheck` ✅ — persistence + llm-client + narrative +
+  engine + web + api
+- `npm test` ✅ — **96/96** (no regressions)
+- `npm run build:packages` ✅
+- `npm run build` ✅ — main **175.99 kB** / vendor 455.80 kB (+0.75 kB
+  for the logger shim and the two new data/ imports; effectively flat)
+- `grep` for leaks → 0 hits, as expected
+- `apps/web/src/main.ts` 899 → **826 lines** (−73)
+
 ## Build Commands
 
 ```bash

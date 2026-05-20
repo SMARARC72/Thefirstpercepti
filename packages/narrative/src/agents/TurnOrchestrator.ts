@@ -1,4 +1,5 @@
 import type { GameState, TaleEntry, SuggestedAction, StatePatch } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type { LLMClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
 import type { GameRepository } from "@first-perception/persistence";
 import { NPCSubagent } from "./NPCSubagent.js";
@@ -166,7 +167,7 @@ export class TurnOrchestrator {
           });
         }
       } catch (err) {
-        console.warn(`NPC subagent ${npc.id} timed out or failed:`, err);
+        getLogger().warn("NPC subagent timed out or failed", { npcId: npc.id, error: err });
       }
     });
 
@@ -200,7 +201,7 @@ export class TurnOrchestrator {
             }
           }
         } catch (err) {
-          console.warn(`Faction subagent ${faction.id} timed out or failed:`, err);
+          getLogger().warn("Faction subagent timed out or failed", { factionId: faction.id, error: err });
         }
       });
 
@@ -245,7 +246,7 @@ export class TurnOrchestrator {
           fallback = true;
         }
       } catch (err) {
-        console.warn("GM Narrator merge failed:", err);
+        getLogger().warn("GM Narrator merge failed", { error: err });
         fallback = true;
       }
     } else {

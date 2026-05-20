@@ -1,4 +1,5 @@
 import type { GameState, FactionState, TaleEntry } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
   LLMClient,
   PromptBuilder,
@@ -53,7 +54,7 @@ export class FactionSubagent {
 
       return this._resolveMove(game, faction, move);
     } catch (err) {
-      console.warn(`FactionSubagent(${this.factionId}) failed:`, err);
+      getLogger().warn("FactionSubagent failed", { factionId: this.factionId, error: err });
       return null;
     }
   }
