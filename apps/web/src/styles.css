@@ -1876,7 +1876,7 @@ dd {
 }
 .legacy-slab::after {
   /* A single sigil-gold rune sealing the slab — purely decorative. */
-  content: "✦";
+  content: "◆";
   position: absolute;
   top: var(--space-4);
   right: var(--space-4);

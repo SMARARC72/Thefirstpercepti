@@ -26,7 +26,8 @@
     "clean": "rm -rf apps/web/dist packages/engine/dist && npm --prefix packages/engine run clean",
     "test:coverage": "npm --prefix packages/persistence run test:coverage && npm --prefix packages/llm-client run test:coverage && npm --prefix packages/narrative run test:coverage && npm --prefix packages/engine run test:coverage && npm --prefix apps/web run test:coverage",
     "gen:types": "node scripts/generate-types.mjs",
-    "gen:types:check": "node scripts/generate-types.mjs && git diff --exit-code packages/types/src/generated.ts"
+    "gen:types:check": "node scripts/generate-types.mjs && git diff --exit-code packages/types/src/generated.ts",
+    "audit:glyphs": "node scripts/audit-glyphs.mjs"
   },
   "devDependencies": {
     "json-schema-to-typescript": "^15.0.4",
