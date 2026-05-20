@@ -38,6 +38,7 @@ import {
   investigationReducer,
   conditionReducer,
   deathReducer,
+  forgingReducer,
   LegacySystem,
   makeId,
 } from "@first-perception/engine";
@@ -190,7 +191,12 @@ async function runCommand(command: string): Promise<void> {
   let actionResult: ActionResult | null = null;
   const dispatch = intent.source === "regex" ? verb : intent.reducer;
 
-  if (intent.source !== "regex") {
+  // Forge verb short-circuits the classifier — IntentClassifier doesn't
+  // know about a "forge" ReducerKind, and dispatching as item/narrative
+  // would lose the recipe-id payload.
+  if (verb === "forge") {
+    actionResult = forgingReducer(game, trimmed, rng);
+  } else if (intent.source !== "regex") {
     if (intent.reducer === "combat") actionResult = combatReducer(game, trimmed, rng);
     else if (intent.reducer === "move") actionResult = moveReducer(game, trimmed, rng);
     else if (intent.reducer === "rest") actionResult = restReducer(game, trimmed, rng);
@@ -210,6 +216,8 @@ async function runCommand(command: string): Promise<void> {
     actionResult = dialogueReducer(game, trimmed, rng);
   } else if (["look", "examine", "read", "listen", "search"].includes(dispatch)) {
     actionResult = investigationReducer(game, trimmed, rng);
+  } else if (dispatch === "forge") {
+    actionResult = forgingReducer(game, trimmed, rng);
   }
 
   // Apply mechanical patches

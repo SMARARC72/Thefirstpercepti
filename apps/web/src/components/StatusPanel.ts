@@ -88,37 +88,6 @@ export class StatusPanel {
     }
     section.appendChild(tags);
 
-    const inventory = document.createElement("div");
-    inventory.className = "inventory";
-    const invTitle = document.createElement("h3");
-    invTitle.textContent = "Inventory";
-    inventory.appendChild(invTitle);
-    const invList = document.createElement("ul");
-    for (const item of this.props.game.player.inventory) {
-      const li = document.createElement("li");
-      li.textContent = item.name;
-      invList.appendChild(li);
-    }
-    inventory.appendChild(invList);
-    section.appendChild(inventory);
-
-    const journal = document.createElement("div");
-    journal.className = "inventory";
-    const journalTitle = document.createElement("h3");
-    journalTitle.textContent = "Journal";
-    journal.appendChild(journalTitle);
-    const journalList = document.createElement("ul");
-    for (const entry of this.props.game.journal) {
-      const li = document.createElement("li");
-      const strong = document.createElement("strong");
-      strong.textContent = `${entry.label}:`;
-      li.appendChild(strong);
-      li.appendChild(document.createTextNode(` ${entry.detail}`));
-      journalList.appendChild(li);
-    }
-    journal.appendChild(journalList);
-    section.appendChild(journal);
-
     this.element = section;
     return section;
   }

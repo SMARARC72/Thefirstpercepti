@@ -51,12 +51,11 @@ export class GameplayScreen {
   }
 
   private handleForge = (recipeId: string): void => {
-    // Phase 9b ships the UI only. The engine-side dispatch (rolling
-    // the smith check, applying consumed inputs, producing the
-    // outcome item) is the parallel agent's responsibility. Until
-    // that lands we log the intent so e2e + manual play can confirm
-    // wiring without crashing on a missing reducer.
+    // Dispatches through the same command pipe as typed input. The
+    // forgingReducer (engine) consumes inputs, rolls the smith check,
+    // and produces a tale entry + an output item on success.
     this.anvilLogger.info("anvil.forge.intent", { recipeId });
+    void this.props.onCommand(`forge ${recipeId}`);
   };
 
   constructor(props: GameplayScreenProps) {
@@ -172,9 +171,22 @@ export class GameplayScreen {
     region.textContent = game.world.region;
     const weather = document.createElement("span");
     weather.textContent = game.world.weather;
+    // Living-world status pill — surfaces whether the LLM-driven NPC /
+    // faction / GM-narrator agents are active. Default is "off" because
+    // GameSettings.llmEnabled starts false; enabling it via The Lens
+    // flips this pill to "on" via the update() path.
+    const llmPill = document.createElement("span");
+    llmPill.className = "llm-status-pill";
+    const llmOn = this.props.state.settings?.llmEnabled === true;
+    llmPill.dataset.state = llmOn ? "on" : "off";
+    llmPill.textContent = llmOn ? "Living world: on" : "Living world: off";
+    llmPill.title = llmOn
+      ? "Living World is active — NPCs, factions, and the GM narrator respond dynamically."
+      : "Living World is off — enable in The Lens for richer narrative.";
     world.appendChild(time);
     world.appendChild(region);
     world.appendChild(weather);
+    world.appendChild(llmPill);
 
     const actions = document.createElement("div");
     actions.className = "header-actions";
@@ -351,6 +363,15 @@ export class GameplayScreen {
         if (region) region.textContent = game.world.region;
         const weather = this.element.querySelectorAll(".world-strip span")[1];
         if (weather) weather.textContent = game.world.weather;
+        const pill = this.element.querySelector<HTMLElement>(".llm-status-pill");
+        if (pill) {
+          const llmOn = newProps.state.settings?.llmEnabled === true;
+          pill.dataset.state = llmOn ? "on" : "off";
+          pill.textContent = llmOn ? "Living world: on" : "Living world: off";
+          pill.title = llmOn
+            ? "Living World is active — NPCs, factions, and the GM narrator respond dynamically."
+            : "Living World is off — enable in The Lens for richer narrative.";
+        }
         updateVignette(game.world.danger);
 
         for (const panel of this.panelInstances) {

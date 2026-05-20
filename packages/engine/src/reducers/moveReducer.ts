@@ -1,4 +1,5 @@
 import type { GameState, ActionResult, Consequence } from '@first-perception/types';
+import { resultBandToRollBand } from '@first-perception/types';
 import { SeededRNG } from '../engine/DiceEngine';
 import {
   getCurrentLocation,
@@ -66,7 +67,12 @@ export function moveReducer(game: GameState, command: string, rng: SeededRNG): A
   const narrative = [];
   const consequences: Consequence[] = [];
 
-  if (roll.band === 'critical_failure' || roll.band === 'failure') {
+  // Branch on the coarse 4-band RollBand so partial-failure rolls produce
+  // partial outcomes (not the prior bug where they fell into full-success).
+  const rollBand = resultBandToRollBand(roll.band);
+
+  if (rollBand === 'disaster') {
+    // Total stumble — no movement, possibly frightened on a failed flee.
     narrative.push(makeTaleEntry(game, 'Stumble', 'You lose your footing. The path resists.', 'danger'));
     if (isFlee) {
       patches.push(patchAppend('/player/conditions', {
@@ -82,14 +88,21 @@ export function moveReducer(game: GameState, command: string, rng: SeededRNG): A
         effects: [{ stat: 'will', modifier: -1 }],
       }));
     }
+  } else if (rollBand === 'failure') {
+    // Partial band: movement still happens but the player draws attention
+    // (no stealth bonus) and discovery doesn't trigger this turn. Tone
+    // matches the mechanical outcome.
+    patches.push(patchReplace('/currentLocationId', exit.toLocationId));
+    narrative.push(makeTaleEntry(game, 'Awkward Passage', `You reach ${exit.label}, but the path costs more than it should.`, 'warning'));
   } else {
+    // Success / triumph: movement + first-time discovery + stealth bonus.
     patches.push(patchReplace('/currentLocationId', exit.toLocationId));
     const dest = game.locations.find((l) => l.id === exit.toLocationId);
     if (dest && !dest.discovered) {
       patches.push(patchReplace(`/locations/${game.locations.findIndex((l) => l.id === exit.toLocationId)}/discovered`, true));
       narrative.push(makeTaleEntry(game, 'Discovery', `You discover ${dest.name}.`, 'success'));
     }
-    if (isSneak && (roll.band === 'clean_success' || roll.band === 'strong_success' || roll.band === 'critical_success')) {
+    if (isSneak) {
       narrative.push(makeTaleEntry(game, 'Silent Passage', 'You move unseen.', 'quiet'));
     } else {
       narrative.push(makeTaleEntry(game, 'Movement', `You travel to ${exit.label}.`, 'quiet'));

@@ -44,6 +44,10 @@ export class OnboardingOverlay {
     mechanics.textContent =
       "Type plain language to act. Verbs like look, listen, speak, approach, rest, and attack open the doors. The tabs at the bottom hold your sheet, your trove, and your reckoning with the world.";
 
+    const help = document.createElement("p");
+    help.className = "onboarding-help-hint";
+    help.textContent = "Type “?” any time to recall the verbs.";
+
     const dismiss = document.createElement("button");
     dismiss.type = "button";
     dismiss.className = "primary-action";
@@ -55,6 +59,7 @@ export class OnboardingOverlay {
     content.appendChild(title);
     content.appendChild(premise);
     content.appendChild(mechanics);
+    content.appendChild(help);
     content.appendChild(dismiss);
     div.appendChild(content);
 

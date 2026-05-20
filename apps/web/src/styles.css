@@ -355,6 +355,31 @@
   flex-wrap: wrap;
 }
 
+/* Living-world status pill — surfaces whether the LLM-driven NPC /
+ * faction / GM-narrator agents are active. Sits in the world-strip
+ * alongside time / region / weather. */
+.llm-status-pill {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+  font-size: calc(var(--text-sm) * 0.92);
+  letter-spacing: 0.02em;
+  cursor: help;
+}
+
+.llm-status-pill[data-state="on"] {
+  color: var(--teal-500, #66e0c2);
+  border-color: var(--teal-500, #66e0c2);
+}
+
+.llm-status-pill[data-state="off"] {
+  color: var(--text-tertiary, var(--text-secondary));
+  opacity: 0.8;
+}
+
 .header-actions {
   margin-left: auto;
 }
@@ -502,6 +527,13 @@
 
 .onboarding-overlay .primary-action {
   margin-top: 0.85rem;
+}
+
+.onboarding-help-hint {
+  margin-top: 0.55rem;
+  font-size: calc(var(--text-sm) * 0.95);
+  color: var(--text-tertiary, var(--text-secondary));
+  font-style: italic;
 }
 
 /* ── Tale ── */

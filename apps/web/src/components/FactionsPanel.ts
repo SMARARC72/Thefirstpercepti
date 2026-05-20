@@ -35,8 +35,15 @@ export class FactionsPanel {
 
     const list = document.createElement("div");
     list.className = "faction-list";
-    for (const faction of this.props.game.factions) {
-      list.appendChild(this.renderCard(faction));
+    if (this.props.game.factions.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty-note";
+      empty.textContent = "No powers have noticed you yet. Travel, speak, and they will rise.";
+      list.appendChild(empty);
+    } else {
+      for (const faction of this.props.game.factions) {
+        list.appendChild(this.renderCard(faction));
+      }
     }
     section.appendChild(list);
 

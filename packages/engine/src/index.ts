@@ -24,6 +24,7 @@ export { dialogueReducer } from './reducers/dialogueReducer';
 export { investigationReducer } from './reducers/investigationReducer';
 export { conditionReducer } from './reducers/conditionReducer';
 export { deathReducer } from './reducers/deathReducer';
+export { forgingReducer } from './reducers/forgingReducer';
 export { LegacySystem } from './legacy/LegacySystem';
 export {
   getCurrentLocation,

@@ -28,8 +28,16 @@ const distAssetsDir = join(rootDir, "apps", "web", "dist", "assets");
 
 // Tracked assets — entries match the asset *prefix* (the hash suffix
 // changes every build, so we glob-match instead).
+//
+// Budget revision history:
+//   2026-05-20 — initial budgets set at Phase 11 first-pass floor.
+//   2026-05-20 — main.js 220→235 kB raw, 65→70 kB gzip after the UX
+//     batch (forgingReducer + LLM-status pill + rest/move RollBand
+//     restructure + empty-state copy). Five real features. Gzip was
+//     already at the prior limit; raw needed +15 kB headroom for the
+//     UI batch to land. Audited in docs/BASELINE_METRICS.md.
 const BUDGETS = [
-  { prefix: "main-", ext: ".js", raw: 220_000, gzip: 65_000 },
+  { prefix: "main-", ext: ".js", raw: 235_000, gzip: 70_000 },
   { prefix: "main-", ext: ".css", raw: 55_000, gzip: 12_000 },
   { prefix: "vendor-", ext: ".js", raw: 470_000, gzip: 130_000 },
 ];
