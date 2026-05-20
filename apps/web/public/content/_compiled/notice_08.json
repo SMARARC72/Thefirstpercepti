@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "sourceFile": "narrative/scenes/notice_08.ink",
+  "compiledAt": "2026-05-20T23:06:18.804Z",
+  "storyContent": "// ============================================================================\n// NOTICE 08 — Acknowledgment (Phase 18 / CONTENT-202)\n// ============================================================================\n// Marked NPC speaks; first explicit pressure scene. The condition\n// recognized-by-not-yet-named fires. Per Notice Ladder spec.\n// ============================================================================\n\n=== notice_08_acknowledgment ===\nA Drowned Church initiate stops in front of you in the alley between the cathedral and the market.\n\n# sound:location-danger\n\nThe initiate does not speak first. The initiate waits for you to acknowledge them, and then says: \"The Marrow-Saint has been told.\"\n\n{ get_player_stat(\"will\") >= 12:\n    You hold the initiate's gaze. The initiate's eyes are the same colour as the standing water in the antechamber. Nothing else moves.\n- else:\n    The initiate's gaze takes a small piece of your composure. You feel the loss after the initiate has walked past.\n}\n\n~ add_journal_entry(\"Notice 8 — Acknowledgment\", \"A Drowned Church initiate has named that you have been named. The Marrow-Saint has been told.\")\n\n* [Follow the initiate toward the cathedral] -> dialogue_marrow_saint_ilyra\n* [Continue your previous path] -> arrival\n",
+  "metadata": {
+    "knots": [
+      "notice_08_acknowledgment"
+    ],
+    "variables": [],
+    "externalFunctions": []
+  }
+}

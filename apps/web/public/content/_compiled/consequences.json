@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "sourceFile": "narrative/systems/consequences.ink",
-  "compiledAt": "2026-05-19T23:31:14.277Z",
+  "compiledAt": "2026-05-20T23:06:18.805Z",
   "storyContent": "// ============================================================================\n// CONSEQUENCE NARRATIVES — Triggered by consequence system\n// ============================================================================\n\n=== consequence_wounded ===\nYour wound opens again when you move too quickly.\n\n{ player_hp <= 5:\n    The blood is not the right color. It carries something that flickers in the lamplight, like letters trying to form words.\n    ~ add_journal_entry(\"Condition\", \"Wound bleeding strangely.\")\n}\n\n-> DONE\n\n=== consequence_danger_rise ===\nThe district has noticed your pattern.\n\n{ world_danger > 80:\n    The streets themselves seem to lean toward you. Doorways narrow. Shadows lengthen in directions that do not match the light.\n}\n\n-> DONE\n\n=== consequence_faction_shift ===\nWord travels fast in a city that reads ledgers before faces.\n\n-> DONE\n",
   "metadata": {
     "knots": [
