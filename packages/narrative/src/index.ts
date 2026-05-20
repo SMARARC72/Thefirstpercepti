@@ -34,3 +34,4 @@ export { Story } from "inkjs";
 
 // Agents
 export * from "./agents/index.js";
+export * from "./voice/index.js";

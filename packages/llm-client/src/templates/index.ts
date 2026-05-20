@@ -15,3 +15,6 @@ export type { InkSynthesizerContext, InkSynthesizerOutput } from "./inkSynthesiz
 
 export { factionMoveTemplate } from "./factionMove.js";
 export type { FactionMoveContext, FactionMoveOutput } from "./factionMove.js";
+
+export { formOfEndingTemplate } from "./formOfEnding.js";
+export type { FormOfEndingContext, FormOfEndingOutput, EndingKind } from "./formOfEnding.js";
