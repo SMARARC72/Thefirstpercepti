@@ -1,59 +1,237 @@
 [
   {
-    "id": "item-brass-lens",
-    "name": "Cracked Brass Lens",
+    "id": "item-bell-marked-charm",
+    "name": "Bell-Marked Charm",
     "type": "tool",
-    "description": "Shows you things you are not ready to see. Cracks spider outward from the center like frozen lightning.",
+    "description": "A small brass disc the size of a coin, stamped with the Civic Bell Court's seal on one face and salt-immersed on the other. Cool to the touch; warms slightly when its bearer is named in any nearby ledger entry. Bearers report a faint ringing at the inner ear when within twenty paces of the dry fountain.",
+    "rarity": "rare",
+    "magical": true,
     "effects": [
-      { "type": "reveal", "target": "hidden_exits", "value": 1 }
+      { "type": "stat_modifier", "target": "presence", "value": 1 },
+      { "type": "trigger", "target": "bell_court_proximity_detection_30ft", "value": 1 }
     ],
     "equipSlot": "accessory"
   },
   {
-    "id": "item-fountain-water",
-    "name": "Sealed Fountain Water",
-    "type": "consumable",
-    "description": "Water that is not wet. Memory held in surface tension. Drinking it is not recommended.",
-    "charges": 1,
-    "maxCharges": 1,
+    "id": "item-marrow-wax-seal-of-ilyra",
+    "name": "Marrow-Wax Seal of Ilyra",
+    "type": "tool",
+    "description": "A finger-sized seal of marrow-wax pressed into an iron core. The drowned-red wax bears Marrow-Saint Ilyra's personal sigil — a salt-ring around a vertical line. Cool to the touch even when held over flame; the marrow does not render unless the holder is rendering the marrow's source. Sworn (not attuned): the bond is permanent and broken only by the seal's destruction or by death.",
+    "rarity": "very_rare",
+    "magical": true,
     "effects": [
-      { "type": "condition", "target": "salt_touched", "value": 1, "duration": 5 }
+      { "type": "stat_modifier", "target": "will", "value": 2 },
+      { "type": "condition", "target": "bonded_to_marrow_saint_ilyra", "value": 1 },
+      { "type": "save_advantage", "target": "saves_against_drowned_red_conditions", "value": 1 }
+    ],
+    "equipSlot": "accessory"
+  },
+  {
+    "id": "item-listening-childs-pebble",
+    "name": "The Listening Child's Pebble",
+    "type": "misc",
+    "description": "An almost-perfectly-round pebble the size of a fingernail. The Listening Child gave it to you. It is warm in your pocket. It does not chip. It does not weather. If you set it down it is back in your pocket within a scene; if you drop it intentionally it is back within a turn. There is no inscription. No sound when you hold it to your ear.",
+    "rarity": "legendary",
+    "magical": true,
+    "effects": [
+      { "type": "trigger", "target": "auto_return_to_player_on_drop_or_loss", "value": 1 },
+      { "type": "trigger", "target": "creation_stat_increment_threshold_witness", "value": 1 }
     ]
   },
   {
-    "id": "item-iron-token",
-    "name": "Dull Iron Token",
-    "type": "misc",
-    "description": "A token with no visible markings. It is warm to the touch, as if recently held by someone feverish."
+    "id": "item-vial-of-practiced-name-water",
+    "name": "Vial of Practiced-Name Water",
+    "type": "consumable",
+    "description": "A finger-length vial of clear water gathered at the dry fountain during a successful Hear-the-Fountain casting. The water is practicing — there is no clearer term — and the practice is audible at very close range. Drink to gain temporary fluency in unspoken names; pour onto an object to allow Compose to target that object regardless of distance.",
+    "rarity": "rare",
+    "magical": true,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": [
+      { "type": "condition", "target": "practicing_water_drunk", "value": 1, "duration": 1 }
+    ]
   },
   {
-    "id": "item-dry-matches",
-    "name": "Three Dry Matches",
+    "id": "item-salt-rime-shard",
+    "name": "Salt-Rime Shard",
+    "type": "consumable",
+    "description": "Salt that has formed in defiance of weather. Brittle, sharp at the edges, oddly warm in the hand. Used in salt-immersion ceremonies, in Salt-Mark casting, and as a binding agent in marrow-wax preparation. Decays outside Greywake — crumbles to ordinary salt within three turns of leaving the region.",
+    "rarity": "common",
+    "magical": true,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": [
+      { "type": "fuel", "target": "salt_immersion_or_salt_mark", "value": 1 }
+    ]
+  },
+  {
+    "id": "item-witness-bell",
+    "name": "Witness Bell",
     "type": "tool",
-    "description": "Ordinary matches that burn with a blue flame. The flame casts no shadow."
+    "description": "A handbell of mottled brass and a single curved sliver of bone for the clapper. Silent in transit. Rings — sharp, brief, unignorable — whenever a canon-progression event is committed within thirty paces of the bearer. The bell cannot be silenced while ringing.",
+    "rarity": "rare",
+    "magical": true,
+    "effects": [
+      { "type": "trigger", "target": "announce_canon_event_within_30ft", "value": 1 },
+      { "type": "stat_modifier", "target": "sense", "value": 1 }
+    ],
+    "equipSlot": "accessory"
   },
   {
-    "id": "item-testimony-scrap",
-    "name": "Sealed Scrap of Testimony",
-    "type": "document",
-    "description": "A fragment of someone's sworn statement. The seal is intact, but the paper inside is blank."
+    "id": "item-drowned-amber-pendant",
+    "name": "Drowned-Amber Pendant",
+    "type": "tool",
+    "description": "A walnut-sized piece of drowned-amber strung on a salt-stained leather cord. The amber holds a single small thing — a fingerbone, an inscribed coin, a flake of paper — that has been inside the amber long enough that the thing has stopped trying to be itself. Worn by Drowned Church initiates; signals doctrinal allegiance.",
+    "rarity": "uncommon",
+    "magical": true,
+    "effects": [
+      { "type": "social_signal", "target": "faith_drowned_church_visible_to_observers", "value": 1 }
+    ],
+    "equipSlot": "accessory"
   },
   {
-    "id": "item-violet-thread",
-    "name": "Violet Thread",
+    "id": "item-tide-league-scrip-bundle-25",
+    "name": "Tide League Scrip Bundle (25)",
     "type": "misc",
-    "description": "Thread pulled from a drain near the fountain. It twitches occasionally, as if remembering being part of something larger."
+    "description": "A canvas-tied bundle of 25 salt-scrip notes. Each note is a small rectangle of salt-fixed parchment stamped with the Tide League weighing-pan sigil. Redeemable at Tide League offices for goods at face value, or tradeable to other factions at exchange rates that vary by tide-cycle.",
+    "rarity": "common",
+    "magical": false,
+    "effects": []
   },
   {
-    "id": "item-backwards-book",
-    "name": "Book of Backwards Names",
-    "type": "document",
-    "description": "A book from the market with pages that turn backwards. The names inside are arranged by date of un-birth."
+    "id": "item-bell-court-inkwell-stamp",
+    "name": "Bell Court Inkwell-Stamp",
+    "type": "tool",
+    "description": "A finger-sized brass inkwell with a hinged stamp head. The stamp leaves a small canon-mark on parchment — a circle around a vertical bar — that the Bell Court treats as an authorized minor witness mark. Issued to junior clerks.",
+    "rarity": "uncommon",
+    "magical": false,
+    "charges": 25,
+    "maxCharges": 25,
+    "effects": [
+      { "type": "trigger", "target": "issue_bell_court_minor_witness_mark", "value": 1 }
+    ]
   },
   {
-    "id": "item-court-seal",
-    "name": "Scratched Court Seal",
-    "type": "key",
-    "description": "A seal from the Drowned Court, scratched into fountain stone. It opens nothing physical."
+    "id": "item-meteoric-iron-dagger",
+    "name": "Meteoric Iron Dagger",
+    "type": "weapon",
+    "description": "A thin double-edged dagger forged from meteoric iron — the metal still slightly warm to the touch from the cold-hammering. Ward-cutting: bypasses contradiction wards and salt-circle wards at the cost of a Ruin +1 to the wielder per use. Greywake-forged.",
+    "rarity": "rare",
+    "magical": true,
+    "effects": [
+      { "type": "damage_resist", "target": "psychic_warding_resistance", "value": 1 },
+      { "type": "trigger", "target": "bypass_contradiction_or_salt_ward", "value": 1 }
+    ],
+    "equipSlot": "weapon"
+  },
+  {
+    "id": "item-compose-chalk",
+    "name": "Compose-Chalk",
+    "type": "consumable",
+    "description": "A stub of dense pale chalk — pressed marrow, fine salt, and a binding agent the Drowned Church does not disclose. Drawn lines hold their shape under rain and are visible to Drowned Church members regardless of distance. Used to mark the boundary of a Compose ritual.",
+    "rarity": "uncommon",
+    "magical": true,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": [
+      { "type": "trigger", "target": "establish_compose_ritual_boundary", "value": 1 }
+    ]
+  },
+  {
+    "id": "item-field-journal-blank",
+    "name": "Field Journal (blank)",
+    "type": "tool",
+    "description": "An ordinary field journal — leather cover, ribbon bookmark, 80 numbered blank pages. Writing in the journal at end-of-scene commits the entry to the player's Tale Log, with the journal voice (Caveat font, brass margin marks).",
+    "rarity": "common",
+    "magical": false,
+    "charges": 80,
+    "maxCharges": 80,
+    "effects": [
+      { "type": "trigger", "target": "commit_tale_log_entry_from_player_input", "value": 1 }
+    ]
+  },
+  {
+    "id": "item-simple-dagger",
+    "name": "Simple Dagger",
+    "type": "weapon",
+    "description": "A serviceable double-edged dagger. Light, finesse, thrown.",
+    "rarity": "common",
+    "magical": false,
+    "effects": [],
+    "equipSlot": "weapon"
+  },
+  {
+    "id": "item-shortsword",
+    "name": "Shortsword",
+    "type": "weapon",
+    "description": "A short single-edged blade with leather grip. Light, finesse.",
+    "rarity": "common",
+    "magical": false,
+    "effects": [],
+    "equipSlot": "weapon"
+  },
+  {
+    "id": "item-leather-armor",
+    "name": "Leather Armor",
+    "type": "armor",
+    "description": "Boiled and oil-cured leather. Light, quiet, unrestricting.",
+    "rarity": "common",
+    "magical": false,
+    "effects": [],
+    "equipSlot": "armor"
+  },
+  {
+    "id": "item-simple-torch",
+    "name": "Simple Torch",
+    "type": "tool",
+    "description": "A pitch-soaked stick. Lights a 20-foot radius for one hour.",
+    "rarity": "common",
+    "magical": false,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": []
+  },
+  {
+    "id": "item-rope-hempen-50ft",
+    "name": "Hempen Rope (50ft)",
+    "type": "tool",
+    "description": "Fifty feet of coarse hempen rope. AC 11; 2 HP; can be burst with a Body check DC 17.",
+    "rarity": "common",
+    "magical": false,
+    "effects": []
+  },
+  {
+    "id": "item-rations-1day",
+    "name": "Rations (1 day)",
+    "type": "consumable",
+    "description": "Hardtack, dried fruit, salted meat. Enough for one day of travel.",
+    "rarity": "common",
+    "magical": false,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": []
+  },
+  {
+    "id": "item-healing-potion-common",
+    "name": "Healing Potion",
+    "type": "consumable",
+    "description": "A small vial of red liquid. Restores 2d4+2 hit points when drunk.",
+    "rarity": "common",
+    "magical": true,
+    "charges": 1,
+    "maxCharges": 1,
+    "effects": [
+      { "type": "heal", "target": "self", "value": 7 }
+    ]
+  },
+  {
+    "id": "item-arcane-focus-crystal",
+    "name": "Arcane Focus (crystal)",
+    "type": "tool",
+    "description": "A clear quartz crystal mounted on a brass haft. Functions as an arcane focus for spellcasting.",
+    "rarity": "common",
+    "magical": true,
+    "effects": [],
+    "equipSlot": "accessory"
   }
 ]
