@@ -26,19 +26,35 @@ export class StatusPanel {
     const titleGroup = document.createElement("div");
     const eyebrow = document.createElement("p");
     eyebrow.className = "eyebrow";
-    eyebrow.textContent = "Character";
+    eyebrow.textContent = "What you are made of";
+    eyebrow.title = "Character";
     const h2 = document.createElement("h2");
-    h2.textContent = "Status";
+    h2.textContent = "The Vessel";
+    h2.title = "Status";
     titleGroup.appendChild(eyebrow);
     titleGroup.appendChild(h2);
     heading.appendChild(titleGroup);
     section.appendChild(heading);
 
-    const hpMeter = new Meter({ label: "Health", value: this.props.game.player.hp, max: this.props.game.player.maxHp, color: "crimson" });
+    const hpMeter = new Meter({
+      label: "Health",
+      diegeticLabel: "Wax seal",
+      kind: "hp",
+      value: this.props.game.player.hp,
+      max: this.props.game.player.maxHp,
+      color: "crimson",
+    });
     this.meters.set("hp", hpMeter);
     section.appendChild(hpMeter.render());
 
-    const focusMeter = new Meter({ label: "Focus", value: this.props.game.player.focus, max: this.props.game.player.maxFocus, color: "teal" });
+    const focusMeter = new Meter({
+      label: "Focus",
+      diegeticLabel: "Candle",
+      kind: "focus",
+      value: this.props.game.player.focus,
+      max: this.props.game.player.maxFocus,
+      color: "teal",
+    });
     this.meters.set("focus", focusMeter);
     section.appendChild(focusMeter.render());
 
@@ -63,45 +79,26 @@ export class StatusPanel {
     for (const tag of this.props.game.player.tags) {
       const span = document.createElement("span");
       span.textContent = tag;
+      span.className = "tag-pill";
       tags.appendChild(span);
     }
     for (const condition of this.props.game.player.conditions) {
       const span = document.createElement("span");
-      span.textContent = condition.name;
+      span.className = `tag-pill condition-pill condition-${condition.category}`;
+      // Diegetic name + remaining-turn suffix when present so the
+      // player sees both the condition AND its lifespan at a glance.
+      const turnsSuffix = condition.turnsRemaining != null && condition.turnsRemaining > 0
+        ? ` · ${condition.turnsRemaining}t`
+        : "";
+      const stackSuffix = condition.stacks > 1 ? ` ×${condition.stacks}` : "";
+      span.textContent = `${condition.name}${stackSuffix}${turnsSuffix}`;
+      // Hover/focus tooltip surfaces the description the player would
+      // otherwise never see. cursor:help signals it's hoverable.
+      span.title = condition.description;
+      span.setAttribute("aria-label", `${condition.name}: ${condition.description}`);
       tags.appendChild(span);
     }
     section.appendChild(tags);
-
-    const inventory = document.createElement("div");
-    inventory.className = "inventory";
-    const invTitle = document.createElement("h3");
-    invTitle.textContent = "Inventory";
-    inventory.appendChild(invTitle);
-    const invList = document.createElement("ul");
-    for (const item of this.props.game.player.inventory) {
-      const li = document.createElement("li");
-      li.textContent = item.name;
-      invList.appendChild(li);
-    }
-    inventory.appendChild(invList);
-    section.appendChild(inventory);
-
-    const journal = document.createElement("div");
-    journal.className = "inventory";
-    const journalTitle = document.createElement("h3");
-    journalTitle.textContent = "Journal";
-    journal.appendChild(journalTitle);
-    const journalList = document.createElement("ul");
-    for (const entry of this.props.game.journal) {
-      const li = document.createElement("li");
-      const strong = document.createElement("strong");
-      strong.textContent = `${entry.label}:`;
-      li.appendChild(strong);
-      li.appendChild(document.createTextNode(` ${entry.detail}`));
-      journalList.appendChild(li);
-    }
-    journal.appendChild(journalList);
-    section.appendChild(journal);
 
     this.element = section;
     return section;

@@ -9,6 +9,7 @@
 
 import * as Tone from "tone";
 import type { AudioCue, AudioLayer, GameState } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type { AudioSystem, AudioPreset } from "./index.js";
 import { buildChain, SynthChain, ToneNode } from "./PresetParser.js";
 
@@ -64,11 +65,11 @@ export class AudioEngine implements AudioSystem {
     this.isInitialized = true;
   }
 
-  start(): void {
+  async start(): Promise<void> {
     if (!this.isInitialized) {
-      void this.initialize();
+      await this.initialize();
     } else {
-      void Tone.getContext().resume();
+      await Tone.getContext().resume();
     }
   }
 
@@ -115,7 +116,7 @@ export class AudioEngine implements AudioSystem {
 
     const preset = this.presets.get(presetName);
     if (!preset) {
-      console.warn(`[AudioEngine] Preset not found: ${presetName}`);
+      getLogger().warn("[AudioEngine] Preset not found", { presetName });
       return;
     }
 
@@ -244,6 +245,19 @@ export class AudioEngine implements AudioSystem {
 
   setMasterVolume(volume: number): void {
     this.masterVolume.volume.rampTo(gainToDb(volume), 0.3);
+  }
+
+  /**
+   * Smoothly fade master volume to silence over `durationSec`, then
+   * suspend the AudioContext. Used by the death ceremony so the world
+   * literally dims with the player. Resolves when the fade and the
+   * suspend have both completed.
+   */
+  async fadeOut(durationSec = 2.5): Promise<void> {
+    // Tone.Volume.volume is an AudioParam; rampTo handles the curve.
+    this.masterVolume.volume.rampTo(-Infinity, durationSec);
+    await new Promise((r) => setTimeout(r, Math.ceil(durationSec * 1000) + 80));
+    this.stop();
   }
 
   setMuted(muted: boolean): void {

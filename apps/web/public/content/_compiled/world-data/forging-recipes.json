@@ -1,0 +1,79 @@
+[
+  {
+    "id": "recipe-ironscale-blade",
+    "label": "Ironscale Blade",
+    "outputTemplateId": "item-ironscale-blade",
+    "outputRarity": "uncommon",
+    "inputs": [
+      { "materialId": "material.ironscale", "quantity": 3 },
+      { "materialId": "material.salt_glass", "quantity": 1 }
+    ],
+    "smithDC": 13,
+    "craftTimeHours": 6,
+    "successNarrativeKey": "forge.recipe-ironscale-blade.success",
+    "partialNarrativeKey": "forge.recipe-ironscale-blade.partial",
+    "failureNarrativeKey": "forge.recipe-ironscale-blade.failure"
+  },
+  {
+    "id": "recipe-witness-charm",
+    "label": "Witness Charm",
+    "outputTemplateId": "item-witness-charm",
+    "outputRarity": "rare",
+    "inputs": [
+      { "materialId": "material.witness_tooth", "quantity": 2 },
+      { "materialId": "material.silver_wire", "quantity": 1 },
+      { "materialId": "material.salt_glass", "quantity": 1 }
+    ],
+    "smithDC": 17,
+    "craftTimeHours": 10,
+    "successNarrativeKey": "forge.recipe-witness-charm.success",
+    "partialNarrativeKey": "forge.recipe-witness-charm.partial",
+    "failureNarrativeKey": "forge.recipe-witness-charm.failure"
+  },
+  {
+    "id": "recipe-salt-lantern",
+    "label": "Salt Lantern",
+    "outputTemplateId": "item-salt-lantern",
+    "outputRarity": "common",
+    "inputs": [
+      { "materialId": "material.salt_glass", "quantity": 2 },
+      { "materialId": "material.tallow", "quantity": 1 }
+    ],
+    "smithDC": 10,
+    "craftTimeHours": 2,
+    "successNarrativeKey": "forge.recipe-salt-lantern.success",
+    "partialNarrativeKey": "forge.recipe-salt-lantern.partial",
+    "failureNarrativeKey": "forge.recipe-salt-lantern.failure"
+  },
+  {
+    "id": "recipe-deepsmith-ward",
+    "label": "Deepsmith's Ward",
+    "outputTemplateId": "item-deepsmith-ward",
+    "outputRarity": "very_rare",
+    "inputs": [
+      { "materialId": "material.ironscale", "quantity": 5 },
+      { "materialId": "material.witness_tooth", "quantity": 1 },
+      { "materialId": "material.cold_ash", "quantity": 3 }
+    ],
+    "smithDC": 20,
+    "craftTimeHours": 18,
+    "successNarrativeKey": "forge.recipe-deepsmith-ward.success",
+    "partialNarrativeKey": "forge.recipe-deepsmith-ward.partial",
+    "failureNarrativeKey": "forge.recipe-deepsmith-ward.failure"
+  },
+  {
+    "id": "recipe-bone-flute",
+    "label": "Bone Flute",
+    "outputTemplateId": "item-bone-flute",
+    "outputRarity": "common",
+    "inputs": [
+      { "materialId": "material.hollow_bone", "quantity": 1 },
+      { "materialId": "material.tallow", "quantity": 1 }
+    ],
+    "smithDC": 11,
+    "craftTimeHours": 1,
+    "successNarrativeKey": "forge.recipe-bone-flute.success",
+    "partialNarrativeKey": "forge.recipe-bone-flute.partial",
+    "failureNarrativeKey": "forge.recipe-bone-flute.failure"
+  }
+]

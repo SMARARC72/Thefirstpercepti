@@ -7,8 +7,16 @@ coverage
 .env.local
 playwright-report
 test-results
+.playwright-mcp
 packages/*/node_modules
 packages/*/dist
 apps/*/node_modules
 apps/*/dist
 scripts/*/node_modules
+.github
+docs
+AGENTS.md
+progress.md
+tests
+*.test.ts
+*.spec.ts

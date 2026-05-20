@@ -15,8 +15,9 @@ import type {
   Domain,
   CoreStat,
   ResultBand,
+  RollBand,
 } from '@first-perception/types';
-import { RESULT_BANDS } from '@first-perception/types';
+import { RESULT_BANDS, resultBandToRollBand } from '@first-perception/types';
 import { SeededRNG } from './engine/DiceEngine';
 
 let _idCounter = 0;
@@ -43,10 +44,14 @@ export function rollD20(
   dc: number,
   command: string,
   rng: SeededRNG,
-  domain: Domain = 'physical'
+  domain: Domain = 'physical',
+  options: { proficient?: boolean } = {}
 ): RollResult {
   const raw = rng.rollDie(20);
-  const modifier = game.player.stats[stat] ?? 0;
+  const statMod = game.player.stats[stat] ?? 0;
+  // Callers that pass `proficient: true` get +PB on top of the stat modifier.
+  const profBonus = options.proficient ? game.player.proficiencyBonus ?? 0 : 0;
+  const modifier = statMod + profBonus;
   const total = raw + modifier;
   const margin = total - dc;
 
@@ -59,6 +64,8 @@ export function rollD20(
   else if (margin <= 9) band = RESULT_BANDS[5];
   else band = RESULT_BANDS[6];
 
+  const profDetail = profBonus !== 0 ? ` (incl. PB +${profBonus})` : '';
+
   return {
     id: makeId('roll'),
     turn: game.turnCount,
@@ -68,9 +75,28 @@ export function rollD20(
     modifier,
     total,
     band,
-    detail: `Rolled ${raw} + ${modifier} = ${total} vs DC ${dc}`,
+    detail: `Rolled ${raw} + ${modifier}${profDetail} = ${total} vs DC ${dc}`,
     seed: game.seed,
   };
+}
+
+/**
+ * Companion to `rollD20` that also returns the coarse 4-band `RollBand`
+ * (disaster | failure | success | triumph). Combat is the only reducer
+ * that branches on RollBand; the others still consume the 7-band
+ * ResultBand directly, which is why this is a sibling helper.
+ */
+export function rollD20WithBand(
+  game: GameState,
+  stat: CoreStat,
+  dc: number,
+  command: string,
+  rng: SeededRNG,
+  domain: Domain = 'physical',
+  options: { proficient?: boolean } = {}
+): { roll: RollResult; band: RollBand } {
+  const roll = rollD20(game, stat, dc, command, rng, domain, options);
+  return { roll, band: resultBandToRollBand(roll.band) };
 }
 
 export function makePatch(path: string, op: StatePatch['op'], value?: unknown, amount?: number, item?: unknown): StatePatch {

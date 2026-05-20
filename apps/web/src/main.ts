@@ -2,6 +2,7 @@ import "@first-perception/ui-system/styles.css";
 import "./styles.css";
 
 import type { AppState, GameTab, GameState, ActionResult, StatePatch, Legacy } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import {
   blankCreation,
   clearSavedGame,
@@ -37,11 +38,23 @@ import {
   investigationReducer,
   conditionReducer,
   deathReducer,
+  forgingReducer,
   LegacySystem,
   makeId,
 } from "@first-perception/engine";
-import { SqliteRepository, MINIMAL_SCHEMA } from "@first-perception/persistence";
-import { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
+import {
+  HttpRepository,
+  LocalStorageRepository,
+  type GameRepository,
+} from "@first-perception/persistence";
+import {
+  ProxyLLMClient,
+  PromptBuilder,
+  WorldContextAssembler,
+  IntentClassifier,
+  type LLMClient,
+} from "@first-perception/llm-client";
+import { buildWorldEvent, buildFactionWorldEvent, deriveCampaignId } from "./data/worldEvents";
 
 declare global {
   interface Window {
@@ -50,15 +63,16 @@ declare global {
   }
 }
 
-const DB_NAME = "the-first-perception";
-const DB_VERSION = 1;
-const STORE_NAME = "saves";
-const LEGACY_HISTORY_KEY = "the-first-perception.legacy-history";
-const API_KEY_STORAGE_KEY = "the-first-perception.moonshot-api-key";
+// IDB save-slot CRUD lives in ./data/idbSaves; legacy ledger in
+// ./data/legacyHistory. They were inlined here before the Phase 5 split.
+import { getSaveSlots, writeSaveSlot, deleteSaveSlot, readSaveSlot } from "./data/idbSaves";
+import { loadLegacyHistory, saveLegacyHistory } from "./data/legacyHistory";
 
-// ── LLM Layer Instances ──
-let sqliteRepo: SqliteRepository | null = null;
-let llmClient: KimiClient | null = null;
+// ── Persistence + LLM layer instances ──
+// repo prefers the server-backed HTTP API; falls back to localStorage if
+// the API is unreachable. Either implementation satisfies GameRepository.
+let repo: GameRepository | null = null;
+let llmClient: LLMClient | null = null;
 let promptBuilder: PromptBuilder | null = null;
 let contextAssembler: WorldContextAssembler | null = null;
 let turnOrchestrator: TurnOrchestrator | null = null;
@@ -74,6 +88,11 @@ let settingsModal: SettingsModal | null = null;
 const audioEngine = new AudioEngine();
 const narrativeEngine = new NarrativeEngine();
 let narrativeReady = false;
+
+// Intent classifier — uses the LLM proxy when enabled, falls back to
+// regex when not. Constructed once and re-wired with a client whenever
+// the Living World toggle flips.
+let intentClassifier = new IntentClassifier();
 
 function createBootState(): AppState {
   const next = createInitialState();
@@ -108,95 +127,8 @@ function createBootState(): AppState {
   };
 }
 
-// ── IndexedDB helpers ──
-
-async function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => resolve(req.result);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
-      }
-    };
-  });
-}
-
-async function getSaveSlots(): Promise<AppState["saveSlots"]> {
-  try {
-    const db = await openDB();
-    const tx = db.transaction(STORE_NAME, "readonly");
-    const store_ = tx.objectStore(STORE_NAME);
-    const req = store_.getAll();
-    return new Promise((resolve, reject) => {
-      req.onsuccess = () => resolve(req.result as AppState["saveSlots"]);
-      req.onerror = () => reject(req.error);
-    });
-  } catch {
-    return [];
-  }
-}
-
-async function writeSaveSlot(slot: AppState["saveSlots"][number]): Promise<void> {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store_ = tx.objectStore(STORE_NAME);
-  store_.put(slot);
-  return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-async function deleteSaveSlot(id: string): Promise<void> {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store_ = tx.objectStore(STORE_NAME);
-  store_.delete(id);
-  return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-function loadLegacyHistory(): Legacy[] {
-  try {
-    const raw = localStorage.getItem(LEGACY_HISTORY_KEY);
-    return raw ? (JSON.parse(raw) as Legacy[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function loadApiKey(): string {
-  try {
-    return localStorage.getItem(API_KEY_STORAGE_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-function saveApiKey(key: string): void {
-  try {
-    if (key) {
-      localStorage.setItem(API_KEY_STORAGE_KEY, key);
-    } else {
-      localStorage.removeItem(API_KEY_STORAGE_KEY);
-    }
-  } catch {
-    // ignore
-  }
-}
-
-function saveLegacyHistory(history: Legacy[]): void {
-  try {
-    localStorage.setItem(LEGACY_HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
-  } catch {
-    // ignore
-  }
-}
+// IDB save-slot CRUD + legacy ledger moved to ./data/idbSaves and
+// ./data/legacyHistory respectively (Phase 5 decomposition).
 
 function autoSaveIfNeeded(state: AppState): void {
   if (!state.settings.autoSave || !state.game) return;
@@ -245,23 +177,49 @@ async function runCommand(command: string): Promise<void> {
 
   let game = state.game;
   const rng = new SeededRNG(game.seed + game.turnCount);
+
+  // LLM-first intent classification. Falls back to regex on any LLM
+  // error or when llmEnabled is off (the classifier is constructed
+  // without a client in that path). Always resolves quickly.
+  const intent = await intentClassifier.classify(trimmed);
   const { verb } = parseCommand(trimmed);
 
-  // Run mechanical reducer
+  // Run mechanical reducer. Prefer the classified reducer when the LLM
+  // returned high-confidence (intent.source === "llm" or "cache"); for
+  // the regex fallback we keep the original keyword dispatch so behaviour
+  // matches what the test suite already locks in.
   let actionResult: ActionResult | null = null;
+  const dispatch = intent.source === "regex" ? verb : intent.reducer;
 
-  if (["attack", "defend", "riposte", "surrender"].includes(verb)) {
-    actionResult = combatReducer(game, trimmed, rng);
-  } else if (["go", "approach", "flee", "sneak"].includes(verb)) {
-    actionResult = moveReducer(game, trimmed, rng);
-  } else if (["rest", "sleep", "recover"].includes(verb)) {
-    actionResult = restReducer(game, trimmed, rng);
-  } else if (["use", "equip", "consume", "inspect", "drop", "trade"].includes(verb)) {
-    actionResult = itemReducer(game, trimmed, rng);
-  } else if (["speak", "ask", "bargain", "threaten", "lie"].includes(verb)) {
-    actionResult = dialogueReducer(game, trimmed, rng);
-  } else if (["look", "examine", "read", "listen", "search"].includes(verb)) {
+  // Verb-level short-circuits — IntentClassifier doesn't know about
+  // "forge" or "glimpse" ReducerKinds, and dispatching as item / narrative
+  // would lose the recipe-id payload or skip the spell-slot consumption.
+  if (verb === "forge") {
+    actionResult = forgingReducer(game, trimmed, rng);
+  } else if (verb === "glimpse") {
     actionResult = investigationReducer(game, trimmed, rng);
+  } else if (intent.source !== "regex") {
+    if (intent.reducer === "combat") actionResult = combatReducer(game, trimmed, rng);
+    else if (intent.reducer === "move") actionResult = moveReducer(game, trimmed, rng);
+    else if (intent.reducer === "rest") actionResult = restReducer(game, trimmed, rng);
+    else if (intent.reducer === "item") actionResult = itemReducer(game, trimmed, rng);
+    else if (intent.reducer === "dialogue") actionResult = dialogueReducer(game, trimmed, rng);
+    else if (intent.reducer === "investigation") actionResult = investigationReducer(game, trimmed, rng);
+    // narrative_only → leave actionResult null; Ink + LLM handle it
+  } else if (["attack", "defend", "riposte", "surrender"].includes(dispatch)) {
+    actionResult = combatReducer(game, trimmed, rng);
+  } else if (["go", "approach", "flee", "sneak"].includes(dispatch)) {
+    actionResult = moveReducer(game, trimmed, rng);
+  } else if (["rest", "sleep", "recover"].includes(dispatch)) {
+    actionResult = restReducer(game, trimmed, rng);
+  } else if (["use", "equip", "consume", "inspect", "drop", "trade"].includes(dispatch)) {
+    actionResult = itemReducer(game, trimmed, rng);
+  } else if (["speak", "ask", "bargain", "threaten", "lie"].includes(dispatch)) {
+    actionResult = dialogueReducer(game, trimmed, rng);
+  } else if (["look", "examine", "read", "listen", "search", "glimpse"].includes(dispatch)) {
+    actionResult = investigationReducer(game, trimmed, rng);
+  } else if (dispatch === "forge") {
+    actionResult = forgingReducer(game, trimmed, rng);
   }
 
   // Apply mechanical patches
@@ -273,13 +231,19 @@ async function runCommand(command: string): Promise<void> {
     game = applyPatches(game, conditionResult.patches);
   }
 
-  // Get narrative from Ink
+  // Get narrative from Ink. Pre-warm the WorldMemoryCache first so any
+  // `recall(loc)` or `llm_generate(prompt)` externals the next passage
+  // hits can answer instantly from session-scoped cache instead of the
+  // deterministic fallback.
   let narrativeResult: import("@first-perception/narrative").NarrativeResult | null = null;
   if (narrativeReady) {
     try {
+      if (repo) {
+        await narrativeEngine.prepareWorldMemory(game, { repo });
+      }
       narrativeResult = narrativeEngine.processCommand(trimmed, game);
     } catch (err) {
-      console.warn("Narrative error:", err);
+      getLogger().warn("Narrative error", { error: err });
     }
   }
 
@@ -325,7 +289,10 @@ async function runCommand(command: string): Promise<void> {
   }
 
   // ── Living World LLM Layer ──
-  const llmEnabled = state.settings.llmEnabled && turnOrchestrator && loadApiKey();
+  // turnOrchestrator is only constructed if settings.llmEnabled is true
+  // AND the proxy initialized successfully (see initLLMLayer). No
+  // per-user api keys; the /api/llm proxy reads keys from server env.
+  const llmEnabled = state.settings.llmEnabled && turnOrchestrator !== null;
   if (llmEnabled) {
     try {
       const llmResult = await turnOrchestrator!.processTurn(game, trimmed);
@@ -353,11 +320,32 @@ async function runCommand(command: string): Promise<void> {
             },
             ...game.tale,
           ].slice(0, 20);
+
+          // Cross-run faction memory: write the pulse as a WorldEvent so
+          // future runs can recall it. Best-effort; never blocks the turn.
+          if (repo) {
+            try {
+              const pulse = llmResult.worldPulse;
+              const sourceFactionId = game.factions[0]?.id ?? "unknown";
+              const sourceFactionName = game.factions[0]?.name ?? "An offstage force";
+              await repo.recordEvent(
+                buildFactionWorldEvent({
+                  game,
+                  factionId: sourceFactionId,
+                  factionName: sourceFactionName,
+                  pulse,
+                  campaignId: deriveCampaignId(game),
+                }),
+              );
+            } catch (err) {
+              getLogger().warn("Faction WorldEvent writeback failed", { error: err });
+            }
+          }
         }
         game.lastFeedback = `Turn ${game.turnCount} · ${llmResult.llmCallsMade} LLM calls · ${llmResult.latencyMs}ms`;
       }
     } catch (err) {
-      console.warn("Living World layer failed:", err);
+      getLogger().warn("Living World layer failed", { error: err });
       // Keep static narrative — graceful fallback
     }
   }
@@ -429,6 +417,25 @@ async function runCommand(command: string): Promise<void> {
     // Audio not critical
   }
 
+  // ── World event writeback ──
+  // Persist what happened this turn so future runs (via recall) and
+  // the LLM context assembler can refer to it. Best-effort: the repo
+  // may be the localStorage fallback (session-scoped) or unavailable.
+  // Either way, save and turn flow must not block.
+  if (actionResult && repo) {
+    try {
+      const event = buildWorldEvent({
+        game,
+        command: trimmed,
+        result: actionResult,
+        campaignId: deriveCampaignId(game),
+      });
+      if (event) await repo.recordEvent(event);
+    } catch (err) {
+      getLogger().warn("WorldEvent writeback failed", { error: err });
+    }
+  }
+
   store.setState({ game, commandDraft: "" });
   saveAppState(store.getState());
   autoSaveIfNeeded(store.getState());
@@ -492,7 +499,7 @@ function renderCreation(): void {
           game.suggestedActions = result?.choices ?? game.suggestedActions;
           store.setState({ game });
         } catch (err) {
-          console.warn("Initial narrative error:", err);
+          getLogger().warn("Initial narrative error", { error: err });
         }
       }
     },
@@ -504,6 +511,13 @@ function renderDeath(): void {
   const state = store.getState();
   const screen = new DeathScreen({
     game: state.game!,
+    onMount: () => {
+      // The audio fades to silence over ~2.5s in parallel with the
+      // visual ceremony. Errors are swallowed — the audio engine may
+      // never have been started (no user gesture before death) and we
+      // don't want that to mar the screen.
+      void audioEngine.fadeOut(2.5).catch(() => {});
+    },
     onNewRun: () => {
       const creation = blankCreation();
       const next = createInitialState();
@@ -595,13 +609,8 @@ function openSettings(): void {
       saveAppState(store.getState());
       // Re-init LLM layer if toggled
       if ("llmEnabled" in partial) {
-        initLLMLayer(nextSettings.llmEnabled, loadApiKey());
+        initLLMLayer(nextSettings.llmEnabled);
       }
-    },
-    apiKey: loadApiKey(),
-    onApiKeyChange: (key) => {
-      saveApiKey(key);
-      initLLMLayer(state.settings.llmEnabled, key);
     },
     onSaveState: async (slotId) => {
       const s = store.getState();
@@ -620,17 +629,11 @@ function openSettings(): void {
     },
     onLoadState: async (slotId) => {
       try {
-        const db = await openDB();
-        const tx = db.transaction(STORE_NAME, "readonly");
-        const st = tx.objectStore(STORE_NAME);
-        const req = st.get(slotId);
-        req.onsuccess = () => {
-          const slot = req.result as AppState["saveSlots"][number] | undefined;
-          if (slot?.data) {
-            const parsed = JSON.parse(slot.data) as AppState;
-            store.setState({ ...parsed, screen: "gameplay" });
-          }
-        };
+        const slot = await readSaveSlot(slotId);
+        if (slot?.data) {
+          const parsed = JSON.parse(slot.data) as AppState;
+          store.setState({ ...parsed, screen: "gameplay" });
+        }
       } catch {
         // ignore
       }
@@ -708,50 +711,62 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Initialize audio on first interaction
+// Initialize audio on first interaction. Tone.js requires a user gesture
+// before it will start its AudioContext, and start() is async — we must
+// await it before the first updateFromGameState() call, otherwise the
+// first command's audio adaptation runs on an uninitialized engine and
+// is silently dropped.
 document.addEventListener(
   "click",
   () => {
-    try {
-      audioEngine.start();
-      const state = store.getState();
-      if (state.game) {
-        audioEngine.updateFromGameState(state.game);
+    void (async () => {
+      try {
+        await audioEngine.start();
+        const state = store.getState();
+        if (state.game) {
+          audioEngine.updateFromGameState(state.game);
+        }
+      } catch {
+        // AudioContext may not be supported
       }
-    } catch {
-      // AudioContext may not be supported
-    }
+    })();
   },
   { once: true },
 );
 
 // ── LLM Layer Initialization ──
 
-function initLLMLayer(enabled: boolean, apiKey: string): void {
-  if (!enabled || !apiKey) {
+// LLM keys live in Vercel env vars and are read server-side by
+// /api/llm + /api/llm/stream. The browser only needs the proxy client,
+// which forwards LLMRequest envelopes. Nothing in the bundle holds a key.
+function initLLMLayer(enabled: boolean): void {
+  if (!enabled) {
     turnOrchestrator = null;
     llmClient = null;
-    console.log("LLM layer disabled.");
+    // Drop the classifier back to regex-only.
+    intentClassifier = new IntentClassifier();
     return;
   }
 
   try {
-    llmClient = new KimiClient({ apiKey });
+    llmClient = new ProxyLLMClient();
     promptBuilder = new PromptBuilder();
-    contextAssembler = new WorldContextAssembler(sqliteRepo ?? undefined);
+    contextAssembler = new WorldContextAssembler(repo ?? undefined);
+    // Re-wire the intent classifier with the new proxy client so
+    // free-text commands can be classified via /api/llm.
+    intentClassifier = new IntentClassifier({ client: llmClient });
     turnOrchestrator = new TurnOrchestrator({
       client: llmClient,
       builder: promptBuilder,
-      repository: sqliteRepo ?? undefined,
+      repository: repo ?? undefined,
       contextAssembler: contextAssembler,
       maxLLMCallsPerTurn: 8,
       maxLatencyMs: 5000,
       maxActiveNPCs: 3,
       maxActiveFactions: 2,
     });
-    console.log("LLM layer initialized.");
   } catch (err) {
-    console.warn("Failed to initialize LLM layer:", err);
+    getLogger().warn("Failed to initialize LLM layer", { error: err });
     turnOrchestrator = null;
     llmClient = null;
   }
@@ -759,30 +774,38 @@ function initLLMLayer(enabled: boolean, apiKey: string): void {
 
 // ── Boot Sequence ──
 async function boot(): Promise<void> {
-  // Initialize SQLite repository
+  // Try the server-backed HTTP repo first. If /api/health is unreachable
+  // (offline, deploy without Postgres, dev without env vars), fall back to
+  // a session-scoped localStorage repo so save slots still work locally.
+  // The world-event / NPC-memory writebacks won't compound across sessions
+  // in fallback mode; the UI will surface that in Phase 7.
   try {
-    sqliteRepo = new SqliteRepository();
-    await sqliteRepo.init();
-    await sqliteRepo.runSchema(MINIMAL_SCHEMA);
-    console.log("SQLite repository initialized.");
-  } catch (err) {
-    console.warn("SQLite repository failed to initialize:", err);
-    sqliteRepo = null;
+    const http = new HttpRepository();
+    await http.init();
+    repo = http;
+  } catch {
+    try {
+      const local = new LocalStorageRepository();
+      await local.init();
+      repo = local;
+    } catch (err) {
+      getLogger().warn("All persistence backends unavailable", { error: err });
+      repo = null;
+    }
   }
 
-  // Initialize LLM layer if configured
+  // Initialize LLM layer if configured. API keys live in Vercel env;
+  // the proxy reads them server-side.
   const loadedState = loadAppState();
   const settings = loadedState?.settings ?? createInitialState().settings;
-  const apiKey = loadApiKey();
-  initLLMLayer(settings.llmEnabled, apiKey);
+  initLLMLayer(settings.llmEnabled);
 
   const [slots] = await Promise.all([
     getSaveSlots(),
     narrativeEngine.initialize().then(() => {
       narrativeReady = true;
-      console.log("Narrative engine ready");
     }).catch((err) => {
-      console.warn("Narrative engine failed to initialize:", err);
+      getLogger().warn("Narrative engine failed to initialize", { error: err });
     }),
   ]);
   store.setState({ saveSlots: slots });
@@ -790,7 +813,7 @@ async function boot(): Promise<void> {
 }
 
 boot().catch((err) => {
-  console.error("Boot failed:", err);
+  getLogger().error("Boot failed", err);
   appRoot!.innerHTML = `<div style="padding:2rem;color:#c9b8a8;font-family:system-ui">
     <h1>The First Perception</h1>
     <p>Failed to initialize. Try a hard refresh (Ctrl+Shift+R) or open in incognito mode.</p>

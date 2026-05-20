@@ -3,6 +3,11 @@ interface MeterProps {
   value: number;
   max: number;
   color?: "teal" | "gold" | "crimson";
+  /** Drives the grimoire reskin (wax seal / candle / tide line). When
+   * set, CSS targets .meter[data-kind="<kind>"] for the per-meter look. */
+  kind?: "hp" | "focus" | "danger" | "stamina" | "neutral";
+  /** Optional diegetic label shown above the literal `label`. */
+  diegeticLabel?: string;
 }
 
 export class Meter {
@@ -21,6 +26,7 @@ export class Meter {
 
     const root = document.createElement("div");
     root.className = "meter";
+    if (this.props.kind) root.dataset.kind = this.props.kind;
     root.setAttribute("aria-label", `${this.props.label}: ${this.props.value} of ${this.props.max}`);
     root.setAttribute("role", "meter");
     root.setAttribute("aria-valuenow", String(this.props.value));
@@ -28,7 +34,9 @@ export class Meter {
 
     const header = document.createElement("div");
     const label = document.createElement("span");
-    label.textContent = this.props.label;
+    label.className = "meter-label";
+    label.textContent = this.props.diegeticLabel ?? this.props.label;
+    if (this.props.diegeticLabel) label.title = this.props.label;
     this.valueText = document.createElement("strong");
     this.valueText.textContent = `${this.props.value}/${this.props.max}`;
     header.appendChild(label);
@@ -37,6 +45,7 @@ export class Meter {
     const track = document.createElement("span");
     track.className = "meter-track";
     this.track = document.createElement("span");
+    this.track.className = "meter-fill";
     this.track.style.width = `${percent}%`;
     this.track.dataset.color = colorClass;
     track.appendChild(this.track);

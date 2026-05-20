@@ -1,6 +1,7 @@
 import type { GameState, TaleEntry, SuggestedAction, StatePatch } from "@first-perception/types";
-import type { KimiClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import { getLogger } from "@first-perception/types";
+import type { LLMClient, PromptBuilder, WorldContextAssembler } from "@first-perception/llm-client";
+import type { GameRepository } from "@first-perception/persistence";
 import { NPCSubagent } from "./NPCSubagent.js";
 import { GMNarrator } from "./GMNarrator.js";
 import { FactionSubagent } from "./FactionSubagent.js";
@@ -22,9 +23,9 @@ export interface TurnOrchestratorResult {
 }
 
 export interface TurnOrchestratorOptions {
-  client: KimiClient;
+  client: LLMClient;
   builder: PromptBuilder;
-  repository?: SqliteRepository;
+  repository?: GameRepository;
   contextAssembler: WorldContextAssembler;
   maxLLMCallsPerTurn: number;
   maxLatencyMs: number;
@@ -41,9 +42,9 @@ export interface TurnOrchestratorOptions {
  * When budget is exceeded or LLM unavailable, falls back to static narrative.
  */
 export class TurnOrchestrator {
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
   private contextAssembler: WorldContextAssembler;
   private maxLLMCalls: number;
   private maxLatency: number;
@@ -166,7 +167,7 @@ export class TurnOrchestrator {
           });
         }
       } catch (err) {
-        console.warn(`NPC subagent ${npc.id} timed out or failed:`, err);
+        getLogger().warn("NPC subagent timed out or failed", { npcId: npc.id, error: err });
       }
     });
 
@@ -200,7 +201,7 @@ export class TurnOrchestrator {
             }
           }
         } catch (err) {
-          console.warn(`Faction subagent ${faction.id} timed out or failed:`, err);
+          getLogger().warn("Faction subagent timed out or failed", { factionId: faction.id, error: err });
         }
       });
 
@@ -245,7 +246,7 @@ export class TurnOrchestrator {
           fallback = true;
         }
       } catch (err) {
-        console.warn("GM Narrator merge failed:", err);
+        getLogger().warn("GM Narrator merge failed", { error: err });
         fallback = true;
       }
     } else {
@@ -308,7 +309,7 @@ export class TurnOrchestrator {
   }
 
   private _isClientHealthy(): boolean {
-    // KimiClient doesn't expose circuit state directly, but we can infer from
+    // LLMClient implementations don't expose circuit state directly, but we can infer from
     // whether the client exists. If API key is missing, complete() will fail fast.
     return true; // Actual failures are caught per-call
   }
@@ -316,9 +317,11 @@ export class TurnOrchestrator {
   private _fallbackResult(
     game: GameState,
     playerAction: string,
-    reason: string
+    _reason: string
   ): TurnOrchestratorResult {
-    console.log(`[TurnOrchestrator] Fallback: ${reason}`);
+    // Fallback details are returned in the TurnOrchestratorResult and
+    // surfaced by the caller; intentionally not logged from here so the
+    // happy-path doesn't spam the console.
     return {
       taleEntry: {
         id: makeId("fb"),

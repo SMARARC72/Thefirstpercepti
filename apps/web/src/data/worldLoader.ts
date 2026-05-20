@@ -6,13 +6,18 @@ import type {
   Exit,
   POI,
   Condition,
+  ConditionEffect,
   Item,
+  LockRequirement,
+  SkillCheck,
+  ForgeRecipe,
 } from "@first-perception/types";
 import locationsData from "./locations.json";
 import factionsData from "./factions.json";
 import npcsData from "./npcs.json";
 import conditionsData from "./conditions.json";
 import itemsData from "./items.json";
+import forgingRecipesData from "./forging-recipes.json";
 
 export interface WorldData {
   locations: LocationNode[];
@@ -21,9 +26,122 @@ export interface WorldData {
   npcs: NpcState[];
   conditions: Condition[];
   items: Item[];
+  forgingRecipes: ForgeRecipe[];
 }
 
-function mapExits(raw: any[]): Exit[] {
+// Raw JSON shapes — fields match the on-disk content/world-data/*.json files.
+// Everything optional here is filled with a default by the mappers below.
+// Raw locked shape mirrors LockRequirement; skillCheck must use CoreStat
+// since the runtime engine indexes player.stats[skillCheck.stat].
+interface RawLocked extends Partial<LockRequirement> {
+  description: string;
+  skillCheck?: SkillCheck;
+}
+
+interface RawExit {
+  toLocationId: string;
+  label: string;
+  visible?: boolean;
+  travelRisk?: number;
+  locked?: RawLocked;
+  hiddenDescription?: string;
+}
+
+interface RawPoi {
+  id: string;
+  name: string;
+  description: string;
+  investigated?: boolean;
+  tags?: string[];
+}
+
+interface RawLocation {
+  id: string;
+  name: string;
+  description: string;
+  regionId: string;
+  exits?: RawExit[];
+  pointsOfInterest?: RawPoi[];
+  dangerBase?: number;
+  discovered?: boolean;
+  investigated?: boolean;
+  tags?: string[];
+}
+
+interface RawFaction {
+  id: string;
+  name: string;
+  stance?: FactionState["stance"];
+  trust?: number;
+  fear?: number;
+  need?: string;
+  plan?: { description?: string };
+  knownSecrets?: string[];
+  npcs?: string[];
+}
+
+interface RawSecret {
+  id: string;
+  content: string;
+  revealed?: boolean;
+  topicId?: string;
+  difficulty?: number;
+}
+
+interface RawNpc {
+  id: string;
+  name: string;
+  role: string;
+  disposition?: string;
+  wants?: string;
+  locationId?: string;
+  factionId?: string;
+  description?: string;
+  secrets?: RawSecret[];
+  tags?: string[];
+  alive?: boolean;
+  dialogueState?: Record<string, number>;
+  stats?: NpcState["stats"];
+  hp?: number;
+  maxHp?: number;
+}
+
+interface RawConditionEffect extends Partial<ConditionEffect> {
+  // Authored content effects use the same shape as runtime ConditionEffect.
+  // Every field is optional in JSON; runtime defaults are applied below.
+}
+
+interface RawCondition {
+  id: string;
+  typeId: string;
+  name: string;
+  description: string;
+  category?: Condition["category"];
+  isHarmful?: boolean;
+  turnsRemaining?: number | null;
+  stacks?: number;
+  maxStacks?: number;
+  effects?: RawConditionEffect[];
+}
+
+interface RawItem {
+  id: string;
+  name: string;
+  type?: Item["type"];
+  description?: string;
+  rarity?: Item["rarity"];
+  durability?: number;
+  maxDurability?: number;
+  charges?: number;
+  maxCharges?: number;
+  effects?: Item["effects"];
+  equipSlot?: Item["equipSlot"];
+  magical?: boolean;
+  attunement?: Item["attunement"];
+  requires?: Item["requires"];
+}
+
+function mapExits(raw: RawExit[]): Exit[] {
   return raw.map((e) => ({
     toLocationId: e.toLocationId,
     visible: e.visible ?? true,
@@ -40,7 +158,7 @@ function mapExits(raw: any[]): Exit[] {
   }));
 }
 
-function mapPois(raw: any[]): POI[] {
+function mapPois(raw: RawPoi[]): POI[] {
   return raw.map((p) => ({
     id: p.id,
     name: p.name,
@@ -50,7 +168,7 @@ function mapPois(raw: any[]): POI[] {
   }));
 }
 
-function mapLocations(raw: any[]): LocationNode[] {
+function mapLocations(raw: RawLocation[]): LocationNode[] {
   return raw.map((l) => ({
     id: l.id,
     name: l.name,
@@ -82,7 +200,7 @@ function mapRegionsFromLocations(locations: LocationNode[]): Region[] {
   return Array.from(regionMap.values());
 }
 
-function mapFactions(raw: any[]): FactionState[] {
+function mapFactions(raw: RawFaction[]): FactionState[] {
   return raw.map((f) => ({
     id: f.id,
     name: f.name,
@@ -96,7 +214,7 @@ function mapFactions(raw: any[]): FactionState[] {
   }));
 }
 
-function mapNpcs(raw: any[]): NpcState[] {
+function mapNpcs(raw: RawNpc[]): NpcState[] {
   return raw.map((n) => ({
     id: n.id,
     name: n.name,
@@ -107,7 +225,7 @@ function mapNpcs(raw: any[]): NpcState[] {
     locationId: n.locationId,
     factionId: n.factionId,
     description: n.description,
-    secrets: (n.secrets ?? []).map((s: any) => ({
+    secrets: (n.secrets ?? []).map((s) => ({
       id: s.id,
       content: s.content,
       revealed: s.revealed ?? false,
@@ -123,7 +241,7 @@ function mapNpcs(raw: any[]): NpcState[] {
   }));
 }
 
-function mapConditions(raw: any[]): Condition[] {
+function mapConditions(raw: RawCondition[]): Condition[] {
   return raw.map((c) => ({
     id: c.id,
     typeId: c.typeId,
@@ -134,7 +252,7 @@ function mapConditions(raw: any[]): Condition[] {
     turnsRemaining: c.turnsRemaining ?? null,
     stacks: c.stacks ?? 1,
     maxStacks: c.maxStacks ?? 10,
-    effects: (c.effects ?? []).map((e: any) => ({
+    effects: (c.effects ?? []).map<ConditionEffect>((e) => ({
       stat: e.stat,
       modifier: e.modifier ?? 0,
       hpPerTurn: e.hpPerTurn,
@@ -143,29 +261,47 @@ function mapConditions(raw: any[]): Condition[] {
   }));
 }
 
-function mapItems(raw: any[]): Item[] {
+// Raw recipe shape is identical to ForgeRecipe — the JSON authors the
+// canonical shape directly. The mapper deep-clones so callers can mutate
+// the result without surprising the JSON-cache singleton vite hands back.
+type RawForgeRecipe = ForgeRecipe;
+
+function mapForgingRecipes(raw: RawForgeRecipe[]): ForgeRecipe[] {
+  return raw.map((r) => ({ ...r, inputs: r.inputs.map((i) => ({ ...i })) }));
+}
+
+function mapItems(raw: RawItem[]): Item[] {
   return raw.map((i) => ({
     id: i.id,
     name: i.name,
     type: i.type ?? "misc",
     description: i.description ?? "",
+    rarity: i.rarity ?? "common",
     durability: i.durability,
     maxDurability: i.maxDurability,
     charges: i.charges,
     maxCharges: i.maxCharges,
     effects: i.effects,
     equipSlot: i.equipSlot,
+    magical: i.magical,
+    attunement: i.attunement,
+    requires: i.requires,
   }));
 }
 
 export function loadWorldData(): WorldData {
-  const locations = mapLocations(locationsData as any[]);
+  const locations = mapLocations(locationsData as RawLocation[]);
   const regions = mapRegionsFromLocations(locations);
-  const factions = mapFactions(factionsData as any[]);
-  const npcs = mapNpcs(npcsData as any[]);
-  const conditions = mapConditions(conditionsData as any[]);
-  const items = mapItems(itemsData as any[]);
-  return { locations, regions, factions, npcs, conditions, items };
+  const factions = mapFactions(factionsData as RawFaction[]);
+  const npcs = mapNpcs(npcsData as RawNpc[]);
+  const conditions = mapConditions(conditionsData as RawCondition[]);
+  const items = mapItems(itemsData as RawItem[]);
+  const forgingRecipes = mapForgingRecipes(forgingRecipesData as RawForgeRecipe[]);
+  return { locations, regions, factions, npcs, conditions, items, forgingRecipes };
+}
+
+export function loadForgingRecipes(): ForgeRecipe[] {
+  return mapForgingRecipes(forgingRecipesData as RawForgeRecipe[]);
 }
 
 export function pickStartLocation(seed: number, locations: LocationNode[]): LocationNode {

@@ -1,12 +1,13 @@
 import type { GameState, FactionState, TaleEntry } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
-  KimiClient,
+  LLMClient,
   PromptBuilder,
   FactionMoveContext,
   FactionMoveOutput,
 } from "@first-perception/llm-client";
 import { factionMoveTemplate } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 import { makeId } from "@first-perception/engine";
 
 export interface FactionActionResult {
@@ -20,15 +21,15 @@ export interface FactionActionResult {
 
 export class FactionSubagent {
   private factionId: string;
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
 
   constructor(options: {
     factionId: string;
-    client: KimiClient;
+    client: LLMClient;
     builder: PromptBuilder;
-    repository?: SqliteRepository;
+    repository?: GameRepository;
   }) {
     this.factionId = options.factionId;
     this.client = options.client;
@@ -53,7 +54,7 @@ export class FactionSubagent {
 
       return this._resolveMove(game, faction, move);
     } catch (err) {
-      console.warn(`FactionSubagent(${this.factionId}) failed:`, err);
+      getLogger().warn("FactionSubagent failed", { factionId: this.factionId, error: err });
       return null;
     }
   }

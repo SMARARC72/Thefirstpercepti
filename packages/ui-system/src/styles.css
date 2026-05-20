@@ -388,3 +388,110 @@ textarea:focus-visible,
 .animate-fade-in { animation: fade-in var(--duration-normal) var(--ease-out) forwards; }
 .animate-fade-in-up { animation: fade-in-up var(--duration-normal) var(--ease-out) forwards; }
 .animate-shake { animation: shake 0.4s var(--ease-smooth); }
+
+/* ============================================================================
+ * OCCULT GRIMOIRE LAYER — Phase 6
+ * ============================================================================
+ * Augments the void/teal/gold base with parchment, ember, sigil-gold, and
+ * ink-bleed tokens. The base palette stays alive for legacy components
+ * during the transition; new components reach for the grimoire tokens via
+ * CSS custom-property fallbacks.
+ *
+ * Cormorant supplies the body voice (a humanist serif with proper
+ * italics, slow weight transitions). Inter remains for UI chrome where
+ * dense readability beats atmosphere.
+ * ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+
+:root {
+  /* Grimoire color tokens. Layer A: ember, the punctuating warm. */
+  --ember-900: #2a0a04;
+  --ember-700: #6a1a08;
+  --ember-500: #b34419;
+  --ember-400: #d9613a;
+  --ember-300: #f08359;
+  --ember-glow: rgba(217, 97, 58, 0.22);
+  --ember-glow-strong: rgba(217, 97, 58, 0.5);
+
+  /* Layer B: sigil-gold, the revelatory accent. Replaces the colder gold. */
+  --sigil-700: #8a6a18;
+  --sigil-500: #d8a93a;
+  --sigil-400: #e7c062;
+  --sigil-300: #f1d486;
+  --sigil-glow: rgba(216, 169, 58, 0.22);
+
+  /* Layer C: bone, the body text against ink. */
+  --bone-100: #f3eee0;
+  --bone-200: #e7decb;
+  --bone-400: #c2b497;
+  --bone-600: #8a7e63;
+
+  /* Layer D: ink, deeper than void; receives the grain overlay. */
+  --ink-950: #0a070b;
+  --ink-900: #0d0a10;
+  --ink-800: #131019;
+  --ink-700: #1a1622;
+  --ink-600: #221d2c;
+
+  /* Layer E: whisper, the desaturated voice for lower-importance prose. */
+  --whisper-fg: rgba(243, 238, 224, 0.62);
+
+  /* Grimoire typography. Body sits Cormorant on Inter to keep UI readable. */
+  --font-grimoire: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+
+  /* Paper-grain overlay (SVG noise) — applied via .grimoire-grain class. */
+  --grimoire-grain:
+    url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.92  0 0 0 0 0.87  0 0 0 0 0.74  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");
+}
+
+/* Light-touch grain on any container that opts in.  Tile-repeats at
+ * 240px so the noise stays subliminal at any breakpoint; pointer-events
+ * none so the overlay never eats clicks. */
+.grimoire-grain {
+  position: relative;
+  isolation: isolate;
+}
+.grimoire-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grimoire-grain);
+  background-size: 240px 240px;
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  z-index: 0;
+}
+.grimoire-grain > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Sigil-gold + ember utility text colors so authored copy can lean on them. */
+.text-sigil { color: var(--sigil-400); }
+.text-ember { color: var(--ember-400); }
+.text-bone  { color: var(--bone-200); }
+.text-whisper {
+  color: var(--whisper-fg);
+  font-style: italic;
+}
+
+/* Slow ember breathe — used by danger glyphs and the turn pill as
+ * danger rises. Cheap, GPU-friendly. */
+@keyframes ember-breathe {
+  0%, 100% {
+    text-shadow: 0 0 8px var(--ember-glow), 0 0 18px transparent;
+  }
+  50% {
+    text-shadow: 0 0 14px var(--ember-glow-strong), 0 0 26px var(--ember-glow);
+  }
+}
+.animate-ember-breathe { animation: ember-breathe 3.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ember-breathe { animation: none; }
+}
+
+[data-reduced-motion="true"] .animate-ember-breathe { animation: none; }

@@ -9,6 +9,7 @@
 export { InkBridge } from "./InkBridge";
 export { NarrativeEngine } from "./NarrativeEngine";
 export { ContentLoader } from "./ContentLoader";
+export { WorldMemoryCache, promptKey } from "./WorldMemoryCache.js";
 export { createGameStateBindings } from "./bindings/gameStateBindings";
 export type { GameStateBindings, BindingsCallbacks } from "./bindings/gameStateBindings";
 

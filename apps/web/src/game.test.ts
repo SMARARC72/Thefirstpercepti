@@ -61,6 +61,25 @@ describe("createGameFromCreation", () => {
     expect(Array.isArray(game.rumors)).toBe(true);
   });
 
+  it("starts the player at a location with mechanical exits", () => {
+    // Regression guard for the documented "locations have no exits" gap.
+    // moveReducer needs at least one exit to function; if worldLoader stops
+    // mapping JSON exits, this will catch it before the player ever tries
+    // to travel.
+    const game = createGameFromCreation(validCreation());
+    const startLocation = game.locations.find((l) => l.id === game.currentLocationId);
+    expect(startLocation).toBeDefined();
+    expect(startLocation?.exits.length).toBeGreaterThan(0);
+    const visibleExits = startLocation?.exits.filter((e) => e.visible) ?? [];
+    expect(visibleExits.length).toBeGreaterThan(0);
+    for (const exit of startLocation?.exits ?? []) {
+      expect(exit.toLocationId).toBeTruthy();
+      expect(exit.label).toBeTruthy();
+      // Every exit must resolve to a real location in the same game.
+      expect(game.locations.some((l) => l.id === exit.toLocationId)).toBe(true);
+    }
+  });
+
   it("produces deterministic state for same inputs", () => {
     const game1 = createGameFromCreation(validCreation());
     const game2 = createGameFromCreation(validCreation());

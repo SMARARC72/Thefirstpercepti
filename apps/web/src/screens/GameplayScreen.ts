@@ -9,6 +9,11 @@ import { NpcsPanel } from "../components/NpcsPanel";
 import { CodexPanel } from "../components/CodexPanel";
 import { JournalPanel } from "../components/JournalPanel";
 import { TabNav } from "../components/TabNav";
+import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
+import { createInventoryPanel } from "../components/InventoryPanel";
+import { createAnvilPanel } from "../components/AnvilPanel";
+import { loadForgingRecipes } from "../data/worldLoader";
+import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
 
 interface GameplayScreenProps {
@@ -27,6 +32,31 @@ export class GameplayScreen {
   private element: HTMLElement | null = null;
   private tabNav: TabNav | null = null;
   private panelInstances: Array<{ destroy: () => void }> = [];
+  // Recipes are content-static; loaded once per screen instance so a
+  // re-render on each game-state tick doesn't re-walk the JSON map.
+  private readonly recipes = loadForgingRecipes();
+  private readonly anvilLogger = getLogger();
+
+  /**
+   * The Anvil tab appears only when the player carries at least one item
+   * whose id matches an input materialId of any known recipe. Below that
+   * threshold the forge has nothing to do; hiding the tab removes a dead
+   * surface for new characters.
+   */
+  private shouldShowAnvil(game: GameState): boolean {
+    if (this.recipes.length === 0) return false;
+    if (!game.player.inventory || game.player.inventory.length === 0) return false;
+    const inventoryIds = new Set(game.player.inventory.map((i) => i.id));
+    return this.recipes.some((r) => r.inputs.some((inp) => inventoryIds.has(inp.materialId)));
+  }
+
+  private handleForge = (recipeId: string): void => {
+    // Dispatches through the same command pipe as typed input. The
+    // forgingReducer (engine) consumes inputs, rolls the smith check,
+    // and produces a tale entry + an output item on success.
+    this.anvilLogger.info("anvil.forge.intent", { recipeId });
+    void this.props.onCommand(`forge ${recipeId}`);
+  };
 
   constructor(props: GameplayScreenProps) {
     this.props = props;
@@ -40,16 +70,27 @@ export class GameplayScreen {
 
     main.appendChild(this.renderHeader(game));
 
-    const tabs: { id: GameTab; label: string }[] = [
-      { id: "tale", label: "Tale" },
-      { id: "fate", label: "Fate" },
-      { id: "status", label: "Status" },
-      { id: "world", label: "World" },
-      { id: "factions", label: "Factions" },
-      { id: "npcs", label: "NPCs" },
-      { id: "codex", label: "Codex" },
-      { id: "journal", label: "Journal" },
+    // Tab labels are diegetic — the underlying GameTab ids stay stable so
+    // store / persistence / tests are unaffected; only what the player
+    // reads changes. Tooltips carry the literal meaning for clarity.
+    const allTabs: { id: GameTab; label: string; title?: string }[] = [
+      { id: "tale", label: "The Unfolding", title: "Tale — narrative log" },
+      { id: "fate", label: "The Tally", title: "Fate — recent rolls and outcomes" },
+      { id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" },
+      { id: "trove", label: "The Trove", title: "Inventory — what the pack holds" },
+      { id: "anvil", label: "The Anvil", title: "Forging — materials, recipes, and the smith's roll" },
+      { id: "status", label: "The Vessel", title: "Status — body and mind" },
+      { id: "world", label: "The Known", title: "World — map and region" },
+      { id: "factions", label: "The Powers", title: "Factions" },
+      { id: "npcs", label: "The Met", title: "NPCs you have crossed" },
+      { id: "codex", label: "The Catalogue", title: "Codex — names, places, and things observed" },
+      { id: "journal", label: "The Witness", title: "Journal — what you noted" },
     ];
+    // Contextual reveals: only show The Anvil when the player holds at
+    // least one material that matches a known recipe input. Phase 11
+    // minimal scope; other contextual hides (Codex, Journal, etc.) can
+    // follow once the journal/codex content surfaces stabilise.
+    const tabs = allTabs.filter((t) => t.id !== "anvil" || this.shouldShowAnvil(game));
 
     this.tabNav = new TabNav({
       tabs,
@@ -130,33 +171,59 @@ export class GameplayScreen {
     region.textContent = game.world.region;
     const weather = document.createElement("span");
     weather.textContent = game.world.weather;
+    // Living-world status pill — surfaces whether the LLM-driven NPC /
+    // faction / GM-narrator agents are active. Default is "off" because
+    // GameSettings.llmEnabled starts false; enabling it via The Lens
+    // flips this pill to "on" via the update() path.
+    const llmPill = document.createElement("span");
+    llmPill.className = "llm-status-pill";
+    const llmOn = this.props.state.settings?.llmEnabled === true;
+    llmPill.dataset.state = llmOn ? "on" : "off";
+    llmPill.textContent = llmOn ? "Living world: on" : "Living world: off";
+    llmPill.title = llmOn
+      ? "Living World is active — NPCs, factions, and the GM narrator respond dynamically."
+      : "Living World is off — enable in The Lens for richer narrative.";
     world.appendChild(time);
     world.appendChild(region);
     world.appendChild(weather);
+    world.appendChild(llmPill);
 
     const actions = document.createElement("div");
     actions.className = "header-actions";
     actions.setAttribute("aria-label", "Save and navigation");
 
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.textContent = "Save";
-    saveBtn.addEventListener("click", () => this.props.onSave());
+    // Each header button now pairs its diegetic name with a small
+    // literal hint below it so new players don't have to hover to
+    // learn what "Bind" / "Recall" / "Withdraw" mean. aria-label
+    // carries the literal meaning for screen readers.
+    const headerBtn = (diegetic: string, literal: string, ariaLabel: string, onClick: () => void): HTMLButtonElement => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "header-action";
+      btn.setAttribute("aria-label", ariaLabel);
+      const big = document.createElement("span");
+      big.className = "header-action-diegetic";
+      big.textContent = diegetic;
+      const small = document.createElement("span");
+      small.className = "header-action-literal";
+      small.textContent = literal;
+      small.setAttribute("aria-hidden", "true");
+      btn.appendChild(big);
+      btn.appendChild(small);
+      btn.addEventListener("click", onClick);
+      return btn;
+    };
 
-    const loadBtn = document.createElement("button");
-    loadBtn.type = "button";
-    loadBtn.textContent = "Load";
-    loadBtn.addEventListener("click", () => this.props.onLoad());
-
-    const newBtn = document.createElement("button");
-    newBtn.type = "button";
-    newBtn.textContent = "Title";
-    newBtn.addEventListener("click", () => this.props.onNewGame());
+    const saveBtn = headerBtn("Bind", "save", "Save the current run", () => this.props.onSave());
+    const loadBtn = headerBtn("Recall", "load", "Load the last save", () => this.props.onLoad());
+    const newBtn = headerBtn("Withdraw", "title", "Return to the title", () => this.props.onNewGame());
 
     const settingsBtn = document.createElement("button");
     settingsBtn.type = "button";
-    settingsBtn.setAttribute("aria-label", "Open settings");
+    settingsBtn.className = "header-action header-action-icon";
+    settingsBtn.setAttribute("aria-label", "Open settings \u2014 The Lens");
     settingsBtn.textContent = "\u2699";
+    settingsBtn.title = "The Lens";
     settingsBtn.addEventListener("click", () => this.props.onOpenSettings());
 
     actions.appendChild(saveBtn);
@@ -218,6 +285,28 @@ export class GameplayScreen {
         this.panelInstances.push(p);
         const el = p.render();
         el.classList.add("mobile-panel");
+        return el;
+      }
+      case "sheet": {
+        const el = createCharacterSheetPanel({ player: game.player });
+        el.id = "panel-sheet";
+        el.classList.add("mobile-panel", "panel");
+        return el;
+      }
+      case "trove": {
+        const el = createInventoryPanel({ player: game.player });
+        el.id = "panel-trove";
+        el.classList.add("mobile-panel", "panel");
+        return el;
+      }
+      case "anvil": {
+        const el = createAnvilPanel({
+          player: game.player,
+          recipes: this.recipes,
+          onForge: this.handleForge,
+        });
+        el.id = "panel-anvil";
+        el.classList.add("mobile-panel", "panel");
         return el;
       }
       case "status": {
@@ -284,6 +373,15 @@ export class GameplayScreen {
         if (region) region.textContent = game.world.region;
         const weather = this.element.querySelectorAll(".world-strip span")[1];
         if (weather) weather.textContent = game.world.weather;
+        const pill = this.element.querySelector<HTMLElement>(".llm-status-pill");
+        if (pill) {
+          const llmOn = newProps.state.settings?.llmEnabled === true;
+          pill.dataset.state = llmOn ? "on" : "off";
+          pill.textContent = llmOn ? "Living world: on" : "Living world: off";
+          pill.title = llmOn
+            ? "Living World is active — NPCs, factions, and the GM narrator respond dynamically."
+            : "Living World is off — enable in The Lens for richer narrative.";
+        }
         updateVignette(game.world.danger);
 
         for (const panel of this.panelInstances) {
@@ -291,6 +389,20 @@ export class GameplayScreen {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
           }
         }
+
+        this.refreshFunctionalPanel("panel-sheet", () =>
+          createCharacterSheetPanel({ player: game.player }),
+        );
+        this.refreshFunctionalPanel("panel-trove", () =>
+          createInventoryPanel({ player: game.player }),
+        );
+        this.refreshFunctionalPanel("panel-anvil", () =>
+          createAnvilPanel({
+            player: game.player,
+            recipes: this.recipes,
+            onForge: this.handleForge,
+          }),
+        );
       }
 
       if (oldState.activeTab !== newProps.state.activeTab) {
@@ -298,6 +410,17 @@ export class GameplayScreen {
         this.syncMobilePanels(newProps.state.activeTab);
       }
     }
+  }
+
+  private refreshFunctionalPanel(panelId: string, build: () => HTMLElement): void {
+    if (!this.element) return;
+    const current = this.element.querySelector(`#${panelId}`);
+    if (!current) return;
+    const next = build();
+    next.id = panelId;
+    next.classList.add("mobile-panel", "panel");
+    if (current.classList.contains("active-panel")) next.classList.add("active-panel");
+    current.replaceWith(next);
   }
 
   private syncMobilePanels(activeTab: GameTab): void {

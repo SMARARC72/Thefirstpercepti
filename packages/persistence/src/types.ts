@@ -1,5 +1,7 @@
 /**
- * Persistence layer types aligned with database/schema.sql
+ * Persistence-layer wire types. These mirror database/schema.postgres.sql.
+ * They are sent across HTTP as JSON, so they must remain primitive-only
+ * (no Date instances — use ISO strings or `number` for ms-since-epoch).
  */
 
 export interface AgentLogEntry {
@@ -14,6 +16,7 @@ export interface AgentLogEntry {
   tokensUsed?: number;
   latencyMs?: number;
   llmContextHash?: string;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }
 
@@ -21,12 +24,24 @@ export interface NPCMemory {
   memoryId: string;
   campaignId: string;
   npcId: string;
-  memoryType: "event" | "meeting" | "place" | "item" | "conversation" | "trauma" | "triumph" | "lesson" | "rumor";
+  memoryType:
+    | "event"
+    | "meeting"
+    | "place"
+    | "item"
+    | "conversation"
+    | "trauma"
+    | "triumph"
+    | "lesson"
+    | "rumor";
   description: string;
   sourceEventId?: string;
   sourceRumorId?: string;
+  /** -1.0..1.0 negative/positive feeling */
   emotionalValence: number;
+  /** 0.0..1.0 how strongly it's felt */
   emotionalIntensity: number;
+  /** 0.0..1.0 resists decay */
   importanceScore: number;
   decayRate: number;
   timesRecalled: number;
@@ -36,6 +51,7 @@ export interface NPCMemory {
   aboutEntityId?: string;
   formedTurn: number;
   lastRecalledTurn?: number;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }
 
@@ -59,9 +75,11 @@ export interface WorldEvent {
   rollResult?: string;
   statUsed?: string;
   difficulty?: number;
+  /** 1..10 narrative weight, controls retention and recall priority. */
   importance: number;
   narrativeTags?: string[];
   turnNumber: number;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }
 
@@ -70,8 +88,10 @@ export interface Rumor {
   campaignId: string;
   sourceEventId?: string;
   content: string;
+  /** 0.0 (lie) .. 1.0 (truth) */
   truthLevel: number;
   rumorStatusId: string;
+  /** 1..10 how far this has spread */
   spreadLevel: number;
   originLocationId?: string;
   originNpcId?: string;
@@ -84,6 +104,7 @@ export interface Rumor {
   associatedFactionId?: string;
   createdTurn: number;
   lastSpreadTurn?: number;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }
 
@@ -95,28 +116,29 @@ export interface SaveSlot {
   playerId: string;
   currentSceneId?: string;
   currentLocationId?: string;
+  /** Stringified GameState (the canonical save payload). */
   worldStateBlob: string;
   checksum?: string;
   playTimeSeconds: number;
   inGameDate?: string;
   isAutoSave: boolean;
   isCheckpoint: boolean;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }
 
-export interface StateDiff {
-  diffId: string;
-  campaignId: string;
-  targetTable: string;
-  targetId: string;
-  targetColumn: string;
-  oldValue?: string;
-  newValue: string;
-  causeEventId?: string;
-  causeType: "simulation" | "player_action" | "npc_action" | "consequence" | "manual";
-  isValidated: boolean;
-  isApplied: boolean;
-  validationNotes?: string;
-  turnNumber: number;
+export interface LegacyRecord {
+  legacyId: string;
+  campaignId?: string;
+  characterName: string;
+  vector: string;
+  epitaph: string;
+  turnsSurvived: number;
+  finalLocationId?: string;
+  /** Stringified WorldSnapshot from death. */
+  worldSnapshot: string;
+  /** Stringified inheritance bundle (item, advantage, etc.). */
+  inheritance?: string;
+  /** Milliseconds since epoch. */
   timestamp: number;
 }

@@ -34,8 +34,15 @@ export class NpcsPanel {
 
     const list = document.createElement("div");
     list.className = "npc-list";
-    for (const npc of this.props.game.npcs) {
-      list.appendChild(this.renderCard(npc));
+    if (this.props.game.npcs.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty-note";
+      empty.textContent = "You have crossed no one yet. The world is wider than this room.";
+      list.appendChild(empty);
+    } else {
+      for (const npc of this.props.game.npcs) {
+        list.appendChild(this.renderCard(npc));
+      }
     }
     section.appendChild(list);
 

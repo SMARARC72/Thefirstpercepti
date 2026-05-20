@@ -24,11 +24,13 @@ export { dialogueReducer } from './reducers/dialogueReducer';
 export { investigationReducer } from './reducers/investigationReducer';
 export { conditionReducer } from './reducers/conditionReducer';
 export { deathReducer } from './reducers/deathReducer';
+export { forgingReducer } from './reducers/forgingReducer';
 export { LegacySystem } from './legacy/LegacySystem';
 export {
   getCurrentLocation,
   getNpcsAtLocation,
   rollD20,
+  rollD20WithBand,
   buildActionResult,
   makeTaleEntry,
   makeSuggestion,
@@ -41,3 +43,29 @@ export {
   makeId,
   cloneState,
 } from './engine-utils';
+export {
+  parseDiceExpression,
+  rollDice,
+  type ParsedDice,
+  type DiceRoll,
+} from './dice-expression';
+export {
+  compareRarity,
+  downgradeRarity,
+  getRarityTier,
+  loadRarityTiers,
+} from './item-rarity';
+export { attemptForge, loadForgingRecipes, validateRecipe } from './forging';
+export type {
+  AttunementRequirement,
+  ForgeOutcome,
+  ForgeOutcomeKind,
+  ForgeRecipe,
+  RarityTier,
+  RarityTierId,
+} from '@first-perception/types';
+export {
+  loadConditions5e,
+  getCondition5e,
+  evaluateConditions5e,
+} from './condition-effects-5e';

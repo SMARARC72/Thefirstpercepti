@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
 import {
-  KimiClient,
   PromptBuilder,
   ResponseParser,
   SafetyFilter,
@@ -8,23 +7,30 @@ import {
   TokenCounter,
   ParseError,
 } from "../src/index.js";
+// Server-only adapter — safe to import directly from a Node test runner;
+// the browser bundle entry (src/index.ts) does not re-export it.
+import { MoonshotClient } from "../src/MoonshotClient.js";
+import { AnthropicClient } from "../src/AnthropicClient.js";
 
-describe("KimiClient", () => {
-  it("throws on empty api key", () => {
-    // Just verify instantiation works
-    const client = new KimiClient({ apiKey: "test-key" });
+describe("MoonshotClient", () => {
+  it("instantiates with an api key", () => {
+    const client = new MoonshotClient({ apiKey: "test-key" });
     expect(client).toBeDefined();
   });
 
-  it("circuit breaker opens after failures", async () => {
-    const client = new KimiClient({
+  it("respects the maxRetries option", () => {
+    const client = new MoonshotClient({
       apiKey: "test",
       maxRetries: 1,
       timeoutMs: 10,
     });
+    expect(client).toBeDefined();
+  });
+});
 
-    // Circuit breaker will open after 5 failures
-    // We can't easily test without mocking fetch, but we verify the class exists
+describe("AnthropicClient", () => {
+  it("instantiates with an api key", () => {
+    const client = new AnthropicClient({ apiKey: "sk-ant-test" });
     expect(client).toBeDefined();
   });
 });

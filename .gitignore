@@ -8,3 +8,5 @@ coverage/
 playwright-report/
 test-results/
 .vercel/
+.playwright-mcp/
+.claude/worktrees/

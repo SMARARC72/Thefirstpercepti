@@ -1,6 +1,7 @@
 import type { GameState, TaleEntry, SuggestedAction } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
-  KimiClient,
+  LLMClient,
   PromptBuilder,
   InkSynthesizerContext,
   InkSynthesizerOutput,
@@ -17,10 +18,10 @@ export interface GMNarrativeResult {
 }
 
 export class GMNarrator {
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
 
-  constructor(options: { client: KimiClient; builder: PromptBuilder }) {
+  constructor(options: { client: LLMClient; builder: PromptBuilder }) {
     this.client = options.client;
     this.builder = options.builder;
   }
@@ -78,7 +79,7 @@ export class GMNarrator {
         taleEntry,
       };
     } catch (err) {
-      console.warn("GMNarrator merge failed:", err);
+      getLogger().warn("GMNarrator merge failed", { error: err });
       // Fallback: return player narrative as-is
       return {
         text: options.playerNarrative,

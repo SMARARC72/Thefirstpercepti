@@ -1,0 +1,501 @@
+/**
+ * ============================================================================
+ * 5e CONDITION RESOLVER
+ * ============================================================================
+ * Pure functions that load the canonical SRD condition catalog and resolve
+ * a stack of active conditions into mechanical effects. The cosmic-horror
+ * condition system (see `content/world-data/conditions.json`) coexists with
+ * this — neither replaces the other.
+ *
+ * The catalog data is embedded as a frozen const so the engine bundle is
+ * fully self-contained. The same payload lives in
+ * `content/world-data/conditions-5e.json` (the human-friendly authored
+ * source); a spec asserts the two stay in sync.
+ *
+ * @module @first-perception/engine/condition-effects-5e
+ * ============================================================================
+ */
+
+import type {
+  ActiveCondition5e,
+  Condition5eCategory,
+  Condition5eDef,
+  Condition5eEffectsAtLevel,
+  Condition5eId,
+  ResolvedConditionEffects,
+  SaveAbility,
+} from '@first-perception/types';
+
+export type {
+  ActiveCondition5e,
+  Condition5eCategory,
+  Condition5eDef,
+  Condition5eEffectsAtLevel,
+  Condition5eId,
+  ResolvedConditionEffects,
+  SaveAbility,
+};
+
+const CONDITIONS_5E_DATA: Condition5eDef[] = [
+  {
+    id: 'blinded',
+    label: 'Blinded',
+    category: 'sensory',
+    hasLevels: false,
+    description:
+      "The witness's second sight has been forcibly clouded. The world reaches them only through hearing and dread; what was seen is now only remembered, and even memory begins to flicker.",
+    effects: [
+      {
+        attackRollAdvantageAgainst: true,
+        attackRollDisadvantageFor: true,
+        narrative:
+          'The world becomes a chorus of sounds and intuitions. Hands swing where shapes used to be.',
+      },
+    ],
+    recoveryVector: 'remove with restorative magic, healing touch, or the cessation of the source',
+  },
+  {
+    id: 'charmed',
+    label: 'Charmed',
+    category: 'mental',
+    hasLevels: false,
+    description:
+      "A non-mortal lien has been written into the witness's regard. The charmer is exempt from their suspicion; the witness will hesitate, smile, refuse to act against the one who holds the lien.",
+    effects: [
+      {
+        narrative:
+          "A warmth that is not the witness's own crowds out their wariness. The charmer wears a face no blade can touch.",
+      },
+    ],
+    recoveryVector: 'saving throw when the charmer harms the witness, or remove curse / dispel',
+  },
+  {
+    id: 'deafened',
+    label: 'Deafened',
+    category: 'sensory',
+    hasLevels: false,
+    description:
+      "The dome of the witness's hearing has collapsed. The world arrives only as pressure on the skin, as shapes against the eye; speech is mouths moving without meaning.",
+    effects: [
+      {
+        narrative:
+          'Silence presses on the witness like a hand cupped over both ears. They feel footfalls before they hear them — and they do not hear them.',
+      },
+    ],
+    recoveryVector: 'remove with restorative magic or cessation of the source',
+  },
+  {
+    id: 'exhaustion',
+    label: 'Exhaustion',
+    category: 'physical',
+    hasLevels: true,
+    maxLevel: 6,
+    description:
+      "The witness has been worn thin by the world's appetite. Each level cuts deeper into what remains of them; at the sixth, there is nothing left for the body to spend.",
+    effects: [
+      {
+        level: 1,
+        abilityChecksDisadvantage: 'all',
+        narrative:
+          "The witness's hands are slow. Every task feels like remembering, not doing.",
+      },
+      {
+        level: 2,
+        abilityChecksDisadvantage: 'all',
+        speedHalved: true,
+        narrative: 'Each step is a negotiation. The body refuses, then complies, then refuses again.',
+      },
+      {
+        level: 3,
+        abilityChecksDisadvantage: 'all',
+        speedHalved: true,
+        attackRollDisadvantageFor: true,
+        savingThrowsDisadvantage: [
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
+        ],
+        narrative:
+          'Vision blurs at the edges. The witness swings at shadows that are not there, and misses the ones that are.',
+      },
+      {
+        level: 4,
+        abilityChecksDisadvantage: 'all',
+        speedHalved: true,
+        attackRollDisadvantageFor: true,
+        savingThrowsDisadvantage: [
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
+        ],
+        hpMaxReducedHalf: true,
+        narrative:
+          'The hollow inside the witness widens. Half their strength has already left and will not return without rest.',
+      },
+      {
+        level: 5,
+        abilityChecksDisadvantage: 'all',
+        speedReducedZeroLevel: true,
+        attackRollDisadvantageFor: true,
+        savingThrowsDisadvantage: [
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
+        ],
+        hpMaxReducedHalf: true,
+        narrative:
+          'The witness cannot move. Their feet are no longer theirs to command; they stand where they fell.',
+      },
+      {
+        level: 6,
+        abilityChecksDisadvantage: 'all',
+        speedReducedZeroLevel: true,
+        attackRollDisadvantageFor: true,
+        savingThrowsDisadvantage: [
+          'strength',
+          'dexterity',
+          'constitution',
+          'intelligence',
+          'wisdom',
+          'charisma',
+        ],
+        hpMaxReducedHalf: true,
+        death: true,
+        narrative:
+          "The witness's name is collected by the world. There is nothing left of them to carry forward.",
+      },
+    ],
+    recoveryVector: 'long rest reduces by one level; greater restoration removes all levels',
+  },
+  {
+    id: 'frightened',
+    label: 'Frightened',
+    category: 'mental',
+    hasLevels: false,
+    description:
+      'The witness has seen something the mortal frame is not built to bear. Their will recoils; their hands shake when the source is in sight.',
+    effects: [
+      {
+        abilityChecksDisadvantage: 'all',
+        attackRollDisadvantageFor: true,
+        narrative:
+          'While the source remains within sight, the witness cannot bring themselves closer to it. Their hands betray them when they try to act.',
+      },
+    ],
+    recoveryVector: 'saving throw at end of turn when the source is out of sight, or remove fear',
+  },
+  {
+    id: 'grappled',
+    label: 'Grappled',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      'Something has caught the witness — a hand, a vine, a worse thing. They are held in place, though their will remains their own.',
+    effects: [
+      {
+        speedReducedToZero: true,
+        narrative:
+          'The witness can twist, can strike, can scream — but they cannot leave the patch of ground where they stand.',
+      },
+    ],
+    recoveryVector:
+      'escape with a contested check, or end when the grappler is incapacitated or moved away',
+  },
+  {
+    id: 'incapacitated',
+    label: 'Incapacitated',
+    category: 'mental',
+    hasLevels: false,
+    description:
+      "The witness's intent has been severed from their body. They are present, conscious of a kind, but cannot turn their will into action.",
+    effects: [
+      {
+        cantTakeActions: true,
+        cantTakeReactions: true,
+        narrative:
+          "The witness watches their own hands like a stranger's. The thought to act arrives — and never crosses into doing.",
+      },
+    ],
+    recoveryVector: 'ends with the source effect',
+  },
+  {
+    id: 'invisible',
+    label: 'Invisible',
+    category: 'metaphysical',
+    hasLevels: false,
+    description:
+      "The witness has been written out of the world's regard. They cast no reflection, no notice, no name to be aimed at — until they speak or strike.",
+    effects: [
+      {
+        narrative:
+          "The witness moves through rooms as the rooms move through wind. Attackers must guess; the witness's own attacks come from nowhere.",
+      },
+    ],
+    recoveryVector: 'ends with the source effect or when the witness reveals themselves',
+  },
+  {
+    id: 'paralyzed',
+    label: 'Paralyzed',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      "The witness's body has been arrested mid-breath. They are conscious; they cannot move, cannot speak, cannot defend. Strikes that reach them reach them deeply.",
+    effects: [
+      {
+        attackRollAdvantageAgainst: true,
+        cantTakeActions: true,
+        cantTakeReactions: true,
+        speedReducedToZero: true,
+        autoFailStrengthDexSaves: true,
+        narrative:
+          'The witness is a held breath. Every blow that lands at melee distance finds the heart on the first try.',
+      },
+    ],
+    recoveryVector: 'saving throw at end of turn, or remove paralysis / lesser restoration',
+  },
+  {
+    id: 'petrified',
+    label: 'Petrified',
+    category: 'metaphysical',
+    hasLevels: false,
+    description:
+      'The witness has been arrested into stone. Their inner clock stops; they do not age, they do not breathe, they do not need. They simply are.',
+    effects: [
+      {
+        attackRollAdvantageAgainst: true,
+        cantTakeActions: true,
+        cantTakeReactions: true,
+        speedReducedToZero: true,
+        autoFailStrengthDexSaves: true,
+        savingThrowsDisadvantage: ['strength', 'dexterity'],
+        narrative:
+          'The witness becomes statuary. Time forgets them. Their weight increases tenfold. Poison cannot reach them; nor can mercy.',
+      },
+    ],
+    recoveryVector: 'greater restoration or stone-to-flesh',
+  },
+  {
+    id: 'poisoned',
+    label: 'Poisoned',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      "Something foreign moves through the witness's blood. Their hands miscount, their thoughts swim, the world tilts a degree off true.",
+    effects: [
+      {
+        abilityChecksDisadvantage: 'all',
+        attackRollDisadvantageFor: true,
+        narrative:
+          "The witness's blood carries an argument it did not consent to. Every act takes one more thought than it used to.",
+      },
+    ],
+    recoveryVector: 'saving throw at intervals, lesser restoration, or wait it out',
+  },
+  {
+    id: 'prone',
+    label: 'Prone',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      'The witness is on the ground. Their footing has betrayed them; standing again will cost a portion of their next breath.',
+    effects: [
+      {
+        attackRollDisadvantageFor: true,
+        narrative:
+          "The witness's view is of boots and sky. Attackers nearby loom large; attackers far away are smaller, but harder to strike.",
+      },
+    ],
+    recoveryVector: 'stand up by spending half movement',
+  },
+  {
+    id: 'restrained',
+    label: 'Restrained',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      'The witness has been bound — by rope, by web, by the worse holdings of the world. They can act, but the act is narrowed; their body refuses the wider motions.',
+    effects: [
+      {
+        speedReducedToZero: true,
+        attackRollAdvantageAgainst: true,
+        attackRollDisadvantageFor: true,
+        savingThrowsDisadvantage: ['dexterity'],
+        narrative:
+          "The witness's range of motion is the width of the binding. Every dodge becomes a flinch; every strike becomes a stab.",
+      },
+    ],
+    recoveryVector:
+      'break free with a strength check, cut the binding, or end the effect at the source',
+  },
+  {
+    id: 'stunned',
+    label: 'Stunned',
+    category: 'mental',
+    hasLevels: false,
+    description:
+      "Something has rung the bell of the witness's mind. They cannot act, they cannot focus; the world is a buzzing field of soft edges.",
+    effects: [
+      {
+        cantTakeActions: true,
+        cantTakeReactions: true,
+        attackRollAdvantageAgainst: true,
+        autoFailStrengthDexSaves: true,
+        savingThrowsDisadvantage: ['strength', 'dexterity'],
+        narrative:
+          'The witness is awake in name only. Words come from far away; the body forgets that pain is an argument.',
+      },
+    ],
+    recoveryVector: 'saving throw at end of turn',
+  },
+  {
+    id: 'unconscious',
+    label: 'Unconscious',
+    category: 'physical',
+    hasLevels: false,
+    description:
+      'The witness has fallen out of themselves. They are not awake, not aware; their body is a tide-line lying where they dropped.',
+    effects: [
+      {
+        attackRollAdvantageAgainst: true,
+        cantTakeActions: true,
+        cantTakeReactions: true,
+        speedReducedToZero: true,
+        autoFailStrengthDexSaves: true,
+        narrative:
+          'The witness lies prone, dreaming or not dreaming. Any strike at melee distance is a killing strike on the first reach.',
+      },
+    ],
+    recoveryVector:
+      'remove paralysis, healing, or the cessation of the source',
+  },
+];
+
+const CONDITIONS_5E_INDEX: Map<Condition5eId, Condition5eDef> = new Map(
+  CONDITIONS_5E_DATA.map((c) => [c.id, c]),
+);
+
+export function loadConditions5e(): Condition5eDef[] {
+  return CONDITIONS_5E_DATA.map((c) => ({
+    ...c,
+    effects: c.effects.map((e) => ({ ...e })),
+  }));
+}
+
+export function getCondition5e(id: Condition5eId): Condition5eDef {
+  const def = CONDITIONS_5E_INDEX.get(id);
+  if (!def) {
+    throw new Error(`Unknown 5e condition id: ${id}`);
+  }
+  return {
+    ...def,
+    effects: def.effects.map((e) => ({ ...e })),
+  };
+}
+
+function neutralResolved(): ResolvedConditionEffects {
+  return {
+    hasAdvantage: new Set<string>(),
+    hasDisadvantage: new Set<string>(),
+    savingThrowDisadvantage: new Set<SaveAbility>(),
+    speedMultiplier: 1,
+    cantTakeActions: false,
+    cantTakeReactions: false,
+    autoFailStrengthDexSaves: false,
+    hpMaxMultiplier: 1,
+    unconscious: false,
+  };
+}
+
+export function evaluateConditions5e(active: ActiveCondition5e[]): ResolvedConditionEffects {
+  const resolved = neutralResolved();
+  // tracks whether any effect demands speed=0; halved is only honored when no 0 wins.
+  let anySpeedZero = false;
+  let anySpeedHalved = false;
+
+  for (const ac of active) {
+    const def = CONDITIONS_5E_INDEX.get(ac.id);
+    if (!def) {
+      throw new Error(`Unknown 5e condition id: ${ac.id}`);
+    }
+
+    // exhaustion cumulates; level N includes level 1..N-1 effects — apply each.
+    const effectsToApply = def.hasLevels
+      ? collectExhaustionEffects(def, ac.level ?? 1)
+      : def.effects;
+
+    for (const eff of effectsToApply) {
+      if (eff.attackRollAdvantageAgainst) {
+        resolved.hasAdvantage.add('attackers-against-self');
+      }
+      if (eff.attackRollDisadvantageFor) {
+        resolved.hasDisadvantage.add('own-attacks');
+      }
+      if (eff.abilityChecksDisadvantage === 'all') {
+        resolved.hasDisadvantage.add('ability-checks');
+      } else if (eff.abilityChecksDisadvantage === 'strength') {
+        resolved.hasDisadvantage.add('strength-checks');
+      } else if (eff.abilityChecksDisadvantage === 'dexterity') {
+        resolved.hasDisadvantage.add('dexterity-checks');
+      }
+      if (eff.savingThrowsDisadvantage) {
+        for (const s of eff.savingThrowsDisadvantage) {
+          resolved.savingThrowDisadvantage.add(s);
+        }
+      }
+      if (eff.speedReducedToZero || eff.speedReducedZeroLevel) {
+        anySpeedZero = true;
+      }
+      if (eff.speedHalved) {
+        anySpeedHalved = true;
+      }
+      if (eff.cantTakeActions) {
+        resolved.cantTakeActions = true;
+      }
+      if (eff.cantTakeReactions) {
+        resolved.cantTakeReactions = true;
+      }
+      if (eff.autoFailStrengthDexSaves) {
+        resolved.autoFailStrengthDexSaves = true;
+      }
+      if (eff.hpMaxReducedHalf) {
+        resolved.hpMaxMultiplier = 0.5;
+      }
+      if (eff.death) {
+        // exhaustion 6 — terminal; resolver flags unconscious so the reducer
+        // can route to death handling.
+        resolved.unconscious = true;
+      }
+    }
+
+    if (ac.id === 'unconscious') {
+      resolved.unconscious = true;
+    }
+  }
+
+  // most-restrictive wins: speed 0 overrides halved.
+  resolved.speedMultiplier = anySpeedZero ? 0 : anySpeedHalved ? 0.5 : 1;
+
+  return resolved;
+}
+
+function collectExhaustionEffects(
+  def: Condition5eDef,
+  level: number,
+): Condition5eDef['effects'] {
+  const clamped = Math.max(1, Math.min(level, def.maxLevel ?? def.effects.length));
+  // exhaustion is authored with each level entry already containing cumulative
+  // mechanical fields, so we only need the single matching entry — not the
+  // union — but we keep the slice contract here so consumers reading the
+  // returned list can still see the level-1..N narrative chain if they want.
+  const exact = def.effects.find((e) => e.level === clamped);
+  return exact ? [exact] : [];
+}

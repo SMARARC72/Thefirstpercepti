@@ -5282,8 +5282,8 @@
   ],
   "listDefs": {},
   "_metadata": {
-    "sourceFile": "narrative\\main.ink",
-    "compiledAt": "2026-05-19T21:56:42.535Z",
+    "sourceFile": "narrative/main.ink",
+    "compiledAt": "2026-05-19T23:31:14.271Z",
     "knots": [
       "arrival",
       "arrival_look",

@@ -8,6 +8,8 @@
  * ============================================================================
  */
 
+import type { RarityTierId, AttunementRequirement } from './items-5e.js';
+
 // =============================================================================
 // PRIMITIVES
 // =============================================================================
@@ -32,6 +34,50 @@ export const RESULT_BANDS = [
   "strong_success",
   "critical_success",
 ] as const;
+
+/**
+ * Coarse 4-band roll classification. Maps to TaleTone via rollBandToTaleTone
+ * and from the finer-grained 7-band ResultBand via resultBandToRollBand.
+ *
+ * Phase 8d introduces this as the consistency layer between mechanical
+ * outcomes and narrative tone. Phase 9 will adopt it as the return type
+ * from rollD20 in the combat rewrite.
+ */
+export type RollBand = "disaster" | "failure" | "success" | "triumph";
+
+/**
+ * Map a coarse RollBand to its canonical narrative TaleTone.
+ *
+ * Note: TaleTone has 5 values (quiet | warning | danger | success | cosmic)
+ * but only 4 of them have a mechanical outcome (RollBand) counterpart.
+ * 'quiet' is reserved for passive / non-roll tale entries.
+ */
+export function rollBandToTaleTone(band: RollBand): TaleTone {
+  switch (band) {
+    case "disaster":
+      return "danger";
+    case "failure":
+      return "warning";
+    case "success":
+      return "success";
+    case "triumph":
+      return "cosmic";
+  }
+}
+
+/**
+ * Collapse the 7-band ResultBand into the coarse 4-band RollBand:
+ *   critical_failure | failure          -> disaster
+ *   partial_failure  | success_with_cost -> failure
+ *   clean_success    | strong_success   -> success
+ *   critical_success                    -> triumph
+ */
+export function resultBandToRollBand(r: ResultBand): RollBand {
+  if (r === "critical_failure" || r === "failure") return "disaster";
+  if (r === "partial_failure" || r === "success_with_cost") return "failure";
+  if (r === "clean_success" || r === "strong_success") return "success";
+  return "triumph"; // critical_success
+}
 
 export type Severity = "implicit" | "explicit" | "off_screen";
 
@@ -93,6 +139,38 @@ export const CORE_STATS = [
 
 export interface Stats extends Record<CoreStat, number> {}
 
+export type HitDie = 'd6' | 'd8' | 'd10' | 'd12';
+
+export interface HitDicePool {
+  current: number;
+  max: number;
+  die: HitDie;
+}
+
+export interface AttunementSlots {
+  used: number;
+  max: number;
+}
+
+export interface SpellSlotLevel {
+  current: number;
+  max: number;
+}
+
+/**
+ * 5e action economy — what slots remain available this turn.
+ *
+ * Each turn the player has up to one action, one bonus action, and one
+ * reaction. Combat verbs consume a slot; turn-end restores them. Optional
+ * on the canonical type so older fixtures and snapshots remain valid;
+ * reducers treat a missing field as "all slots available".
+ */
+export interface ActionEconomy {
+  action: boolean;
+  bonusAction: boolean;
+  reaction: boolean;
+}
+
 export interface Player {
   id: UUID;
   name: string;
@@ -109,6 +187,12 @@ export interface Player {
   conditions: Condition[];
   inventory: Item[];
   tags: string[];
+  proficiencyBonus: number;
+  hitDice: HitDicePool;
+  savingThrowProficiencies: ReadonlyArray<CoreStat>;
+  attunementSlots: AttunementSlots;
+  spellSlots?: Record<number, SpellSlotLevel>;
+  actionEconomy?: ActionEconomy;
 }
 
 // =============================================================================
@@ -117,17 +201,27 @@ export interface Player {
 
 export type ItemType = "weapon" | "armor" | "consumable" | "tool" | "key" | "document" | "misc";
 
+export interface ItemRequirements {
+  form?: CharacterForm;
+  posture?: KnowledgePosture;
+  domain?: Domain;
+}
+
 export interface Item {
   id: UUID;
   name: string;
   type: ItemType;
   description: string;
+  rarity: RarityTierId;
   durability?: number;
   maxDurability?: number;
   charges?: number;
   maxCharges?: number;
   effects?: ItemEffect[];
   equipSlot?: "hand" | "body" | "head" | "accessory";
+  magical?: boolean;
+  attunement?: AttunementRequirement;
+  requires?: ItemRequirements;
 }
 
 export interface ItemEffect {
@@ -729,7 +823,18 @@ export interface AudioCue {
 
 export type Screen = "title" | "creation" | "gameplay" | "settings" | "legacy" | "game_over";
 
-export type GameTab = "tale" | "fate" | "status" | "world" | "factions" | "npcs" | "codex" | "journal";
+export type GameTab =
+  | "tale"
+  | "fate"
+  | "sheet"
+  | "trove"
+  | "anvil"
+  | "status"
+  | "world"
+  | "factions"
+  | "npcs"
+  | "codex"
+  | "journal";
 
 export interface AppState {
   screen: Screen;
@@ -743,3 +848,31 @@ export interface AppState {
   elapsedMs: number;
   saveSlots: SaveSlot[];
 }
+
+// =============================================================================
+// LOGGER (re-exported from ./logger)
+// =============================================================================
+export { getLogger, setLogger, resetLogger } from './logger.js';
+export type { Logger, LogLevel, LogContext } from './logger.js';
+
+// =============================================================================
+// 5e RULESET (re-exported from ./items-5e, ./conditions-5e)
+// =============================================================================
+export type {
+  RarityTierId,
+  RarityTier,
+  AttunementRequirement,
+  ForgeRecipe,
+  ForgeOutcomeKind,
+  ForgeOutcome,
+} from './items-5e.js';
+export type {
+  Condition5eId,
+  Condition5eCategory,
+  SaveAbility,
+  Condition5eEffectsAtLevel,
+  Condition5eDef,
+  ActiveCondition5e,
+  ResolvedConditionEffects,
+} from './conditions-5e.js';
+

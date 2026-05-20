@@ -160,6 +160,33 @@ export function getAvailableStatValues(statName: string, remainingPoints: number
 }
 
 // =============================================================================
+// SPELL SLOTS — POSTURE GATING (Phase 10)
+// =============================================================================
+
+/**
+ * Posture-driven spell slot allocation at character creation.
+ *
+ * The 'witness' posture is the cosmic-horror seer archetype — the only
+ * posture that opens with metaphysical-access "spell slots" (renamed
+ * downstream as "Glimpses" in UI copy; the canonical schema field stays
+ * `spellSlots` to match 5e nomenclature). Other postures may unlock
+ * casting later through encounters, but at character creation only
+ * witness grants slots.
+ *
+ * Minimal scope per the Phase 10 directive: one posture, one slot level,
+ * two slots. Phase 11 or later can grow the table to cover other
+ * postures and higher-level slots.
+ */
+export function spellSlotsForPosture(
+  posture: KnowledgePosture
+): Record<number, { current: number; max: number }> | undefined {
+  if (posture === 'witness') {
+    return { 1: { current: 2, max: 2 } };
+  }
+  return undefined;
+}
+
+// =============================================================================
 // CHARACTER CREATION ENGINE
 // =============================================================================
 
@@ -504,6 +531,14 @@ export class CharacterCreationEngine {
       createdAt: Date.now(),
       actionsTaken: 0,
       timePlayed: 0,
+      // 5e defaults for a level-1 character. Spell slots are seeded by
+      // posture below (Phase 10); combat reducer consumes/resets actionEconomy.
+      proficiencyBonus: 2,
+      hitDice: { current: 1, max: 1, die: 'd8' },
+      savingThrowProficiencies: [],
+      attunementSlots: { used: 0, max: 3 },
+      actionEconomy: { action: true, bonusAction: true, reaction: true },
+      spellSlots: spellSlotsForPosture(inputs.knowledgePosture.posture),
     };
 
     // 6. Generate starting items

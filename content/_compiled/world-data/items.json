@@ -4,6 +4,8 @@
     "name": "Cracked Brass Lens",
     "type": "tool",
     "description": "Shows you things you are not ready to see. Cracks spider outward from the center like frozen lightning.",
+    "rarity": "common",
+    "magical": true,
     "effects": [
       { "type": "reveal", "target": "hidden_exits", "value": 1 }
     ],
@@ -14,6 +16,8 @@
     "name": "Sealed Fountain Water",
     "type": "consumable",
     "description": "Water that is not wet. Memory held in surface tension. Drinking it is not recommended.",
+    "rarity": "common",
+    "magical": true,
     "charges": 1,
     "maxCharges": 1,
     "effects": [
@@ -24,36 +28,44 @@
     "id": "item-iron-token",
     "name": "Dull Iron Token",
     "type": "misc",
-    "description": "A token with no visible markings. It is warm to the touch, as if recently held by someone feverish."
+    "description": "A token with no visible markings. It is warm to the touch, as if recently held by someone feverish.",
+    "rarity": "common"
   },
   {
     "id": "item-dry-matches",
     "name": "Three Dry Matches",
     "type": "tool",
-    "description": "Ordinary matches that burn with a blue flame. The flame casts no shadow."
+    "description": "Ordinary matches that burn with a blue flame. The flame casts no shadow.",
+    "rarity": "common"
   },
   {
     "id": "item-testimony-scrap",
     "name": "Sealed Scrap of Testimony",
     "type": "document",
-    "description": "A fragment of someone's sworn statement. The seal is intact, but the paper inside is blank."
+    "description": "A fragment of someone's sworn statement. The seal is intact, but the paper inside is blank.",
+    "rarity": "common"
   },
   {
     "id": "item-violet-thread",
     "name": "Violet Thread",
     "type": "misc",
-    "description": "Thread pulled from a drain near the fountain. It twitches occasionally, as if remembering being part of something larger."
+    "description": "Thread pulled from a drain near the fountain. It twitches occasionally, as if remembering being part of something larger.",
+    "rarity": "common"
   },
   {
     "id": "item-backwards-book",
     "name": "Book of Backwards Names",
     "type": "document",
-    "description": "A book from the market with pages that turn backwards. The names inside are arranged by date of un-birth."
+    "description": "A book from the market with pages that turn backwards. The names inside are arranged by date of un-birth.",
+    "rarity": "common",
+    "magical": true
   },
   {
     "id": "item-court-seal",
     "name": "Scratched Court Seal",
     "type": "key",
-    "description": "A seal from the Drowned Court, scratched into fountain stone. It opens nothing physical."
+    "description": "A seal from the Drowned Court, scratched into fountain stone. It opens nothing physical.",
+    "rarity": "common",
+    "magical": true
   }
 ]

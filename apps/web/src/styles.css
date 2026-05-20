@@ -355,6 +355,31 @@
   flex-wrap: wrap;
 }
 
+/* Living-world status pill — surfaces whether the LLM-driven NPC /
+ * faction / GM-narrator agents are active. Sits in the world-strip
+ * alongside time / region / weather. */
+.llm-status-pill {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+  font-size: calc(var(--text-sm) * 0.92);
+  letter-spacing: 0.02em;
+  cursor: help;
+}
+
+.llm-status-pill[data-state="on"] {
+  color: var(--teal-500, #66e0c2);
+  border-color: var(--teal-500, #66e0c2);
+}
+
+.llm-status-pill[data-state="off"] {
+  color: var(--text-tertiary, var(--text-secondary));
+  opacity: 0.8;
+}
+
 .header-actions {
   margin-left: auto;
 }
@@ -362,6 +387,33 @@
 .header-actions button {
   min-width: 64px;
   min-height: 44px;
+}
+
+/* Diegetic + literal pairing for header buttons — the big diegetic
+ * label is decorative; the small literal label below grounds new
+ * players who don't yet know what "Bind / Recall / Withdraw" mean. */
+.header-action {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  line-height: 1;
+}
+
+.header-action-diegetic {
+  font-size: var(--text-sm);
+}
+
+.header-action-literal {
+  font-size: calc(var(--text-sm) * 0.78);
+  color: var(--text-tertiary, var(--text-secondary));
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+.header-action.header-action-icon {
+  font-size: 1.25rem;
 }
 
 /* ── Tab Nav ── */
@@ -480,23 +532,35 @@
   font-weight: 800;
 }
 
-/* ── Onboarding ── */
+/* ── Onboarding — Witness Briefing ── */
 .onboarding-overlay {
   flex-shrink: 0;
   border: 1px solid var(--border-gold);
   border-radius: var(--radius-md);
   background: var(--gold-glow);
-  padding: 1rem;
+  padding: 1.15rem 1.15rem 1rem;
 }
 
 .onboarding-overlay h2 {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.6rem;
   font-size: var(--text-md);
+  line-height: 1.25;
 }
 
-.onboarding-overlay p:last-child {
-  margin-bottom: 0;
+.onboarding-overlay p + p {
+  margin-top: 0.55rem;
   color: var(--text-secondary);
+}
+
+.onboarding-overlay .primary-action {
+  margin-top: 0.85rem;
+}
+
+.onboarding-help-hint {
+  margin-top: 0.55rem;
+  font-size: calc(var(--text-sm) * 0.95);
+  color: var(--text-tertiary, var(--text-secondary));
+  font-style: italic;
 }
 
 /* ── Tale ── */
@@ -746,6 +810,16 @@ dd {
   font-size: var(--text-sm);
 }
 
+.condition-pill {
+  cursor: help;
+}
+
+.condition-pill.condition-physical { border-color: var(--crimson-500, var(--border-default)); }
+.condition-pill.condition-mental { border-color: var(--teal-500, var(--border-default)); }
+.condition-pill.condition-magical { border-color: var(--violet-500, var(--border-default)); }
+.condition-pill.condition-divine { border-color: var(--gold-500, var(--border-default)); }
+.condition-pill.condition-environmental { border-color: var(--text-tertiary, var(--border-default)); }
+
 /* ── Inventory / Journal lists ── */
 .inventory {
   display: grid;
@@ -846,6 +920,68 @@ dd {
   padding: 1rem 1.25rem;
 }
 
+/* ── The Lens — settings drawer ──
+ * Anchored to the right edge, slides in over the gameplay surface.
+ * The `.modal-backdrop` overlay still dims the rest of the screen;
+ * the `.settings-drawer-backdrop` variant just turns off the
+ * grid centring so the drawer can stretch to the right edge.
+ */
+.settings-drawer-backdrop {
+  display: block;
+  padding: 0;
+}
+
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 92vw);
+  max-height: 100svh;
+  overflow: auto;
+  border-left: 1px solid var(--border-default);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  animation: drawer-slide-in var(--duration-normal) var(--ease-out) forwards;
+}
+
+@keyframes drawer-slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+[data-reduced-motion="true"] .settings-drawer {
+  animation: none;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--surface-elevated);
+  z-index: 1;
+}
+
+.drawer-header button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.5rem;
+  line-height: 1;
+  border-radius: var(--radius-md);
+}
+
+.drawer-body {
+  padding: 1rem 1.25rem 2rem;
+  flex: 1 1 auto;
+}
+
 .settings-section {
   margin-bottom: 1.5rem;
 }
@@ -876,6 +1012,30 @@ dd {
 .toggle-label input[type="checkbox"] {
   width: auto;
   accent-color: var(--teal-500);
+}
+
+/* "Saved" pill that flashes next to a setting input after a change.
+ * Created on first change, reused thereafter; opacity transition gives
+ * the 1.5s fade. */
+.settings-saved-pill {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--teal-500, #66e0c2);
+  color: var(--background, #05060a);
+  font-size: calc(var(--text-sm) * 0.78);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(-1px);
+  transition: opacity var(--duration-normal, 220ms) var(--ease-out, ease), transform var(--duration-normal, 220ms) var(--ease-out, ease);
+  pointer-events: none;
+}
+
+.settings-saved-pill.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .save-slots {
@@ -1291,3 +1451,1188 @@ dd {
     display: none !important;
   }
 }
+
+/* ============================================================================
+ * GRIMOIRE OVERRIDE LAYER — Phase 6 (Immersion & diegetic UI)
+ * ============================================================================
+ * Layered on top of the void/teal/gold base. Refines tale tone typography,
+ * adds soft turn dividers, restyles status meters as in-world objects, and
+ * makes suggestion chips read as italic inner thoughts.
+ *
+ * Reachable from any consumer via the shared tokens declared in
+ * ui-system/src/styles.css under "OCCULT GRIMOIRE LAYER".
+ * ========================================================================== */
+
+.tale-panel {
+  /* Layer the paper grain only inside the tale, where the player reads
+   * for stretches. Heading rails, dock, and rails stay clean. */
+  position: relative;
+}
+.tale-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grimoire-grain);
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+.tale-panel > * { position: relative; z-index: 1; }
+
+/* Tale body sits Cormorant for the reading run; UI chrome around it
+ * stays Inter so meters/buttons keep their dense readability. */
+.tale-entry h3 {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--bone-100);
+}
+.tale-entry p {
+  font-family: var(--font-grimoire);
+  font-weight: 400;
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--bone-200);
+  /* Subtle ink-bleed on long-form prose. */
+  text-shadow: 0 0 1px rgba(243, 238, 224, 0.06);
+}
+.tale-entry span {
+  /* "Turn N" eyebrow — quieter than before, still parsable. */
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+}
+
+/* Per-tone typography. Pre-existing tone rules (border-color) stay above; */
+/* these layer atmospheric weight without removing the color signal.       */
+.tale-entry.danger h3 {
+  color: var(--ember-300);
+  text-shadow: 0 0 14px var(--ember-glow);
+}
+.tale-entry.danger p {
+  color: var(--bone-100);
+}
+.tale-entry.danger::after {
+  /* A soft ember halo at the right margin to telegraph weight without
+   * pulling text out of register. */
+  content: "";
+  position: absolute;
+  inset: -1px -1px -1px auto;
+  width: 3px;
+  background: linear-gradient(180deg, transparent 0%, var(--ember-glow-strong) 50%, transparent 100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  pointer-events: none;
+}
+.tale-entry.warning h3 { color: var(--sigil-300); }
+.tale-entry.warning p  { font-style: italic; color: var(--bone-200); }
+
+.tale-entry.success h3 { color: var(--sigil-400); }
+.tale-entry.success::before {
+  /* Sigil-gold edge — quiet, ceremonial. */
+  content: "";
+  position: absolute;
+  inset: -1px auto -1px -1px;
+  width: 2px;
+  background: var(--sigil-glow);
+  pointer-events: none;
+}
+
+.tale-entry.cosmic h3 {
+  color: var(--twilight-400);
+  letter-spacing: 0.05em;
+}
+.tale-entry.cosmic p {
+  font-style: italic;
+  color: var(--twilight-400);
+}
+
+/* Whisper tone — lower-importance prose, indented + dimmed. */
+.tale-entry.whisper {
+  border-left: 2px solid var(--border-subtle);
+  background: transparent;
+  margin-left: 1.5rem;
+}
+.tale-entry.whisper p {
+  font-style: italic;
+  color: var(--whisper-fg);
+  font-size: 0.98rem;
+}
+
+/* Quiet (default) keeps the bone palette; just ensure relative positioning
+ * so the danger/success edge accents anchor correctly. */
+.tale-entry { position: relative; }
+
+/* Soft turn dividers between consecutive entries. A 1px hairline + a tiny
+ * glyph make the reading flow easier to scan without screaming structure. */
+.tale-entry + .tale-entry {
+  margin-top: 0.5rem;
+}
+.tale-entry + .tale-entry::before {
+  content: "·";
+  position: absolute;
+  top: -0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--bone-600);
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  opacity: 0.7;
+}
+
+/* ── Turn pill — diegetic. Pulses faster as danger rises (Phase 6b can wire
+ *    the data-attr from JS; CSS handles the visuals). ────────────────────── */
+.turn-pill {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-400);
+  border: 1px solid var(--border-subtle);
+  background: var(--ink-800);
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+}
+.turn-pill[data-danger="high"] {
+  border-color: var(--ember-700);
+  color: var(--ember-300);
+  animation: ember-breathe 3.4s ease-in-out infinite;
+}
+.turn-pill[data-danger="extreme"] {
+  border-color: var(--ember-500);
+  color: var(--ember-400);
+  animation: ember-breathe 2.0s ease-in-out infinite;
+}
+
+/* ── Suggestion chips — italic inner thoughts, not buttons that yell. ────── */
+.quick-actions button {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  font-size: 0.98rem;
+  color: var(--bone-200);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.85rem;
+  transition:
+    border-color var(--duration-fast) var(--ease-smooth),
+    color var(--duration-fast) var(--ease-smooth),
+    background var(--duration-fast) var(--ease-smooth);
+}
+.quick-actions button::before {
+  content: "— ";
+  color: var(--bone-600);
+}
+.quick-actions button:hover,
+.quick-actions button:focus-visible {
+  color: var(--sigil-300);
+  border-color: var(--border-gold);
+  background: rgba(216, 169, 58, 0.04);
+  outline: none;
+}
+
+/* ── Command dock heading — sigil-gold eyebrow, Cormorant placeholder. ───── */
+.command-dock textarea,
+.command-dock input[type="text"] {
+  font-family: var(--font-grimoire);
+  font-size: 1.05rem;
+  color: var(--bone-100);
+  background: var(--ink-800);
+  border: 1px solid var(--border-subtle);
+}
+.command-dock textarea::placeholder,
+.command-dock input[type="text"]::placeholder {
+  font-style: italic;
+  color: var(--bone-600);
+}
+
+/* ── Status meters reskinned as in-world objects ─────────────────────────── */
+/*    HP → wax seal (warm ember disc), focus → candle (gold rising), danger
+ *    → tide line. These augment the existing .meter components; they do not
+ *    replace them, so accessibility / aria stays intact. */
+
+.meter[data-kind="hp"] .meter-fill,
+.meter--hp .meter-fill {
+  background: radial-gradient(circle at 30% 35%,
+    var(--ember-300) 0%,
+    var(--ember-500) 55%,
+    var(--ember-700) 100%);
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,0.4),
+    0 0 8px var(--ember-glow);
+}
+
+.meter[data-kind="focus"] .meter-fill,
+.meter--focus .meter-fill {
+  background: linear-gradient(180deg,
+    var(--sigil-300) 0%,
+    var(--sigil-500) 60%,
+    var(--sigil-700) 100%);
+  box-shadow:
+    inset 0 0 4px rgba(0,0,0,0.35),
+    0 0 6px var(--sigil-glow);
+}
+
+.meter[data-kind="danger"] .meter-fill,
+.meter--danger .meter-fill {
+  background: linear-gradient(90deg,
+    var(--ink-700) 0%,
+    var(--ember-700) 60%,
+    var(--ember-500) 95%);
+  /* Tide-line: thin top edge highlight implies water rising. */
+  box-shadow:
+    inset 0 1px 0 rgba(217,97,58,0.5),
+    inset 0 0 4px rgba(0,0,0,0.4);
+}
+
+/* Meter labels join Cormorant for tactile, in-world voice. */
+.meter-label {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--bone-400);
+}
+
+/* ── Tab nav — diegetic tabs; labels are renamed in TS but the style here
+ *    treats them more like an index in a bound volume. ─────────────────── */
+.tab-nav button {
+  font-family: var(--font-grimoire);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--bone-400);
+}
+.tab-nav button.active {
+  color: var(--sigil-300);
+  text-shadow: 0 0 8px var(--sigil-glow);
+}
+
+/* ── Panel headings — Cormorant + sigil eyebrow. ─────────────────────────── */
+.panel-heading h2 {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+}
+.panel-heading .eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sigil-700);
+}
+
+/* ── Save / Load buttons in the dock — diegetic copy fits a smaller serif. */
+.dock-actions button {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+}
+
+/* ── Title coalesce — each letter is animated by gsap from a scattered
+ *    offset, so it must be inline-block to receive transforms. ────────── */
+.title-coalesce .title-letter,
+.title-coalesce .title-space {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+.title-coalesce .title-space {
+  width: 0.4em;
+}
+/* Reduced-motion: skip the choreography entirely. */
+@media (prefers-reduced-motion: reduce) {
+  .title-coalesce .title-letter,
+  .title-coalesce .title-space {
+    will-change: auto;
+  }
+}
+[data-reduced-motion="true"] .title-coalesce .title-letter,
+[data-reduced-motion="true"] .title-coalesce .title-space {
+  will-change: auto;
+}
+
+/* ── Death ceremony — heading glow, epitaph in sigil-gold, stylized
+ *    underline beneath "The Record Closes". ───────────────────────────── */
+.death-heading-coalesce {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bone-100);
+  text-shadow:
+    0 0 14px var(--sigil-glow),
+    0 0 32px rgba(216, 169, 58, 0.12);
+  position: relative;
+  padding-bottom: 0.4em;
+}
+.death-heading-coalesce::after {
+  /* Stylized underline that "carves" into the page below the heading. */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 56%;
+  max-width: 18rem;
+  height: 1px;
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      var(--sigil-700) 20%,
+      var(--sigil-400) 50%,
+      var(--sigil-700) 80%,
+      transparent 100%);
+  opacity: 0.85;
+  box-shadow: 0 0 8px var(--sigil-glow);
+}
+.death-heading-coalesce .title-letter,
+.death-heading-coalesce .title-space {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.epitaph-coalesce {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-size: 1.18rem;
+  line-height: 1.55;
+  color: var(--sigil-300);
+  text-shadow: 0 0 10px var(--sigil-glow);
+}
+.epitaph-coalesce .title-letter,
+.epitaph-coalesce .title-space {
+  display: inline-block;
+}
+
+/* Death screen sits over a slightly warmer gradient than the base so
+ * the page itself feels "lower" — light leaving the room. */
+.death-screen {
+  background: radial-gradient(circle at 50% 30%,
+    var(--ink-700) 0%,
+    var(--ink-900) 55%,
+    var(--void-950) 100%);
+}
+
+/* Reduced-motion users land on the resting state immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .death-heading-coalesce .title-letter,
+  .death-heading-coalesce .title-space,
+  .epitaph-coalesce .title-letter,
+  .epitaph-coalesce .title-space {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+[data-reduced-motion="true"] .death-heading-coalesce .title-letter,
+[data-reduced-motion="true"] .death-heading-coalesce .title-space,
+[data-reduced-motion="true"] .epitaph-coalesce .title-letter,
+[data-reduced-motion="true"] .epitaph-coalesce .title-space {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* ── Legacy stone register — slab-per-life layout. ───────────────────────── */
+.legacy-list-container.register {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-6);
+  padding: var(--space-2) var(--space-1);
+}
+
+.legacy-slab {
+  position: relative;
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(180deg,
+      rgba(20, 18, 24, 0.85) 0%,
+      rgba(13, 10, 16, 0.95) 100%);
+  border: 1px solid var(--border-subtle);
+  box-shadow:
+    inset 0 1px 0 rgba(216, 169, 58, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 4px 14px rgba(0, 0, 0, 0.45);
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth),
+    border-color var(--duration-normal) var(--ease-smooth);
+}
+.legacy-slab::before {
+  /* Carved-stone grain: layered noise + a soft top vignette. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grimoire-grain);
+  background-size: 200px 200px;
+  background-repeat: repeat;
+  opacity: 0.45;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.legacy-slab::after {
+  /* A single sigil-gold rune sealing the slab — purely decorative. */
+  content: "✦";
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: 0.8rem;
+  color: var(--sigil-700);
+  letter-spacing: 0;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.legacy-slab:hover,
+.legacy-slab:focus-within {
+  transform: translateY(-2px);
+  border-color: var(--border-gold);
+  box-shadow:
+    inset 0 1px 0 rgba(216, 169, 58, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 8px 22px rgba(0, 0, 0, 0.55),
+    0 0 18px var(--sigil-glow);
+}
+.legacy-slab h2 {
+  font-family: var(--font-grimoire);
+  font-weight: 600;
+  font-size: 1.45rem;
+  color: var(--bone-100);
+  margin: 0 0 var(--space-2);
+  letter-spacing: 0.02em;
+}
+.legacy-slab .slab-meta {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+  margin-bottom: var(--space-3);
+}
+.legacy-slab .slab-epitaph {
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  color: var(--sigil-300);
+  margin: 0 0 var(--space-3);
+}
+.legacy-slab .slab-detail {
+  /* Hidden by default; reveals on hover/focus-within. */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height var(--duration-normal) var(--ease-smooth),
+    opacity var(--duration-normal) var(--ease-smooth);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  color: var(--bone-400);
+}
+.legacy-slab:hover .slab-detail,
+.legacy-slab:focus-within .slab-detail {
+  max-height: 12rem;
+  opacity: 1;
+  margin-top: var(--space-2);
+}
+.legacy-slab .slab-detail dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+  margin-top: var(--space-1);
+}
+.legacy-slab .slab-detail dd {
+  margin: 0 0 var(--space-1);
+  color: var(--bone-200);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legacy-slab,
+  .legacy-slab .slab-detail {
+    transition: none;
+  }
+}
+[data-reduced-motion="true"] .legacy-slab,
+[data-reduced-motion="true"] .legacy-slab .slab-detail {
+  transition: none;
+}
+
+/* ── Tale auto-scroll pill — pops in when new entries arrive while the
+ *    reader is scrolled back. ──────────────────────────────────────────── */
+.tale-recall-pill {
+  position: sticky;
+  bottom: var(--space-4);
+  align-self: center;
+  margin: 0 auto;
+  padding: 0.35rem 0.9rem;
+  background: var(--ink-800);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  color: var(--sigil-300);
+  font-family: var(--font-grimoire);
+  font-style: italic;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 12px var(--sigil-glow);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity var(--duration-normal) var(--ease-smooth),
+    transform var(--duration-normal) var(--ease-smooth);
+}
+.tale-recall-pill.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.tale-recall-pill::after {
+  content: " ↓";
+}
+
+/* ===== BEGIN CharacterSheetPanel (Wave 1 Unit 4) ===== */
+/* Grimoire-register character sheet. Two-column at >=768px, single
+   column below. The modifier on each ability tile is the dominant
+   element — it is what players read at the table. */
+.character-sheet-panel {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-gold, var(--border-default));
+  border-radius: var(--radius-md);
+  background:
+    radial-gradient(
+      circle at top left,
+      var(--sigil-glow, rgba(216, 169, 58, 0.06)) 0%,
+      transparent 55%
+    ),
+    var(--ink-800, var(--surface-elevated));
+  color: var(--text-primary);
+  font-family: var(--font-grimoire, var(--font-body));
+}
+
+.character-sheet-panel h2 {
+  margin: 0 0 0.5rem;
+  color: var(--sigil-300, var(--gold-400));
+  font-family: var(--font-grimoire, var(--font-display));
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide, 0.05em);
+  text-shadow: 0 0 6px var(--sigil-glow, transparent);
+}
+
+.csp-section-heading {
+  font-size: var(--text-md);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+}
+
+/* ── Identity strip ─────────────────────────────────────────────── */
+.csp-identity {
+  display: grid;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-gold, var(--border-default));
+}
+
+.csp-identity-name {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-tight, -0.02em);
+  text-transform: none;
+}
+
+.csp-identity-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.25rem 1rem;
+  margin: 0;
+}
+
+.csp-identity-meta dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-identity-meta dd {
+  margin: 0 0 0.4rem;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ── Two-column body ───────────────────────────────────────────── */
+.csp-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .csp-body {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+.csp-column {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* ── Ability score 3x3 grid ────────────────────────────────────── */
+.csp-ability-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csp-ability-tile {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.65rem 0.5rem;
+  border: 1px solid var(--border-gold, var(--border-default));
+  border-radius: var(--radius-md);
+  background: rgba(216, 169, 58, 0.04);
+  text-align: center;
+}
+
+.csp-ability-name {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-ability-mod {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--sigil-300, var(--gold-400));
+  text-shadow: 0 0 10px var(--sigil-glow, transparent);
+}
+
+.csp-ability-score {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Combat callouts row ───────────────────────────────────────── */
+.csp-callouts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.csp-callout {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+}
+
+.csp-callout dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-callout dd {
+  margin: 0;
+  color: var(--sigil-300, var(--gold-400));
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Saving throws list ────────────────────────────────────────── */
+.csp-save-list {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.csp-save-row {
+  display: grid;
+  grid-template-columns: 1.2rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.csp-save-row.is-proficient {
+  border-color: var(--border-gold, var(--border-default));
+  background: rgba(216, 169, 58, 0.05);
+}
+
+.csp-save-sigil {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  line-height: 1;
+}
+
+.csp-save-row.is-proficient .csp-save-sigil {
+  color: var(--sigil-400, var(--gold-500));
+  text-shadow: 0 0 6px var(--sigil-glow, transparent);
+}
+
+.csp-save-name {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-transform: capitalize;
+}
+
+.csp-save-value {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Status footer ─────────────────────────────────────────────── */
+.csp-status-meters {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.csp-status-meter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.csp-status-meter dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider, 0.1em);
+  color: var(--text-tertiary);
+}
+
+.csp-status-meter dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+/* ===== END CharacterSheetPanel (Wave 1 Unit 4) ===== */
+/* ===== BEGIN InventoryPanel (Wave 1 Unit 5) ===== */
+/* Slot-grid inventory with rarity-tier borders. Lives apart from
+ * StatusPanel's plain list so Phase 8a can swap the host without
+ * disturbing legacy code. Tokens here are scoped to .inventory-panel
+ * so they cannot leak into other surfaces. */
+.inventory-panel {
+  --rarity-common: #c8b89a;      /* bone */
+  --rarity-uncommon: #6f8a5f;    /* moss */
+  --rarity-rare: #4f8a8a;        /* teal */
+  --rarity-very-rare: #4a3a6a;   /* twilight */
+  --rarity-legendary: #b8932a;   /* sigil-gold */
+  --rarity-artifact: #a83a1f;    /* ember */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--ink-800, var(--surface-elevated));
+  padding: var(--space-4);
+  font-family: var(--font-grimoire, var(--font-body));
+  color: var(--bone-200, var(--text-primary));
+}
+
+.inventory-empty {
+  margin: 0;
+  padding: var(--space-3) 0;
+  color: var(--whisper-fg, var(--text-secondary));
+  font-style: italic;
+  text-align: center;
+}
+
+.inventory-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  /* 4 cols wide; auto-narrows to 2 on small viewports via the media query
+   * below. minmax floor keeps a tile readable in the cramped case. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.inventory-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(243, 238, 224, 0.03);
+  /* Border colour comes from the per-tile --slot-tier custom property
+   * so we author one rule and let the tier paint itself. */
+  border: 1px solid var(--slot-tier, var(--rarity-common));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
+  transition: transform var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    box-shadow var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.inventory-slot:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    0 0 10px color-mix(in srgb, var(--slot-tier, var(--rarity-common)) 35%, transparent);
+}
+
+.inventory-slot-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.inventory-slot-name {
+  margin: 0;
+  font-size: var(--text-base, 0.95rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--bone-100, var(--text-primary));
+}
+
+.inventory-slot-glyphs {
+  display: inline-flex;
+  gap: var(--space-1);
+  font-size: var(--text-sm, 0.85rem);
+  line-height: 1;
+}
+
+.inventory-glyph-equipped { color: var(--sigil-400, var(--gold-400)); }
+.inventory-glyph-attune   { color: var(--ember-400, var(--gold-400)); }
+
+.inventory-slot-tier {
+  margin: 0;
+  font-size: var(--text-xs, 0.7rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slot-tier, var(--rarity-common));
+  /* Slight desaturation so darker tiers stay legible on ink-800. */
+  filter: saturate(0.85);
+}
+
+.inventory-slot-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle, rgba(202, 211, 196, 0.08));
+}
+
+.inventory-slot-weight {
+  font-size: var(--text-xs, 0.7rem);
+  color: var(--text-tertiary, #6b6f7a);
+  font-variant-numeric: tabular-nums;
+}
+
+.inventory-slot-action {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--bone-100, var(--text-primary));
+  font-family: inherit;
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    background var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.inventory-slot-action:hover:not(:disabled) {
+  border-color: var(--sigil-400, var(--gold-400));
+  background: rgba(245, 217, 130, 0.08);
+}
+
+.inventory-slot-action[data-action="unequip"] {
+  border-color: var(--border-crimson, rgba(255, 107, 107, 0.35));
+}
+
+.inventory-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+
+.inventory-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0_5, 0.15rem);
+}
+
+.inventory-stat-label {
+  font-size: var(--text-xs, 0.7rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #6b6f7a);
+}
+
+.inventory-stat-value {
+  font-family: var(--font-grimoire, var(--font-body));
+  font-size: var(--text-md, 1.05rem);
+  color: var(--sigil-300, var(--gold-300));
+  font-variant-numeric: tabular-nums;
+}
+/* ===== END InventoryPanel (Wave 1 Unit 5) ===== */
+/* ===== BEGIN AnvilPanel (Phase 9b) ===== */
+/* Forging UI surface — recipe tiles + materials surface. Rarity tokens
+ * are scoped to .anvil-panel (mirroring the .inventory-panel ladder) so
+ * the same custom-property names cannot collide with another surface's
+ * recolouring. Mobile-first: recipes stack as a single column; the
+ * wider grid kicks in above 720px. */
+.anvil-panel {
+  --rarity-common: #c8b89a;
+  --rarity-uncommon: #6f8a5f;
+  --rarity-rare: #4f8a8a;
+  --rarity-very-rare: #4a3a6a;
+  --rarity-legendary: #b8932a;
+  --rarity-artifact: #a83a1f;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--ink-800, var(--surface-elevated));
+  padding: var(--space-4);
+  font-family: var(--font-grimoire, var(--font-body));
+  color: var(--bone-200, var(--text-primary));
+}
+
+.anvil-empty {
+  margin: 0;
+  padding: var(--space-3) 0;
+  color: var(--whisper-fg, var(--text-secondary));
+  font-style: italic;
+  text-align: center;
+}
+
+.anvil-materials {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.anvil-section-heading {
+  margin: 0;
+  font-size: var(--text-sm, 0.85rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--whisper-fg, var(--text-secondary));
+}
+
+.anvil-materials-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.anvil-material-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0.25rem 0;
+  border-bottom: 1px dashed var(--border-subtle, rgba(202, 211, 196, 0.08));
+}
+
+.anvil-material-name {
+  color: var(--bone-100, var(--text-primary));
+}
+
+.anvil-material-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--sigil-300, var(--gold-300));
+}
+
+.anvil-materials-empty {
+  margin: 0;
+  font-style: italic;
+  color: var(--whisper-fg, var(--text-secondary));
+}
+
+.anvil-recipes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .anvil-recipes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.anvil-recipe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: rgba(243, 238, 224, 0.03);
+  border: 1px solid var(--slot-tier, var(--rarity-common));
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
+  transition:
+    transform var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    box-shadow var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.anvil-recipe:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    0 0 10px color-mix(in srgb, var(--slot-tier, var(--rarity-common)) 35%, transparent);
+}
+
+.anvil-recipe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.anvil-recipe-label {
+  margin: 0;
+  font-size: var(--text-base, 0.95rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--bone-100, var(--text-primary));
+}
+
+.anvil-recipe-rarity {
+  font-size: var(--text-xs, 0.7rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slot-tier, var(--rarity-common));
+  filter: saturate(0.85);
+}
+
+.anvil-recipe-inputs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.15rem;
+  font-size: var(--text-sm, 0.85rem);
+}
+
+.anvil-recipe-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--bone-200, var(--text-primary));
+}
+
+.anvil-recipe-input.is-missing {
+  color: var(--text-tertiary, #6b6f7a);
+}
+
+.anvil-recipe-input-ratio {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs, 0.72rem);
+}
+
+.anvil-recipe-input.is-missing .anvil-recipe-input-ratio {
+  color: var(--border-crimson, rgba(255, 107, 107, 0.55));
+}
+
+.anvil-recipe-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle, rgba(202, 211, 196, 0.08));
+}
+
+.anvil-recipe-dc {
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #6b6f7a);
+  font-variant-numeric: tabular-nums;
+}
+
+.anvil-recipe-action {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm, 4px);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--bone-100, var(--text-primary));
+  font-family: inherit;
+  font-size: var(--text-xs, 0.72rem);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    background var(--duration-fast, 150ms) var(--ease-smooth, ease),
+    opacity var(--duration-fast, 150ms) var(--ease-smooth, ease);
+}
+
+.anvil-recipe-action:hover:not(:disabled) {
+  border-color: var(--sigil-400, var(--gold-400));
+  background: rgba(245, 217, 130, 0.08);
+}
+
+.anvil-recipe-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* ===== END AnvilPanel (Phase 9b) ===== */

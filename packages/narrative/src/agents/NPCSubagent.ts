@@ -1,6 +1,7 @@
 import type { GameState, NpcState, TaleEntry } from "@first-perception/types";
+import { getLogger } from "@first-perception/types";
 import type {
-  KimiClient,
+  LLMClient,
   PromptBuilder,
   NPCActionContext,
   NPCActionOutput,
@@ -8,7 +9,7 @@ import type {
   NPCDialogueOutput,
 } from "@first-perception/llm-client";
 import { npcActionTemplate, npcDialogueTemplate } from "@first-perception/llm-client";
-import type { SqliteRepository } from "@first-perception/persistence";
+import type { GameRepository } from "@first-perception/persistence";
 import { makeId } from "@first-perception/engine";
 
 export interface NPCActionResult {
@@ -24,15 +25,15 @@ export interface NPCActionResult {
 
 export class NPCSubagent {
   private npcId: string;
-  private client: KimiClient;
+  private client: LLMClient;
   private builder: PromptBuilder;
-  private repository?: SqliteRepository;
+  private repository?: GameRepository;
 
   constructor(options: {
     npcId: string;
-    client: KimiClient;
+    client: LLMClient;
     builder: PromptBuilder;
-    repository?: SqliteRepository;
+    repository?: GameRepository;
   }) {
     this.npcId = options.npcId;
     this.client = options.client;
@@ -85,7 +86,7 @@ export class NPCSubagent {
 
       return result;
     } catch (err) {
-      console.warn(`NPCSubagent(${this.npcId}) decision failed:`, err);
+      getLogger().warn("NPCSubagent decision failed", { npcId: this.npcId, error: err });
       return null;
     }
   }
@@ -133,7 +134,7 @@ export class NPCSubagent {
 
       return output.dialogue;
     } catch (err) {
-      console.warn(`NPCSubagent(${this.npcId}) dialogue failed:`, err);
+      getLogger().warn("NPCSubagent dialogue failed", { npcId: this.npcId, error: err });
       return null;
     }
   }

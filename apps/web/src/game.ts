@@ -2,8 +2,7 @@ export const SAVE_KEY = "the-first-perception.save.v1";
 
 import { loadWorldData, pickStartLocation } from "./data/worldLoader";
 
-export type { Screen } from "@first-perception/types";
-export type GameTab = "tale" | "fate" | "status" | "world" | "factions" | "npcs" | "codex" | "journal";
+export type { Screen, GameTab } from "@first-perception/types";
 export type CreationStepIndex = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type CharacterForm =
@@ -364,11 +363,16 @@ export function createGameFromCreation(creation: CreationState): GameState {
       maxFocus,
       tags: [formLabel, postureLabel, domainLabel(domain)],
       inventory: [
-        { id: "item-start", name: creation.desiredItem.trim() || "a dull iron token", type: "misc", description: "" },
-        { id: "item-matches", name: "three dry matches", type: "tool", description: "" },
-        { id: "item-testimony", name: "a sealed scrap of testimony", type: "document", description: "" },
+        { id: "item-start", name: creation.desiredItem.trim() || "a dull iron token", type: "misc", description: "", rarity: "common" },
+        { id: "item-matches", name: "three dry matches", type: "tool", description: "", rarity: "common" },
+        { id: "item-testimony", name: "a sealed scrap of testimony", type: "document", description: "", rarity: "common" },
       ],
       conditions: worldData.conditions.filter((c) => c.typeId === "salt_touched"),
+      proficiencyBonus: 2,
+      hitDice: { current: 1, max: 1, die: "d8" },
+      savingThrowProficiencies: [],
+      attunementSlots: { used: 0, max: 3 },
+      spellSlots: posture === "witness" ? { 1: { current: 2, max: 2 } } : undefined,
     },
     currentLocationId: startLoc.id,
     locations,
