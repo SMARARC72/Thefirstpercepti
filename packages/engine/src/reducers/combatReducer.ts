@@ -47,17 +47,26 @@ export function combatReducer(game: GameState, command: string, rng: SeededRNG):
     narrative.push(makeTaleEntry(game, 'Disaster', 'Your attack goes horribly wrong.', 'danger'));
     patches.push(patchIncrement('/player/hp', -3));
   } else if (roll.band === 'failure') {
-    narrative.push(makeTaleEntry(game, 'Miss', 'You fail to connect.', 'warning'));
     if (npc) {
       const npcRuin = (npc?.dialogueState?.ruin as number) ?? 0;
       const retaliation = Math.max(1, Math.floor((npcBody + npcRuin) / 4));
       patches.push(patchIncrement('/player/hp', -retaliation));
+      narrative.push(makeTaleEntry(game, 'Counterstrike', `You fail to connect; ${npc.name} answers for ${retaliation}.`, 'danger'));
+    } else {
+      narrative.push(makeTaleEntry(game, 'Miss', 'You fail to connect.', 'warning'));
     }
   } else if (roll.band === 'partial_failure') {
-    narrative.push(makeTaleEntry(game, 'Graze', 'A glancing blow.', 'warning'));
     if (npc) {
       const idx = game.npcs.findIndex((n) => n.id === npc!.id);
-      if (idx >= 0) patches.push(patchIncrement(`/npcs/${idx}/stats/body`, -1));
+      if (idx >= 0) {
+        const currentHp = ((npc.dialogueState?.hp as number) ?? 6) - 1;
+        patches.push(patchReplace(`/npcs/${idx}/hp`, currentHp));
+        narrative.push(makeTaleEntry(game, 'Graze', `A glancing blow lands on ${npc.name} for 1.`, 'warning'));
+      } else {
+        narrative.push(makeTaleEntry(game, 'Graze', 'A glancing blow.', 'warning'));
+      }
+    } else {
+      narrative.push(makeTaleEntry(game, 'Graze', 'A glancing blow.', 'warning'));
     }
   } else {
     let damage = Math.max(1, (game.player.stats.body ?? 0) + (game.player.stats.ruin ?? 0));

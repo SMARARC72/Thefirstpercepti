@@ -89,7 +89,7 @@ export function moveReducer(game: GameState, command: string, rng: SeededRNG): A
       patches.push(patchReplace(`/locations/${game.locations.findIndex((l) => l.id === exit.toLocationId)}/discovered`, true));
       narrative.push(makeTaleEntry(game, 'Discovery', `You discover ${dest.name}.`, 'success'));
     }
-    if (isSneak && roll.band === 'clean_success' || roll.band === 'strong_success' || roll.band === 'critical_success') {
+    if (isSneak && (roll.band === 'clean_success' || roll.band === 'strong_success' || roll.band === 'critical_success')) {
       narrative.push(makeTaleEntry(game, 'Silent Passage', 'You move unseen.', 'quiet'));
     } else {
       narrative.push(makeTaleEntry(game, 'Movement', `You travel to ${exit.label}.`, 'quiet'));
