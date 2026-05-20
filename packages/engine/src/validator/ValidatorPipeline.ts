@@ -25,7 +25,7 @@ import type {
   ValidatorPipelineResult,
   ValidatorStage,
   ValidatorStageId,
-  ValidatorStageResult,
+  ValidatorStageOutcome,
 } from "./types.js";
 import { DEFAULT_STAGES, Stage5ContradictionCheck } from "./stages.js";
 
@@ -50,12 +50,12 @@ export class ValidatorPipeline {
 
   process(envelope: AgentEnvelope): ValidatorPipelineResult {
     const t0 = Date.now();
-    const stageResults: ValidatorStageResult[] = [];
+    const stageResults: ValidatorStageOutcome[] = [];
     let failed_at_stage: ValidatorStageId | null = null;
     const surfaced_contradictions: ValidatorPipelineResult["surfaced_contradictions"] = [];
 
     for (const stage of this.stages) {
-      let result: ValidatorStageResult;
+      let result: ValidatorStageOutcome;
       try {
         result = stage.validate(envelope);
       } catch (err: unknown) {

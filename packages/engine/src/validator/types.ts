@@ -79,7 +79,7 @@ export interface AgentEnvelope {
 }
 
 /** Result of a single validator stage. Mirrors schema_pack_v0.5 $def validator_stage_result. */
-export interface ValidatorStageResult {
+export interface ValidatorStageOutcome {
   stage_id: ValidatorStageId;
   pass: boolean;
   reason: string | null;
@@ -93,7 +93,7 @@ export interface ValidatorStageResult {
 export interface ValidatorPipelineResult {
   envelope_id: string;
   overall_pass: boolean;
-  stages: ValidatorStageResult[];
+  stages: ValidatorStageOutcome[];
   /** Which stage stopped the pipeline, if any */
   failed_at_stage: ValidatorStageId | null;
   /** Total time across all stages */
@@ -114,5 +114,5 @@ export interface ValidatorPipelineOptions {
 export interface ValidatorStage {
   readonly id: ValidatorStageId;
   readonly validator_id: string;
-  validate(envelope: AgentEnvelope): ValidatorStageResult;
+  validate(envelope: AgentEnvelope): ValidatorStageOutcome;
 }

@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import type { AgentEnvelope, ValidatorStage, ValidatorStageResult } from "./types.js";
+import type { AgentEnvelope, ValidatorStage, ValidatorStageOutcome } from "./types.js";
 
 // =============================================================================
 // Helpers
@@ -20,11 +20,11 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function pass(stage_id: ValidatorStage["id"], validator_id: string, details?: Record<string, unknown>): ValidatorStageResult {
+function pass(stage_id: ValidatorStage["id"], validator_id: string, details?: Record<string, unknown>): ValidatorStageOutcome {
   return { stage_id, pass: true, reason: null, validator_id, completed_at: nowIso(), details };
 }
 
-function fail(stage_id: ValidatorStage["id"], validator_id: string, reason: string, details?: Record<string, unknown>): ValidatorStageResult {
+function fail(stage_id: ValidatorStage["id"], validator_id: string, reason: string, details?: Record<string, unknown>): ValidatorStageOutcome {
   return { stage_id, pass: false, reason, validator_id, completed_at: nowIso(), details };
 }
 
@@ -36,7 +36,7 @@ function fail(stage_id: ValidatorStage["id"], validator_id: string, reason: stri
 export const Stage1Input: ValidatorStage = {
   id: "stage_1_input",
   validator_id: "input.v1",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
 
     if (!env || typeof env !== "object") return fail(id, vid, "envelope is not an object");
@@ -72,7 +72,7 @@ const DICE_RX = /^\s*(\d+)\s*d\s*(\d+)\s*([+\-]\s*\d+)?\s*$/i;
 export const Stage2Rules: ValidatorStage = {
   id: "stage_2_rules",
   validator_id: "rules.v1",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
 
     const rolls = env.proposal.rolls ?? [];
@@ -108,7 +108,7 @@ export const Stage2Rules: ValidatorStage = {
 export const Stage3CanonConsistency: ValidatorStage = {
   id: "stage_3_canon_consistency",
   validator_id: "canon_consistency.v1",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
     const state: any = env.game_state_before;
 
@@ -174,7 +174,7 @@ export const STATE_MANAGER_ONLY_PATHS: ReadonlyArray<string> = [
 export const Stage4CanonProgression: ValidatorStage = {
   id: "stage_4_canon_progression",
   validator_id: "canon_progression.v1",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
 
     const violations: string[] = [];
@@ -226,7 +226,7 @@ export const Stage4CanonProgression: ValidatorStage = {
 export const Stage5ContradictionCheck: ValidatorStage = {
   id: "stage_5_contradiction_check",
   validator_id: "contradiction_check.v1",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
     const state: any = env.game_state_before;
     const surfaced: Array<{ kind: string; detail: string }> = [];
@@ -298,13 +298,57 @@ const BANNED_INTROSPECTION = [
 
 /** Common jailbreak prompt-injection patterns. */
 const JAILBREAK_PATTERNS = [
+  // Instruction override
   /ignore (all )?previous (instructions|rules|prompts)/i,
-  /you are now (a |an )?(.*assistant|.*GPT|.*Claude)/i,
-  /system\s*[:>]\s*you/i,
   /(disregard|forget) (your |the )?(prompt|persona|instructions)/i,
+  // Persona override — generalized "you are now ..."
+  /you are now (a |an )?/i,
+  // Act-as / pretend
   /act as if you (are|were)/i,
   /pretend (you are|to be)/i,
-  /(reveal|show me|print) (your |the )?(system prompt|instructions|persona)/i,
+  // System prompt reveal
+  /(reveal|show me|print|share|expose) (your |the )?(system prompt|instructions|persona|rules|configuration|prompt)/i,
+  /(what|tell me) (were|are|was) (the |your )?(previous |original )?(instructions|prompt|persona|rules)/i,
+  /repeat (the )?(text|message|prompt|instructions) (above|before|previous|prior)/i,
+  // Context exfiltration / system markers
+  /system\s*[:>]/i,
+  /\[\s*system\s*\]/i,
+  /dump (your |the )?(context|prompt|history|state|configuration)/i,
+  // Role swap
+  /(switch|swap|trade) roles/i,
+  /from now on (i am|you are) (the )?(gm|game master|player|narrator|dm)/i,
+  /i (will|am the?) (narrate|narrator|gm|game master|dm)/i,
+  // Media references — known IP/properties
+  /\b(marvel|iron man|the matrix|shakespeare|harry potter|star wars|lord of the rings|game of thrones|disney|avengers)\b/i,
+  /(quote|recite|sing) (a |the )?(line|sonnet|dialogue|verse|poem|monologue|scene)/i,
+  // Math reveal in narration
+  /(recite|calculate|compute|solve|print) (pi|e\b|the digits|this calculus|this equation|this (math|problem))/i,
+  // Narrative subversion / state cheats
+  /(end|stop|terminate|skip|finish) (the )?(game|story|narration|session|adventure) (now|immediately|at once)/i,
+  /(make|set) (me|my character|my hp|my authority|my level|my score)/i,
+  /(award|give|grant) (me|my character) (\d+|infinite|max|all)/i,
+  /(reveal|show|expose|tell) (all|every) (hidden )?(secrets|truths|npcs|locations|items)/i,
+  /trigger [a-z]\.\d+/i,
+  // Encoded / indirect injection
+  /translate the following/i,
+  /decode (this |the )?(base64|hex|rot13|cipher)/i,
+  /what does ['"][^'"]*['"] mean.*\b(now|then)\b.*\bdo\b/i,
+  // Multilingual "ignore previous instructions"
+  /ignoriere alle (vorherigen|vorhergehenden)/i,
+  /ignora todas? las (instrucciones|reglas)/i,
+  /前.*指示.*無視/,
+  // Developer / admin / debug mode
+  /(enable|activate|switch to|engage) (developer|admin|debug|root|god|cheat|sudo) mode/i,
+  /^\s*sudo[\s:]/i,
+  // Social engineering — fake authority
+  /i('?m| am) (the |a )?(developer|engineer|admin|tester|qa|researcher|employee|founder)/i,
+  /(anthropic|openai|google) (told me|said|authorized|allows|permits)/i,
+  /i('?ve| have) (authorization|permission|approval)/i,
+  // Fake continuation
+  /(continue|finish|complete) (the |this |that )?(message|sentence|prompt|thought|story)\b/i,
+  // Fictional framing for jailbreak
+  /in (this )?(fictional|hypothetical|imaginary) (scenario|story|tale|narrative)/i,
+  /write a (story|tale|narrative) (where|in which) (the )?(narrator|ai|gm|model|character) (reveals|exposes|shares|tells)/i,
 ];
 
 /** Glyphs that may appear in Narrator output. Anything else fails. */
@@ -325,7 +369,7 @@ function isFlaggablePictograph(ch: string): boolean {
 export const Stage6ContentBoundary: ValidatorStage = {
   id: "stage_6_content_boundary",
   validator_id: "content_boundary.v1.rule_based",
-  validate(env: AgentEnvelope): ValidatorStageResult {
+  validate(env: AgentEnvelope): ValidatorStageOutcome {
     const id = this.id; const vid = this.validator_id;
     const violations: string[] = [];
 
