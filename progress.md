@@ -1232,6 +1232,145 @@ to avoid penalising legitimate feature work.
   scripts/validate-content.mjs) and 8d (RollBand enum) can run in
   any order now; none of them touch each other's files.
 
+---
+
+## 2026-05-20 (Session 8 cont. ²) — Phase 8b + 8c + 8d: Parallel batch landed
+
+Three independent 8-cluster fixes dispatched as background agents
+in parallel (`docs/PHASE_8B_8C_8D_BATCH_PLAN.md` captured the
+brief). All three landed as PRs into the integration branch and
+were merged together via squash.
+
+### What landed
+
+**Phase 8b — IntentClassifier hardening (PR #9 → squash `a670f9f`)**
+
+- Three confirmed misroutes fixed in
+  `packages/llm-client/src/IntentClassifier.ts`:
+  - `"break the lock"` → `narrative_only` → now → `investigation`
+    (`break`/`pick`/`force`/`unlock`/`open` added to the
+    `REDUCER_VERBS.investigation` bucket).
+  - `"go talk to the man at the gate"` → `move` → now → `dialogue`
+    via a new `PHRASE_OVERRIDES` table scanned before the
+    first-word lookup. Sibling overrides cover `"take a look"` →
+    `investigation` and `"approach and attack"` → `combat`.
+  - `"stalk the priestess"` → `social` (via `talk` substring) →
+    now → `stealth` via a new `containsWord` helper. Codex P2
+    review noted the strict-boundary fix accidentally killed
+    inflected forms; the helper now uses `\bword\w*\b` (leading
+    boundary protects `stalk`, trailing `\w*` lets `attack` match
+    `attacking`/`attacks`/`attacker`, `speak` match `speaker`,
+    `name` match `named`, etc.).
+- `DEFAULT_SYSTEM_PROMPT` rewritten to embed an explicit per-field
+  schema, enumerate every reducer/domain enum value, and add
+  per-reducer guidance. `jsonMode: true` already flows correctly
+  through the LLM client adapters; no infra change needed.
+- llm-client test count: 35 → **49** (+14 specs covering the three
+  misroutes, the inflection regression, and the LLM-prompt path).
+
+**Phase 8c — Ink scene routing validator (PR #8 → squash `2130200`)**
+
+- `scripts/validate-content.mjs` ships. `package.json:21` has
+  pointed at this file since before Phase 7; it finally exists.
+- Walks every `.ink` file under `content/narrative/` (mirrors
+  `scripts/build-content.mjs` discovery), collects knot
+  definitions + stitches, validates that every `-> target`
+  resolves to a defined knot, `DONE`, or `END`.
+- Validates the four synthetic-jump construction sites in
+  `packages/narrative/src/NarrativeEngine.ts`:
+  - `legacy_death` must exist (hardcoded fallback in `enterLegacy`).
+  - At least one `combat_*` / `dialogue_*` / `consequence_*` knot
+    each (sanity for the encounter / NPC / consequence dispatchers).
+- Soft-warns on NPC ids in `content/world-data/npcs.json` lacking
+  a dedicated `dialogue_<id>` knot (engine falls back to default).
+- Codex P1 review caught a real over-permissive bug: dotted
+  diverts `-> knot.stitch` previously passed validation as long as
+  `knot` existed, even when `stitch` was gibberish. Fix in commit
+  `8a8b529` (now folded into the squash merge): `parseInk`
+  tracks the current knot context and records every `= stitchname`
+  line as `Knot.stitchname` qualified; the resolution check no
+  longer head-falls-back.
+- Current corpus: clean — 14 files, 64 knots, 119 diverts all
+  resolve. One soft warning for `npc-keeper` (the dead Bell Keeper
+  has no dialogue knot; that's the warn-only NPC fallback case).
+
+**Phase 8d — RollBand enum + reducer tale-tone consistency (PR #10 → squash `6b4e78d`)**
+
+- Canonical `RollBand` type added to `packages/types/src/index.ts`:
+  `'disaster' | 'failure' | 'success' | 'triumph'`. Coarse
+  4-band classification layered above the existing 7-band
+  `ResultBand`.
+- Two runtime helpers exported alongside the type:
+  - `rollBandToTaleTone(band): TaleTone`
+  - `resultBandToRollBand(r: ResultBand): RollBand`
+- Phase 9 will adopt `RollBand` as the return type from `rollD20`
+  in the combat rewrite; this phase ships the type + helpers +
+  the consistency-at-the-test-level invariant only.
+- One reducer body/tone mismatch surfaced + fixed:
+  `combatReducer.ts:77` — the `'Slain'` tale entry on the
+  successful-kill path was tagged tone `'danger'`. Retoned to
+  `'quiet'` (the kill is consequential but not a player setback).
+  All other reducers were already self-consistent.
+- New spec `packages/engine/tests/roll-band-consistency.spec.ts`
+  drives the six roll-gated reducers through deterministic
+  failure and success outcomes (fixed-die RNG subclass), asserts
+  tone matches outcome on both branches.
+- Engine test count: 113 → **127** (+14 specs).
+
+### Codex reviews
+
+PRs #8 and #9 received automated reviews from the Codex bot. Both
+findings were real and small enough to confidently fix before
+merge:
+
+- **PR #8 (validator)** — P1 dotted-divert head-fallback bug.
+  Fixed at `8a8b529` and merged.
+- **PR #9 (IntentClassifier)** — P2 inflection regression after
+  the word-boundary switch. Fixed at `1f8e628` with 4 added regression
+  specs (matched inflected verbs across combat/social/lore
+  domains; locked in the `stalk → stealth` protection).
+
+PR #10 received no review comments.
+
+### Vercel deployment infra issue (flagged, not fixed)
+
+All three PRs surfaced the same Vercel project config bug — `thefirstpercepti-web` runs `npm run build:packages && npm run build` with Root Directory set to `apps/web/`, but `build:packages` only exists at repo root, so the project always errors. The parallel `thefirstpercepti-web-mect` deployment (correctly configured) succeeded on each PR. Flagged for user decision; not silently changing the Vercel settings.
+
+### Verify (integration branch post-merge)
+
+- `npm run typecheck` — clean across packages + apps/web + api.
+- `npm run build:packages` — clean.
+- `npm test` — **231 tests passing** across all 5 workspaces:
+  persistence 18 / llm-client 49 / narrative 10 / engine 127 /
+  apps/web 27.
+- `npm run build` — 1079 modules, 3.23 s.
+- `npm run content:validate` — exit 0 on clean tree.
+- Bundle delta vs Phase 8a baseline:
+  - `main.js` 202.21 → **203.83 kB** raw (+1.62 kB, +0.65 kB gzip) —
+    RollBand helpers + IntentClassifier additions land.
+  - `vendor.js` 455.80 kB — unchanged.
+  - `main.css` 44.75 kB — unchanged.
+- Leak grep on `apps/web/dist/assets/*.js` — 0 hits.
+
+### What's still ahead
+
+- **Phase 9** — Forging UI ("The Anvil") tab + combat reducer
+  rewrite using dice expressions + 5e action economy
+  (action / bonus / reaction). 9a and 9b are independent and
+  parallelisable: 9a (engine combat) touches `combatReducer.ts`
+  + dice-expression integration + the engine-internal/canonical
+  Player bridge growth; 9b (forging UI) touches new apps/web
+  panel + GameTab + GameplayScreen wiring (same pattern as Phase
+  8a).
+- **Phase 10** — Spell slots: posture-driven casting surfaces
+  for any posture that grants it. Player.spellSlots is already
+  in the canonical schema (Phase 7); no consumer uses it yet.
+- **Phase 11** — Sentry wiring, streaming LLM tokens, bundle
+  budget CI gate, "The Lens" settings drawer, Witness Briefing
+  first-run overlay, accessibility hardening, contextual tab
+  reveals. The bundle gate should anchor at the post-Phase-9
+  floor (Phase 9 is the last big additive feature wave).
+
 ## Build Commands
 
 ```bash

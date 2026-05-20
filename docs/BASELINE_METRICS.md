@@ -24,6 +24,29 @@ regressions are caught early and budgets stay honest.
 > hand-rolled DOM shim in `tests/character-sheet-panel.spec.ts` replaced with
 > happy-dom, standardising the apps/web test environment). Leak grep still 0.
 > 1077 → 1079 modules through vite.
+>
+> **Phase 8b + 8c + 8d update (same date — parallel batch, merged together):**
+> Three independent story-engine fixes landed via PRs #8 / #9 / #10:
+>
+> - **8b (IntentClassifier hardening):** llm-client suite 35 → 49 (+14 specs).
+>   Three confirmed misroutes fixed (`break the lock` → investigation;
+>   `go talk to <x>` → dialogue; `stalk` no longer matches `talk` substring),
+>   stem-prefix `\bword\w*\b` matching so inflected forms (`attacking`,
+>   `speaking`, `named`, `reading`) keep routing to the right domain. LLM prompt
+>   embeds explicit schema. (Codex P2 review caught + fixed before merge.)
+> - **8c (validator):** `scripts/validate-content.mjs` ships, exit 0 on the
+>   current corpus (14 .ink files, 64 knots, 119 diverts). Soft-warns on
+>   `npc-keeper` missing dialogue knot (expected fallback). (Codex P1 review
+>   caught dotted-divert head-fallback + fixed before merge; validator now
+>   requires the full qualified `knot.stitch` name.)
+> - **8d (RollBand):** engine suite 113 → **127** (+14 specs). Canonical
+>   `RollBand` type + `rollBandToTaleTone` / `resultBandToRollBand` helpers in
+>   types package. One reducer tone fix: `combatReducer.ts` `'Slain'` tone
+>   `'danger'` → `'quiet'` (success-branch entries must never be `'danger'`).
+>
+> Bundle: `main.js` 202.21 → **203.83 kB** raw (+1.62 kB), gzip 58.03 → 58.68
+> (+0.65 kB). `vendor.js` + `main.css` unchanged. Leak grep still 0. Total
+> tests across all workspaces: 201 → **231** (+30).
 
 ## Tests
 
