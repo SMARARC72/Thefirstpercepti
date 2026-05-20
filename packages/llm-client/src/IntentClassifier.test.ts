@@ -3,15 +3,26 @@ import { IntentClassifier, regexClassify } from "./IntentClassifier.js";
 import type { LLMClient } from "./LLMClient.js";
 import type { LLMResponse } from "./types.js";
 
-function stubClient(content: string, latencyMs = 5): LLMClient {
+interface ChatCall {
+  system: string;
+  user: string;
+  jsonMode?: boolean;
+}
+
+function stubClient(
+  content: string,
+  latencyMs = 5,
+  calls: ChatCall[] = [],
+): LLMClient {
+  const reply = (): LLMResponse => ({
+    id: "stub",
+    content,
+    usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
+    latencyMs,
+  });
   return {
     async complete(): Promise<LLMResponse> {
-      return {
-        id: "stub",
-        content,
-        usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
-        latencyMs,
-      };
+      return reply();
     },
     async *stream() {
       return {
@@ -21,13 +32,9 @@ function stubClient(content: string, latencyMs = 5): LLMClient {
         latencyMs: 0,
       };
     },
-    async chat(): Promise<LLMResponse> {
-      return {
-        id: "stub",
-        content,
-        usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
-        latencyMs,
-      };
+    async chat(opts): Promise<LLMResponse> {
+      calls.push({ system: opts.system, user: opts.user, jsonMode: opts.jsonMode });
+      return reply();
     },
   };
 }
@@ -114,5 +121,95 @@ describe("IntentClassifier", () => {
     const intent = await classifier.classify("rest by the wall");
     expect(intent.reducer).toBe("rest");
     expect(intent.source).toBe("regex");
+  });
+});
+
+/**
+ * Phase 8b regression specs: each test pins down a real misroute fixed
+ * in the regex map + the schema-explicit LLM prompt. See the commit
+ * message for the full before/after audit.
+ */
+describe("regexClassify — Phase 8b misroute fixes", () => {
+  it("routes 'break the lock' to investigation (was narrative_only)", () => {
+    const intent = regexClassify("break the lock");
+    expect(intent.reducer).toBe("investigation");
+    expect(intent.verb).toBe("break");
+  });
+
+  it("routes 'pick the lock' to investigation (lockpicking is a skill check, not item use)", () => {
+    const intent = regexClassify("pick the lock");
+    expect(intent.reducer).toBe("investigation");
+  });
+
+  it("routes 'go talk to the man at the gate' to dialogue (was move)", () => {
+    const intent = regexClassify("go talk to the man at the gate");
+    expect(intent.reducer).toBe("dialogue");
+  });
+
+  it("routes 'head over and ask the smith' to dialogue (was move)", () => {
+    const intent = regexClassify("head over and ask the smith");
+    expect(intent.reducer).toBe("dialogue");
+  });
+
+  it("routes 'take a closer look at the altar' to investigation (was item)", () => {
+    const intent = regexClassify("take a closer look at the altar");
+    expect(intent.reducer).toBe("investigation");
+  });
+
+  it("routes 'approach and attack the warden' to combat (was move)", () => {
+    const intent = regexClassify("approach and attack the warden");
+    expect(intent.reducer).toBe("combat");
+  });
+
+  it("does NOT match domain 'social' on 'stalk the priestess' (was social via 'talk' substring)", () => {
+    // Word-boundary scan stops "stalk" leaking into the social hint via "talk".
+    const intent = regexClassify("stalk the priestess");
+    expect(intent.domain).toBe("stealth");
+  });
+
+  it("preserves plain 'talk to' → dialogue (no leading movement verb)", () => {
+    const intent = regexClassify("talk to sister mourn");
+    expect(intent.reducer).toBe("dialogue");
+    expect(intent.domain).toBe("social");
+  });
+
+  it("still routes plain 'go to the market' → move (no dialogue verb present)", () => {
+    const intent = regexClassify("go to the market");
+    expect(intent.reducer).toBe("move");
+  });
+});
+
+describe("IntentClassifier — Phase 8b LLM-prompt regression", () => {
+  it("passes jsonMode=true through to the LLM client and embeds the schema in the system prompt", async () => {
+    const calls: ChatCall[] = [];
+    const llmJson = JSON.stringify({
+      verb: "examine",
+      target: "altar",
+      domain: "wilderness",
+      reducer: "investigation",
+      confidence: 0.9,
+    });
+    const classifier = new IntentClassifier({
+      client: stubClient(llmJson, 5, calls),
+    });
+    await classifier.classify("examine the altar");
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].jsonMode).toBe(true);
+    // The schema-explicit prompt must enumerate every reducer kind so the
+    // LLM can't invent a new value.
+    const prompt = calls[0].system;
+    for (const kind of [
+      "move",
+      "combat",
+      "rest",
+      "item",
+      "dialogue",
+      "investigation",
+      "narrative_only",
+    ]) {
+      expect(prompt).toContain(kind);
+    }
+    expect(prompt).toMatch(/JSON only/i);
   });
 });
