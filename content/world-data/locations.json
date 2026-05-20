@@ -1,140 +1,140 @@
 [
   {
-    "id": "loc-fountain",
-    "name": "The Sunken Fountain",
-    "description": "A fountain that has been underwater for years. The water is black, and the carved names on its lip seem to shift when unobserved.",
+    "id": "loc-greywake-market-district",
+    "name": "Greywake Market District",
+    "description": "A coastal market district built on a tide that does not behave like a tide. Salt streaks every wall and inscribes its own slow handwriting into stone. Three institutions have offices within four streets of each other; they pretend not to notice each other and notice each other very precisely. The fountain at the center is dry, has been dry since before living memory, and leaks upward. Most people do not look at it directly.",
+    "regionId": "reg-greywake",
+    "dangerBase": 15,
+    "discovered": true,
+    "investigated": false,
+    "tags": [
+      "slice-anchor",
+      "coastal",
+      "shrine-adjacent",
+      "market"
+    ],
+    "exits": [
+      { "toLocationId": "loc-dry-fountain", "visible": true, "label": "the fountain (centre)", "travelRisk": 5 },
+      { "toLocationId": "loc-bell-court-precinct", "visible": true, "label": "Bell Court precinct (north)", "travelRisk": 10 },
+      { "toLocationId": "loc-drowned-cathedral", "visible": true, "label": "Drowned Cathedral (east)", "travelRisk": 15 },
+      { "toLocationId": "loc-tide-league-brokers-office", "visible": true, "label": "Tide League broker (south)", "travelRisk": 8 },
+      { "toLocationId": "loc-bell-forge", "visible": false, "label": "the Bell-Forge (west alleys)", "hiddenDescription": "An alley forge half-hidden between two warehouses. Discovered via rumor or by observing brass-smoke from the right alley.", "travelRisk": 20 }
+    ],
+    "pointsOfInterest": [
+      { "id": "poi-the-butcher-stall", "name": "The Butcher's Stall", "description": "A market stall hung with cuts that are not from any animal common to the region. A large man performs the same five-minute cycle of motions for as long as anyone has watched.", "investigated": false, "tags": ["the-butcher-who-repeats", "do-not-disrupt"] },
+      { "id": "poi-salt-streaked-wall", "name": "Salt-Streaked Wall", "description": "Salt has inscribed its own slow handwriting into the stone. The handwriting is not unreadable. It has just not yet been read.", "investigated": false, "tags": ["substrate-anomaly"] }
+    ]
+  },
+  {
+    "id": "loc-dry-fountain",
+    "name": "The Dry Fountain",
+    "description": "A four-tiered fountain of weather-pocked limestone, dry to the eye and yet — when you stand close enough — leaking upward. Faint runnels of black seawater rise an inch above the lip of the topmost basin and dissolve into the air. The salt rime on the lower stones is unbroken. There is no plumbing that should produce this. A single coin lies in the upper basin; nobody removes it.",
     "regionId": "reg-greywake",
     "dangerBase": 25,
     "discovered": true,
     "investigated": false,
-    "tags": ["water", "archive-connected", "court-seal"],
+    "tags": [
+      "slice-anchor",
+      "ritual-site",
+      "tonal-north-star",
+      "fountain"
+    ],
     "exits": [
-      {
-        "toLocationId": "loc-archive",
-        "visible": true,
-        "label": "To the Archive Steps",
-        "travelRisk": 15
-      },
-      {
-        "toLocationId": "loc-market",
-        "visible": true,
-        "label": "To Greywake Market",
-        "travelRisk": 20
-      },
-      {
-        "toLocationId": "loc-breach",
-        "visible": false,
-        "label": "To the Old Breach",
-        "hiddenDescription": "A path that only appears after the fountain has been touched at Deep Night.",
-        "travelRisk": 60,
-        "locked": {
-          "description": "Requires Deep Night touch"
-        }
-      }
+      { "toLocationId": "loc-greywake-market-district", "visible": true, "label": "back to the market", "travelRisk": 5 }
     ],
     "pointsOfInterest": [
-      {
-        "id": "poi-fountain-lip",
-        "name": "The Carved Lip",
-        "description": "Names carved in an order you do not yet understand.",
-        "investigated": false,
-        "tags": ["names", "court-seal"]
-      },
-      {
-        "id": "poi-fountain-water",
-        "name": "The Black Water",
-        "description": "Water that is not wet. Memory held in surface tension.",
-        "investigated": false,
-        "tags": ["water", "memory"]
-      }
+      { "id": "poi-fountain-lip", "name": "The Carved Lip", "description": "Names carved in an order you do not yet understand. Some of them you do not yet recognize as names.", "investigated": false, "tags": ["names", "substrate-anchor"] },
+      { "id": "poi-fountain-water", "name": "The Black Water", "description": "Water that is not wet. Memory held in surface tension. The water rises an inch above the topmost basin and dissolves into the air.", "investigated": false, "tags": ["water", "memory", "leaks-upward"] },
+      { "id": "poi-the-one-coin", "name": "The One Coin", "description": "A single coin lies in the upper basin. Nobody removes it. The coin is older than the fountain.", "investigated": false, "tags": ["substrate-anchor", "item-presence"] }
     ]
   },
   {
-    "id": "loc-archive",
-    "name": "The Archive Steps",
-    "description": "The Luminous Archive rises like a held breath. Rows of shelves extend into shadow, each holding records of things that should not have survived.",
+    "id": "loc-bell-court-precinct",
+    "name": "Bell Court Precinct",
+    "description": "A two-storey ledger-house with a single brass bell hung over the front door. The bell is small and never rings on its own; clerks pull a cord when an entry is committed. Inside: low desks, paper-stacks, glass jars of black ink, and a hush that punishes loud voices. The walls are pinned with notices. Some of the notices are addressed to people who do not exist yet.",
     "regionId": "reg-greywake",
-    "dangerBase": 15,
+    "dangerBase": 10,
     "discovered": false,
     "investigated": false,
-    "tags": ["knowledge", "bells", "restricted"],
+    "tags": [
+      "faction-anchor",
+      "law",
+      "writing",
+      "civic"
+    ],
     "exits": [
-      {
-        "toLocationId": "loc-fountain",
-        "visible": true,
-        "label": "To the Sunken Fountain",
-        "travelRisk": 15
-      }
+      { "toLocationId": "loc-greywake-market-district", "visible": true, "label": "out to the market", "travelRisk": 10 }
     ],
     "pointsOfInterest": [
-      {
-        "id": "poi-archive-index",
-        "name": "The Master Index",
-        "description": "Coded references to records you cannot yet access.",
-        "investigated": false,
-        "tags": ["records", "coded"]
-      },
-      {
-        "id": "poi-archive-bells",
-        "name": "The Silent Bells",
-        "description": "Bells that ring in frequencies you feel rather than hear.",
-        "investigated": false,
-        "tags": ["bells", "sound"]
-      }
+      { "id": "poi-the-brass-bell", "name": "The Brass Bell", "description": "Small. Hung over the front door. Never rings on its own; clerks pull a cord when an entry is committed.", "investigated": false, "tags": ["ritual-anchor", "civic"] },
+      { "id": "poi-the-ledger", "name": "The Open Ledger", "description": "The central ledger sits open on Bell-Magistrate Orro's desk. Entries are in three different inks. Reading is not encouraged.", "investigated": false, "tags": ["investigation-target", "civic"] },
+      { "id": "poi-pinned-notices", "name": "Pinned Notices", "description": "Some of the notices are addressed to people who do not exist yet.", "investigated": false, "tags": ["substrate-anomaly", "civic"] }
     ]
   },
   {
-    "id": "loc-market",
-    "name": "Greywake Market",
-    "description": "A market that trades in memories, debts, and silence. The stalls are arranged by how much light they permit.",
+    "id": "loc-drowned-cathedral",
+    "name": "Drowned Cathedral Antechamber",
+    "description": "A long stone chamber, knee-deep in standing water that should not be there. The water has the wrong colour for seawater and the wrong viscosity for fresh; it parts around you and rejoins behind you, slowly. Niches along the walls hold tithing-cups, marrow-wax candles, and small folded prayers written on the inside of dried fish skins. A staircase descends behind a half-open door of rusted iron. Nobody goes down.",
     "regionId": "reg-greywake",
-    "dangerBase": 35,
+    "dangerBase": 30,
     "discovered": false,
     "investigated": false,
-    "tags": ["trade", "crowd", "factions"],
+    "tags": [
+      "faction-anchor",
+      "theology",
+      "wet",
+      "underdescribed"
+    ],
     "exits": [
-      {
-        "toLocationId": "loc-fountain",
-        "visible": true,
-        "label": "To the Sunken Fountain",
-        "travelRisk": 20
-      }
+      { "toLocationId": "loc-greywake-market-district", "visible": true, "label": "back out into the air", "travelRisk": 15 },
+      { "toLocationId": "loc-drowned-cathedral-lower", "visible": true, "label": "down the staircase (DOCTRINALLY FORBIDDEN)", "hiddenDescription": "The descent is open but no Drowned Church member will pass through it. Player attempts trigger Marrow-Saint Ilyra's immediate intervention.", "travelRisk": 90, "locked": { "description": "Doctrinally forbidden — Drowned Church members will intervene." } }
     ],
     "pointsOfInterest": [
-      {
-        "id": "poi-market-debt-court",
-        "name": "The Debt Court",
-        "description": "A court that judges by memories people never confessed.",
-        "investigated": false,
-        "tags": ["court", "debt", "memories"]
-      }
+      { "id": "poi-tithing-cup", "name": "Tithing-Cup", "description": "A small brass cup half-filled with the standing water. Coins inside have stopped trying to be coins.", "investigated": false, "tags": ["ritual-anchor"] },
+      { "id": "poi-marrow-wax-candle", "name": "Marrow-Wax Candle", "description": "A drowned-red candle in a wall niche. The candle is taller than it was an hour ago. Nobody has trimmed it.", "investigated": false, "tags": ["ritual-anchor"] },
+      { "id": "poi-prayer-on-fish-skin", "name": "Prayer on Fish-Skin", "description": "A small folded prayer written on the inside of a dried fish skin. The prayer reads as a name. The name is yours, but not the one you've been using.", "investigated": false, "tags": ["investigation-target", "substrate-anomaly"] }
     ]
   },
   {
-    "id": "loc-breach",
-    "name": "The Old Breach",
-    "description": "Where the Shattered entered. The wound in reality has not healed. It has learned to hide.",
+    "id": "loc-tide-league-brokers-office",
+    "name": "Tide League Broker's Office",
+    "description": "A low room behind a heavy door whose latch has been replaced with a brass weighing-pan. Inside: a counter, an abacus that uses bone beads, three scrip-presses, two stools, and a Tide League broker who will look up when you enter and then return to a contract without speaking. Salt-scrip is stacked behind the counter in tied bundles. Above the broker's chair: a chart of the local tides that has been amended in ink so many times the original is unreadable.",
     "regionId": "reg-greywake",
-    "dangerBase": 80,
+    "dangerBase": 8,
     "discovered": false,
     "investigated": false,
-    "tags": ["shattered", "dangerous", "hidden"],
+    "tags": [
+      "faction-anchor",
+      "economic",
+      "negotiation-site"
+    ],
     "exits": [
-      {
-        "toLocationId": "loc-fountain",
-        "visible": false,
-        "label": "Back to the Fountain",
-        "travelRisk": 40
-      }
+      { "toLocationId": "loc-greywake-market-district", "visible": true, "label": "back out", "travelRisk": 8 }
     ],
     "pointsOfInterest": [
-      {
-        "id": "poi-breach-wound",
-        "name": "The Wound",
-        "description": "Reality is thin here. You can see through to something that is not quite sky.",
-        "investigated": false,
-        "tags": ["shattered", "reality"]
-      }
+      { "id": "poi-amended-tide-chart", "name": "Amended Tide Chart", "description": "A chart of the local tides that has been amended in ink so many times the original is unreadable. The most recent amendment is in red.", "investigated": false, "tags": ["investigation-target", "economic"] },
+      { "id": "poi-abacus-of-bone", "name": "Abacus of Bone", "description": "An abacus that uses bone beads. The beads warm slightly when transactions are pending.", "investigated": false, "tags": ["item-presence", "economic"] }
+    ]
+  },
+  {
+    "id": "loc-bell-forge",
+    "name": "The Bell-Forge",
+    "description": "A narrow alley forge half-hidden between two warehouses. The Bell-Forge does not have a sign. Its bellows breathe even when nobody works them. The smith — unnamed — works alone and accepts commissions only on days the Bell-Court does not record. The fire here is not orange but a wrong gold, somewhere between brass and lantern. The walls are darkened with use and with the kind of soot that does not come off skin.",
+    "regionId": "reg-greywake",
+    "dangerBase": 18,
+    "discovered": false,
+    "investigated": false,
+    "tags": [
+      "crafting-site",
+      "hidden",
+      "off-civic-register"
+    ],
+    "exits": [
+      { "toLocationId": "loc-greywake-market-district", "visible": true, "label": "back to the alleys", "travelRisk": 20 }
+    ],
+    "pointsOfInterest": [
+      { "id": "poi-bell-forge-bellows", "name": "The Bellows", "description": "They breathe even when nobody works them. The breath is regular. Five-second intervals.", "investigated": false, "tags": ["substrate-anomaly", "crafting"] },
+      { "id": "poi-wrong-gold-fire", "name": "The Wrong-Gold Fire", "description": "Not orange. Somewhere between brass and lantern. Casts no shadow.", "investigated": false, "tags": ["substrate-anomaly", "crafting"] }
     ]
   }
 ]

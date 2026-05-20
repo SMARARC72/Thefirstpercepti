@@ -99,22 +99,29 @@ function createBootState(): AppState {
   const params = new URLSearchParams(window.location.search);
   if (params.get("demo") !== "1") return next;
 
+  // Phase 15 / CONTENT-106: Khojen — Greywake slice-baseline demo character.
+  // (Was: "No One" spirit-bound character from pre-Greywake demo.)
+  // Per project memory: L2 Warlock Tiefling, The Indebted calling, Day 14 Scene 3.
+  // Repo-creation primitives map: form=spirit_bound (closest to Warlock-Indebted
+  // pact-binding), posture=witness, primaryDomain=lore. Stats and Day 14 state
+  // are achieved through gameplay; demo starts at Day 1 with Khojen's identity
+  // and the canonical Greywake first-perception.
   const creation = {
     ...blankCreation(),
     step: 5 as const,
-    name: "No One",
+    name: "Khojen",
     form: "spirit_bound" as const,
-    formDescription: "A second shadow answers half a breath late.",
-    perception: "A dry footprint at the edge of a fountain that has been underwater for years.",
+    formDescription: "An Indebted whose pact is owed back to something the fountain still practices.",
+    perception: "A four-tiered limestone fountain, dry to the eye, leaking upward.",
     dominantSense: "sight",
-    capabilityClaim: "I can hear the shape of a lie before it becomes language.",
+    capabilityClaim: "I can hear the fountain when it is rehearsing a name.",
     primaryDomain: "lore" as const,
     posture: "witness" as const,
-    postureDescription: "Record first. Intervene only when the record would become an excuse.",
-    optionalDetails: "The name No One was given as punishment and kept as armor.",
-    desiredItem: "a cracked brass lens",
-    fear: "being remembered incorrectly",
-    leftBehind: "a room full of sleeping bells",
+    postureDescription: "Record first. The Bell Court records what it can adjudicate; I record what it cannot.",
+    optionalDetails: "Lately a person who hears the fountain. The Indebted carry an interest that compounds in unspoken syllables.",
+    desiredItem: "a Bell-Marked Charm",
+    fear: "being named by a Drowned Church marrow-vigil before consenting",
+    leftBehind: "the name the Bell Court would have struck",
   };
 
   return {
