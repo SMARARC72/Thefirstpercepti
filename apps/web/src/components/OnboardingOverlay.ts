@@ -1,3 +1,5 @@
+import { trapFocus } from "../effects/focusTrap";
+
 interface OnboardingOverlayProps {
   onDismiss: () => void;
 }
@@ -13,6 +15,9 @@ interface OnboardingOverlayProps {
 export class OnboardingOverlay {
   private props: OnboardingOverlayProps;
   private element: HTMLElement | null = null;
+  // Focus-trap release function — set when the overlay mounts, called
+  // on dismiss/destroy so keyboard users can't Tab out of the modal.
+  private releaseFocusTrap: (() => void) | null = null;
 
   constructor(props: OnboardingOverlayProps) {
     this.props = props;
@@ -64,10 +69,21 @@ export class OnboardingOverlay {
     div.appendChild(content);
 
     this.element = div;
+    // Install the focus trap after the overlay is in the DOM. The
+    // dismiss button is the only focusable child today; trap still
+    // enforces the aria-modal contract by catching Tab cycles.
+    queueMicrotask(() => {
+      dismiss.focus();
+      this.releaseFocusTrap = trapFocus(div);
+    });
     return div;
   }
 
   destroy(): void {
+    if (this.releaseFocusTrap) {
+      this.releaseFocusTrap();
+      this.releaseFocusTrap = null;
+    }
     this.element = null;
   }
 }

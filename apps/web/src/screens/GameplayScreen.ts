@@ -75,7 +75,7 @@ export class GameplayScreen {
     // reads changes. Tooltips carry the literal meaning for clarity.
     const allTabs: { id: GameTab; label: string; title?: string }[] = [
       { id: "tale", label: "The Unfolding", title: "Tale — narrative log" },
-      { id: "fate", label: "What Waits", title: "Fate — recent rolls" },
+      { id: "fate", label: "The Tally", title: "Fate — recent rolls and outcomes" },
       { id: "sheet", label: "The Sheet", title: "Character sheet — abilities, saves, hit dice" },
       { id: "trove", label: "The Trove", title: "Inventory — what the pack holds" },
       { id: "anvil", label: "The Anvil", title: "Forging — materials, recipes, and the smith's roll" },
@@ -83,7 +83,7 @@ export class GameplayScreen {
       { id: "world", label: "The Known", title: "World — map and region" },
       { id: "factions", label: "The Powers", title: "Factions" },
       { id: "npcs", label: "The Met", title: "NPCs you have crossed" },
-      { id: "codex", label: "Names of Things", title: "Codex — what you've named" },
+      { id: "codex", label: "The Catalogue", title: "Codex — names, places, and things observed" },
       { id: "journal", label: "The Witness", title: "Journal — what you noted" },
     ];
     // Contextual reveals: only show The Anvil when the player holds at
@@ -192,28 +192,38 @@ export class GameplayScreen {
     actions.className = "header-actions";
     actions.setAttribute("aria-label", "Save and navigation");
 
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.textContent = "Bind";
-    saveBtn.title = "Save the current run";
-    saveBtn.addEventListener("click", () => this.props.onSave());
+    // Each header button now pairs its diegetic name with a small
+    // literal hint below it so new players don't have to hover to
+    // learn what "Bind" / "Recall" / "Withdraw" mean. aria-label
+    // carries the literal meaning for screen readers.
+    const headerBtn = (diegetic: string, literal: string, ariaLabel: string, onClick: () => void): HTMLButtonElement => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "header-action";
+      btn.setAttribute("aria-label", ariaLabel);
+      const big = document.createElement("span");
+      big.className = "header-action-diegetic";
+      big.textContent = diegetic;
+      const small = document.createElement("span");
+      small.className = "header-action-literal";
+      small.textContent = literal;
+      small.setAttribute("aria-hidden", "true");
+      btn.appendChild(big);
+      btn.appendChild(small);
+      btn.addEventListener("click", onClick);
+      return btn;
+    };
 
-    const loadBtn = document.createElement("button");
-    loadBtn.type = "button";
-    loadBtn.textContent = "Recall";
-    loadBtn.title = "Load the last save";
-    loadBtn.addEventListener("click", () => this.props.onLoad());
-
-    const newBtn = document.createElement("button");
-    newBtn.type = "button";
-    newBtn.textContent = "Withdraw";
-    newBtn.title = "Return to the title";
-    newBtn.addEventListener("click", () => this.props.onNewGame());
+    const saveBtn = headerBtn("Bind", "save", "Save the current run", () => this.props.onSave());
+    const loadBtn = headerBtn("Recall", "load", "Load the last save", () => this.props.onLoad());
+    const newBtn = headerBtn("Withdraw", "title", "Return to the title", () => this.props.onNewGame());
 
     const settingsBtn = document.createElement("button");
     settingsBtn.type = "button";
-    settingsBtn.setAttribute("aria-label", "Open settings");
+    settingsBtn.className = "header-action header-action-icon";
+    settingsBtn.setAttribute("aria-label", "Open settings \u2014 The Lens");
     settingsBtn.textContent = "\u2699";
+    settingsBtn.title = "The Lens";
     settingsBtn.addEventListener("click", () => this.props.onOpenSettings());
 
     actions.appendChild(saveBtn);

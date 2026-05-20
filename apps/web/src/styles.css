@@ -389,6 +389,33 @@
   min-height: 44px;
 }
 
+/* Diegetic + literal pairing for header buttons — the big diegetic
+ * label is decorative; the small literal label below grounds new
+ * players who don't yet know what "Bind / Recall / Withdraw" mean. */
+.header-action {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  line-height: 1;
+}
+
+.header-action-diegetic {
+  font-size: var(--text-sm);
+}
+
+.header-action-literal {
+  font-size: calc(var(--text-sm) * 0.78);
+  color: var(--text-tertiary, var(--text-secondary));
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+.header-action.header-action-icon {
+  font-size: 1.25rem;
+}
+
 /* ── Tab Nav ── */
 .tab-nav {
   position: sticky;
@@ -783,6 +810,16 @@ dd {
   font-size: var(--text-sm);
 }
 
+.condition-pill {
+  cursor: help;
+}
+
+.condition-pill.condition-physical { border-color: var(--crimson-500, var(--border-default)); }
+.condition-pill.condition-mental { border-color: var(--teal-500, var(--border-default)); }
+.condition-pill.condition-magical { border-color: var(--violet-500, var(--border-default)); }
+.condition-pill.condition-divine { border-color: var(--gold-500, var(--border-default)); }
+.condition-pill.condition-environmental { border-color: var(--text-tertiary, var(--border-default)); }
+
 /* ── Inventory / Journal lists ── */
 .inventory {
   display: grid;
@@ -975,6 +1012,30 @@ dd {
 .toggle-label input[type="checkbox"] {
   width: auto;
   accent-color: var(--teal-500);
+}
+
+/* "Saved" pill that flashes next to a setting input after a change.
+ * Created on first change, reused thereafter; opacity transition gives
+ * the 1.5s fade. */
+.settings-saved-pill {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--teal-500, #66e0c2);
+  color: var(--background, #05060a);
+  font-size: calc(var(--text-sm) * 0.78);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(-1px);
+  transition: opacity var(--duration-normal, 220ms) var(--ease-out, ease), transform var(--duration-normal, 220ms) var(--ease-out, ease);
+  pointer-events: none;
+}
+
+.settings-saved-pill.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .save-slots {

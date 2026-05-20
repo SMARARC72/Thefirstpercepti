@@ -1,5 +1,6 @@
 import type { AppState } from "../game";
 import { SaveSlotCard } from "../components/SaveSlotCard";
+import { trapFocus } from "../effects/focusTrap";
 
 interface SettingsModalProps {
   state: AppState;
@@ -16,9 +17,42 @@ export class SettingsModal {
   // Escape-to-close + keep the listener scoped to this instance so the
   // drawer doesn't leak handlers after destroy.
   private keyHandler: ((e: KeyboardEvent) => void) | null = null;
+  // Per-input "Saved" pill timers, keyed by the input element. A new
+  // change before the prior pill expires cancels the prior timer so
+  // the pill stays visible for the full 1.5s after each change.
+  private savedPillTimers: Map<HTMLElement, number> = new Map();
+  // Focus-trap release function — set on render, called on destroy.
+  // Keeps Tab / Shift-Tab cycling inside the drawer until it closes.
+  private releaseFocusTrap: (() => void) | null = null;
 
   constructor(props: SettingsModalProps) {
     this.props = props;
+  }
+
+  /**
+   * Flash a transient "Saved" pill next to an input that just changed.
+   * The pill is created on first use and reused thereafter; visible
+   * class drives the CSS fade.
+   */
+  private flashSaved(target: HTMLElement): void {
+    const host = target.parentElement;
+    if (!host) return;
+    let pill = host.querySelector<HTMLElement>(".settings-saved-pill");
+    if (!pill) {
+      pill = document.createElement("span");
+      pill.className = "settings-saved-pill";
+      pill.setAttribute("aria-live", "polite");
+      pill.textContent = "Saved";
+      host.appendChild(pill);
+    }
+    pill.classList.add("visible");
+    const prior = this.savedPillTimers.get(pill);
+    if (prior !== undefined) window.clearTimeout(prior);
+    const timer = window.setTimeout(() => {
+      pill?.classList.remove("visible");
+      this.savedPillTimers.delete(pill!);
+    }, 1500);
+    this.savedPillTimers.set(pill, timer);
   }
 
   render(): HTMLElement {
@@ -74,6 +108,9 @@ export class SettingsModal {
 
     queueMicrotask(() => {
       closeBtn.focus();
+      // Install the focus trap after the initial focus lands so Tab
+      // starts cycling from the close button forward.
+      this.releaseFocusTrap = trapFocus(drawer);
     });
 
     this.element = backdrop;
@@ -102,7 +139,10 @@ export class SettingsModal {
     speedInput.max = "80";
     speedInput.value = String(this.props.state.settings?.textSpeed ?? 16);
     speedInput.addEventListener("input", () => {
+      const value = Number(speedInput.value);
       document.documentElement.dataset.textSpeed = speedInput.value;
+      this.props.onSettingsChange({ textSpeed: value });
+      this.flashSaved(speedInput);
     });
     grid.appendChild(speedLabel);
     grid.appendChild(speedInput);
@@ -119,6 +159,8 @@ export class SettingsModal {
     }
     sizeSelect.addEventListener("change", () => {
       document.documentElement.dataset.fontSize = sizeSelect.value;
+      this.props.onSettingsChange({ fontSize: sizeSelect.value as "small" | "medium" | "large" });
+      this.flashSaved(sizeSelect);
     });
     grid.appendChild(sizeLabel);
     grid.appendChild(sizeSelect);
@@ -130,6 +172,8 @@ export class SettingsModal {
     motionCheck.checked = this.props.state.settings?.reducedMotion ?? false;
     motionCheck.addEventListener("change", () => {
       document.documentElement.dataset.reducedMotion = String(motionCheck.checked);
+      this.props.onSettingsChange({ reducedMotion: motionCheck.checked });
+      this.flashSaved(motionCheck);
     });
     motionWrap.appendChild(motionCheck);
     motionWrap.appendChild(document.createTextNode("Reduced motion"));
@@ -142,6 +186,8 @@ export class SettingsModal {
     contrastCheck.checked = this.props.state.settings?.highContrast ?? false;
     contrastCheck.addEventListener("change", () => {
       document.documentElement.dataset.highContrast = String(contrastCheck.checked);
+      this.props.onSettingsChange({ highContrast: contrastCheck.checked });
+      this.flashSaved(contrastCheck);
     });
     contrastWrap.appendChild(contrastCheck);
     contrastWrap.appendChild(document.createTextNode("High contrast"));
@@ -159,6 +205,10 @@ export class SettingsModal {
     const soundCheck = document.createElement("input");
     soundCheck.type = "checkbox";
     soundCheck.checked = this.props.state.settings?.soundEnabled ?? true;
+    soundCheck.addEventListener("change", () => {
+      this.props.onSettingsChange({ soundEnabled: soundCheck.checked });
+      this.flashSaved(soundCheck);
+    });
     soundWrap.appendChild(soundCheck);
     soundWrap.appendChild(document.createTextNode("Sound effects"));
     grid.appendChild(soundWrap);
@@ -168,6 +218,10 @@ export class SettingsModal {
     const musicCheck = document.createElement("input");
     musicCheck.type = "checkbox";
     musicCheck.checked = this.props.state.settings?.musicEnabled ?? true;
+    musicCheck.addEventListener("change", () => {
+      this.props.onSettingsChange({ musicEnabled: musicCheck.checked });
+      this.flashSaved(musicCheck);
+    });
     musicWrap.appendChild(musicCheck);
     musicWrap.appendChild(document.createTextNode("Music"));
     grid.appendChild(musicWrap);
@@ -184,6 +238,10 @@ export class SettingsModal {
     const rollsCheck = document.createElement("input");
     rollsCheck.type = "checkbox";
     rollsCheck.checked = this.props.state.settings?.showRolls ?? true;
+    rollsCheck.addEventListener("change", () => {
+      this.props.onSettingsChange({ showRolls: rollsCheck.checked });
+      this.flashSaved(rollsCheck);
+    });
     rollsWrap.appendChild(rollsCheck);
     rollsWrap.appendChild(document.createTextNode("Show rolls"));
     grid.appendChild(rollsWrap);
@@ -193,6 +251,10 @@ export class SettingsModal {
     const autoCheck = document.createElement("input");
     autoCheck.type = "checkbox";
     autoCheck.checked = this.props.state.settings?.autoSave ?? true;
+    autoCheck.addEventListener("change", () => {
+      this.props.onSettingsChange({ autoSave: autoCheck.checked });
+      this.flashSaved(autoCheck);
+    });
     autoWrap.appendChild(autoCheck);
     autoWrap.appendChild(document.createTextNode("Auto-save"));
     grid.appendChild(autoWrap);
@@ -202,6 +264,10 @@ export class SettingsModal {
     const animCheck = document.createElement("input");
     animCheck.type = "checkbox";
     animCheck.checked = this.props.state.settings?.animationEnabled ?? true;
+    animCheck.addEventListener("change", () => {
+      this.props.onSettingsChange({ animationEnabled: animCheck.checked });
+      this.flashSaved(animCheck);
+    });
     animWrap.appendChild(animCheck);
     animWrap.appendChild(document.createTextNode("Animations"));
     grid.appendChild(animWrap);
@@ -220,6 +286,7 @@ export class SettingsModal {
     enabledCheck.checked = this.props.state.settings?.llmEnabled ?? false;
     enabledCheck.addEventListener("change", () => {
       this.props.onSettingsChange({ llmEnabled: enabledCheck.checked });
+      this.flashSaved(enabledCheck);
     });
     enabledWrap.appendChild(enabledCheck);
     enabledWrap.appendChild(document.createTextNode("Enable Living World (LLM)"));
@@ -309,6 +376,12 @@ export class SettingsModal {
     if (this.keyHandler) {
       document.removeEventListener("keydown", this.keyHandler);
       this.keyHandler = null;
+    }
+    for (const t of this.savedPillTimers.values()) window.clearTimeout(t);
+    this.savedPillTimers.clear();
+    if (this.releaseFocusTrap) {
+      this.releaseFocusTrap();
+      this.releaseFocusTrap = null;
     }
     this.element = null;
   }

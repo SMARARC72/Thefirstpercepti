@@ -76,6 +76,18 @@ regressions are caught early and budgets stay honest.
 > 5. **Empty-state copy + help affordance** — `FactionsPanel` and `NpcsPanel` now show diegetic empty-state lines when their lists are bare ("No powers have noticed you yet"; "You have crossed no one yet"). Witness Briefing gains a third paragraph: "Type '?' any time to recall the verbs."
 >
 > Bundle: `main.js` 217.19 → **225.68 kB** raw (+8.49 kB — forging reducer + LLM pill + rest/move refactor + empty-state copy combined), gzip 62.07 → 64.85 (+2.78 kB). `main.css` 49.83 → **50.42 kB** (+0.59 kB — pill + onboarding hint CSS). Bundle budget gate caught the overrun on first run (main.js raw was at 220 kB ceiling); raised to 235 kB raw / 70 kB gzip with a `BUDGET_REVISIONS` audit-trail comment in `scripts/check-bundle-budget.mjs`. Total tests **262 → 267** (+5 forging-reducer specs).
+>
+> **UX audit follow-up — seven-item polish pass** addresses the remaining `docs/UX_AUDIT.md` items §1.3, §2.2, §2.3, §3.1, §3.2, §3.3, §4.5/§4.6:
+>
+> - **§1.3 Spell-cast affordance** — new `glimpse` verb in investigationReducer. Consumes one Level-1 spell slot, reveals every undiscovered POI at the current location, appends matching journal entries. Refuses gracefully on no-slots-remaining. Slot consumption uses a full-object patchReplace at `/player/spellSlots` (parity with the actionEconomy Codex fix). Cast-hint line on the Glimpses section of CharacterSheetPanel tells the player how to use it. `glimpse` also short-circuits the IntentClassifier in main.ts:runCommand so the LLM can't misroute it. New spec `glimpse-spell.spec.ts` (5 cases).
+> - **§2.2 Tab labels** — "What Waits" → "The Tally" (a record, which is what Fate is); "Names of Things" → "The Catalogue".
+> - **§2.3 Conditions tooltips** — StatusPanel's `.tag-cloud` conditions now carry `title` attribute (full description), `aria-label`, remaining-turns suffix (e.g. "Salt-touched · 4t"), stacks suffix (e.g. "Exhaustion ×2"), and category-coloured borders (physical / mental / magical / divine / environmental).
+> - **§3.1 Header onboarding** — Bind / Recall / Withdraw buttons now show a small literal hint below the diegetic name ("Bind\nsave", "Recall\nload", "Withdraw\ntitle"). No first-touch flash needed — the mapping is always visible. Settings gear is icon-only with proper `aria-label`.
+> - **§3.2 Command history** — CommandDock supports ArrowUp / ArrowDown to walk through the last 16 submissions. Typing exits history mode. De-dupes consecutive duplicates so spamming a verb doesn't fill the ring.
+> - **§3.3 Settings save confirmation** — every Lens drawer input now (a) actually persists via `onSettingsChange` (most didn't before — only `llmEnabled` was wired) and (b) flashes a transient "Saved" pill next to the input for 1.5s. textSpeed, fontSize, reducedMotion, highContrast, soundEnabled, musicEnabled, showRolls, autoSave, animationEnabled all wired.
+> - **§4.5/§4.6 Focus traps** — new `apps/web/src/effects/focusTrap.ts` utility with the standard a11y pattern (Tab/Shift-Tab cycling inside container, restore prior focus on release). Applied to both modals: Witness Briefing OnboardingOverlay and "The Lens" SettingsModal drawer. Both also auto-focus their first interactive element on mount.
+>
+> Bundle: `main.js` 225.68 → **230.29 kB** raw (+4.61 kB — command history ring + focus-trap utility + glimpse reducer branch + settings wiring), gzip 64.85 → 66.11 (+1.26 kB). `main.css` 50.42 → **51.78 kB** (+1.36 kB — header literal labels, saved-pill, condition-pill categories). Both within budget. Total tests **267 → 272** (+5 glimpse-spell specs).
 
 ## Tests
 

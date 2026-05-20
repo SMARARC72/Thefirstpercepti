@@ -197,6 +197,16 @@ function renderSpellSlots(player: Player): HTMLElement | null {
     list.appendChild(row);
   }
   section.appendChild(list);
+
+  // Cast affordance: tells the player how to spend a slot. Without this
+  // line a witness sees "2/2" and has no way to discover the verb.
+  const hint = el(
+    "p",
+    "csp-spell-hint",
+    'Cast with "glimpse" to reveal hidden things at this location. Each casting consumes one Level-1 slot.',
+  );
+  section.appendChild(hint);
+
   return section;
 }
 

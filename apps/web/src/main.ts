@@ -191,11 +191,13 @@ async function runCommand(command: string): Promise<void> {
   let actionResult: ActionResult | null = null;
   const dispatch = intent.source === "regex" ? verb : intent.reducer;
 
-  // Forge verb short-circuits the classifier — IntentClassifier doesn't
-  // know about a "forge" ReducerKind, and dispatching as item/narrative
-  // would lose the recipe-id payload.
+  // Verb-level short-circuits — IntentClassifier doesn't know about
+  // "forge" or "glimpse" ReducerKinds, and dispatching as item / narrative
+  // would lose the recipe-id payload or skip the spell-slot consumption.
   if (verb === "forge") {
     actionResult = forgingReducer(game, trimmed, rng);
+  } else if (verb === "glimpse") {
+    actionResult = investigationReducer(game, trimmed, rng);
   } else if (intent.source !== "regex") {
     if (intent.reducer === "combat") actionResult = combatReducer(game, trimmed, rng);
     else if (intent.reducer === "move") actionResult = moveReducer(game, trimmed, rng);
@@ -214,7 +216,7 @@ async function runCommand(command: string): Promise<void> {
     actionResult = itemReducer(game, trimmed, rng);
   } else if (["speak", "ask", "bargain", "threaten", "lie"].includes(dispatch)) {
     actionResult = dialogueReducer(game, trimmed, rng);
-  } else if (["look", "examine", "read", "listen", "search"].includes(dispatch)) {
+  } else if (["look", "examine", "read", "listen", "search", "glimpse"].includes(dispatch)) {
     actionResult = investigationReducer(game, trimmed, rng);
   } else if (dispatch === "forge") {
     actionResult = forgingReducer(game, trimmed, rng);

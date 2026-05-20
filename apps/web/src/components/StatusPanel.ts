@@ -79,11 +79,23 @@ export class StatusPanel {
     for (const tag of this.props.game.player.tags) {
       const span = document.createElement("span");
       span.textContent = tag;
+      span.className = "tag-pill";
       tags.appendChild(span);
     }
     for (const condition of this.props.game.player.conditions) {
       const span = document.createElement("span");
-      span.textContent = condition.name;
+      span.className = `tag-pill condition-pill condition-${condition.category}`;
+      // Diegetic name + remaining-turn suffix when present so the
+      // player sees both the condition AND its lifespan at a glance.
+      const turnsSuffix = condition.turnsRemaining != null && condition.turnsRemaining > 0
+        ? ` · ${condition.turnsRemaining}t`
+        : "";
+      const stackSuffix = condition.stacks > 1 ? ` ×${condition.stacks}` : "";
+      span.textContent = `${condition.name}${stackSuffix}${turnsSuffix}`;
+      // Hover/focus tooltip surfaces the description the player would
+      // otherwise never see. cursor:help signals it's hoverable.
+      span.title = condition.description;
+      span.setAttribute("aria-label", `${condition.name}: ${condition.description}`);
       tags.appendChild(span);
     }
     section.appendChild(tags);
