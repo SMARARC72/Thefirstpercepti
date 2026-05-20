@@ -876,3 +876,32 @@ export type {
   ResolvedConditionEffects,
 } from './conditions-5e.js';
 
+
+// =============================================================================
+// =============================================================================
+// SCHEMA LAYER RE-EXPORT — Phase 13 / Wave B / ENG-104
+// =============================================================================
+//
+// The block below re-exports the canonical schema-derived types from
+// `./generated.ts` (which is auto-generated from
+// content/schemas/schema_pack_v0.5.json). Schema-derived types use a `Schema`
+// suffix (PlayerSchema, ItemSchema, etc.) and do NOT collide with the runtime
+// types above (Player, Item, etc.).
+//
+// Layering:
+//   - RUNTIME types (above this block) = what the engine reducers, state adapter,
+//     and persistence layer actually manipulate per turn. Hand-authored.
+//   - SCHEMA types (re-exported below) = canonical entity shapes from the
+//     design-layer schema_pack. Used by content authoring, validators, and
+//     persistence boundaries.
+//
+// Convergence:
+//   Over Phases 15-19, runtime types should converge onto schema types at every
+//   persistence boundary. See docs/PHASE_13_TYPE_RECONCILIATION.md for the per-pair
+//   migration plan (Player vs PlayerSchema, Item vs ItemSchema, etc.).
+//
+// DO NOT hand-edit generated.ts. Edit the schema and re-run `npm run gen:types`.
+// CI enforces sync via `npm run gen:types:check`.
+// =============================================================================
+
+export * from "./generated.js";
