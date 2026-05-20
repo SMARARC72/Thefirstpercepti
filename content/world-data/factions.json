@@ -1,66 +1,67 @@
 [
   {
-    "id": "fac-drowned-court",
-    "name": "The Drowned Court",
-    "description": "A faction drawn to drowned law and failed vessels. They operate where justice has leaked into something older.",
-    "stance": "neutral",
+    "id": "fac-drowned-church",
+    "name": "The Drowned Church",
+    "description": "A theology built around salt that has learned to refuse drying. Worships the Wave Mother through the regional lens, but the practical authority sits with Marrow-Saint Ilyra. Sells absolution through marrow-wax candles and tithing-cups, but the absolution occasionally works.",
+    "stance": "watchful",
     "trust": 0,
-    "fear": 25,
-    "need": "Proof that the fountain is remembering names",
+    "fear": 20,
+    "need": "Proof that the fountain remembers the names the Bell Court has struck.",
     "plan": {
-      "description": "Seal the fountain's lower chamber before the door opens",
-      "turnsRemaining": 15,
+      "description": "Petition the player to bring a Bell-Court-struck name as a salt-immersion offering; if successful, escalate to a Composing rite that re-anchors the absented name in the fountain's memory.",
+      "turnsRemaining": 14,
       "visibleToPlayer": false
     },
-    "knownSecrets": ["fountain_door", "court_precedents"],
-    "npcs": ["npc-sister-mourn"]
+    "knownSecrets": [
+      "fountain_listens",
+      "marrow_wax_provenance",
+      "unnamed_succession"
+    ],
+    "npcs": [
+      "npc-marrow-saint-ilyra",
+      "npc-butcher-who-repeats"
+    ]
   },
   {
-    "id": "fac-luminous-archive",
-    "name": "The Luminous Archive",
-    "description": "Keepers of bright records in a city that rewrites itself. They believe knowledge is a form of resistance.",
-    "stance": "neutral",
+    "id": "fac-civic-bell-court",
+    "name": "The Civic Bell Court",
+    "description": "The administrative-legal faction. Rules through ledgers, not arms. They strike names from registers, record canon events on stamped wax, keep the city's contradictions ledgered (and occasionally pruned). Bell-Magistrate Orro is the current senior magistrate.",
+    "stance": "civic_authority",
     "trust": 5,
-    "fear": 15,
-    "need": "A complete catalog of post-Shattering phenomena",
+    "fear": 8,
+    "need": "Complete ledgers — no contradictions floating in the open record longer than three civic days.",
     "plan": {
-      "description": "Recruit the player as a field observer",
-      "turnsRemaining": 20,
-      "visibleToPlayer": false
-    },
-    "knownSecrets": ["archive_vault", "keeper_walks"],
-    "npcs": []
-  },
-  {
-    "id": "fac-umbral-covenant",
-    "name": "The Umbral Covenant",
-    "description": "Operators who move where public memory thins. They trade in absences.",
-    "stance": "wary",
-    "trust": -10,
-    "fear": 40,
-    "need": "Someone to be forgotten in a specific way",
-    "plan": {
-      "description": "Test the player's capacity for strategic forgetting",
-      "turnsRemaining": 12,
-      "visibleToPlayer": false
-    },
-    "knownSecrets": ["memory_trade", "forgotten_names"],
-    "npcs": ["npc-fennick"]
-  },
-  {
-    "id": "fac-azure-merchants",
-    "name": "Azure Merchants' Guild",
-    "description": "Ledger-holders who can buy passage through most locked doors. They measure worth in debts and favors.",
-    "stance": "neutral",
-    "trust": 0,
-    "fear": 10,
-    "need": "New markets in information and protection",
-    "plan": {
-      "description": "Assess the player as potential client or competitor",
+      "description": "Identify the player as a potential informant. Offer civic protection in exchange for naming three actors operating without registry (Drowned Church names preferred). If declined, escalate to summons.",
       "turnsRemaining": 18,
-      "visibleToPlayer": false
+      "visibleToPlayer": true
     },
-    "knownSecrets": ["guild_routes", "debt_records"],
-    "npcs": []
+    "knownSecrets": [
+      "struck_names_persist",
+      "orro_personal_doubt"
+    ],
+    "npcs": [
+      "npc-bell-magistrate-orro"
+    ]
+  },
+  {
+    "id": "fac-merchant-tide-league",
+    "name": "The Merchant Tide League",
+    "description": "An economic faction operating between the Drowned Church's theology and the Bell Court's administration. They issue salt-scrip (the regional currency, redeemable in time-discounted tide-cycles), trade absolution-warrants between the other two factions, and act as the unofficial market arbiter.",
+    "stance": "neutral_brokering",
+    "trust": 2,
+    "fear": 4,
+    "need": "Stable salt-scrip valuation — third-cycle speculations capped at 25% gain so the market doesn't seize.",
+    "plan": {
+      "description": "Recruit the player as a courier between factions. Player carries scrip-sealed envelopes between Drowned Church and Bell Court. League takes a percentage on each transit.",
+      "turnsRemaining": 22,
+      "visibleToPlayer": true
+    },
+    "knownSecrets": [
+      "scrip_inflation_risk",
+      "venn_hook_origin"
+    ],
+    "npcs": [
+      "npc-venn-hook"
+    ]
   }
 ]
