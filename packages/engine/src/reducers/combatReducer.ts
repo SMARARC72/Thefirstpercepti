@@ -170,7 +170,12 @@ export function combatReducer(game: GameState, command: string, rng: SeededRNG):
   const consequences: Consequence[] = [];
 
   // Slot is charged for any verb that gets past the gate, hit or miss.
-  patches.push(patchReplace(`/player/actionEconomy/${slot}`, false));
+  // Patch the whole actionEconomy object rather than the nested slot so
+  // the gate works even on Players that arrive without the field
+  // initialised (e.g. apps/web's createGameFromCreation, which builds
+  // the canonical Player and never sets actionEconomy). A nested-path
+  // patchReplace would be silently dropped on a missing intermediate.
+  patches.push(patchReplace('/player/actionEconomy', { ...economy, [slot]: false }));
 
   // 7-band branching: the graze (partial_failure / success_with_cost) and
   // counterstrike (failure) paths must stay split — `reducer-bugfixes.spec.ts`

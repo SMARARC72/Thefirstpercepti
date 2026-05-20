@@ -137,6 +137,28 @@ describe('combatReducer — action economy gate', () => {
     expect(result.rolls.length).toBe(1);
   });
 
+  it('initialises actionEconomy on the snapshot when consuming a slot from a missing-field Player', () => {
+    // Regression for Codex P2 on PR #12: nested-path patches like
+    // `/player/actionEconomy/action` are dropped silently when the
+    // intermediate object doesn't exist, which would no-op the gate
+    // for any Player constructed without actionEconomy (the apps/web
+    // createGameFromCreation path). The fix is a full-object replace;
+    // this test locks that in by applying the patches and asserting a
+    // second attack on the same turn IS refused.
+    const game = makeGameWithPlayer({ actionEconomy: undefined });
+    const first = combatReducer(game, 'attack iron wraith', new FixedDieRNG(10));
+    const after = applyPatches(game, first.patches);
+    expect(after.player.actionEconomy).toEqual({
+      action: false,
+      bonusAction: true,
+      reaction: true,
+    });
+    const second = combatReducer(after, 'attack iron wraith', new FixedDieRNG(10));
+    // Second attack on the same turn must hit the spent-slot gate.
+    expect(second.feedback.toLowerCase()).toContain("already taken your action");
+    expect(second.rolls.length).toBe(0);
+  });
+
   it('resetActionEconomyPatches returns patches that restore all slots to true', () => {
     const game = makeGameWithPlayer({
       actionEconomy: { action: false, bonusAction: false, reaction: false },
