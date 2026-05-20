@@ -5,7 +5,7 @@ import type { GameRepository } from "@first-perception/persistence";
 import { NPCSubagent } from "./NPCSubagent.js";
 import { GMNarrator } from "./GMNarrator.js";
 import { FactionSubagent } from "./FactionSubagent.js";
-import { makeId } from "@first-perception/engine";
+import { makeId, ValidatorPipeline, type AgentEnvelope, type ValidatorPipelineResult } from "@first-perception/engine";
 
 export interface TurnOrchestratorResult {
   taleEntry: TaleEntry;
@@ -20,6 +20,8 @@ export interface TurnOrchestratorResult {
   latencyMs: number;
   llmCallsMade: number;
   fallback: boolean;
+  /** Phase 16 / Wave E: 6-stage validator result. Patches are cleared if overall_pass=false. */
+  validationResult?: ValidatorPipelineResult;
 }
 
 export interface TurnOrchestratorOptions {
@@ -54,6 +56,7 @@ export class TurnOrchestrator {
   private npcSubagents: Map<string, NPCSubagent> = new Map();
   private factionSubagents: Map<string, FactionSubagent> = new Map();
   private gmNarrator: GMNarrator;
+  private validator: ValidatorPipeline;
 
   constructor(options: TurnOrchestratorOptions) {
     this.client = options.client;
@@ -65,6 +68,7 @@ export class TurnOrchestrator {
     this.maxActiveNPCs = options.maxActiveNPCs;
     this.maxActiveFactions = options.maxActiveFactions;
     this.gmNarrator = new GMNarrator({ client: options.client, builder: options.builder });
+    this.validator = new ValidatorPipeline();
   }
 
   /**
@@ -296,15 +300,41 @@ export class TurnOrchestrator {
       }
     }
 
+    // ── Phase 16 / Wave E: 6-stage validator chain ──
+    // Run validator on the proposed envelope before returning. If overall_pass=false,
+    // clear patches (don't commit) but still return narrative + tale entry so the
+    // player sees the scene; the validation failure is attached for the caller to render.
+    const envelope: AgentEnvelope = {
+      envelope_id: makeId(),
+      author: "turn_orchestrator",
+      input: { player_command: playerAction, player_id: game.player.id, turn_index: game.turnCount ?? 0 },
+      proposal: {
+        patches: allPatches,
+        narrative_text: taleEntry.body ?? taleEntry.title ?? "",
+      },
+      game_state_before: game,
+    };
+    const validationResult = this.validator.process(envelope);
+    const safePatches = validationResult.overall_pass ? allPatches : [];
+    if (!validationResult.overall_pass) {
+      try {
+        getLogger().warn("validator chain rejected turn", {
+          failed_at_stage: validationResult.failed_at_stage,
+          envelope_id: envelope.envelope_id,
+        });
+      } catch { /* logging is best-effort */ }
+    }
+
     return {
       taleEntry,
-      patches: allPatches,
+      patches: safePatches,
       suggestedActions: mergedChoices.length > 0 ? mergedChoices : game.suggestedActions,
       worldPulse: factionResults[0],
       tokensUsed,
       latencyMs,
       llmCallsMade,
       fallback: false,
+      validationResult,
     };
   }
 
