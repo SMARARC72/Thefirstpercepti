@@ -47,3 +47,11 @@ export function setHighContrast(enabled: boolean): void {
 export function setFontSize(size: "small" | "medium" | "large"): void {
   document.documentElement.dataset.fontSize = size;
 }
+
+// =============================================================================
+// Iconography — Tide-Stained motifs (Phase 14 / UI-102)
+// =============================================================================
+// 8 canonical motif SVGs. NO icon library, NO emoji (allowed glyphs: ◆ ❦ ↻ → ·
+// per design discipline). See motifs.ts for the full vocabulary + render helpers.
+//
+export * from "./motifs.js";
