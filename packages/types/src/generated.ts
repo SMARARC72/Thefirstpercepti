@@ -1667,6 +1667,28 @@ export interface FirstPerceptionSchemaPack {
     parent_faction_id?: string | null;
   };
   /**
+   * Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
+   */
+  trade_route_v08?: {
+    route_id: string;
+    origin_location_id: string;
+    destination_location_id: string;
+    /**
+     * FK to commodity_catalog_entry.commodity_id (catalog entries live in $defs, registered at engine init).
+     */
+    commodity_id: string;
+    controlling_faction_id?: string | null;
+    /**
+     * True if route is disrupted by seasonal weather.
+     */
+    weather_dependency: boolean;
+    active_status: "open" | "disrupted" | "closed";
+    /**
+     * Max commodity units transportable per season.
+     */
+    capacity_per_season: number;
+  };
+  /**
    * Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
    */
   institution_response_queue_entry?: {
@@ -2296,12 +2318,13 @@ export type OpexStateSchema = NonNullable<FirstPerceptionSchemaPack["opex_state"
 export type OpexEventSchema = NonNullable<FirstPerceptionSchemaPack["opex_event"]>;
 export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model_tier_policy"]>;
 export type InstitutionSchema = NonNullable<FirstPerceptionSchemaPack["institution"]>;
+export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 45
-// $defs count:  46
+// Entity count: 46
+// $defs count:  51
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

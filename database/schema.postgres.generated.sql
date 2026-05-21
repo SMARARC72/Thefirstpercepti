@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T21:51:53.432Z
+-- Generated at:   2026-05-21T21:59:04.677Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -120,6 +120,37 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.faction_tick_attempt_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."faction_tick_attempt_kind" AS ENUM (
+    'expansion',
+    'consolidation',
+    'defense',
+    'withdrawal'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.faction_tick_outcome
+DO $$ BEGIN
+  CREATE TYPE "public"."faction_tick_outcome" AS ENUM (
+    'gain',
+    'stalemate',
+    'setback'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.commodity_unit
+DO $$ BEGIN
+  CREATE TYPE "public"."commodity_unit" AS ENUM (
+    'kg',
+    'barrel',
+    'ingot',
+    'scrap',
+    'bushel',
+    'head'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.npc_memory_archetype
 DO $$ BEGIN
   CREATE TYPE "public"."npc_memory_archetype" AS ENUM (
@@ -142,6 +173,15 @@ DO $$ BEGIN
     'magistrate',
     'scholar',
     'broker'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.trade_route_active_status
+DO $$ BEGIN
+  CREATE TYPE "public"."trade_route_active_status" AS ENUM (
+    'open',
+    'disrupted',
+    'closed'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -1192,7 +1232,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 1 entities
+-- CONTENT schema — 2 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -1214,6 +1254,27 @@ CREATE TABLE IF NOT EXISTS "content"."institution" (
 );
 COMMENT ON TABLE "content"."institution" IS "Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.";
 ALTER TABLE "content"."institution" ENABLE ROW LEVEL SECURITY;
+
+-- trade_route_v08 (content.trade_route_v08)
+-- Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
+CREATE TABLE IF NOT EXISTS "content"."trade_route_v08" (
+  "route_id" TEXT NOT NULL,
+  "origin_location_id" TEXT NOT NULL,
+  "destination_location_id" TEXT NOT NULL,
+  "commodity_id" TEXT NOT NULL,
+  "controlling_faction_id" TEXT,
+  "weather_dependency" BOOLEAN NOT NULL,
+  "active_status" "content"."trade_route_active_status" NOT NULL,
+  "capacity_per_season" INTEGER NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY ("origin_location_id") REFERENCES "content"."location"(id) ON DELETE RESTRICT,
+  FOREIGN KEY ("destination_location_id") REFERENCES "content"."location"(id) ON DELETE RESTRICT,
+  FOREIGN KEY ("controlling_faction_id") REFERENCES "content"."faction"(id) ON DELETE SET NULL,
+  CHECK ("capacity_per_season" >= 0)
+);
+COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.";
+ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
 -- STATE schema — 1 entities
@@ -1238,5 +1299,5 @@ ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 45 entities · 11 enums · 5 schemas
+-- 46 entities · 15 enums · 5 schemas
 -- ----------------------------------------------------------------------------

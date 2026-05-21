@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T21:51:54.480Z
+ * Generated at:   2026-05-21T21:59:05.511Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (46)
+// $defs (51)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -234,6 +234,83 @@ export const InternalFactionEntryZ = z.object({
       "influence_weight": z.number().int().min(1).max(5),
     }).strict();
 export type InternalFactionEntry = z.infer<typeof InternalFactionEntryZ>;
+
+export const FactionReachZ = z.object({
+      "public_reach": z.array(z.object({
+      "domain": z.string(),
+      "range": z.number().int().min(1).max(5),
+      "visible_to_player": z.boolean(),
+    }).strict()),
+      "actual_reach": z.array(z.object({
+      "domain": z.string(),
+      "range": z.number().int().min(1).max(5),
+      "visible_to_player": z.boolean(),
+    }).strict()),
+    }).strict();
+export type FactionReach = z.infer<typeof FactionReachZ>;
+
+export const FactionLedgerZ = z.object({
+      "scrip_balance": z.number().nullable().optional(),
+      "salt_coin_balance": z.number().nullable().optional(),
+      "outstanding_debts": z.array(z.object({
+      "creditor_faction_id": z.string(),
+      "amount": z.number(),
+      "due_day": z.number().int().nullable().optional(),
+    }).strict()),
+      "outstanding_credits": z.array(z.object({
+      "debtor_faction_id": z.string(),
+      "amount": z.number(),
+      "due_day": z.number().int().nullable().optional(),
+    }).strict()),
+      "recent_transactions": z.array(z.object({
+      "day": z.number().int().min(0),
+      "amount": z.number(),
+      "counterparty_id": z.string(),
+      "kind": z.string(),
+    }).strict()),
+    }).strict();
+export type FactionLedger = z.infer<typeof FactionLedgerZ>;
+
+export const FactionTickResolutionZ = z.object({
+      "faction_id": z.string(),
+      "tick_at_day": z.number().int().min(0),
+      "attempt_kind": z.enum(["expansion", "consolidation", "defense", "withdrawal"]),
+      "outcome": z.enum(["gain", "stalemate", "setback"]),
+      "setback_bias_applied": z.boolean(),
+      "delta_reach": z.number().int().nullable().optional(),
+      "delta_ledger": z.object({
+      "kind": z.enum(["scrip", "salt_coin"]).optional(),
+      "amount": z.number().optional(),
+    }).strict().optional(),
+    }).strict();
+export type FactionTickResolution = z.infer<typeof FactionTickResolutionZ>;
+
+export const CommodityCatalogEntryZ = z.object({
+      "commodity_id": z.string(),
+      "name": z.string(),
+      "unit": z.enum(["kg", "barrel", "ingot", "scrap", "bushel", "head"]),
+      "base_value_scrip": z.number().min(0),
+      "base_value_salt_coin": z.number().min(0),
+      "volatility": z.number().int().min(1).max(5),
+      "region_of_origin": z.string().optional(),
+    }).strict();
+export type CommodityCatalogEntry = z.infer<typeof CommodityCatalogEntryZ>;
+
+export const ScripStabilityModelZ = z.object({
+      "current_peg": z.object({
+      "commodity_id": z.string(),
+      "ratio": z.number().min(0),
+    }).strict(),
+      "volatility_modifier": z.number().min(0).max(2),
+      "recent_shocks": z.array(z.object({
+      "day": z.number().int().min(0),
+      "magnitude": z.number(),
+      "cause": z.string(),
+    }).strict()),
+      "confidence_level": z.number().int().min(1).max(5),
+      "shattering_aftershock_pressure": z.number().int().min(0).max(10),
+    }).strict();
+export type ScripStabilityModel = z.infer<typeof ScripStabilityModelZ>;
 
 export const ScheduleNestingZ = z.object({
       "local_pattern": z.object({
@@ -511,7 +588,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (45)
+// Top-level entities (46)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -1703,6 +1780,18 @@ export const InstitutionSchemaZ = z.object({
     }).strict();
 export type InstitutionSchema = z.infer<typeof InstitutionSchemaZ>;
 
+export const TradeRouteV08SchemaZ = z.object({
+      "route_id": z.string(),
+      "origin_location_id": z.string(),
+      "destination_location_id": z.string(),
+      "commodity_id": z.string(),
+      "controlling_faction_id": z.string().nullable().optional(),
+      "weather_dependency": z.boolean(),
+      "active_status": z.enum(["open", "disrupted", "closed"]),
+      "capacity_per_season": z.number().int().min(0),
+    }).strict();
+export type TradeRouteV08Schema = z.infer<typeof TradeRouteV08SchemaZ>;
+
 export const InstitutionResponseQueueEntrySchemaZ = z.object({
       "id": z.string(),
       "institution_id": z.string(),
@@ -1717,5 +1806,5 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
     }).strict();
 export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
 
-// 46 $defs · 45 entities
+// 51 $defs · 46 entities
 // END OF GENERATED Zod VALIDATORS

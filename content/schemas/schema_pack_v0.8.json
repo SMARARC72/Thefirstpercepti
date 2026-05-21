@@ -552,6 +552,176 @@
       },
       "additionalProperties": false
     },
+    "faction_reach": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-01 — Three-pronged faction reach per RT-21. Distinct public_reach (visible to player) and actual_reach (hidden); may intentionally diverge.",
+      "required": ["public_reach", "actual_reach"],
+      "properties": {
+        "public_reach": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["domain", "range", "visible_to_player"],
+            "properties": {
+              "domain": { "type": "string", "description": "e.g. doctrinal, civic, mercantile. Free-string; regional packs define values; lookup table at DDL time." },
+              "range": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "visible_to_player": { "type": "boolean", "const": true }
+            },
+            "additionalProperties": false
+          }
+        },
+        "actual_reach": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["domain", "range", "visible_to_player"],
+            "properties": {
+              "domain": { "type": "string" },
+              "range": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "visible_to_player": { "type": "boolean", "const": false, "description": "Always false — actual_reach is the hidden ground truth." }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "faction_ledger": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-02 — Faction financial state. Mutable runtime; lives in state.* schema.",
+      "required": ["outstanding_debts", "outstanding_credits", "recent_transactions"],
+      "properties": {
+        "scrip_balance": { "type": ["number", "null"], "description": "Primary Greywake currency per RT-20." },
+        "salt_coin_balance": { "type": ["number", "null"], "description": "Secondary commodity-backed currency." },
+        "outstanding_debts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["creditor_faction_id", "amount"],
+            "properties": {
+              "creditor_faction_id": { "type": "string" },
+              "amount": { "type": "number" },
+              "due_day": { "type": ["integer", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "outstanding_credits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["debtor_faction_id", "amount"],
+            "properties": {
+              "debtor_faction_id": { "type": "string" },
+              "amount": { "type": "number" },
+              "due_day": { "type": ["integer", "null"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "recent_transactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["day", "amount", "counterparty_id", "kind"],
+            "properties": {
+              "day": { "type": "integer", "minimum": 0 },
+              "amount": { "type": "number" },
+              "counterparty_id": { "type": "string" },
+              "kind": { "type": "string", "description": "Transaction kind label (trade, tithe, fee, fine, etc.)." }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "faction_tick_resolution": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-03 — Per-tick engine output for a faction's attempt. House setback-bias governor records its application per tick.",
+      "required": ["faction_id", "tick_at_day", "attempt_kind", "outcome", "setback_bias_applied"],
+      "properties": {
+        "faction_id": { "type": "string" },
+        "tick_at_day": { "type": "integer", "minimum": 0 },
+        "attempt_kind": {
+          "type": "string",
+          "enum": ["expansion", "consolidation", "defense", "withdrawal"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "faction_tick_attempt_kind"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["gain", "stalemate", "setback"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "faction_tick_outcome"
+        },
+        "setback_bias_applied": { "type": "boolean", "description": "House governor: winning factions get +30% setback weight; this flag records whether the bias was applied." },
+        "delta_reach": { "type": ["integer", "null"], "description": "Change to faction_reach intensity. Null = no reach delta this tick." },
+        "delta_ledger": {
+          "type": ["object", "null"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["scrip", "salt_coin"] },
+            "amount": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "commodity_catalog_entry": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-04 — Catalog entry for a tradable commodity. Engine commodity registry.",
+      "required": ["commodity_id", "name", "unit", "base_value_scrip", "base_value_salt_coin", "volatility"],
+      "properties": {
+        "commodity_id": { "type": "string" },
+        "name": { "type": "string" },
+        "unit": {
+          "type": "string",
+          "enum": ["kg", "barrel", "ingot", "scrap", "bushel", "head"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "commodity_unit"
+        },
+        "base_value_scrip": { "type": "number", "minimum": 0 },
+        "base_value_salt_coin": { "type": "number", "minimum": 0 },
+        "volatility": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "region_of_origin": { "type": "string", "description": "Optional FK → region.region_id" }
+      },
+      "additionalProperties": false
+    },
+    "scrip_stability_model": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-07 — Scrip stability engine state. Feeds Bundle E pan_world_plot P-02 (The Scrip Run).",
+      "required": ["current_peg", "volatility_modifier", "recent_shocks", "confidence_level", "shattering_aftershock_pressure"],
+      "properties": {
+        "current_peg": {
+          "type": "object",
+          "required": ["commodity_id", "ratio"],
+          "properties": {
+            "commodity_id": { "type": "string" },
+            "ratio": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "volatility_modifier": { "type": "number", "minimum": 0, "maximum": 2, "description": "0.0..2.0 multiplier on baseline volatility." },
+        "recent_shocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["day", "magnitude", "cause"],
+            "properties": {
+              "day": { "type": "integer", "minimum": 0 },
+              "magnitude": { "type": "number" },
+              "cause": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "description": "Order-preserving log of recent shocks. Engine tail-trims to N most-recent."
+        },
+        "confidence_level": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "shattering_aftershock_pressure": { "type": "integer", "minimum": 0, "maximum": 10 }
+      },
+      "additionalProperties": false
+    },
     "schedule_nesting": {
       "type": "object",
       "description": "Phase 24b §4.2 / Bundle A / L.I-SC-06 — Per-NPC schedule nested under an institution. Bridge to Bundle B (institutional schedules) + Bundle C (faction-scale scheduling). Source: Sec L.I (codex lines 8759-8771).",
@@ -7379,6 +7549,48 @@
           "x_fk_target": "faction",
           "x_fk_policy": { "on_delete": "SET NULL" }
         }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "content"
+    },
+    "trade_route_v08": {
+      "type": "object",
+      "description": "Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.",
+      "required": [
+        "route_id",
+        "origin_location_id",
+        "destination_location_id",
+        "commodity_id",
+        "active_status",
+        "capacity_per_season",
+        "weather_dependency"
+      ],
+      "properties": {
+        "route_id": { "type": "string" },
+        "origin_location_id": {
+          "type": "string",
+          "x_fk_target": "location",
+          "x_fk_policy": { "on_delete": "RESTRICT" }
+        },
+        "destination_location_id": {
+          "type": "string",
+          "x_fk_target": "location",
+          "x_fk_policy": { "on_delete": "RESTRICT" }
+        },
+        "commodity_id": { "type": "string", "description": "FK to commodity_catalog_entry.commodity_id (catalog entries live in $defs, registered at engine init)." },
+        "controlling_faction_id": {
+          "type": ["string", "null"],
+          "x_fk_target": "faction",
+          "x_fk_policy": { "on_delete": "SET NULL" }
+        },
+        "weather_dependency": { "type": "boolean", "description": "True if route is disrupted by seasonal weather." },
+        "active_status": {
+          "type": "string",
+          "enum": ["open", "disrupted", "closed"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "trade_route_active_status"
+        },
+        "capacity_per_season": { "type": "integer", "minimum": 0, "description": "Max commodity units transportable per season." }
       },
       "additionalProperties": false,
       "x_schema_namespace": "content"
