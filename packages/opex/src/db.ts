@@ -21,11 +21,21 @@ function makeSql() {
       "automatically. Check Vercel dashboard → Settings → Environment Variables."
     );
   }
-  return postgres(url, {
-    prepare: false,        // required for Supabase transaction pooler (port 6543)
-    max: 1,                // serverless: 1 connection per Lambda instance
-    idle_timeout: 20,      // close idle conns after 20s
-    connect_timeout: 10,   // fail fast on connect issues
+  // Strip the URL's sslmode so the explicit `ssl` option below is the
+  // single source of truth. The AWS-region Supabase pooler presents a cert
+  // chain that node's TLS treats as self-signed in some runtimes; setting
+  // rejectUnauthorized:false here matches the existing PostgresRepository
+  // (pg Pool) policy and prevents handshake failures.
+  const cleanedUrl = url.replace(
+    /([?&])sslmode=[^&]*(&|$)/,
+    (_match, prefix, suffix) => (suffix === "&" ? prefix : ""),
+  );
+  return postgres(cleanedUrl, {
+    prepare: false,                          // Supabase transaction pooler (port 6543) doesn't support prepared statements
+    max: 1,                                  // serverless: 1 connection per Lambda instance
+    idle_timeout: 20,                        // close idle conns after 20s
+    connect_timeout: 10,                     // fail fast on connect issues
+    ssl: { rejectUnauthorized: false },      // accept Supabase's pooler cert chain
   });
 }
 
