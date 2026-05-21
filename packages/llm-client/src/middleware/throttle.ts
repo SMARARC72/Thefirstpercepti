@@ -48,6 +48,17 @@ export interface ThrottledLLMResponse extends LLMResponse {
   fell_back_from_primary: boolean;
   /** Daily spend BEFORE this call (for diagnostics). */
   daily_spend_before_usd: number;
+  /**
+   * When the fallback chain is exhausted (model_id="graceful_fallback"),
+   * this surfaces the last attempt's error message + the chain attempted.
+   * Aids in distinguishing missing-key vs invalid-key vs upstream-503
+   * without needing access to the opex_event ledger. Undefined on success.
+   */
+  diagnostics?: {
+    last_error?: string;
+    last_error_kind?: string;
+    chain_attempted: string[];
+  };
 }
 
 const GRACEFUL_NARRATION_FALLBACK = (
@@ -151,6 +162,11 @@ export async function callLLM(
   // All fallbacks exhausted — return graceful canned narration so player UX doesn't crash.
   console.error(`[throttle] All ${selection.fallback_chain.length} fallback attempts failed for agent ${ctx.agent}. Last error:`, lastError);
 
+  const lastErrorMessage =
+    lastError instanceof Error ? lastError.message : String(lastError ?? "unknown");
+  const lastErrorKind =
+    lastError instanceof Error ? lastError.constructor.name : "unknown";
+
   return {
     content: GRACEFUL_NARRATION_FALLBACK,
     model_id: "graceful_fallback",
@@ -161,6 +177,11 @@ export async function callLLM(
     selection_reason: selection.reason,
     fell_back_from_primary: true,
     daily_spend_before_usd: dailySpendBefore,
+    diagnostics: {
+      last_error: lastErrorMessage.slice(0, 500),
+      last_error_kind: lastErrorKind,
+      chain_attempted: [...selection.fallback_chain],
+    },
   };
 }
 

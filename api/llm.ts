@@ -101,6 +101,16 @@ export default withErrors(async (req: IncomingMessage, res: ServerResponse) => {
       if (throttleResult.fell_back_from_primary) {
         res.setHeader("x-llm-fell-back", "true");
       }
+      if (isGraceful && throttleResult.diagnostics) {
+        // Surface the per-attempt failure mode for ad-hoc smoke testing.
+        // Header values are URL-encoded so quotes / newlines don't break HTTP framing.
+        res.setHeader(
+          "x-llm-last-error",
+          encodeURIComponent(throttleResult.diagnostics.last_error ?? "").slice(0, 480),
+        );
+        res.setHeader("x-llm-last-error-kind", throttleResult.diagnostics.last_error_kind ?? "unknown");
+        res.setHeader("x-llm-chain-attempted", throttleResult.diagnostics.chain_attempted.join(","));
+      }
       res.end(JSON.stringify(apiOk(llmResponse)));
       return;
     } catch (err) {
