@@ -105,53 +105,53 @@ function newConditionToOld(n: Condition): OldCondition {
 }
 
 function oldItemToNew(old: OldItem): Item {
+  // v0.6 subtype enum drops "misc"/"document"; map legacy categories to the
+  // closest v0.6 equivalent. "trinket" is the catch-all for non-functional
+  // unique objects; "book" replaces "document" for written matter.
   const typeMap: Record<string, Item['type']> = {
     weapon: 'weapon',
     armor: 'armor',
     tool: 'tool',
     consumable: 'consumable',
-    material: 'misc',
-    lore: 'document',
-    currency: 'misc',
+    material: 'trinket',
+    lore: 'book',
+    currency: 'currency_token',
     key: 'key',
     clothing: 'armor',
-    jewelry: 'misc',
-    anomaly: 'misc',
+    jewelry: 'trinket',
+    anomaly: 'trinket',
   };
+  const charges = old.maxUses > 0
+    ? { current: old.usesRemaining, max: old.maxUses }
+    : undefined;
+  // v0.6 BaseItem has no description / durability / structured-effects fields;
+  // those live on either the per-subtype interface or are encoded as plain
+  // English in effects_on_*. The adapter intentionally drops them on conversion.
   return {
-    id: old.id,
+    item_id: old.id,
     name: old.name,
-    type: typeMap[old.category] ?? 'misc',
-    description: old.description,
+    type: typeMap[old.category] ?? 'trinket',
     rarity: 'common',
-    durability: old.maxUses > 0 ? old.maxUses : undefined,
-    maxDurability: old.maxUses > 0 ? old.maxUses : undefined,
-    charges: old.maxUses > 0 ? old.usesRemaining : undefined,
-    maxCharges: old.maxUses > 0 ? old.maxUses : undefined,
-    effects: old.effects.map((e) => ({
-      type: 'heal' as const,
-      target: e.trigger,
-      value: 1,
-    })),
-    equipSlot: old.slot as Item['equipSlot'],
-  };
+    charges,
+    equip_slot: old.slot as Item['equip_slot'],
+  } as Item;
 }
 
 function newItemToOld(n: Item): OldItem {
   return {
-    id: n.id,
+    id: n.item_id,
     name: n.name,
-    description: n.description,
+    description: n.name,
     category: 'tool' as OldItem['category'],
     statModifiers: {},
     effects: [],
-    equippable: Boolean(n.equipSlot),
+    equippable: Boolean(n.equip_slot),
     equipped: false,
-    slot: n.equipSlot,
+    slot: n.equip_slot ?? undefined,
     value: 0,
     weight: 1,
-    maxUses: n.maxCharges ?? -1,
-    usesRemaining: n.charges ?? -1,
+    maxUses: n.charges?.max ?? -1,
+    usesRemaining: n.charges?.current ?? -1,
     unique: false,
     tags: n.type ? [n.type] : [],
   };

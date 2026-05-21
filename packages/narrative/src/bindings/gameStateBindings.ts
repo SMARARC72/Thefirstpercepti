@@ -69,7 +69,7 @@ export function createGameStateBindings(
       const inventory = stateRef.current?.player.inventory ?? [];
       return inventory.some(
         (i) =>
-          i.id === itemId ||
+          i.item_id === itemId ||
           i.name.toLowerCase().replace(/\s+/g, "_") === itemId.toLowerCase()
       );
     },

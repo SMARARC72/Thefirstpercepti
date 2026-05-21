@@ -217,15 +217,15 @@ describe('combatReducer — damage rolls flow through dice-expression', () => {
     expect(narrativeBlob).toMatch(/\(1d4\+3\)/);
   });
 
-  it('equipped weapons swap the damage die to 1d6 and stack damage-effect bonuses', () => {
+  it('equipped weapons swap the damage die to 1d6', () => {
     const weapon: Item = {
-      id: 'item-spike',
+      item_id: 'item-spike',
       name: 'iron spike',
       type: 'weapon',
-      description: 'A short iron spike.',
       rarity: 'common',
-      effects: [{ type: 'damage', target: 'body', value: 1 }],
-    };
+      damage_dice: '1d4',
+      damage_type: 'piercing',
+    } as Item;
     const game = makeGameWithPlayer(
       { stats: { ...makePlayer().stats, body: 3 }, inventory: [weapon] },
       // beef up the npc so the wound tale (which carries the expression) lands
@@ -234,8 +234,10 @@ describe('combatReducer — damage rolls flow through dice-expression', () => {
     );
     const result = combatReducer(game, 'attack iron wraith', new FixedDieRNG(8, 0.5));
     const narrativeBlob = result.narrative.map((n) => n.body).join(' ');
-    // body=3 mod; weapon adds +1 → damage modifier=+4, die=d6.
-    expect(narrativeBlob).toMatch(/\(1d6\+4\)/);
+    // v0.6: weapon flips base die to d6; pre-v0.6 structured damage effects no
+    // longer apply (the bonus from the weapon's own damage_dice will be wired
+    // through in Phase 21 — see combatReducer.buildDamageExpression).
+    expect(narrativeBlob).toMatch(/\(1d6\+3\)/);
   });
 
   it('a triumph (critical_success) doubles the dice count but not the modifier', () => {

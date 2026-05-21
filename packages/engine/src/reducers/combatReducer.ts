@@ -99,10 +99,12 @@ function buildDamageExpression(player: Player, band: RollBand): string {
   const strMod = player.stats.body;
   const weapon = activeWeapon(player);
   const die = weapon ? 6 : 4;
-  const weaponBonus =
-    weapon?.effects
-      ?.filter((e) => e.type === 'damage')
-      .reduce((acc, e) => acc + (e.value ?? 0), 0) ?? 0;
+  // v0.6 weapons embed damage in `damage_dice` directly; the pre-v0.6
+  // structured `effects: [{ type: "damage", value }]` array no longer
+  // exists. Bonus damage is encoded in the weapon's own dice expression
+  // (e.g. "1d6+1") rather than parsed out here. Phase 21 will route this
+  // through `parseDiceExpression(weapon.damage_dice)` for proper handling.
+  const weaponBonus = 0;
 
   const modifier = strMod + weaponBonus;
   const diceCount = band === 'triumph' ? 2 : 1;
