@@ -113,7 +113,9 @@ export function getClientForModel(modelId: string): LLMClient {
   }
   if (modelId.startsWith("kimi-") || modelId.startsWith("moonshot-")) {
     return get("moonshot", () => {
-      const apiKey = process.env.MOONSHOT_API_KEY;
+      // TODO(phase-22.7-or-later): drop MOONSHOOT_API_KEY fallback once the
+      // env var is renamed in Vercel. Canonical spelling is MOONSHOT_API_KEY.
+      const apiKey = process.env.MOONSHOT_API_KEY ?? process.env.MOONSHOOT_API_KEY;
       if (!apiKey) {
         throw new LLMClientError(
           "MOONSHOT_API_KEY not set; cannot route kimi-/moonshot- model",
