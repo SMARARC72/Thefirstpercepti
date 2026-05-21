@@ -13,6 +13,10 @@
     "./server": {
       "types": "./dist/server.d.ts",
       "import": "./dist/server.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "import": "./dist/middleware/index.js"
     }
   },
   "scripts": {
@@ -22,6 +26,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@first-perception/opex": "*",
     "@first-perception/persistence": "^2.0.0",
     "@first-perception/types": "^2.0.0"
   },
