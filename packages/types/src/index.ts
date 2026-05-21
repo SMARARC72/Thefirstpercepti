@@ -941,3 +941,17 @@ export * from "./items-v06.js";
 export type { RegionSchema as Region } from "./generated.js";
 export type { RumorSchema as Rumor } from "./generated.js";
 export type { ConsequenceSchema as Consequence } from "./generated.js";
+
+// RECON-205/206 (Desktop Q3.2): NPC and Faction have TWO competing
+// hand-rolled shapes in the runtime — `Faction` + `FactionState`,
+// `NPC` + `NpcState`. Both are heavily used (13+6 and 33+7 consumers
+// respectively). Per Desktop, do NOT rename. Instead, re-export the
+// schema-derived shapes alongside under their canonical schema-suffix
+// names so callers that need the design-contract shape can pick it
+// explicitly. v0.8 Session 4 will resolve the tri-shape situation.
+//
+// Note: `FactionSchema` and `NpcSchema` are already exported via
+// `export * from "./generated.js"` above. These explicit re-exports
+// are documentation aids — they make the intentional duality visible
+// at the import site rather than hidden under a wildcard re-export.
+export type { FactionSchema, NpcSchema } from "./generated.js";
