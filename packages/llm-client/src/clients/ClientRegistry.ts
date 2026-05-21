@@ -86,6 +86,21 @@ class MoonshotAdapter implements LLMClient {
   }
 }
 
+// Look up an env var by canonical UPPERCASE name, tolerating case
+// variations and the MOONSHOOT typo. Mirrors the helper in
+// api/_lib/llm-router.ts — keep them in sync if you change the rules.
+function findEnvVar(canonical: string): string | undefined {
+  if (process.env[canonical]) return process.env[canonical];
+  const targets = new Set<string>([canonical.toLowerCase()]);
+  if (canonical === "MOONSHOT_API_KEY") {
+    targets.add("moonshoot_api_key");
+  }
+  for (const [k, v] of Object.entries(process.env)) {
+    if (v && targets.has(k.toLowerCase())) return v;
+  }
+  return undefined;
+}
+
 const cache = new Map<string, LLMClient>();
 
 function get(provider: string, factory: () => LLMClient): LLMClient {
@@ -101,7 +116,7 @@ export function getClientForModel(modelId: string): LLMClient {
   // Order: most-specific first.
   if (modelId.startsWith("claude-")) {
     return get("anthropic", () => {
-      const apiKey = process.env.ANTHROPIC_API_KEY;
+      const apiKey = findEnvVar("ANTHROPIC_API_KEY");
       if (!apiKey) {
         throw new LLMClientError(
           "ANTHROPIC_API_KEY not set; cannot route claude-* model",
@@ -113,9 +128,7 @@ export function getClientForModel(modelId: string): LLMClient {
   }
   if (modelId.startsWith("kimi-") || modelId.startsWith("moonshot-")) {
     return get("moonshot", () => {
-      // TODO(phase-22.7-or-later): drop MOONSHOOT_API_KEY fallback once the
-      // env var is renamed in Vercel. Canonical spelling is MOONSHOT_API_KEY.
-      const apiKey = process.env.MOONSHOT_API_KEY ?? process.env.MOONSHOOT_API_KEY;
+      const apiKey = findEnvVar("MOONSHOT_API_KEY");
       if (!apiKey) {
         throw new LLMClientError(
           "MOONSHOT_API_KEY not set; cannot route kimi-/moonshot- model",
