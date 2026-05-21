@@ -53,7 +53,7 @@ You hold your hand near the surface that should not be there.
 * [Step back] -> dry_fountain
 
 === dry_fountain_vial ===
-{ has_item("item-bell-marked-charm") || has_item("item-vial-of-practiced-name-water"):
+{ has_item("item_bell_marked_charm") || has_item("item_vial_of_practiced_name_water"):
     You hold an empty vial at the lip. The water enters slowly and against the curvature. The vial hums faintly against the heel of your hand.
     ~ add_journal_entry("Practicing water", "Vial filled at the dry fountain.")
 - else:
