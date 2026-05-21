@@ -12,6 +12,8 @@ import { TabNav } from "../components/TabNav";
 import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
 import { createInventoryPanel } from "../components/InventoryPanel";
 import { createAnvilPanel } from "../components/AnvilPanel";
+import { createSpecimenJar, recomposeSpecimenJar } from "../components/SpecimenJar";
+import { playerToSpecimenJarState } from "../state/playerToSpecimenJar";
 import { loadForgingRecipes } from "../data/worldLoader";
 import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
@@ -32,6 +34,7 @@ export class GameplayScreen {
   private element: HTMLElement | null = null;
   private tabNav: TabNav | null = null;
   private panelInstances: Array<{ destroy: () => void }> = [];
+  private specimenJarHost: HTMLElement | null = null;
   // Recipes are content-static; loaded once per screen instance so a
   // re-render on each game-state tick doesn't re-walk the JSON map.
   private readonly recipes = loadForgingRecipes();
@@ -106,6 +109,7 @@ export class GameplayScreen {
     // Left rail (desktop)
     const leftRail = document.createElement("aside");
     leftRail.className = "rail rail-left";
+    leftRail.appendChild(this.renderSpecimenJar(game));
     leftRail.appendChild(this.renderWorldPanel(game));
     leftRail.appendChild(this.renderFactionsPanel(game));
     grid.appendChild(leftRail);
@@ -260,6 +264,19 @@ export class GameplayScreen {
     return status.render();
   }
 
+  private renderSpecimenJar(game: GameState): HTMLElement {
+    const wrap = document.createElement("section");
+    wrap.className = "panel specimen-jar-panel";
+    wrap.setAttribute("aria-label", "Specimen jar — character portrait");
+    const reducedMotion = this.props.state.settings?.reducedMotion === true;
+    const jar = createSpecimenJar(playerToSpecimenJarState(game.player), {
+      animate: !reducedMotion,
+    });
+    this.specimenJarHost = jar;
+    wrap.appendChild(jar);
+    return wrap;
+  }
+
   private renderWorldPanel(game: GameState): HTMLElement {
     const world = new WorldPanel({ game });
     this.panelInstances.push(world);
@@ -384,6 +401,13 @@ export class GameplayScreen {
         }
         updateVignette(game.world.danger);
 
+        if (this.specimenJarHost) {
+          const reducedMotion = newProps.state.settings?.reducedMotion === true;
+          recomposeSpecimenJar(this.specimenJarHost, playerToSpecimenJarState(game.player), {
+            animate: !reducedMotion,
+          });
+        }
+
         for (const panel of this.panelInstances) {
           if ("update" in panel) {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
@@ -441,6 +465,7 @@ export class GameplayScreen {
     for (const c of this.panelInstances) c.destroy();
     this.panelInstances = [];
     this.tabNav?.destroy();
+    this.specimenJarHost = null;
     this.element = null;
   }
 }
