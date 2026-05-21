@@ -9,9 +9,16 @@ import { NpcsPanel } from "../components/NpcsPanel";
 import { CodexPanel } from "../components/CodexPanel";
 import { JournalPanel } from "../components/JournalPanel";
 import { TabNav } from "../components/TabNav";
-import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
+import { createCharacterSheet, type CharacterSheetTab } from "../components/CharacterSheet";
 import { createInventoryPanel } from "../components/InventoryPanel";
 import { createAnvilPanel } from "../components/AnvilPanel";
+import { createSpecimenJar, recomposeSpecimenJar } from "../components/SpecimenJar";
+import { playerToSpecimenJarState } from "../state/playerToSpecimenJar";
+import { createWorldTicker } from "../components/WorldTicker";
+import { WorldTickerQueue } from "../state/WorldTickerQueue";
+import { createLeanModeBadge } from "../components/LeanModeBadge";
+import { createNoticeBanner } from "../components/NoticeBanner";
+import { deriveNoticeBannerSlice } from "../state/noticeBannerSelector";
 import { loadForgingRecipes } from "../data/worldLoader";
 import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
@@ -32,6 +39,18 @@ export class GameplayScreen {
   private element: HTMLElement | null = null;
   private tabNav: TabNav | null = null;
   private panelInstances: Array<{ destroy: () => void }> = [];
+  private specimenJarHost: HTMLElement | null = null;
+  private worldTickerMount: HTMLElement | null = null;
+  // Long-lived per-screen queue. The World Director (engine) will enqueue
+  // items into this once that plumbing lands; until then the bar renders
+  // the "— the world is quiet —" placeholder.
+  private readonly worldTickerQueue = new WorldTickerQueue();
+  private leanBadgeSlot: HTMLElement | null = null;
+  private noticeBannerSlot: HTMLElement | null = null;
+  // Persist the sheet's active tab across game ticks. The new
+  // createCharacterSheet has internal tab state, but refreshFunctionalPanel
+  // tears it down on every state change, so we re-pass the active tab in.
+  private sheetActiveTab: CharacterSheetTab = "stats";
   // Recipes are content-static; loaded once per screen instance so a
   // re-render on each game-state tick doesn't re-walk the JSON map.
   private readonly recipes = loadForgingRecipes();
@@ -69,6 +88,7 @@ export class GameplayScreen {
     main.setAttribute("aria-labelledby", "game-heading");
 
     main.appendChild(this.renderHeader(game));
+    main.appendChild(this.renderWorldTickerBar());
 
     // Tab labels are diegetic — the underlying GameTab ids stay stable so
     // store / persistence / tests are unaffected; only what the player
@@ -106,6 +126,7 @@ export class GameplayScreen {
     // Left rail (desktop)
     const leftRail = document.createElement("aside");
     leftRail.className = "rail rail-left";
+    leftRail.appendChild(this.renderSpecimenJar(game));
     leftRail.appendChild(this.renderWorldPanel(game));
     leftRail.appendChild(this.renderFactionsPanel(game));
     grid.appendChild(leftRail);
@@ -113,8 +134,16 @@ export class GameplayScreen {
     // Center stage
     const center = document.createElement("div");
     center.className = "stage";
+    // NoticeBanner slot — populated only when notice ≥ 7 (rung-condition
+    // present on the player). The slot stays empty otherwise so the tale
+    // panel sits flush against the world ticker.
+    const noticeSlot = document.createElement("div");
+    noticeSlot.className = "notice-banner-slot";
+    this.noticeBannerSlot = noticeSlot;
+    center.appendChild(noticeSlot);
     center.appendChild(this.renderTalePanel(game));
     grid.appendChild(center);
+    this.refreshNoticeBanner(game);
 
     // Right rail (desktop)
     const rightRail = document.createElement("aside");
@@ -138,6 +167,7 @@ export class GameplayScreen {
 
     this.element = main;
     updateVignette(game.world.danger);
+    this.mountLeanModeBadge();
 
     return main;
   }
@@ -187,6 +217,13 @@ export class GameplayScreen {
     world.appendChild(region);
     world.appendChild(weather);
     world.appendChild(llmPill);
+
+    // Lean-mode badge slot — populated asynchronously by mountLeanModeBadge().
+    // Renders empty when lean mode is off (the badge component returns null).
+    const leanSlot = document.createElement("span");
+    leanSlot.className = "lean-badge-slot";
+    this.leanBadgeSlot = leanSlot;
+    world.appendChild(leanSlot);
 
     const actions = document.createElement("div");
     actions.className = "header-actions";
@@ -260,6 +297,91 @@ export class GameplayScreen {
     return status.render();
   }
 
+  private buildCharacterSheet(game: GameState): HTMLElement {
+    return createCharacterSheet({
+      player: game.player,
+      activeTab: this.sheetActiveTab,
+      onTabChange: (tab) => {
+        this.sheetActiveTab = tab;
+      },
+    });
+  }
+
+  private renderWorldTickerBar(): HTMLElement {
+    const mount = document.createElement("div");
+    mount.className = "world-ticker-mount";
+    mount.appendChild(this.buildWorldTicker());
+    this.worldTickerMount = mount;
+    return mount;
+  }
+
+  private buildWorldTicker(): HTMLElement {
+    const reducedMotion = this.props.state.settings?.reducedMotion === true;
+    return createWorldTicker({
+      items: this.worldTickerQueue.visible(),
+      reducedMotion,
+      onItemSurfaced: (id) => this.worldTickerQueue.markDisplayed(id),
+    });
+  }
+
+  private refreshWorldTicker(): void {
+    if (!this.worldTickerMount) return;
+    this.worldTickerMount.innerHTML = "";
+    this.worldTickerMount.appendChild(this.buildWorldTicker());
+  }
+
+  /**
+   * The lean-mode badge is async (it queries the throttle middleware for
+   * the current fallback state). We append it to the world-strip when it
+   * resolves; if lean mode is off, nothing renders.
+   */
+  private mountLeanModeBadge(): void {
+    if (!this.leanBadgeSlot) return;
+    const slot = this.leanBadgeSlot;
+    void createLeanModeBadge().then((badge) => {
+      // The slot may have been torn down while we were awaiting; bail if so.
+      if (badge && slot.isConnected) slot.appendChild(badge);
+    });
+  }
+
+  private refreshNoticeBanner(game: GameState): void {
+    if (!this.noticeBannerSlot) return;
+    const slice = deriveNoticeBannerSlice(game);
+    this.noticeBannerSlot.innerHTML = "";
+    if (!slice) return;
+    const banner = createNoticeBanner({
+      rung: slice.rung,
+      notice: slice.notice,
+      authority: slice.authority,
+      factions: slice.factions,
+      onInspect: () => this.props.onTabChange("factions"),
+      onReturn: () => {
+        // No engine-side scene-route hook yet; dismiss is visual-only.
+        if (this.noticeBannerSlot) this.noticeBannerSlot.innerHTML = "";
+      },
+      onApotheosisAccept: () => {
+        void this.props.onCommand("apotheosis accept");
+      },
+      onApotheosisRefuse: () => {
+        void this.props.onCommand("apotheosis refuse");
+      },
+    });
+    this.noticeBannerSlot.appendChild(banner);
+  }
+
+  private renderSpecimenJar(game: GameState): HTMLElement {
+    const wrap = document.createElement("section");
+    wrap.className = "panel specimen-jar-panel";
+    wrap.setAttribute("aria-label", "Specimen jar — character portrait");
+    const reducedMotion = this.props.state.settings?.reducedMotion === true;
+    const jar = createSpecimenJar(playerToSpecimenJarState(game.player), {
+      animate: !reducedMotion,
+    });
+    this.specimenJarHost = jar;
+    wrap.appendChild(jar);
+    return wrap;
+  }
+
   private renderWorldPanel(game: GameState): HTMLElement {
     const world = new WorldPanel({ game });
     this.panelInstances.push(world);
@@ -288,7 +410,7 @@ export class GameplayScreen {
         return el;
       }
       case "sheet": {
-        const el = createCharacterSheetPanel({ player: game.player });
+        const el = this.buildCharacterSheet(game);
         el.id = "panel-sheet";
         el.classList.add("mobile-panel", "panel");
         return el;
@@ -384,6 +506,24 @@ export class GameplayScreen {
         }
         updateVignette(game.world.danger);
 
+        if (this.specimenJarHost) {
+          const reducedMotion = newProps.state.settings?.reducedMotion === true;
+          recomposeSpecimenJar(this.specimenJarHost, playerToSpecimenJarState(game.player), {
+            animate: !reducedMotion,
+          });
+        }
+
+        // World Ticker — sweep expired and re-render on every game-state
+        // tick so new items surface and stale ones drop. visible() also
+        // excludes items already markDisplayed'd on prior renders.
+        this.worldTickerQueue.sweepExpired();
+        this.refreshWorldTicker();
+
+        // Notice Banner — appears the moment a rung-condition is appended
+        // to the player and disappears when the condition is removed by
+        // canon-event-absolution.
+        this.refreshNoticeBanner(game);
+
         for (const panel of this.panelInstances) {
           if ("update" in panel) {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
@@ -391,7 +531,7 @@ export class GameplayScreen {
         }
 
         this.refreshFunctionalPanel("panel-sheet", () =>
-          createCharacterSheetPanel({ player: game.player }),
+          this.buildCharacterSheet(game),
         );
         this.refreshFunctionalPanel("panel-trove", () =>
           createInventoryPanel({ player: game.player }),
@@ -441,6 +581,10 @@ export class GameplayScreen {
     for (const c of this.panelInstances) c.destroy();
     this.panelInstances = [];
     this.tabNav?.destroy();
+    this.specimenJarHost = null;
+    this.worldTickerMount = null;
+    this.leanBadgeSlot = null;
+    this.noticeBannerSlot = null;
     this.element = null;
   }
 }

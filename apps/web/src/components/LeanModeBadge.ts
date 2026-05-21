@@ -12,11 +12,26 @@
  *  - NO animation. Static glyph. No pulse, glow, bounce, fade-in.
  *  - Glyph from allowed set: ◆ ❦ ↻ → · — using ◆ (in-set, neutral).
  *  - Tooltip uses field-journal density. No "you", no apology, no celebration.
- *  - Hidden by default; only renders when isLeanMode() returns true.
+ *  - Hidden by default; only renders when /api/world-pulse-status reports
+ *    `{ lean: true }`. Fetching via the API keeps the throttle middleware
+ *    (and its transitive Postgres driver import) out of the browser bundle.
  */
-import { isLeanMode } from "@first-perception/llm-client/middleware";
 
 const GLYPH = "◆";  // in-set; from allowed: ◆ ❦ ↻ → ·
+
+const STATUS_ENDPOINT = "/api/world-pulse-status";
+
+async function fetchLeanMode(): Promise<boolean> {
+  try {
+    const res = await fetch(STATUS_ENDPOINT, { method: "GET" });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { data?: { lean?: boolean }; lean?: boolean };
+    // sendOk wraps payload under { data: ... }; tolerate either shape.
+    return Boolean(body.data?.lean ?? body.lean);
+  } catch {
+    return false;
+  }
+}
 
 const TOOLTIP_TEXT = (
   "Lean mode. The world's clarity is subtler today. " +
@@ -27,14 +42,7 @@ const TOOLTIP_TEXT = (
  * Returns the badge DOM element if lean mode is active, else null.
  */
 export async function createLeanModeBadge(): Promise<HTMLElement | null> {
-  let lean: boolean;
-  try {
-    lean = await isLeanMode();
-  } catch (err) {
-    console.warn("[LeanModeBadge] isLeanMode failed; suppressing badge:", err);
-    return null;
-  }
-
+  const lean = await fetchLeanMode();
   if (!lean) return null;
 
   const span = document.createElement("span");
