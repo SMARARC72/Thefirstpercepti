@@ -17,6 +17,8 @@ import { playerToSpecimenJarState } from "../state/playerToSpecimenJar";
 import { createWorldTicker } from "../components/WorldTicker";
 import { WorldTickerQueue } from "../state/WorldTickerQueue";
 import { createLeanModeBadge } from "../components/LeanModeBadge";
+import { createNoticeBanner } from "../components/NoticeBanner";
+import { deriveNoticeBannerSlice } from "../state/noticeBannerSelector";
 import { loadForgingRecipes } from "../data/worldLoader";
 import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
@@ -44,6 +46,7 @@ export class GameplayScreen {
   // the "— the world is quiet —" placeholder.
   private readonly worldTickerQueue = new WorldTickerQueue();
   private leanBadgeSlot: HTMLElement | null = null;
+  private noticeBannerSlot: HTMLElement | null = null;
   // Recipes are content-static; loaded once per screen instance so a
   // re-render on each game-state tick doesn't re-walk the JSON map.
   private readonly recipes = loadForgingRecipes();
@@ -127,8 +130,16 @@ export class GameplayScreen {
     // Center stage
     const center = document.createElement("div");
     center.className = "stage";
+    // NoticeBanner slot — populated only when notice ≥ 7 (rung-condition
+    // present on the player). The slot stays empty otherwise so the tale
+    // panel sits flush against the world ticker.
+    const noticeSlot = document.createElement("div");
+    noticeSlot.className = "notice-banner-slot";
+    this.noticeBannerSlot = noticeSlot;
+    center.appendChild(noticeSlot);
     center.appendChild(this.renderTalePanel(game));
     grid.appendChild(center);
+    this.refreshNoticeBanner(game);
 
     // Right rail (desktop)
     const rightRail = document.createElement("aside");
@@ -319,6 +330,31 @@ export class GameplayScreen {
     });
   }
 
+  private refreshNoticeBanner(game: GameState): void {
+    if (!this.noticeBannerSlot) return;
+    const slice = deriveNoticeBannerSlice(game);
+    this.noticeBannerSlot.innerHTML = "";
+    if (!slice) return;
+    const banner = createNoticeBanner({
+      rung: slice.rung,
+      notice: slice.notice,
+      authority: slice.authority,
+      factions: slice.factions,
+      onInspect: () => this.props.onTabChange("factions"),
+      onReturn: () => {
+        // No engine-side scene-route hook yet; dismiss is visual-only.
+        if (this.noticeBannerSlot) this.noticeBannerSlot.innerHTML = "";
+      },
+      onApotheosisAccept: () => {
+        void this.props.onCommand("apotheosis accept");
+      },
+      onApotheosisRefuse: () => {
+        void this.props.onCommand("apotheosis refuse");
+      },
+    });
+    this.noticeBannerSlot.appendChild(banner);
+  }
+
   private renderSpecimenJar(game: GameState): HTMLElement {
     const wrap = document.createElement("section");
     wrap.className = "panel specimen-jar-panel";
@@ -469,6 +505,11 @@ export class GameplayScreen {
         this.worldTickerQueue.sweepExpired();
         this.refreshWorldTicker();
 
+        // Notice Banner — appears the moment a rung-condition is appended
+        // to the player and disappears when the condition is removed by
+        // canon-event-absolution.
+        this.refreshNoticeBanner(game);
+
         for (const panel of this.panelInstances) {
           if ("update" in panel) {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
@@ -529,6 +570,7 @@ export class GameplayScreen {
     this.specimenJarHost = null;
     this.worldTickerMount = null;
     this.leanBadgeSlot = null;
+    this.noticeBannerSlot = null;
     this.element = null;
   }
 }
