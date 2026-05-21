@@ -38,8 +38,11 @@ CREATE TABLE IF NOT EXISTS opex_event (
   latency_ms        INTEGER      NULL
 );
 
+-- Postgres rejects DATE(timestamptz) in an index expression because the
+-- result depends on the session timezone (not IMMUTABLE). The cast through
+-- `AT TIME ZONE 'UTC'` is IMMUTABLE and gives the same effective bucket.
 CREATE INDEX IF NOT EXISTS opex_event_date_agent_idx
-  ON opex_event (DATE(timestamp), agent);
+  ON opex_event (((timestamp AT TIME ZONE 'UTC')::date), agent);
 
 CREATE INDEX IF NOT EXISTS opex_event_session_idx
   ON opex_event (session_id) WHERE session_id IS NOT NULL;
