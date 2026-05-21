@@ -450,7 +450,18 @@ export interface Effect {
   description: string;
 }
 
-export interface Consequence {
+/**
+ * Phase 24a / RECON-203 — Renamed from `Consequence` to `ConsequenceState`.
+ *
+ * Runtime resolution-state envelope (whether a consequence has fired,
+ * its effects, its narrative outcome). Distinct from `ConsequenceSchema`
+ * (campaign-event design with trigger_type enum, affected_systems,
+ * preventable flag, status enum). The bare `Consequence` alias resolves
+ * to the schema shape.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Consequence section).
+ */
+export interface ConsequenceState {
   id: UUID;
   type: ConsequenceType;
   trigger: Trigger;
@@ -912,3 +923,4 @@ export * from "./items-v06.js";
 
 export type { RegionSchema as Region } from "./generated.js";
 export type { RumorSchema as Rumor } from "./generated.js";
+export type { ConsequenceSchema as Consequence } from "./generated.js";
