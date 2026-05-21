@@ -14,6 +14,9 @@ import { createInventoryPanel } from "../components/InventoryPanel";
 import { createAnvilPanel } from "../components/AnvilPanel";
 import { createSpecimenJar, recomposeSpecimenJar } from "../components/SpecimenJar";
 import { playerToSpecimenJarState } from "../state/playerToSpecimenJar";
+import { createWorldTicker } from "../components/WorldTicker";
+import { WorldTickerQueue } from "../state/WorldTickerQueue";
+import { createLeanModeBadge } from "../components/LeanModeBadge";
 import { loadForgingRecipes } from "../data/worldLoader";
 import { getLogger } from "@first-perception/types";
 import { updateVignette } from "../effects/vignette";
@@ -35,6 +38,12 @@ export class GameplayScreen {
   private tabNav: TabNav | null = null;
   private panelInstances: Array<{ destroy: () => void }> = [];
   private specimenJarHost: HTMLElement | null = null;
+  private worldTickerMount: HTMLElement | null = null;
+  // Long-lived per-screen queue. The World Director (engine) will enqueue
+  // items into this once that plumbing lands; until then the bar renders
+  // the "— the world is quiet —" placeholder.
+  private readonly worldTickerQueue = new WorldTickerQueue();
+  private leanBadgeSlot: HTMLElement | null = null;
   // Recipes are content-static; loaded once per screen instance so a
   // re-render on each game-state tick doesn't re-walk the JSON map.
   private readonly recipes = loadForgingRecipes();
@@ -72,6 +81,7 @@ export class GameplayScreen {
     main.setAttribute("aria-labelledby", "game-heading");
 
     main.appendChild(this.renderHeader(game));
+    main.appendChild(this.renderWorldTickerBar());
 
     // Tab labels are diegetic — the underlying GameTab ids stay stable so
     // store / persistence / tests are unaffected; only what the player
@@ -142,6 +152,7 @@ export class GameplayScreen {
 
     this.element = main;
     updateVignette(game.world.danger);
+    this.mountLeanModeBadge();
 
     return main;
   }
@@ -191,6 +202,13 @@ export class GameplayScreen {
     world.appendChild(region);
     world.appendChild(weather);
     world.appendChild(llmPill);
+
+    // Lean-mode badge slot — populated asynchronously by mountLeanModeBadge().
+    // Renders empty when lean mode is off (the badge component returns null).
+    const leanSlot = document.createElement("span");
+    leanSlot.className = "lean-badge-slot";
+    this.leanBadgeSlot = leanSlot;
+    world.appendChild(leanSlot);
 
     const actions = document.createElement("div");
     actions.className = "header-actions";
@@ -262,6 +280,43 @@ export class GameplayScreen {
     const status = new StatusPanel({ game });
     this.panelInstances.push(status);
     return status.render();
+  }
+
+  private renderWorldTickerBar(): HTMLElement {
+    const mount = document.createElement("div");
+    mount.className = "world-ticker-mount";
+    mount.appendChild(this.buildWorldTicker());
+    this.worldTickerMount = mount;
+    return mount;
+  }
+
+  private buildWorldTicker(): HTMLElement {
+    const reducedMotion = this.props.state.settings?.reducedMotion === true;
+    return createWorldTicker({
+      items: this.worldTickerQueue.visible(),
+      reducedMotion,
+      onItemSurfaced: (id) => this.worldTickerQueue.markDisplayed(id),
+    });
+  }
+
+  private refreshWorldTicker(): void {
+    if (!this.worldTickerMount) return;
+    this.worldTickerMount.innerHTML = "";
+    this.worldTickerMount.appendChild(this.buildWorldTicker());
+  }
+
+  /**
+   * The lean-mode badge is async (it queries the throttle middleware for
+   * the current fallback state). We append it to the world-strip when it
+   * resolves; if lean mode is off, nothing renders.
+   */
+  private mountLeanModeBadge(): void {
+    if (!this.leanBadgeSlot) return;
+    const slot = this.leanBadgeSlot;
+    void createLeanModeBadge().then((badge) => {
+      // The slot may have been torn down while we were awaiting; bail if so.
+      if (badge && slot.isConnected) slot.appendChild(badge);
+    });
   }
 
   private renderSpecimenJar(game: GameState): HTMLElement {
@@ -408,6 +463,12 @@ export class GameplayScreen {
           });
         }
 
+        // World Ticker — sweep expired and re-render on every game-state
+        // tick so new items surface and stale ones drop. visible() also
+        // excludes items already markDisplayed'd on prior renders.
+        this.worldTickerQueue.sweepExpired();
+        this.refreshWorldTicker();
+
         for (const panel of this.panelInstances) {
           if ("update" in panel) {
             (panel as unknown as { update(props: Record<string, unknown>): void }).update({ game });
@@ -466,6 +527,8 @@ export class GameplayScreen {
     this.panelInstances = [];
     this.tabNav?.destroy();
     this.specimenJarHost = null;
+    this.worldTickerMount = null;
+    this.leanBadgeSlot = null;
     this.element = null;
   }
 }
