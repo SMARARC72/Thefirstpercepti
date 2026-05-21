@@ -237,6 +237,35 @@ export interface Player {
   experience?: number;
   /** PlayerSchema.alignment_descriptor — 9-axis D&D-style alignment */
   alignmentDescriptor?: AlignmentDescriptor;
+
+  // ── RECON-208d inventory + attunement + spell slots + pact + concentration ─
+  // Schema-richer pull-ins. Existing runtime fields (inventory, attunementSlots,
+  // spellSlots) are kept as-is for v0.7-era compatibility; new fields are added
+  // as optional. v0.8 Session 4 reconciles shapes (InventoryEntry vs Item discriminated
+  // union; SpellSlotTable vs Record; AttunementSlot tuple vs AttunementSlots wrapper).
+  /** PlayerSchema.pact_slots — Warlock-specific. Khojen is a warlock per memory. */
+  pactSlots?: {
+    max?: number;
+    current?: number;
+    slotLevel?: number;
+  };
+  /** PlayerSchema.known_spells — spells the character knows (separate from prepared) */
+  knownSpells?: Array<{
+    spellId: string;
+    source?: "race" | "class" | "feat" | "item" | "pact_boon" | "ritual" | "scroll";
+    prepared?: boolean;
+  }>;
+  /** PlayerSchema.spellbook_ids — for wizards / similar list-casters */
+  spellbookIds?: string[];
+  /** PlayerSchema.concentration — single-spell concentration tracking */
+  concentration?: {
+    activeSpellId?: string | null;
+    startedAt?: { day?: number; phase_id?: string };
+  };
+  /** PlayerSchema.abilities_known — class/race features known to the player */
+  abilitiesKnown?: unknown[];
+  /** PlayerSchema.abilities_hidden — features the character has but doesn't know about */
+  abilitiesHidden?: unknown[];
 }
 
 // =============================================================================
