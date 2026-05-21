@@ -9,7 +9,7 @@ import { NpcsPanel } from "../components/NpcsPanel";
 import { CodexPanel } from "../components/CodexPanel";
 import { JournalPanel } from "../components/JournalPanel";
 import { TabNav } from "../components/TabNav";
-import { createCharacterSheetPanel } from "../components/CharacterSheetPanel";
+import { createCharacterSheet, type CharacterSheetTab } from "../components/CharacterSheet";
 import { createInventoryPanel } from "../components/InventoryPanel";
 import { createAnvilPanel } from "../components/AnvilPanel";
 import { createSpecimenJar, recomposeSpecimenJar } from "../components/SpecimenJar";
@@ -47,6 +47,10 @@ export class GameplayScreen {
   private readonly worldTickerQueue = new WorldTickerQueue();
   private leanBadgeSlot: HTMLElement | null = null;
   private noticeBannerSlot: HTMLElement | null = null;
+  // Persist the sheet's active tab across game ticks. The new
+  // createCharacterSheet has internal tab state, but refreshFunctionalPanel
+  // tears it down on every state change, so we re-pass the active tab in.
+  private sheetActiveTab: CharacterSheetTab = "stats";
   // Recipes are content-static; loaded once per screen instance so a
   // re-render on each game-state tick doesn't re-walk the JSON map.
   private readonly recipes = loadForgingRecipes();
@@ -293,6 +297,16 @@ export class GameplayScreen {
     return status.render();
   }
 
+  private buildCharacterSheet(game: GameState): HTMLElement {
+    return createCharacterSheet({
+      player: game.player,
+      activeTab: this.sheetActiveTab,
+      onTabChange: (tab) => {
+        this.sheetActiveTab = tab;
+      },
+    });
+  }
+
   private renderWorldTickerBar(): HTMLElement {
     const mount = document.createElement("div");
     mount.className = "world-ticker-mount";
@@ -396,7 +410,7 @@ export class GameplayScreen {
         return el;
       }
       case "sheet": {
-        const el = createCharacterSheetPanel({ player: game.player });
+        const el = this.buildCharacterSheet(game);
         el.id = "panel-sheet";
         el.classList.add("mobile-panel", "panel");
         return el;
@@ -517,7 +531,7 @@ export class GameplayScreen {
         }
 
         this.refreshFunctionalPanel("panel-sheet", () =>
-          createCharacterSheetPanel({ player: game.player }),
+          this.buildCharacterSheet(game),
         );
         this.refreshFunctionalPanel("panel-trove", () =>
           createInventoryPanel({ player: game.player }),
