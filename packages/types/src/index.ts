@@ -293,6 +293,31 @@ export interface Player {
   faithMeters?: FaithMeterEntry[];
   /** PlayerSchema.path_ledger — weighted domain entries (Phase 22.6 CharacterSheet v3 dependency) */
   pathLedger?: PathLedgerEntry[];
+
+  // ── RECON-208f action economy + tags primitive + session_state ────────
+  // Note: `tags: string[]` and `actionEconomy?: ActionEconomy` already exist
+  // as required/optional fields above (v0.7-era hand-rolled). 208f formalizes
+  // them as v0.8 candidates:
+  //   - tags promotes to cross-entity primitive (NPC + Region + LocationNode etc.)
+  //   - actionEconomy promotes as `action_economy_block` $def in Session 4
+  // Speculative fields per schema R-128-F / R-131-F / R-65 deferred to v0.9
+  // (dream_state, legacy_inherited_substrate_weight, scrip_speculation_history).
+
+  /** PlayerSchema.traits — class/race traits; opaque in schema, Session 4 tightens */
+  traits?: unknown[];
+  /** PlayerSchema.class_switch_history — multi-class respec audit trail */
+  classSwitchHistory?: Array<{
+    fromClassId: string;
+    toClassId: string;
+    onDayId?: string;
+    switchedBy?: "player_explicit" | "consequence" | "narrative_trigger";
+  }>;
+  /** PlayerSchema.session_state — transient per-session flags (Bundle H Hardening) */
+  sessionState?: {
+    lastMainSceneFocusAt?: string | null;
+    currentSessionId?: string | null;
+    transientFlags?: Record<string, unknown>;
+  };
 }
 
 // =============================================================================
