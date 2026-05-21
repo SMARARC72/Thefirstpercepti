@@ -271,7 +271,17 @@ export interface POI {
 // WORLD — REGION & WEATHER
 // =============================================================================
 
-export interface Region {
+/**
+ * Phase 24a / RECON-201 — Renamed from `Region` to `RegionState`.
+ *
+ * Runtime world-state envelope (current world simulation tracks per-region).
+ * Distinct from `RegionSchema` (campaign-config region with status enum,
+ * pantheon refs, weather_state object) which is re-exported from generated.ts
+ * and accessible as `RegionSchema` or the convenience alias `Region` below.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Region section).
+ */
+export interface RegionState {
   id: UUID;
   name: string;
   description: string;
@@ -871,3 +881,23 @@ export type {
 
 export * from "./generated.js";
 export * from "./items-v06.js";
+
+// =============================================================================
+// PHASE 24a RUNTIME ↔ SCHEMA ALIASES (RECON-201..207)
+// =============================================================================
+//
+// Bare-name aliases that expose the SCHEMA shape for entities where the runtime
+// envelope has been renamed to `XxxState` / `XxxInstance`. After Phase 24a:
+//
+//   - `Region` (this alias)   = `RegionSchema` (campaign-config shape)
+//   - `RegionState` (above)   = runtime world-simulation envelope
+//
+// Consumers that need the runtime envelope import `RegionState` explicitly.
+// Consumers that need the schema shape can use either `Region` or `RegionSchema`.
+//
+// Per Desktop's Q3.3 decision: `XxxState` is the canonical suffix for renamed
+// runtime envelopes. Exceptions: `ConditionInstance` (instance semantics),
+// `LocationNode` (graph-node semantics), `Player` (no rename — too many consumers).
+// =============================================================================
+
+export type { RegionSchema as Region } from "./generated.js";
