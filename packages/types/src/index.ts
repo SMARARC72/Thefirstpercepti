@@ -523,7 +523,17 @@ export interface Inheritance {
 // RUMORS
 // =============================================================================
 
-export interface Rumor {
+/**
+ * Phase 24a / RECON-202 — Renamed from `Rumor` to `RumorState`.
+ *
+ * Runtime propagation-state envelope (how a rumor moves through the world).
+ * Distinct from `RumorSchema` (rumor design with versions, distortion_type,
+ * factions_amplifying) which is re-exported from generated.ts. The bare
+ * `Rumor` alias now resolves to the schema shape.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Rumor section).
+ */
+export interface RumorState {
   id: UUID;
   content: string;
   sourceNpcId?: UUID;
@@ -901,3 +911,4 @@ export * from "./items-v06.js";
 // =============================================================================
 
 export type { RegionSchema as Region } from "./generated.js";
+export type { RumorSchema as Rumor } from "./generated.js";
