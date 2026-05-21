@@ -81,12 +81,10 @@ export function forgingReducer(
 
   if (outcome.outputItemTemplateId && outcome.outputRarity) {
     const output: Item = {
-      id: `${outcome.outputItemTemplateId}-${makeId('forged')}`,
+      item_id: `${outcome.outputItemTemplateId}-${makeId('forged')}`,
       name: recipe.label,
       type: 'tool',
-      description: `Forged at The Anvil. ${recipe.label.toLowerCase()} — rolled ${roll.total} vs DC ${recipe.smithDC}.`,
       rarity: outcome.outputRarity,
-      magical: outcome.outputRarity !== 'common',
     };
     patches.push(patchAppend('/player/inventory', output));
   }
@@ -115,7 +113,7 @@ function missingMaterials(
 ): Array<{ materialId: string; quantity: number }> {
   const counts = new Map<string, number>();
   for (const item of game.player.inventory) {
-    counts.set(item.id, (counts.get(item.id) ?? 0) + 1);
+    counts.set(item.item_id, (counts.get(item.item_id) ?? 0) + 1);
   }
   const missing: Array<{ materialId: string; quantity: number }> = [];
   for (const input of recipe.inputs) {
@@ -137,7 +135,7 @@ function consumeInputPatches(
   for (const input of consumed) {
     let remaining = input.quantity;
     for (let i = 0; i < game.player.inventory.length && remaining > 0; i++) {
-      if (game.player.inventory[i].id === input.materialId && !indicesToRemove.includes(i)) {
+      if (game.player.inventory[i].item_id === input.materialId && !indicesToRemove.includes(i)) {
         indicesToRemove.push(i);
         remaining--;
       }

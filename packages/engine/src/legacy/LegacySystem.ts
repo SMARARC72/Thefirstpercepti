@@ -46,7 +46,7 @@ export class LegacySystem {
   }
 
   generateInheritance(game: GameState, rng: SeededRNG): Inheritance {
-    const items = game.player.inventory.filter((i) => i.type === 'key' || i.type === 'document');
+    const items = game.player.inventory.filter((i) => i.type === 'key' || i.type === 'book');
     const item = items.length > 0 ? items[Math.floor(rng.next() * items.length)] : undefined;
 
     const reputation: Record<string, number> = {};

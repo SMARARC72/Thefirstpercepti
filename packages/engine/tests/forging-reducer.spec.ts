@@ -14,10 +14,10 @@ const RECIPE = loadForgingRecipes().find((r) => r.id === 'recipe-ironscale-blade
 function gameWithMaterials(opts: { hasInputs?: boolean } = {}) {
   const inventory = opts.hasInputs
     ? [
-        { id: 'material.ironscale', name: 'Ironscale', type: 'misc' as const, description: '', rarity: 'common' as const },
-        { id: 'material.ironscale', name: 'Ironscale', type: 'misc' as const, description: '', rarity: 'common' as const },
-        { id: 'material.ironscale', name: 'Ironscale', type: 'misc' as const, description: '', rarity: 'common' as const },
-        { id: 'material.salt_glass', name: 'Salt Glass', type: 'misc' as const, description: '', rarity: 'common' as const },
+        { item_id: 'material.ironscale', name: 'Ironscale', type: 'trinket' as const, rarity: 'common' as const },
+        { item_id: 'material.ironscale', name: 'Ironscale', type: 'trinket' as const, rarity: 'common' as const },
+        { item_id: 'material.ironscale', name: 'Ironscale', type: 'trinket' as const, rarity: 'common' as const },
+        { item_id: 'material.salt_glass', name: 'Salt Glass', type: 'trinket' as const, rarity: 'common' as const },
       ]
     : [];
   return makeGameState({
