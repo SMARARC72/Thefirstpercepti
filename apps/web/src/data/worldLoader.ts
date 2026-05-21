@@ -124,22 +124,9 @@ interface RawCondition {
   effects?: RawConditionEffect[];
 }
 
-interface RawItem {
-  id: string;
-  name: string;
-  type?: Item["type"];
-  description?: string;
-  rarity?: Item["rarity"];
-  durability?: number;
-  maxDurability?: number;
-  charges?: number;
-  maxCharges?: number;
-  effects?: Item["effects"];
-  equipSlot?: Item["equipSlot"];
-  magical?: boolean;
-  attunement?: Item["attunement"];
-  requires?: Item["requires"];
-}
+// Items are authored as canonical v0.6 shape in content/world-data/items.json
+// (see Phase 19 / SCHEMA-403). No mapper is needed — the JSON IS the runtime
+// shape, so we cast directly at the load site below.
 
 function mapExits(raw: RawExit[]): Exit[] {
   return raw.map((e) => ({
@@ -270,24 +257,6 @@ function mapForgingRecipes(raw: RawForgeRecipe[]): ForgeRecipe[] {
   return raw.map((r) => ({ ...r, inputs: r.inputs.map((i) => ({ ...i })) }));
 }
 
-function mapItems(raw: RawItem[]): Item[] {
-  return raw.map((i) => ({
-    id: i.id,
-    name: i.name,
-    type: i.type ?? "misc",
-    description: i.description ?? "",
-    rarity: i.rarity ?? "common",
-    durability: i.durability,
-    maxDurability: i.maxDurability,
-    charges: i.charges,
-    maxCharges: i.maxCharges,
-    effects: i.effects,
-    equipSlot: i.equipSlot,
-    magical: i.magical,
-    attunement: i.attunement,
-    requires: i.requires,
-  }));
-}
 
 export function loadWorldData(): WorldData {
   const locations = mapLocations(locationsData as RawLocation[]);
@@ -295,7 +264,7 @@ export function loadWorldData(): WorldData {
   const factions = mapFactions(factionsData as RawFaction[]);
   const npcs = mapNpcs(npcsData as RawNpc[]);
   const conditions = mapConditions(conditionsData as RawCondition[]);
-  const items = mapItems(itemsData as RawItem[]);
+  const items = itemsData as unknown as Item[];
   const forgingRecipes = mapForgingRecipes(forgingRecipesData as RawForgeRecipe[]);
   return { locations, regions, factions, npcs, conditions, items, forgingRecipes };
 }

@@ -46,7 +46,7 @@ export class GameplayScreen {
   private shouldShowAnvil(game: GameState): boolean {
     if (this.recipes.length === 0) return false;
     if (!game.player.inventory || game.player.inventory.length === 0) return false;
-    const inventoryIds = new Set(game.player.inventory.map((i) => i.id));
+    const inventoryIds = new Set(game.player.inventory.map((i) => i.item_id));
     return this.recipes.some((r) => r.inputs.some((inp) => inventoryIds.has(inp.materialId)));
   }
 

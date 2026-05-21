@@ -7,13 +7,12 @@ import { canForgeRecipe, createAnvilPanel } from "../src/components/AnvilPanel";
 
 function makeItem(id: string, overrides: Partial<Item> = {}): Item {
   return {
-    id,
+    item_id: id,
     name: overrides.name ?? id,
-    type: "misc",
-    description: "",
+    type: "trinket",
     rarity: "common",
     ...overrides,
-  };
+  } as Item;
 }
 
 function makePlayer(inventory: Item[]): Player {

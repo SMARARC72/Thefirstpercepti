@@ -9,6 +9,7 @@
  */
 
 import type { RarityTierId, AttunementRequirement } from './items-5e.js';
+import type { Item } from './items-v06.js';
 
 // =============================================================================
 // PRIMITIVES
@@ -193,42 +194,6 @@ export interface Player {
   attunementSlots: AttunementSlots;
   spellSlots?: Record<number, SpellSlotLevel>;
   actionEconomy?: ActionEconomy;
-}
-
-// =============================================================================
-// ITEMS
-// =============================================================================
-
-export type ItemType = "weapon" | "armor" | "consumable" | "tool" | "key" | "document" | "misc";
-
-export interface ItemRequirements {
-  form?: CharacterForm;
-  posture?: KnowledgePosture;
-  domain?: Domain;
-}
-
-export interface Item {
-  id: UUID;
-  name: string;
-  type: ItemType;
-  description: string;
-  rarity: RarityTierId;
-  durability?: number;
-  maxDurability?: number;
-  charges?: number;
-  maxCharges?: number;
-  effects?: ItemEffect[];
-  equipSlot?: "hand" | "body" | "head" | "accessory";
-  magical?: boolean;
-  attunement?: AttunementRequirement;
-  requires?: ItemRequirements;
-}
-
-export interface ItemEffect {
-  type: "stat_boost" | "heal" | "damage" | "condition" | "unlock" | "reveal";
-  target: string;
-  value: number;
-  duration?: number;
 }
 
 // =============================================================================
@@ -905,3 +870,4 @@ export type {
 // =============================================================================
 
 export * from "./generated.js";
+export * from "./items-v06.js";

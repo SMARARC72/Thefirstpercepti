@@ -1,9 +1,19 @@
-import type { Player, Item, RarityTierId } from "@first-perception/types";
+import type { Player, Item, RarityTierId, EquipSlot } from "@first-perception/types";
+import { isMagical, isEquippable, requiresAttunement } from "@first-perception/types";
 
 export interface InventoryPanelProps {
   player: Player;
   attunementUsed?: number;
   attunementMax?: number;
+  /**
+   * Map of `equip_slot` → `item_id` for items currently worn. The
+   * pre-Phase-19 InventoryPanel inferred this from `item.equipSlot` being
+   * non-empty (i.e. the item itself remembered where it was equipped). v0.6
+   * moved that runtime state to `InventoryEntry.equipped_slot` (generated.ts).
+   * Until Player.inventory migrates from Item[] → InventoryEntry[] (Phase 21+
+   * scope per the Phase 20 README), apps/web passes this map directly.
+   */
+  equippedSlots?: ReadonlyMap<EquipSlot, string>;
   getItemRarity?: (item: Item) => RarityTierId;
   getItemWeight?: (item: Item) => number;
   onEquip?: (itemId: string) => void;
@@ -28,24 +38,57 @@ const RARITY_LABEL: Record<RarityTierId, string> = {
   artifact: "Artifact",
 };
 
-function isEquipped(item: Item): boolean {
-  return typeof item.equipSlot === "string" && item.equipSlot.length > 0;
+function isEquippedAt(
+  item: Item,
+  equippedSlots: ReadonlyMap<EquipSlot, string> | undefined,
+): boolean {
+  if (!equippedSlots || !item.equip_slot) return false;
+  return equippedSlots.get(item.equip_slot) === item.item_id;
 }
 
-function requiresAttunement(item: Item, rarity: RarityTierId): boolean {
-  if (item.attunement?.required) return true;
-  if (rarity === "legendary" || rarity === "artifact") return true;
-  return false;
-}
-
+/**
+ * Compose the human-readable effect summary line for the tile tooltip.
+ * v0.6 reshape: effects are now string[] of plain phrases on three surfaces
+ * (effects_on_equip / effects_on_attune / effects_on_use). We compose all
+ * three, prefixing with their trigger context so the player can read what's
+ * conditional vs. always-on. Empty arrays produce an empty summary.
+ */
 function effectSummary(item: Item): string {
-  if (!item.effects || item.effects.length === 0) return "";
-  return item.effects
-    .map((e) => {
-      const sign = e.value >= 0 ? "+" : "";
-      return `${e.type.replace(/_/g, " ")} ${e.target} ${sign}${e.value}`.trim();
-    })
-    .join("; ");
+  const parts: string[] = [];
+  const eq = item.effects_on_equip ?? [];
+  const at = item.effects_on_attune ?? [];
+  const us = item.effects_on_use ?? [];
+  if (eq.length) parts.push(`equip: ${eq.join(", ").replace(/_/g, " ")}`);
+  if (at.length) parts.push(`attune: ${at.join(", ").replace(/_/g, " ")}`);
+  if (us.length) parts.push(`use: ${us.join(", ").replace(/_/g, " ")}`);
+  return parts.join(" — ");
+}
+
+/**
+ * v0.6 discriminator-narrowed type-specific badges. UI-404 spec line: weapons
+ * show damage_dice/damage_type, armor shows armor_ac_base, etc. Returns
+ * empty string for types with no display-worthy primary stat (tool, trinket,
+ * book, key, currency_token), letting the rarity/name/glyphs carry the tile.
+ */
+function typeBadge(item: Item): string {
+  switch (item.type) {
+    case "weapon":
+      return `${item.damage_dice} ${item.damage_type}`;
+    case "armor":
+      return `AC ${item.armor_ac_base}${item.subtype ? ` · ${item.subtype}` : ""}`;
+    case "shield":
+      return `+${item.armor_ac_base} AC`;
+    case "ammunition":
+      return item.subtype;
+    case "consumable":
+    case "wondrous":
+    case "tool":
+    case "trinket":
+    case "book":
+    case "key":
+    case "currency_token":
+      return "";
+  }
 }
 
 export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
@@ -53,8 +96,9 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
     player,
     attunementUsed = player.attunementSlots?.used ?? 0,
     attunementMax = player.attunementSlots?.max ?? 3,
+    equippedSlots,
     getItemRarity = (item: Item) => item.rarity,
-    getItemWeight = () => 1,
+    getItemWeight = (item: Item) => item.weight_kg ?? 1,
     onEquip = () => {},
     onUnequip = () => {},
   } = props;
@@ -93,19 +137,24 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
     for (const item of inventory) {
       const rarity = getItemRarity(item);
       const weight = getItemWeight(item);
-      const equipped = isEquipped(item);
-      const needsAttune = requiresAttunement(item, rarity);
+      const equipped = isEquippedAt(item, equippedSlots);
+      const equippable = isEquippable(item);
+      const needsAttune = requiresAttunement(item);
+      const magical = isMagical(item);
 
       const tile = document.createElement("li");
       tile.className = "inventory-slot";
-      tile.dataset.itemId = item.id;
+      tile.dataset.itemId = item.item_id;
+      tile.dataset.itemType = item.type;
       tile.dataset.rarity = rarity;
+      if (magical) tile.dataset.magical = "true";
       tile.style.setProperty("--slot-tier", `var(${RARITY_TOKEN[rarity]})`);
 
       // Native title is the minimum-viable tooltip — there is no richer
-      // [data-tooltip] system in styles.css yet to upgrade to.
-      const effects = effectSummary(item);
-      const tipParts = [item.description, effects].filter(Boolean);
+      // [data-tooltip] system in styles.css yet to upgrade to. v0.6 removed
+      // the free-text `description` field; effects + type badge carry the
+      // tooltip now.
+      const tipParts = [typeBadge(item), effectSummary(item)].filter(Boolean);
       tile.title = tipParts.join(" — ");
 
       const header = document.createElement("div");
@@ -122,14 +171,14 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
       if (equipped) {
         const eq = document.createElement("span");
         eq.className = "inventory-glyph inventory-glyph-equipped";
-        eq.textContent = "◆"; // ◆
+        eq.textContent = "◆";
         eq.setAttribute("aria-label", "Equipped");
         glyphs.appendChild(eq);
       }
       if (needsAttune) {
         const at = document.createElement("span");
         at.className = "inventory-glyph inventory-glyph-attune";
-        at.textContent = "◆"; // ◆ Authority-cost / attunement marker (Tide-Stained allowed glyph)
+        at.textContent = "◆"; // Authority-cost / attunement marker (Tide-Stained allowed glyph)
         at.setAttribute("aria-label", "Requires attunement");
         glyphs.appendChild(at);
       }
@@ -141,31 +190,41 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
       tier.textContent = RARITY_LABEL[rarity];
       tile.appendChild(tier);
 
+      const badge = typeBadge(item);
+      if (badge) {
+        const badgeEl = document.createElement("p");
+        badgeEl.className = "inventory-slot-badge";
+        badgeEl.dataset.testid = `inventory-badge-${item.item_id}`;
+        badgeEl.textContent = badge;
+        tile.appendChild(badgeEl);
+      }
+
       const footer = document.createElement("div");
       footer.className = "inventory-slot-footer";
 
       const weightEl = document.createElement("span");
       weightEl.className = "inventory-slot-weight";
-      weightEl.textContent = `${weight} wt`;
+      // Format: drop trailing .0 for clean integers but keep precision otherwise.
+      weightEl.textContent = `${Number.isInteger(weight) ? weight : weight.toFixed(1)} kg`;
       footer.appendChild(weightEl);
 
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "inventory-slot-action";
-      if (equipped) {
-        btn.textContent = "Unequip";
-        btn.dataset.action = "unequip";
-        btn.addEventListener("click", () => {
-          // For unequip the contract takes a slot id; until Phase 8a wires
-          // a real slot registry we forward the equipSlot string itself.
-          onUnequip(item.equipSlot ?? item.id);
-        });
-      } else {
-        btn.textContent = "Equip";
-        btn.dataset.action = "equip";
-        btn.addEventListener("click", () => onEquip(item.id));
+      if (equippable) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "inventory-slot-action";
+        if (equipped) {
+          btn.textContent = "Unequip";
+          btn.dataset.action = "unequip";
+          btn.addEventListener("click", () => {
+            onUnequip(item.equip_slot ?? item.item_id);
+          });
+        } else {
+          btn.textContent = "Equip";
+          btn.dataset.action = "equip";
+          btn.addEventListener("click", () => onEquip(item.item_id));
+        }
+        footer.appendChild(btn);
       }
-      footer.appendChild(btn);
       tile.appendChild(footer);
 
       grid.appendChild(tile);
@@ -187,8 +246,7 @@ export function createInventoryPanel(props: InventoryPanelProps): HTMLElement {
   weightLabel.textContent = "Burden";
   const weightValue = document.createElement("strong");
   weightValue.className = "inventory-stat-value";
-  // Format: drop trailing .0 for clean integers but keep precision otherwise.
-  weightValue.textContent = `${Number.isInteger(totalWeight) ? totalWeight : totalWeight.toFixed(1)} wt`;
+  weightValue.textContent = `${Number.isInteger(totalWeight) ? totalWeight : totalWeight.toFixed(1)} kg`;
   weightStat.appendChild(weightLabel);
   weightStat.appendChild(weightValue);
   summary.appendChild(weightStat);

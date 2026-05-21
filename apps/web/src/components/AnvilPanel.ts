@@ -23,8 +23,8 @@ function indexInventory(inventory: ReadonlyArray<Item>): MaterialIndex {
   const counts = new Map<string, number>();
   const names = new Map<string, string>();
   for (const item of inventory) {
-    counts.set(item.id, (counts.get(item.id) ?? 0) + 1);
-    if (!names.has(item.id)) names.set(item.id, item.name);
+    counts.set(item.item_id, (counts.get(item.item_id) ?? 0) + 1);
+    if (!names.has(item.item_id)) names.set(item.item_id, item.name);
   }
   return { counts, names };
 }
