@@ -1,0 +1,1856 @@
+{
+  "materials": [
+    {
+      "material_id": "mat_iron",
+      "name": "Iron",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 10,
+      "witness_payload": null,
+      "notes": "Standard wrought iron. Tier 1. SRD baseline. Common across smiths."
+    },
+    {
+      "material_id": "mat_steel",
+      "name": "Steel",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 40,
+      "witness_payload": null,
+      "notes": "Carbon-iron alloy. Tier 1-2 split depending on quality. Used in weapons and tools."
+    },
+    {
+      "material_id": "mat_bronze",
+      "name": "Bronze",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 25,
+      "witness_payload": null,
+      "notes": "Copper-tin alloy. Older than iron; ritually preferred in some traditions for not 'arguing with the moon.'"
+    },
+    {
+      "material_id": "mat_copper",
+      "name": "Copper",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.42,
+      "value_cp_per_unit": 20,
+      "witness_payload": null,
+      "notes": "Soft, conductive. Tinkering reagent; alchemical conductor."
+    },
+    {
+      "material_id": "mat_tin",
+      "name": "Tin",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.42,
+      "value_cp_per_unit": 15,
+      "witness_payload": null,
+      "notes": "Soft, low-melt. Pewter precursor; alloy component for bronze and bell-metal."
+    },
+    {
+      "material_id": "mat_lead",
+      "name": "Lead",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.51,
+      "value_cp_per_unit": 5,
+      "witness_payload": null,
+      "notes": "Heavy, dull, toxic over long handling. Used to line caskets, write curse tablets, line scrying basins (blocks divination)."
+    },
+    {
+      "material_id": "mat_silver",
+      "name": "Silver",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 500,
+      "witness_payload": null,
+      "notes": "Tier 2. Common silvering surcharge on weapons against undead/lycanthropic creatures (SRD baseline)."
+    },
+    {
+      "material_id": "mat_gold",
+      "name": "Gold",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.96,
+      "value_cp_per_unit": 5000,
+      "witness_payload": null,
+      "notes": "Tier 3 by value. Soft for weapons; used in inlay, ritual implements, coin substrate."
+    },
+    {
+      "material_id": "mat_electrum",
+      "name": "Electrum",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.62,
+      "value_cp_per_unit": 2500,
+      "witness_payload": null,
+      "notes": "Gold-silver alloy. Tier 2-3. Coin metal in some regions; ritually 'between worlds' for psychopomp work."
+    },
+    {
+      "material_id": "mat_cold_iron",
+      "name": "Cold Iron",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.48,
+      "value_cp_per_unit": 200,
+      "witness_payload": {
+        "witness_summary": "Forged below freezing without flame quench; resists fey, abjurations, and Imposed bindings.",
+        "binding_dc": 14,
+        "carries_soul_kind": null,
+        "carries_memory_tags": [
+          "anti_fey",
+          "anti_binding",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Tier 2. Folkloric (Celtic, Slavic) anti-fey iron. In this world: forged cold, never touched by flame after pour. Reduces effectiveness of charm/binding effects by 1 step when used as substrate."
+    },
+    {
+      "material_id": "mat_meteoric_iron",
+      "name": "Meteoric Iron",
+      "category": "material_metal",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 3000,
+      "witness_payload": {
+        "witness_summary": "Star-fall metal. Holds memory of its descent: any item forged of it dreams of falling. Witness binding rolls inherit memory_tag 'starfall'.",
+        "binding_dc": 16,
+        "carries_soul_kind": "fragment",
+        "carries_memory_tags": [
+          "starfall",
+          "ancient"
+        ]
+      },
+      "notes": "Tier 3. Classical (Iliad references meteoric iron weapons). Rare; usually arrives as ore in craters or already-worked relics. Mythology: 'fell from where the sky is thin.'"
+    },
+    {
+      "material_id": "mat_orichalcum",
+      "name": "Orichalcum",
+      "category": "material_metal",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.55,
+      "value_cp_per_unit": 8000,
+      "witness_payload": {
+        "witness_summary": "Pre-civilizational copper-gold alloy attested in old hymns and ruined temple inscriptions. Resists tarnish; rings when struck even across rooms.",
+        "binding_dc": 18,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "pre_civilizational",
+          "resonant"
+        ]
+      },
+      "notes": "Tier 4. Lifted in pattern from Plato/classical Atlantis lore. Functionally: a metal that should not still exist; sometimes pulled from ruins. Strikes with a bell-clear tone. Cannot be forged with mundane fire; requires a Composed condition (canon-cost)."
+    },
+    {
+      "material_id": "mat_granite",
+      "name": "Granite",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.7,
+      "value_cp_per_unit": 2,
+      "witness_payload": null,
+      "notes": "Common igneous building stone. Tier 1."
+    },
+    {
+      "material_id": "mat_limestone",
+      "name": "Limestone",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.5,
+      "value_cp_per_unit": 2,
+      "witness_payload": null,
+      "notes": "Soft, common. Base for lime-mortar; carves easily; weathers."
+    },
+    {
+      "material_id": "mat_slate",
+      "name": "Slate",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.7,
+      "value_cp_per_unit": 3,
+      "witness_payload": null,
+      "notes": "Fissile. Roofing, writing tablets, Bell Court ledger boards."
+    },
+    {
+      "material_id": "mat_marble",
+      "name": "Marble",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.65,
+      "value_cp_per_unit": 35,
+      "witness_payload": null,
+      "notes": "Tier 1-2. Civic and religious construction; takes polish; veining matters to carvers."
+    },
+    {
+      "material_id": "mat_obsidian",
+      "name": "Obsidian",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.4,
+      "value_cp_per_unit": 60,
+      "witness_payload": null,
+      "notes": "Volcanic glass. Sharpest natural edge; brittle. Ritual knives, scrying mirrors. SRD- and Mesoamerican-attested."
+    },
+    {
+      "material_id": "mat_jade",
+      "name": "Jade",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 3.3,
+      "value_cp_per_unit": 800,
+      "witness_payload": null,
+      "notes": "Tier 3. Funerary and protective in many traditions. Tough — survives drops that shatter softer stones."
+    },
+    {
+      "material_id": "mat_chalk",
+      "name": "Chalk",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 2.3,
+      "value_cp_per_unit": 1,
+      "witness_payload": null,
+      "notes": "Soft, friable. Marks circles, doors, names. Cheap and everywhere."
+    },
+    {
+      "material_id": "mat_soulstone",
+      "name": "Soulstone",
+      "category": "material_stone",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 1.8,
+      "value_cp_per_unit": 4000,
+      "witness_payload": {
+        "witness_summary": "Crystalline matrix capable of holding a fragment of cognition. Used in necromantic and animistic crafts to anchor an echo of a person, animal, or pact.",
+        "binding_dc": 17,
+        "carries_soul_kind": "fragment",
+        "carries_memory_tags": [
+          "matrix",
+          "ancient",
+          "binding_substrate"
+        ]
+      },
+      "notes": "Tier 3-4. Pattern lifted from D&D 5e soul gems + animistic stone traditions; renamed for honesty. Risk: improper handling can bind a fragment of the holder. Cleric/heretical-surgery contraband in many cities."
+    },
+    {
+      "material_id": "mat_oak",
+      "name": "Oak",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.75,
+      "value_cp_per_unit": 5,
+      "witness_payload": null,
+      "notes": "Hardwood. Standard structural and weapon-haft wood. Tier 1."
+    },
+    {
+      "material_id": "mat_ash",
+      "name": "Ash",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.7,
+      "value_cp_per_unit": 5,
+      "witness_payload": null,
+      "notes": "Flexible, shock-absorbent. Tool handles, spear shafts, bows."
+    },
+    {
+      "material_id": "mat_pine",
+      "name": "Pine",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.55,
+      "value_cp_per_unit": 2,
+      "witness_payload": null,
+      "notes": "Softwood. Cheap, plentiful, resinous. Building, crating, kindling."
+    },
+    {
+      "material_id": "mat_yew",
+      "name": "Yew",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.65,
+      "value_cp_per_unit": 30,
+      "witness_payload": null,
+      "notes": "Longbow wood; poisonous heartwood. Folk-belief: grows in graveyards because it likes the company."
+    },
+    {
+      "material_id": "mat_blackthorn",
+      "name": "Blackthorn",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.85,
+      "value_cp_per_unit": 25,
+      "witness_payload": null,
+      "notes": "Dense, dark, wickedly thorned. Cudgels, walking staves. Folklore (Celtic): cuts both physical and curse-thread."
+    },
+    {
+      "material_id": "mat_ironwood",
+      "name": "Ironwood",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 1.05,
+      "value_cp_per_unit": 120,
+      "witness_payload": null,
+      "notes": "Tier 2. Hardwood dense enough to dull blades; sinks in water. SRD-attested; carved only with cold-chiseling or sorcery."
+    },
+    {
+      "material_id": "mat_darkwood",
+      "name": "Darkwood",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.3,
+      "value_cp_per_unit": 500,
+      "witness_payload": null,
+      "notes": "Tier 3. SRD: rare hardwood half the weight of normal wood at twice the strength. Used in shields and bows where weight matters."
+    },
+    {
+      "material_id": "mat_ghostwood",
+      "name": "Ghostwood",
+      "category": "material_wood",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.2,
+      "value_cp_per_unit": 2200,
+      "witness_payload": {
+        "witness_summary": "Wood cut from trees that grew on or through a tomb. Holds the silence of the place it grew. Items made of it are quieter than they should be — footfalls, drawn blades, voices near them.",
+        "binding_dc": 15,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "silence_carrier",
+          "tomb_grown"
+        ]
+      },
+      "notes": "Tier 3. Original. Not 'evil wood' — silence wood. Sound around a ghostwood object is dampened (tonal: gives the player a stat advantage on Sense-stealth at cost of being deeply unsettling in social use)."
+    },
+    {
+      "material_id": "mat_linen",
+      "name": "Linen",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.3,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Flax fiber. Common cloth; bandages, undergarments, sails."
+    },
+    {
+      "material_id": "mat_wool",
+      "name": "Wool",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.4,
+      "value_cp_per_unit": 6,
+      "witness_payload": null,
+      "notes": "Sheep fiber. Cloaks, tunics, blankets. Holds warmth wet or dry."
+    },
+    {
+      "material_id": "mat_cotton",
+      "name": "Cotton",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.25,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Plant fiber. Lighter than linen, softer than wool. Mid-tier garments."
+    },
+    {
+      "material_id": "mat_hemp",
+      "name": "Hemp",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.3,
+      "value_cp_per_unit": 4,
+      "witness_payload": null,
+      "notes": "Coarse, durable. Rope, sailcloth, sacking."
+    },
+    {
+      "material_id": "mat_silk",
+      "name": "Silk",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.1,
+      "value_cp_per_unit": 600,
+      "witness_payload": null,
+      "notes": "Tier 2-3. Luxurious; takes dye brilliantly. Required for some divinatory garments."
+    },
+    {
+      "material_id": "mat_leather",
+      "name": "Leather",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 25,
+      "witness_payload": null,
+      "notes": "Cured hide. Armor, bindings, belts, scabbards. Standard tanned cow/ox."
+    },
+    {
+      "material_id": "mat_hide_heavy",
+      "name": "Heavy Hide",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.9,
+      "value_cp_per_unit": 50,
+      "witness_payload": null,
+      "notes": "Uncured or thick-cured large-beast hide (boar, aurochs, bear). Heavier armor stock."
+    },
+    {
+      "material_id": "mat_parchment",
+      "name": "Parchment",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 20,
+      "witness_payload": null,
+      "notes": "Treated animal skin. Writing substrate; spell scribing in many traditions."
+    },
+    {
+      "material_id": "mat_vellum_calf",
+      "name": "Calf Vellum",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 75,
+      "witness_payload": null,
+      "notes": "Tier 2. Higher-grade parchment from young calf. Civic ledgers and high-cost scribing."
+    },
+    {
+      "material_id": "mat_dragonscale",
+      "name": "Dragonscale (loose)",
+      "category": "material_fiber",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.2,
+      "value_cp_per_unit": 6000,
+      "witness_payload": {
+        "witness_summary": "Loose scale from a dragon — typically shed, occasionally taken. Carries faint resonance of its parent's element. Crafts incorporating dragonscale risk attracting the dragon's attention if it lives.",
+        "binding_dc": 18,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "parent_resonance",
+          "draconic"
+        ]
+      },
+      "notes": "Tier 4. SRD-attested. Original twist: if parent dragon still alive, items made carry an Echo back to it (Notice +2 with dragon faction at use)."
+    },
+    {
+      "material_id": "mat_salt_common",
+      "name": "Salt (common)",
+      "category": "material_reagent",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 1,
+      "witness_payload": null,
+      "notes": "Table salt. Preservation, scattering wards, mundane cooking. Distinct from Greywake's worked salts."
+    },
+    {
+      "material_id": "mat_sulfur",
+      "name": "Sulfur",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Yellow brimstone. Alchemy, smoke-bombs, gunpowder analogues. Banned in some civic codes."
+    },
+    {
+      "material_id": "mat_mercury",
+      "name": "Mercury (quicksilver)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.1,
+      "value_cp_per_unit": 60,
+      "witness_payload": null,
+      "notes": "Tier 2. Liquid metal. Mirror-silvering, alchemical solvent, scrying basin. Toxic; long-handlers lose Sense over time (handled by adapter, not material data)."
+    },
+    {
+      "material_id": "mat_phosphor_dust",
+      "name": "Phosphor Dust",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 30,
+      "witness_payload": null,
+      "notes": "Glows faintly in dark; ignites in air if loose. Light-glyphs, signal flares."
+    },
+    {
+      "material_id": "mat_herb_bundle",
+      "name": "Herb Bundle (mixed)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 5,
+      "witness_payload": null,
+      "notes": "Generic apothecary bundle: rosemary, sage, wormwood, yarrow, etc. Regional substitutes documented in regional packs."
+    },
+    {
+      "material_id": "mat_bone_meal",
+      "name": "Bone Meal",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 6,
+      "witness_payload": null,
+      "notes": "Ground bone — agricultural and necromantic both. Source provenance matters in some traditions (human/animal/unknown)."
+    },
+    {
+      "material_id": "mat_blood_binder",
+      "name": "Blood-Binder (dried)",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 40,
+      "witness_payload": {
+        "witness_summary": "Dried blood (usually animal) prepared for pact and binding work. Source must be declared at crafting; using human blood without declaration triggers contradiction.",
+        "binding_dc": 12,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "pact_binder",
+          "declared_source_required"
+        ]
+      },
+      "notes": "Tier 2. Declared animal source is mundane; undeclared source is cursed. Universally banned in some civic codes; common in others."
+    },
+    {
+      "material_id": "mat_ash_reagent",
+      "name": "Ash (worked)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 3,
+      "witness_payload": null,
+      "notes": "Pyre or hearth ash; sometimes named-pyre ash (provenance noted separately). Banishment circles, mourning rites."
+    },
+    {
+      "material_id": "mat_ink_iron_gall",
+      "name": "Iron-Gall Ink",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Standard scribing ink. Civic ledgers, scribed scrolls, mundane records."
+    },
+    {
+      "material_id": "mat_beeswax",
+      "name": "Beeswax",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 10,
+      "witness_payload": null,
+      "notes": "Sealing wax, candles, waterproofing. Distinct from Greywake marrow-wax."
+    },
+    {
+      "material_id": "mat_essential_oil",
+      "name": "Essential Oil (mixed)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 35,
+      "witness_payload": null,
+      "notes": "Distilled botanical. Anointing, perfume, alchemical solvent."
+    },
+    {
+      "material_id": "mat_crystal_dust",
+      "name": "Crystal Dust",
+      "category": "material_reagent",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 200,
+      "witness_payload": {
+        "witness_summary": "Ground quartz/calcite with weak resonant memory. Used in scrying focuses, alchemical amplifiers, abjuration powders.",
+        "binding_dc": 10,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "resonant",
+          "focus_substrate"
+        ]
+      },
+      "notes": "Tier 2-3. Lower-grade carrier of metaphysical signal; pairs with stronger reagents."
+    },
+    {
+      "material_id": "mat_pewter",
+      "name": "Pewter",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Tin-lead-copper alloy. Tableware, tankards, mass-cast trinkets. Soft; deforms before breaking."
+    },
+    {
+      "material_id": "mat_brass_baseline",
+      "name": "Brass (baseline)",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 22,
+      "witness_payload": null,
+      "notes": "Copper-zinc alloy. Distinct from mat_brass_greywake (regional, foundry-hallmarked). Instruments, fittings, hinges."
+    },
+    {
+      "material_id": "mat_watered_steel_damascus",
+      "name": "Watered Steel (Damascus)",
+      "category": "material_metal",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.46,
+      "value_cp_per_unit": 700,
+      "witness_payload": null,
+      "notes": "Tier 2-3. Folded high-carbon steel with characteristic wavy pattern. Edge holds twice mundane steel; smiths swear by it. Historical attestation: Persian/Indian metallurgy."
+    },
+    {
+      "material_id": "mat_mithral",
+      "name": "Mithral",
+      "category": "material_metal",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.22,
+      "value_cp_per_unit": 4500,
+      "witness_payload": {
+        "witness_summary": "Silver-bright alloy lighter than aluminum and harder than steel. Fey traditions claim it as 'truesilver' — does not tarnish, holds enchantment well, ignores some abjurations.",
+        "binding_dc": 16,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "fey_touched",
+          "lightweight",
+          "enchantment_substrate"
+        ]
+      },
+      "notes": "Tier 3-4. SRD-attested. Armor made of mithral counts as one category lighter for stealth/strength prerequisites."
+    },
+    {
+      "material_id": "mat_adamantine",
+      "name": "Adamantine",
+      "category": "material_metal",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.8,
+      "value_cp_per_unit": 7500,
+      "witness_payload": {
+        "witness_summary": "Black-gray alloy of nigh-unbreakable strength. Dwarven and dread-king metallurgy traditions both claim it. Items made of it cannot be sundered by mundane means; deal critical damage to objects.",
+        "binding_dc": 18,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "earth_bound",
+          "unsunderable",
+          "weight_bearing"
+        ]
+      },
+      "notes": "Tier 4. SRD-attested. Heavy, hard to work, expensive."
+    },
+    {
+      "material_id": "mat_sapphire",
+      "name": "Sapphire",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.005,
+      "value_cp_per_unit": 1000,
+      "witness_payload": null,
+      "notes": "Tier 3. Blue corundum. Royal/judicial associations; some traditions use as truth-focus."
+    },
+    {
+      "material_id": "mat_ruby",
+      "name": "Ruby",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.005,
+      "value_cp_per_unit": 1500,
+      "witness_payload": null,
+      "notes": "Tier 3. Red corundum. Most valuable corundum; folk-belief: heats blood, protects from poison."
+    },
+    {
+      "material_id": "mat_emerald",
+      "name": "Emerald",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.004,
+      "value_cp_per_unit": 1200,
+      "witness_payload": null,
+      "notes": "Tier 3. Green beryl. Folk-belief: reveals lies, eyes of statues. Cracks under stress."
+    },
+    {
+      "material_id": "mat_diamond",
+      "name": "Diamond",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.004,
+      "value_cp_per_unit": 3000,
+      "witness_payload": null,
+      "notes": "Tier 3-4. Hardest known stone; cuts glass, focuses light. Required component in some Restoration-tier spell traditions (consumed at cast)."
+    },
+    {
+      "material_id": "mat_moonstone",
+      "name": "Moonstone",
+      "category": "material_stone",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.006,
+      "value_cp_per_unit": 220,
+      "witness_payload": {
+        "witness_summary": "Adularescent feldspar that catches light like a tide. Folk and scholarly traditions agree: dreams settle on moonstone overnight. Holds a faint echo of the wearer's recent dreams.",
+        "binding_dc": 11,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "dream_residue",
+          "lunar_resonance"
+        ]
+      },
+      "notes": "Tier 2. One of the few baseline gemstones with light metaphysical signature. Folk: divination, fertility, safe sea passage."
+    },
+    {
+      "material_id": "mat_onyx",
+      "name": "Onyx",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.008,
+      "value_cp_per_unit": 180,
+      "witness_payload": null,
+      "notes": "Tier 2. Black banded chalcedony. Funerary and necromantic traditions both use it; signet rings and curse-mounting. SRD: spell component for Animate Dead."
+    },
+    {
+      "material_id": "mat_malachite",
+      "name": "Malachite",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.01,
+      "value_cp_per_unit": 60,
+      "witness_payload": null,
+      "notes": "Tier 1-2. Green banded copper carbonate. Carved decorative; folk-protective against evil eye (worn near children)."
+    },
+    {
+      "material_id": "mat_lapis_lazuli",
+      "name": "Lapis Lazuli",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.009,
+      "value_cp_per_unit": 150,
+      "witness_payload": null,
+      "notes": "Tier 2. Ultramarine pigment source; ground to make the most expensive blue paint in the world. Religious icons, illumination."
+    },
+    {
+      "material_id": "mat_amber_baseline",
+      "name": "Amber (baseline)",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.002,
+      "value_cp_per_unit": 80,
+      "witness_payload": null,
+      "notes": "Tier 1-2. Fossilized tree resin. Inclusions (insects, debris) raise value. Distinct from mat_drowned_amber (Greywake regional)."
+    },
+    {
+      "material_id": "mat_pearl",
+      "name": "Pearl",
+      "category": "material_stone",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.001,
+      "value_cp_per_unit": 280,
+      "witness_payload": null,
+      "notes": "Tier 2-3. Mollusk-secretion biomineral. Coastal traditions: sea-witness; oath-binding. SRD: spell component for some divinations."
+    },
+    {
+      "material_id": "mat_cedar",
+      "name": "Cedar",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.4,
+      "value_cp_per_unit": 9,
+      "witness_payload": null,
+      "notes": "Aromatic softwood. Moth-repellent; preferred for chests, scroll cases. Religious traditions: incense, temple beams."
+    },
+    {
+      "material_id": "mat_willow",
+      "name": "Willow",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 4,
+      "witness_payload": null,
+      "notes": "Flexible, waterside. Baskets, wattle, charcoal for ink. Folk: bark steeped for fever (salicin)."
+    },
+    {
+      "material_id": "mat_hazel",
+      "name": "Hazel",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.6,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Coppice wood. Divining rods (water-witching), wands, wattle. Folk: hazel rods point at hidden water."
+    },
+    {
+      "material_id": "mat_rowan",
+      "name": "Rowan",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.65,
+      "value_cp_per_unit": 14,
+      "witness_payload": null,
+      "notes": "Folkloric anti-witch wood (Celtic/Norse). Threshold posts, walking staves, charm-rod cores. Reads as 'protective' across many traditions."
+    },
+    {
+      "material_id": "mat_juniper",
+      "name": "Juniper",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.55,
+      "value_cp_per_unit": 7,
+      "witness_payload": null,
+      "notes": "Aromatic. Berries flavor spirits; smoke for ritual purification (Greek, Slavic, North African traditions)."
+    },
+    {
+      "material_id": "mat_mahogany",
+      "name": "Mahogany",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.65,
+      "value_cp_per_unit": 90,
+      "witness_payload": null,
+      "notes": "Tier 2. Tropical hardwood. Furniture, fine cabinetry, ship rails. Imported from southern continents."
+    },
+    {
+      "material_id": "mat_teak",
+      "name": "Teak",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.7,
+      "value_cp_per_unit": 75,
+      "witness_payload": null,
+      "notes": "Tier 2. Oily tropical hardwood. Ship decking; water-rot resistant. Burmese/SE Asian historical attestation."
+    },
+    {
+      "material_id": "mat_hawthorn",
+      "name": "Hawthorn",
+      "category": "material_wood",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.8,
+      "value_cp_per_unit": 18,
+      "witness_payload": null,
+      "notes": "Dense thorny. Cudgels, hedging, faerie-folklore boundary marker (a hawthorn alone in a field is not cut). Akin to blackthorn but with stronger threshold-significance."
+    },
+    {
+      "material_id": "mat_rawhide",
+      "name": "Rawhide",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Uncured hide. Drumheads, dog chews, lashing. Hardens like wood when wet then dried."
+    },
+    {
+      "material_id": "mat_sinew",
+      "name": "Sinew",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Animal tendon, processed. Bowstring backing, fine lashing. SC-08 candidate (creature-derived but using material_fiber for now)."
+    },
+    {
+      "material_id": "mat_gut_string",
+      "name": "Gut String",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 10,
+      "witness_payload": null,
+      "notes": "Processed gut (sheep/cat). Musical instrument strings, surgical thread, bowstrings. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_feathers_down",
+      "name": "Down Feathers",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 14,
+      "witness_payload": null,
+      "notes": "Soft underfeathers (goose, eider). Pillow stuffing, quilted gambeson padding, fletching down. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_fur_assorted",
+      "name": "Fur (assorted)",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.45,
+      "value_cp_per_unit": 35,
+      "witness_payload": null,
+      "notes": "Various trim-grade furs (rabbit, fox, beaver). Cold-weather lining. Source/quality matters for value. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_spider_silk",
+      "name": "Spider Silk (raw)",
+      "category": "material_fiber",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.005,
+      "value_cp_per_unit": 600,
+      "witness_payload": {
+        "witness_summary": "Strands harvested from large spider species. Stronger than steel by weight; takes dye unevenly. Some traditions: spiders weave fate; thread holds a fragment of that.",
+        "binding_dc": 14,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "fate_thread",
+          "tensile_resonant"
+        ]
+      },
+      "notes": "Tier 3. SRD-adjacent (giant spider silk). Used in light armor, ritual bindings, divinatory cordage."
+    },
+    {
+      "material_id": "mat_canvas",
+      "name": "Canvas",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.35,
+      "value_cp_per_unit": 15,
+      "witness_payload": null,
+      "notes": "Heavy hemp or linen weave. Sails, tents, painted panels, tarpaulins."
+    },
+    {
+      "material_id": "mat_felted_wool",
+      "name": "Felted Wool",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.4,
+      "value_cp_per_unit": 18,
+      "witness_payload": null,
+      "notes": "Wool processed by heat/moisture/pressure into dense matted fabric. Boot liners, gambeson layers, yurt walls."
+    },
+    {
+      "material_id": "mat_hide_dire",
+      "name": "Dire-Beast Hide",
+      "category": "material_fiber",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 1.2,
+      "value_cp_per_unit": 350,
+      "witness_payload": {
+        "witness_summary": "Hide from a dire-class beast (dire wolf, dire bear, dire boar). Carries trace of the beast's pre-death intent — armor or trophy made from it occasionally provokes hostile animals.",
+        "binding_dc": 13,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "dire_origin",
+          "beast_memory"
+        ]
+      },
+      "notes": "Tier 2-3. SC-08 candidate. Source creature affects effect: dire bear hide grants intimidation in social use; dire wolf hide warmth + tracking aura."
+    },
+    {
+      "material_id": "mat_scales_reptile",
+      "name": "Reptile Scales",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.3,
+      "value_cp_per_unit": 60,
+      "witness_payload": null,
+      "notes": "Crocodile/giant lizard/serpent scales. Scale armor stock. Tier 2. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_scales_fish",
+      "name": "Fish Scales (large)",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.1,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Sturgeon, tarpon, large salmon. Iridescent decorative use; fish-leather backing. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_chitin_insectoid",
+      "name": "Chitin (insectoid)",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.25,
+      "value_cp_per_unit": 90,
+      "witness_payload": null,
+      "notes": "Tier 2. Plates harvested from large insectoid beasts. Hard, light, brittle when struck wrong. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_shell_giant_arthropod",
+      "name": "Giant Arthropod Shell",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.8,
+      "value_cp_per_unit": 200,
+      "witness_payload": null,
+      "notes": "Tier 2-3. Carapace from giant crabs, scorpions, etc. Shield stock. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_saltpeter",
+      "name": "Saltpeter",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 18,
+      "witness_payload": null,
+      "notes": "Potassium nitrate. Preservation, alchemical oxidizer, smoke-bomb component. Civic-regulated in many cities."
+    },
+    {
+      "material_id": "mat_charcoal",
+      "name": "Charcoal",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 2,
+      "witness_payload": null,
+      "notes": "Carbonized wood. Smithing fuel, sketching, water purification, ink base."
+    },
+    {
+      "material_id": "mat_soot",
+      "name": "Soot",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 1,
+      "witness_payload": null,
+      "notes": "Carbon-black residue. Pigment, ink base, disguise compound."
+    },
+    {
+      "material_id": "mat_alchemical_acid",
+      "name": "Alchemical Acid (vial)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.15,
+      "value_cp_per_unit": 25,
+      "witness_payload": null,
+      "notes": "Etching, alchemical processing, splash weapon (1d6 acid damage in many rule frames)."
+    },
+    {
+      "material_id": "mat_lye",
+      "name": "Lye",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 4,
+      "witness_payload": null,
+      "notes": "Caustic alkali. Soap-making, paper processing, corpse-rendering."
+    },
+    {
+      "material_id": "mat_alum",
+      "name": "Alum",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 7,
+      "witness_payload": null,
+      "notes": "Mordant for dyes, water clarifier, styptic for shaving cuts."
+    },
+    {
+      "material_id": "mat_gum_arabic",
+      "name": "Gum Arabic",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 16,
+      "witness_payload": null,
+      "notes": "Acacia resin. Binder for inks, paints, alchemical pastes."
+    },
+    {
+      "material_id": "mat_frankincense",
+      "name": "Frankincense",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 45,
+      "witness_payload": null,
+      "notes": "Tier 2. Aromatic resin. Religious incense across many traditions; folk-belief: drives off harmful spirits."
+    },
+    {
+      "material_id": "mat_myrrh",
+      "name": "Myrrh",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 55,
+      "witness_payload": null,
+      "notes": "Tier 2. Aromatic resin. Embalming, funerary incense, antiseptic. Companion-pairing with frankincense."
+    },
+    {
+      "material_id": "mat_camphor",
+      "name": "Camphor",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 30,
+      "witness_payload": null,
+      "notes": "Crystalline aromatic. Embalming, moth-repellent, alchemical solvent. Folk: drives away the unburied."
+    },
+    {
+      "material_id": "mat_mandrake_root",
+      "name": "Mandrake Root",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 120,
+      "witness_payload": {
+        "witness_summary": "Human-shaped root. Powerful narcotic/hallucinogen; folk-belief screams when uprooted. Drowned Church variant: 'practiced mandrake' carries the screamer's witness — uses in dream-walking, oath-breaking, false-confession.",
+        "binding_dc": 14,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "screamer_resonance",
+          "dream_substrate",
+          "narcotic"
+        ]
+      },
+      "notes": "Tier 2-3. Civic-restricted in most cities. Source declaration matters."
+    },
+    {
+      "material_id": "mat_wormwood_dried",
+      "name": "Wormwood (dried)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 8,
+      "witness_payload": null,
+      "notes": "Bitter herb. Absinthe production, vermifuge, banishment circles, marginalia ink-bittering."
+    },
+    {
+      "material_id": "mat_asafoetida",
+      "name": "Asafoetida",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 22,
+      "witness_payload": null,
+      "notes": "Pungent gum-resin. Indian/Persian historical attestation. Cooking spice; folk: wards against malign spirits (smell does the work)."
+    },
+    {
+      "material_id": "mat_valerian_root",
+      "name": "Valerian Root",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Sedative herb. Sleep aid, anxiolytic in tinctures. Cats are drawn to it."
+    },
+    {
+      "material_id": "mat_blood_fresh_animal",
+      "name": "Animal Blood (fresh)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 6,
+      "witness_payload": {
+        "witness_summary": "Fresh animal blood. Cheaper and weaker than dried blood-binder; spoils in hours. Used in immediate-effect rites (apotropaic warding, fresh-blood scrying). Source declaration required.",
+        "binding_dc": 9,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "fresh_only",
+          "declared_source_required",
+          "spoils_fast"
+        ]
+      },
+      "notes": "Tier 1. SC-08 candidate. Distinct from mat_blood_binder (which is dried, durable). Useful for ritual immediacy, not for storage."
+    },
+    {
+      "material_id": "mat_marrow_animal",
+      "name": "Marrow (animal)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 18,
+      "witness_payload": {
+        "witness_summary": "Bone marrow. Substrate for marrow-wax production (Greywake Drowned Church specialty). Carries the witness of the bone's origin.",
+        "binding_dc": 11,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "bone_origin",
+          "wax_substrate"
+        ]
+      },
+      "notes": "SC-08 candidate. Pan-world substrate; Greywake's Drowned Church renders it heretically (see mat_marrow_wax_trace)."
+    },
+    {
+      "material_id": "mat_bile_predator",
+      "name": "Predator Bile",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 40,
+      "witness_payload": null,
+      "notes": "Tier 2. Bile from carnivore (wolf, big cat, raptor). Alchemical solvent, poison vector, leather processing. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_ichor_aberration",
+      "name": "Aberrant Ichor",
+      "category": "material_reagent",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 800,
+      "witness_payload": {
+        "witness_summary": "Fluid harvested from aberration-class creatures (mind-things, deep-things, wrongly-made beasts). Resists declaration: even the harvester rarely knows what they took. Substrate for high-tier psionic-adjacent alchemy.",
+        "binding_dc": 17,
+        "carries_soul_kind": "fragment",
+        "carries_memory_tags": [
+          "aberrant_origin",
+          "undeclared_witness",
+          "high_canon_pressure"
+        ]
+      },
+      "notes": "Tier 3-4. SC-08 candidate. Rare; contested by multiple traditions (Drowned Church wants it, civic authorities ban it)."
+    },
+    {
+      "material_id": "mat_tallow_rendered",
+      "name": "Tallow (rendered)",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.1,
+      "value_cp_per_unit": 4,
+      "witness_payload": null,
+      "notes": "Rendered animal fat. Candles, soap, leather conditioning, food. SC-08 candidate (creature-derived but mundane processing)."
+    },
+    {
+      "material_id": "mat_fangs_predator",
+      "name": "Predator Fangs",
+      "category": "material_reagent",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 25,
+      "witness_payload": null,
+      "notes": "Wolf, big cat, large reptile. Carved into amulets, knife pommels, ritual implements. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_claws_raptor",
+      "name": "Raptor Claws",
+      "category": "material_reagent",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 20,
+      "witness_payload": null,
+      "notes": "Large bird-of-prey or wyvern-kin talons. Ritual implements, prestige hunting trophies. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_horn_ungulate",
+      "name": "Horn (ungulate)",
+      "category": "material_reagent",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.2,
+      "value_cp_per_unit": 30,
+      "witness_payload": null,
+      "notes": "Goat, cow, antelope, aurochs horn. Drinking vessels, signal horns, bow nocks, powder flasks. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_sinew_beast",
+      "name": "Beast Sinew (large)",
+      "category": "material_fiber",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.08,
+      "value_cp_per_unit": 22,
+      "witness_payload": null,
+      "notes": "Tier 1-2. Heavy tendon from large beasts (bear, aurochs, megafauna). Composite bow backing, heavy bindings. SC-08 candidate. Distinct from mat_sinew (smaller animals)."
+    },
+    {
+      "material_id": "mat_feathers_raptor",
+      "name": "Raptor Feathers (flight)",
+      "category": "material_reagent",
+      "tinting_class": "vellum_mundane",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.005,
+      "value_cp_per_unit": 12,
+      "witness_payload": null,
+      "notes": "Eagle, hawk, owl primary feathers. Fletching arrows; ritual headgear; quill pens. SC-08 candidate."
+    },
+    {
+      "material_id": "mat_pitch",
+      "name": "Pitch",
+      "category": "material_reagent",
+      "tinting_class": "verdigris_consumable",
+      "regional_origin_id": null,
+      "weight_kg_per_unit": 0.2,
+      "value_cp_per_unit": 5,
+      "witness_payload": null,
+      "notes": "Tar from pine resin or coal. Sealing hulls, waterproofing roofs, torches, incendiary mixtures."
+    },
+    {
+      "material_id": "mat_salt_iron",
+      "name": "Salt-Iron",
+      "category": "material_metal",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.48,
+      "value_cp_per_unit": 80,
+      "witness_payload": {
+        "witness_summary": "Bog iron pulled from the salt-marshes north of Greywake. Smelts brittle but takes a wicked edge. Holds memory of the fountain's pressure — items forged of it 'remember the tide.' On a nat-1 attack roll, the weapon snaps along a salt vein.",
+        "binding_dc": 13,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "tide_pressure",
+          "bog_iron",
+          "fragile_at_crit_fail",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Heretical reading of mundane bog iron + cold-iron folklore. Greywake-only because of the salt-marsh geography + the fountain's metaphysical pressure that the iron 'remembers.' Recipe sink: salt-iron dagger (slice recipe #1)."
+    },
+    {
+      "material_id": "mat_bell_tin",
+      "name": "Bell-Tin",
+      "category": "material_metal",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.43,
+      "value_cp_per_unit": 60,
+      "witness_payload": {
+        "witness_summary": "Tin recovered from the salvage of old Bell Court bells that were retired or cracked. Carries faint resonance — tools of bell-tin ring softly when struck near civic spaces.",
+        "binding_dc": 12,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "civic_resonance",
+          "bell_origin",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Civic-origin metal. Bell-Marked Charms made with bell-tin can be 'recognized' by Bell Court officials at attune-ceremony (mechanical: Notice +1 if charm used in a magistrate's presence). Recipe sink: Bell-Marked Charm (slice recipe #2)."
+    },
+    {
+      "material_id": "mat_drowned_bronze",
+      "name": "Drowned Bronze",
+      "category": "material_metal",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.55,
+      "value_cp_per_unit": 100,
+      "witness_payload": {
+        "witness_summary": "Bronze retrieved from sunken civic and church wreckage in the shallows. Carries the witness of whatever the wreck once was — shield, bell-rim, altar lip. Crafts inherit a faint trace of the original purpose.",
+        "binding_dc": 14,
+        "carries_soul_kind": "spirit",
+        "carries_memory_tags": [
+          "wreck_origin",
+          "purpose_inheritance",
+          "drowned_church_adjacent",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Origin matters — Drowned Church may claim items made from church-source drowned bronze (Faith Meter:Umberlee or Notice consequence at craft commit, decided by State Manager via witness binding roll). Recipe sink: Drowned Bronze Buckler (slice recipe #3)."
+    },
+    {
+      "material_id": "mat_brass_greywake",
+      "name": "Greywake Brass",
+      "category": "material_metal",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 35,
+      "witness_payload": {
+        "witness_summary": "Brass cast in Greywake foundries from copper-tin-zinc mixes. Mundane-adjacent; carries only the faintest civic record (the foundry's hallmark). Used for non-mystical fittings, hinges, instrument casings, salt-battery casings.",
+        "binding_dc": 9,
+        "carries_soul_kind": null,
+        "carries_memory_tags": [
+          "foundry_hallmarked",
+          "slice_eligible"
+        ]
+      },
+      "notes": "The 'almost-mundane' Greywake metal. Useful because it carries the brass_greywake tinting WITHOUT the metaphysical weight of salt-iron or drowned bronze. Tinker-friendly for salt-battery casings."
+    },
+    {
+      "material_id": "mat_salt_reagent",
+      "name": "Salt (Greywake)",
+      "category": "material_reagent",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 3,
+      "witness_payload": {
+        "witness_summary": "Reagent-grade salt harvested from the Greywake salt-pans. Distinct from common table salt in that the salt-pans sit downstream of the leaking fountain — the salt is 'practiced' even before any human touches it.",
+        "binding_dc": 8,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "fountain_downstream",
+          "ambient_practiced",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Greywake's working salt. Cheap, omnipresent, but never truly mundane in this region. Substrate of dozens of recipes. Recipe sink: Salt-Iron Dagger, Bell-Marked Charm, Drowned Bronze Buckler (slice recipes #1, #2, #3)."
+    },
+    {
+      "material_id": "mat_butchers_salt",
+      "name": "Butcher's Salt",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.06,
+      "value_cp_per_unit": 25,
+      "witness_payload": {
+        "witness_summary": "Salt blessed and cut by Marrow-Saint Ilyra's hands during specific Drowned Church rites. Carries the witness of the Marrow-Saint and the rite. Used in preservation of meat, of bodies, and of secrets.",
+        "binding_dc": 14,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "marrow_saint_blessed",
+          "drowned_church_rite",
+          "preservation_witness",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Doctrinal Drowned Church material. Use without permission counts as taboo violation (drowned_church.json — taboo: unauthorized_butcher_salt_use). Recipe sink: Vial of Marrow-Wax Sealant (slice recipe #4)."
+    },
+    {
+      "material_id": "mat_fountain_water",
+      "name": "Fountain Water (raw)",
+      "category": "material_reagent",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 1.0,
+      "value_cp_per_unit": 50,
+      "witness_payload": {
+        "witness_summary": "Black seawater that leaks UPWARD from the dry fountain at the Market District's heart. Cannot be made still by mundane means — moves against gravity in containers, eats brass, blesses or curses depending on the witness of the drawer.",
+        "binding_dc": 16,
+        "carries_soul_kind": "spirit",
+        "carries_memory_tags": [
+          "upward_leaking",
+          "contradicts_gravity",
+          "fountain_witness",
+          "high_canon_pressure",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Center of Greywake's metaphysical pressure. Drawing it is itself an act some factions watch for. Notice +1 on any draw. Recipe sink: Vial of Practiced-Name Water (slice intermediate, feeds into Bell-Marked Charm)."
+    },
+    {
+      "material_id": "mat_practicing_water",
+      "name": "Practicing Water (intermediate)",
+      "category": "material_reagent",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.3,
+      "value_cp_per_unit": 90,
+      "witness_payload": {
+        "witness_summary": "Fountain water that has been spoken-over by a practitioner with a Bell-Marked Charm or Drowned Church standing. Now holds a 'practiced name' — a faint, repeatable witness signature that can be transferred into crafts.",
+        "binding_dc": 14,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "practiced_name",
+          "intermediate_craft",
+          "transferable_witness",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Intermediate. Produced by R-08 doctrinal rite (substrate: practicing_word). Cannot be created without prerequisite charm or standing — gates downstream recipes. Recipe sink: Bell-Marked Charm (slice recipe #2)."
+    },
+    {
+      "material_id": "mat_marrow_wax_trace",
+      "name": "Marrow-Wax (trace)",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 120,
+      "witness_payload": {
+        "witness_summary": "Wax rendered from bone-marrow under Drowned Church sealing rite. Holds the witness of whatever (or whoever) the marrow came from. Used to seal documents, doors, mouths.",
+        "binding_dc": 15,
+        "carries_soul_kind": "spirit",
+        "carries_memory_tags": [
+          "marrow_witness",
+          "sealing_substrate",
+          "drowned_church_rite",
+          "named_or_unnamed_source",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Source declaration matters: animal-marrow is permitted under Marrow-Saint Ilyra's standing rite (no penalty); human-marrow without declaration = cursed (contradiction event). NPC Ilyra holds the legitimate supply chain. Recipe sink: Vial of Marrow-Wax Sealant (slice recipe #4); Marrow-Wax Seal of Ilyra (canonical baseline character bound item)."
+    },
+    {
+      "material_id": "mat_unrecorded_ink_base",
+      "name": "Unrecorded Ink (base)",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 80,
+      "witness_payload": {
+        "witness_summary": "Ink mixed with butcher's salt, fountain-water, and the ashes of a Bell Court ledger page that was officially burned for falsification. Writes lines that cannot be 'witnessed' by Bell Court instruments. Civic contraband.",
+        "binding_dc": 16,
+        "carries_soul_kind": "spirit",
+        "carries_memory_tags": [
+          "civic_invisibility",
+          "anti_record",
+          "contraband",
+          "bell_court_evade",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Writes that resist being noticed by the civic record system. Possession alone is a Bell Court taboo violation if discovered. Counter-substrate is the Unrecord spell (Imposed, L3). Recipe sink: vial of Unrecorded Ink (slice recipe #5)."
+    },
+    {
+      "material_id": "mat_salt_rime",
+      "name": "Salt-Rime",
+      "category": "material_reagent",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 18,
+      "witness_payload": {
+        "witness_summary": "Crystalline crust that forms overnight on metal and stone within sight of the fountain. Visually beautiful, mechanically inert until applied — when applied to a wound or to a brand, marks the bearer 'recognized but not yet named' (Greywake condition).",
+        "binding_dc": 11,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "fountain_proximity",
+          "marking_substrate",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Atmospheric byproduct of the Greywake metaphysical climate. Common, cheap, but you cannot ship it — outside region_greywake it crumbles to common salt within hours."
+    },
+    {
+      "material_id": "mat_drowned_amber",
+      "name": "Drowned Amber",
+      "category": "material_reagent",
+      "tinting_class": "bone_relic",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.1,
+      "value_cp_per_unit": 400,
+      "witness_payload": {
+        "witness_summary": "Tide-tumbled amber pulled from the shore north of the salt-pans. Inclusions are not insects — they are scraps of paper, fragments of bell-clappers, the occasional fingernail. Each piece holds a discrete 'frozen' witness from the time the wreck happened.",
+        "binding_dc": 17,
+        "carries_soul_kind": "fragment",
+        "carries_memory_tags": [
+          "frozen_witness",
+          "wreck_inclusion",
+          "high_value",
+          "slice_eligible"
+        ]
+      },
+      "notes": "Tier 3. Greywake's prestige metaphysical material. Drowned Church will pay for any piece whose inclusion matches a missing-presumed-dead church record. Tide League speculates on it. Item-soul substrate (R-73 schema candidate)."
+    },
+    {
+      "material_id": "mat_salt_pan_brine",
+      "name": "Salt-Pan Brine",
+      "category": "material_reagent",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 1.05,
+      "value_cp_per_unit": 2,
+      "witness_payload": {
+        "witness_summary": "Raw seawater concentrated in the Greywake salt-pans before crystallization. Higher canon-pressure than processed salt — the pans sit closer to the fountain than the salt-houses do.",
+        "binding_dc": 10,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "salt_pan_origin",
+          "uncrystallized",
+          "ambient_practiced"
+        ]
+      },
+      "notes": "Cheap, abundant, awkward to transport (liquid). Alchemy substrate; cannot be shipped outside region without crystallizing en route (becomes mat_salt_reagent within ~3 days)."
+    },
+    {
+      "material_id": "mat_salt_pan_crust",
+      "name": "Salt-Pan Crust",
+      "category": "material_reagent",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.08,
+      "value_cp_per_unit": 12,
+      "witness_payload": {
+        "witness_summary": "Top crust scraped from a fully-evaporated salt-pan. Mineral-rich (trace iron, copper, fountain-residue). Used in stronger rite preparations than common salt-reagent.",
+        "binding_dc": 12,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "mineral_concentrate",
+          "salt_pan_crust",
+          "rite_substrate"
+        ]
+      },
+      "notes": "Tier 1-2. More potent than mat_salt_reagent for some rites; rougher texture. Drowned Church surgeons sometimes prefer it for warding salt-circles."
+    },
+    {
+      "material_id": "mat_marrow_saint_thread",
+      "name": "Marrow-Saint Thread",
+      "category": "material_fiber",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.01,
+      "value_cp_per_unit": 65,
+      "witness_payload": {
+        "witness_summary": "Sinew (animal, declared) cured under Marrow-Saint Ilyra's surgical rite. Used for suturing wounds that would otherwise scar irreversibly, and for binding heretical-surgery grafts. Heals what it sews; remembers what it healed.",
+        "binding_dc": 14,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "surgical_witness",
+          "marrow_saint_rite",
+          "healing_substrate"
+        ]
+      },
+      "notes": "Tier 2. Drowned Church exclusive supply chain (Ilyra). Unsanctioned use of thread (without rite or declared source) triggers Faith:Umberlee -1, Notice +1."
+    },
+    {
+      "material_id": "mat_bone_needle",
+      "name": "Bone Needle (Drowned Church)",
+      "category": "material_reagent",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.002,
+      "value_cp_per_unit": 35,
+      "witness_payload": {
+        "witness_summary": "Needle carved from a Drowned Church reliquary bone-stock under Ilyra's rite. Surgical fineness; some say each needle 'remembers' the saint whose bone it came from.",
+        "binding_dc": 13,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "reliquary_bone",
+          "surgical_implement"
+        ]
+      },
+      "notes": "Tier 2. Paired with mat_marrow_saint_thread for sanctioned surgical work. Source declaration mandatory (the church keeps a ledger)."
+    },
+    {
+      "material_id": "mat_reliquary_gauze",
+      "name": "Reliquary Gauze",
+      "category": "material_fiber",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.02,
+      "value_cp_per_unit": 28,
+      "witness_payload": {
+        "witness_summary": "Linen woven and salt-cured to wrap reliquary objects (saints' bones, drowned-church seals). When applied to wounds, transfers a faint Faith:Umberlee witness to the wound bearer.",
+        "binding_dc": 11,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "reliquary_wrap",
+          "faith_carrier"
+        ]
+      },
+      "notes": "Tier 1-2. Available from Drowned Church infirmaries; gray-market grade exists (no rite, no witness). Practical and devotional uses overlap."
+    },
+    {
+      "material_id": "mat_civic_seal_wax",
+      "name": "Civic Seal Wax (Bell Court)",
+      "category": "material_reagent",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 20,
+      "witness_payload": {
+        "witness_summary": "Bell-tin-shavings mixed into beeswax under a magistrate's hand. When stamped, the seal counts as Bell Court witness; tampering produces a visible discoloration (the wax 'tells').",
+        "binding_dc": 12,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "civic_seal",
+          "tamper_evident",
+          "bell_court_witness"
+        ]
+      },
+      "notes": "Tier 2. Legitimate civic substrate (counter to mat_marrow_wax_trace, which is Drowned Church sealing). Use without authorization (forgery) is a Bell Court taboo."
+    },
+    {
+      "material_id": "mat_bell_certified_ink",
+      "name": "Bell-Certified Ink",
+      "category": "material_reagent",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 32,
+      "witness_payload": {
+        "witness_summary": "Iron-gall ink fortified with bell-tin shavings and consecrated to Bell Court records. Writes that count as canonical civic record; resists Unrecord (DC +2 against attempts to scrub).",
+        "binding_dc": 12,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "civic_record",
+          "unrecord_resistant",
+          "bell_court_witness"
+        ]
+      },
+      "notes": "Tier 2. Direct counter-substrate to mat_unrecorded_ink_base. Two civic record substrates fighting; the slice's first economic conflict."
+    },
+    {
+      "material_id": "mat_civic_paper_watermarked",
+      "name": "Civic Paper (Bell-Watermarked)",
+      "category": "material_fiber",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.04,
+      "value_cp_per_unit": 25,
+      "witness_payload": {
+        "witness_summary": "Linen-rag paper watermarked with the Bell Court seal at manufacture. Used for civic contracts, debt records, magistrate orders. Counterfeiting requires either an inside hand or the destruction of a real sheet.",
+        "binding_dc": 13,
+        "carries_soul_kind": "echo",
+        "carries_memory_tags": [
+          "civic_substrate",
+          "watermarked",
+          "counterfeit_resistant"
+        ]
+      },
+      "notes": "Tier 2. Substrate for civic contracts (couples with mat_bell_certified_ink). One sheet = one civic record-page."
+    },
+    {
+      "material_id": "mat_scrip_paper",
+      "name": "Scrip Paper (Tide League)",
+      "category": "material_fiber",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.03,
+      "value_cp_per_unit": 18,
+      "witness_payload": {
+        "witness_summary": "Lighter, rougher paper used for Tide League salt-scrip and trade memos. NOT civic-canonical (Bell Court does not accept it as record). Volatile substrate — scrip itself trades against fountain pressure.",
+        "binding_dc": 10,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "scrip_substrate",
+          "non_canonical_record",
+          "speculation_substrate"
+        ]
+      },
+      "notes": "Tier 1-2. Mechanically coupled with the salt-scrip volatility model (v0.4 Bundle A). Tide League prints scrip on this; speculators trade it."
+    },
+    {
+      "material_id": "mat_league_seal_brass",
+      "name": "League Seal Brass",
+      "category": "material_metal",
+      "tinting_class": "brass_greywake",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 55,
+      "witness_payload": {
+        "witness_summary": "Brass cast at the Tide League's broker-house furnaces. Used for trade seals, contract pendants, broker badges. Identifies the bearer as League-affiliated; carries a witness of the broker who cast it.",
+        "binding_dc": 12,
+        "carries_soul_kind": "witness",
+        "carries_memory_tags": [
+          "broker_witness",
+          "league_affiliation"
+        ]
+      },
+      "notes": "Tier 2. Trade-faction marker. Civic authorities (Bell Court) treat League seals as legitimate trade record but NOT civic record."
+    },
+    {
+      "material_id": "mat_heretical_choir_brass",
+      "name": "Heretical Choir Brass",
+      "category": "material_metal",
+      "tinting_class": "drowned_red_cursed",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.5,
+      "value_cp_per_unit": 240,
+      "witness_payload": {
+        "witness_summary": "Brass cast in undeclared furnaces — usually by heretical Drowned Church splinters who refuse civic foundry oversight. Items made of it ring oddly under church-sanctioned bells; sometimes the ring sustains after the bell falls silent.",
+        "binding_dc": 16,
+        "carries_soul_kind": "spirit",
+        "carries_memory_tags": [
+          "undeclared_origin",
+          "anti_civic",
+          "contraband",
+          "heretical_resonance"
+        ]
+      },
+      "notes": "Tier 3. Possession alone is a Bell Court taboo violation + Drowned Church orthodoxy violation simultaneously. Two-front contraband."
+    },
+    {
+      "material_id": "mat_listening_child_pebble",
+      "name": "Listening Child's Pebble",
+      "category": "material_stone",
+      "tinting_class": "tide_bloom_metaphysical",
+      "regional_origin_id": "region_greywake",
+      "weight_kg_per_unit": 0.05,
+      "value_cp_per_unit": 5,
+      "witness_payload": {
+        "witness_summary": "Beach pebbles the Listening Child collects and gives away. Each pebble has held the Child's attention for some unmeasured duration. Carries a fragment of whatever the Child was listening to when she picked it up.",
+        "binding_dc": 13,
+        "carries_soul_kind": "fragment",
+        "carries_memory_tags": [
+          "listening_child_witness",
+          "fragment_carrier",
+          "given_not_taken"
+        ]
+      },
+      "notes": "Tier 1 by value, Tier 3 by metaphysical signature. Cannot be purchased — the Child only gives them. Refusal to accept is itself a canon-event in some workflows (X.14). One of canonical baseline character Khojen's bound items."
+    }
+  ]
+}

@@ -1,0 +1,6695 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "The First Perception - Living World RPG Engine",
+  "version": "0.6.0",
+  "version_notes": "v0.5.0 schema pack — full-sweep additive: 80 candidates applied (19 SC/R-73 catalog-buildout, 44 Final Design Review v0.5, 17 Party System v0.5). Cat C (12 deferred-bundle) items pre-emptively added with deferred_bundle_pending_design_pass annotations so the bundles have schema homes when their design pass lands. v0.4.1 records remain valid (additive discipline). New top-level schemas: companion, quirk, recruitment_quest, location, travel_route, conflict_envelope, creature_material, material_substitution, orchestrator_session, agent_envelope, portrait_layer_definition.",
+  "manifesto_guardrails": [
+    "Greywake is the seed, not the soil",
+    "Authority has a price (universal canon-cost layer on leveled spellcasting)",
+    "Calling = scaffolding; world calls you (Path-driven)",
+    "Pantheon is one possible baseline (R-54)",
+    "Only State Manager writes canon (R-56)",
+    "Materials remember; items witness",
+    "Mythology is substrate, not setting"
+  ],
+  "changelog": {
+    "0.4.1": "Patch — adds canon_progression_entry.threshold_spent_until_day (closes R-86 from M2 paper prototype). Additive only.",
+    "0.4": "25 additives across Bundle A + Bundle C; 5 new top-level schemas. Closes v0.4 R-60 redux. Manifesto regression check clean.",
+    "0.3": "Initial formalization of v0.2 + v0.3 additive fields. Closed R-60.",
+    "0.2": "(unreleased) workflow atlas + ERD + contradiction ledger entry shapes",
+    "0.1": "Initial schema pack: campaign, player, event, faction, npc, rumor, belief, consequence, state_diff",
+    "0.5.0": {
+      "date": "2026-05-20",
+      "summary": "Full-sweep v0.5 additive: 80 candidates applied (19 SC/R-73, 44 FDR, 17 P).",
+      "categories_applied": {
+        "Cat A — Slice-blocking": 12,
+        "Cat B — M3-supporting": 16,
+        "Cat C — Deferred-bundle (annotated)": 12,
+        "Cat D — UX/visual support": 8,
+        "Cat E — Quality-of-life": 8,
+        "Cat F — Speculative (annotated x_speculative)": 5,
+        "SC — Catalog buildout layer": 19
+      },
+      "deferred_bundle_pending_design_pass_count": 12,
+      "regression_check": "v0.4.1 records remain valid — all additions are optional fields or new schemas.",
+      "manifesto_guardrails_intact": true,
+      "writer_authority_paths_added": 6
+    },
+    "0.6.0": {
+      "date": "2026-05-20",
+      "wave": "G-1 / Phase 19",
+      "summary": "Catalog port: discriminator-typed item subtypes, v2-canonical recipe shape, new litany/marginalia/imposed_spell schemas, field gap closures.",
+      "breaking_changes": [
+        "recipe.ingredients -> materials; output_item_id -> produces_item_id; station_required -> primary_station_id. v1 normalized at port."
+      ],
+      "additions": {
+        "schemas_added": [
+          "litany",
+          "marginalia",
+          "imposed_spell"
+        ],
+        "item_oneOf_discriminator": [
+          "weapon_item",
+          "armor_item",
+          "shield_item",
+          "ammunition_item",
+          "tool_item",
+          "trinket_item",
+          "consumable_item",
+          "wondrous_item",
+          "book_item",
+          "key_item",
+          "currency_token_item"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "world_time": {
+      "type": "object",
+      "required": [
+        "day",
+        "scene_index"
+      ],
+      "properties": {
+        "day": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scene_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tide_phase": {
+          "enum": [
+            "low",
+            "rising",
+            "high",
+            "falling",
+            "still"
+          ]
+        },
+        "calendar_label": {
+          "type": "string"
+        }
+      }
+    },
+    "bounded_int_0_10": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "bounded_int_neg10_pos10": {
+      "type": "integer",
+      "minimum": -10,
+      "maximum": 10
+    },
+    "ability_score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 30
+    },
+    "modifier": {
+      "type": "integer",
+      "minimum": -5,
+      "maximum": 10
+    },
+    "custom_stats_block": {
+      "type": "object",
+      "required": [
+        "body",
+        "grace",
+        "sense",
+        "mind",
+        "will",
+        "presence",
+        "authority",
+        "ruin",
+        "creation"
+      ],
+      "properties": {
+        "body": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "grace": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "sense": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "mind": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "will": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "presence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "authority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "ruin": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "creation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    },
+    "derived_stats_block": {
+      "type": "object",
+      "required": [
+        "str",
+        "dex",
+        "con",
+        "int",
+        "wis",
+        "cha"
+      ],
+      "properties": {
+        "str": {
+          "$ref": "#/$defs/ability_score"
+        },
+        "dex": {
+          "$ref": "#/$defs/ability_score"
+        },
+        "con": {
+          "$ref": "#/$defs/ability_score"
+        },
+        "int": {
+          "$ref": "#/$defs/ability_score"
+        },
+        "wis": {
+          "$ref": "#/$defs/ability_score"
+        },
+        "cha": {
+          "$ref": "#/$defs/ability_score"
+        }
+      }
+    },
+    "meters_block": {
+      "type": "object",
+      "required": [
+        "fatigue",
+        "clarity",
+        "debt",
+        "notice",
+        "corruption"
+      ],
+      "properties": {
+        "fatigue": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        },
+        "clarity": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        },
+        "debt": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        },
+        "notice": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        },
+        "corruption": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        }
+      }
+    },
+    "hp_block": {
+      "type": "object",
+      "required": [
+        "current",
+        "max"
+      ],
+      "properties": {
+        "current": {
+          "type": "integer",
+          "minimum": -10
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "temp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "death_save_successes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "death_save_failures": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "hit_dice_entry": {
+      "type": "object",
+      "required": [
+        "class_id",
+        "die_size",
+        "total",
+        "remaining"
+      ],
+      "properties": {
+        "class_id": {
+          "type": "string"
+        },
+        "die_size": {
+          "enum": [
+            6,
+            8,
+            10,
+            12
+          ]
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "spell_slot_table": {
+      "type": "object",
+      "patternProperties": {
+        "^slot_[1-9]$": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        }
+      },
+      "additionalProperties": false
+    },
+    "spell_cost_layer": {
+      "description": "R-51 universal canon-cost on leveled spellcasting. Cantrips remain free.",
+      "type": "object",
+      "properties": {
+        "fatigue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "notice": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "corruption": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "authority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "ruin": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "creation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "scaling_rule": {
+          "type": "string"
+        }
+      }
+    },
+    "alignment_descriptor": {
+      "enum": [
+        "LG",
+        "NG",
+        "CG",
+        "LN",
+        "N",
+        "CN",
+        "LE",
+        "NE",
+        "CE"
+      ]
+    },
+    "duration_object": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "kind": {
+              "const": "instant"
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "n_turns"
+            },
+            "n": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "n"
+          ]
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "n_scenes"
+            },
+            "n": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "n"
+          ]
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "until_long_rest"
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "until_short_rest"
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "until_canon_event"
+            },
+            "event_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "event_id"
+          ]
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "permanent"
+            }
+          }
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "concentration"
+            },
+            "max_minutes": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "currency_amount": {
+      "type": "object",
+      "properties": {
+        "cp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ep": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "regional": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "regional_pack_ref": {
+      "type": "object",
+      "required": [
+        "region_id",
+        "kind"
+      ],
+      "properties": {
+        "region_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "conditions",
+            "currencies",
+            "magic_traditions",
+            "pantheon",
+            "items",
+            "recipes",
+            "factions",
+            "deities",
+            "litanies",
+            "marginalia",
+            "substrate",
+            "loot_tables",
+            "materials",
+            "cult_institutions",
+            "environment"
+          ]
+        },
+        "pack_version": {
+          "type": "string"
+        }
+      }
+    },
+    "attunement_slot": {
+      "type": "object",
+      "required": [
+        "slot_index",
+        "status"
+      ],
+      "properties": {
+        "slot_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "status": {
+          "enum": [
+            "empty",
+            "attuned",
+            "sworn",
+            "cursed",
+            "scarred"
+          ]
+        },
+        "item_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "attuned_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ceremony_kind": {
+          "enum": [
+            "short_rest",
+            "salt_immersion",
+            "sworn_oath",
+            "blood_consecration",
+            "involuntary_curse"
+          ]
+        },
+        "break_conditions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "dis-engagement",
+              "trauma",
+              "competing_claim",
+              "remove_curse",
+              "canon_event"
+            ]
+          }
+        },
+        "scarred_until_day": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "v0.4 Bundle A: when sworn slot is broken or fulfilled, may scar; cannot accept new attunement until this in-world day."
+        }
+      }
+    },
+    "path_ledger_entry": {
+      "type": "object",
+      "required": [
+        "entry_id",
+        "domain",
+        "weight",
+        "source_event_id",
+        "timestamp"
+      ],
+      "properties": {
+        "entry_id": {
+          "type": "string"
+        },
+        "domain": {
+          "enum": [
+            "law",
+            "faith",
+            "mercy",
+            "cruelty",
+            "promise",
+            "oath",
+            "debt",
+            "ruin",
+            "creation",
+            "loyalty",
+            "betrayal",
+            "curiosity",
+            "silence",
+            "hubris",
+            "tithe",
+            "tapu_violation"
+          ]
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "source_event_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "$ref": "#/$defs/world_time"
+        },
+        "narrative_phrase": {
+          "type": "string"
+        }
+      }
+    },
+    "canon_progression_entry": {
+      "type": "object",
+      "required": [
+        "stat",
+        "current_value",
+        "progress_toward_next",
+        "asi_sacrifices_spent"
+      ],
+      "properties": {
+        "stat": {
+          "enum": [
+            "authority",
+            "ruin",
+            "creation"
+          ]
+        },
+        "current_value": {
+          "$ref": "#/$defs/bounded_int_0_10"
+        },
+        "progress_toward_next": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "criteria_required": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "asi_sacrifices_spent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "threshold_spent_until_day": {
+          "description": "v0.4.1 (R-86): in-world day until which a spent end-condition threshold cannot retrigger. Set when player refuses apotheosis (X.12), self-unmaking (X.13), or withdrawal (X.14). null means threshold is not in spent state. State Manager owns set; clears automatically when current_time.day exceeds this value.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null
+        },
+        "criteria_events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "side_effects_applied": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "stat_or_meter",
+              "delta"
+            ],
+            "properties": {
+              "stat_or_meter": {
+                "type": "string"
+              },
+              "delta": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "faith_meter_entry": {
+      "type": "object",
+      "required": [
+        "deity_id",
+        "value"
+      ],
+      "properties": {
+        "deity_id": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/bounded_int_neg10_pos10"
+        },
+        "apostate_history": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "condition_active_instance": {
+      "type": "object",
+      "required": [
+        "condition_id",
+        "duration"
+      ],
+      "properties": {
+        "condition_id": {
+          "type": "string"
+        },
+        "duration": {
+          "$ref": "#/$defs/duration_object"
+        },
+        "source": {
+          "type": "string"
+        },
+        "stacks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        }
+      }
+    },
+    "inventory_entry": {
+      "type": "object",
+      "required": [
+        "item_id",
+        "quantity"
+      ],
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "identified": {
+          "type": "boolean"
+        },
+        "attuned_slot_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 2
+        },
+        "equipped_slot": {
+          "enum": [
+            null,
+            "main_hand",
+            "off_hand",
+            "two_handed",
+            "armor",
+            "shield",
+            "helm",
+            "cloak",
+            "boots",
+            "gloves",
+            "ring_1",
+            "ring_2",
+            "amulet",
+            "belt"
+          ]
+        },
+        "bound_to_you": {
+          "type": "boolean"
+        },
+        "soul_instance": {
+          "type": "object",
+          "properties": {
+            "soul_id": {
+              "type": "string"
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "kind": {
+              "enum": [
+                "witness",
+                "spirit",
+                "fragment",
+                "echo"
+              ]
+            },
+            "bound_by_event_id": {
+              "type": "string"
+            },
+            "speaks": {
+              "type": "boolean"
+            },
+            "speaks_threshold": {
+              "type": "object",
+              "properties": {
+                "meter": {
+                  "enum": [
+                    "fatigue",
+                    "clarity",
+                    "debt",
+                    "notice",
+                    "corruption"
+                  ]
+                },
+                "value": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10
+                }
+              }
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "demands": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "dormant_unless": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "memory_instance": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "memory_id",
+                  "witness_summary"
+                ],
+                "properties": {
+                  "memory_id": {
+                    "type": "string"
+                  },
+                  "timestamp_world": {
+                    "$ref": "#/$defs/world_time"
+                  },
+                  "witness_summary": {
+                    "type": "string"
+                  },
+                  "actor_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "readable_via": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "legend_lore_spell",
+                  "speak_with_dead_on_origin",
+                  "imposed_unrecord_inverted",
+                  "alchemy_purgative_inversion",
+                  "sense_check"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "known_spell_entry": {
+      "type": "object",
+      "required": [
+        "spell_id"
+      ],
+      "properties": {
+        "spell_id": {
+          "type": "string"
+        },
+        "prepared": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "class",
+            "race",
+            "feat",
+            "item",
+            "pact",
+            "canon_event"
+          ]
+        },
+        "ritual_eligible": {
+          "type": "boolean"
+        }
+      }
+    },
+    "body_modifications_block": {
+      "type": "object",
+      "x_deferred_bundle": "mad_sci_track",
+      "x_design_pass_status": "PENDING_v0.5_or_v0.6",
+      "properties": {
+        "grafts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "graft_id": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "brass_spinal_brace",
+                  "bone_lattice_lung",
+                  "salt_iron_jaw_brace",
+                  "marrow_wax_eye",
+                  "drowned_amber_hand",
+                  "bell_iron_chest_plate"
+                ],
+                "description": "R-99-C: constrained vocabulary; Greywake-native frame locked"
+              },
+              "grafted_on_day": {
+                "type": "integer"
+              },
+              "grafter_npc_id": {
+                "type": "string"
+              },
+              "is_reversible": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "symbionts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbiont_id": {
+                "type": "string"
+              },
+              "host_relationship": {
+                "type": "string",
+                "enum": [
+                  "parasitic",
+                  "commensal",
+                  "mutualist",
+                  "contested"
+                ],
+                "description": "R-100-C"
+              }
+            }
+          }
+        },
+        "fusions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fusion_id": {
+                "type": "string"
+              },
+              "reversibility_event_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "R-101-C: canon-event that could reverse, if reversible"
+              }
+            }
+          }
+        },
+        "adaptagen_active": {
+          "type": "array",
+          "description": "R-102-C: bottled mutagenic relics currently active",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "validator_stage_result": {
+      "type": "object",
+      "properties": {
+        "stage_id": {
+          "type": "string",
+          "enum": [
+            "stage_1_input",
+            "stage_2_rules",
+            "stage_3_canon_consistency",
+            "stage_4_canon_progression",
+            "stage_5_contradiction_check",
+            "stage_6_content_boundary"
+          ]
+        },
+        "pass": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Failure reason; null on pass"
+        },
+        "validator_id": {
+          "type": "string"
+        },
+        "completed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "stage_id",
+        "pass",
+        "validator_id"
+      ]
+    },
+    "world_pulse_ticker_item": {
+      "type": "object",
+      "x_transient": true,
+      "x_description": "R-113-D: derived from events; transient session state for the Live Ticker UI.",
+      "properties": {
+        "ticker_item_id": {
+          "type": "string"
+        },
+        "source_event_id": {
+          "type": "string"
+        },
+        "summary_text": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "ticker_class": {
+          "type": "string",
+          "enum": [
+            "faction_action",
+            "rumor",
+            "weather",
+            "rite",
+            "canon_event"
+          ]
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "displayed_to_player": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "schemas": {
+    "campaign": {
+      "type": "object",
+      "required": [
+        "campaign_id",
+        "mode",
+        "current_time",
+        "active_character_id",
+        "status"
+      ],
+      "properties": {
+        "campaign_id": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "standard",
+            "immersive",
+            "tactical",
+            "hardcore",
+            "creator_debug"
+          ]
+        },
+        "transparency_mode": {
+          "type": "string"
+        },
+        "ironman": {
+          "type": "boolean"
+        },
+        "legacy_enabled": {
+          "type": "boolean"
+        },
+        "current_time": {
+          "$ref": "#/$defs/world_time"
+        },
+        "current_region_id": {
+          "type": "string"
+        },
+        "active_character_id": {
+          "type": "string"
+        },
+        "world_seed": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "dead",
+            "legacy",
+            "ended"
+          ]
+        },
+        "leveling_mode": {
+          "enum": [
+            "xp",
+            "milestone"
+          ],
+          "default": "xp"
+        },
+        "regional_pack_pointers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/regional_pack_ref"
+          }
+        },
+        "active_pantheon_id": {
+          "type": "string"
+        },
+        "regional_currency_states": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rng_lineage": {
+          "type": "object",
+          "properties": {
+            "root_seed": {
+              "type": "string"
+            },
+            "stream_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "last_committed_event_id": {
+              "type": "string"
+            }
+          }
+        },
+        "party_state": {
+          "type": "object",
+          "properties": {
+            "slot_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4,
+              "default": 4
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "slot_index": {
+                    "type": "integer"
+                  },
+                  "companion_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "joined_event_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "joined_day": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "former_members": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "R-132-P: top-level party tracking. 4-max party (1 player + up to 3 companions)."
+        },
+        "former_party_members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "companion_id": {
+                "type": "string"
+              },
+              "departed_day": {
+                "type": "integer"
+              },
+              "departure_kind": {
+                "type": "string",
+                "enum": [
+                  "dismissed",
+                  "betrayed",
+                  "died",
+                  "recalled_by_faction",
+                  "departed_X12",
+                  "departed_X13",
+                  "departed_X14",
+                  "departed_X15",
+                  "departed_X16",
+                  "obligation_expired"
+                ]
+              },
+              "departure_event_id": {
+                "type": "string"
+              },
+              "post_departure_state": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          "description": "R-148-P: persistent post-departure state for companions who left the party."
+        },
+        "session_log": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "R-97-B: ordered session_ids that have committed against this campaign. Multi-session replay support."
+        },
+        "accessibility_settings": {
+          "type": "object",
+          "properties": {
+            "reduced_motion": {
+              "type": "boolean",
+              "default": false
+            },
+            "screen_reader_mode": {
+              "type": "boolean",
+              "default": false
+            },
+            "color_blind_palette_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                null,
+                "deuteranopia",
+                "protanopia",
+                "tritanopia"
+              ]
+            },
+            "high_contrast": {
+              "type": "boolean",
+              "default": false
+            },
+            "adaptive_prose_density": {
+              "type": "string",
+              "enum": [
+                "compact",
+                "standard",
+                "expanded"
+              ],
+              "default": "standard"
+            }
+          },
+          "description": "R-116-D: slice accessibility commitments."
+        },
+        "ui_preference_state": {
+          "type": "object",
+          "properties": {
+            "tab_grouping_1366": {
+              "type": "object",
+              "description": "R-62 closure: per-tab collapse preferences at 1366×768"
+            },
+            "hotbar_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tooltip_density": {
+              "type": "string",
+              "enum": [
+                "minimal",
+                "standard",
+                "verbose"
+              ]
+            },
+            "preferred_default_sheet_tab": {
+              "type": "string"
+            }
+          },
+          "description": "R-117-D: persistent UI prefs. Closes R-62."
+        },
+        "world_pulse_recurring_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recurring_event_id": {
+                "type": "string"
+              },
+              "event_kind": {
+                "type": "string"
+              },
+              "cadence_days": {
+                "type": "integer"
+              },
+              "first_fired_day": {
+                "type": "integer"
+              },
+              "next_fires_day": {
+                "type": "integer"
+              }
+            }
+          },
+          "description": "R-127-F (speculative): scheduled events that fire on a cadence (e.g., weekly salt vigil) outside the agent loop.",
+          "x_speculative": true
+        }
+      }
+    },
+    "player": {
+      "type": "object",
+      "required": [
+        "player_id",
+        "identifier",
+        "form",
+        "race_id",
+        "classes",
+        "stats",
+        "derived_stats",
+        "meters",
+        "hp",
+        "current_location",
+        "alignment_descriptor",
+        "level_total"
+      ],
+      "properties": {
+        "player_id": {
+          "type": "string"
+        },
+        "identifier": {
+          "type": "string"
+        },
+        "form": {
+          "type": "string"
+        },
+        "knowledge_posture": {
+          "type": "string"
+        },
+        "first_perception": {
+          "type": "string"
+        },
+        "current_location": {
+          "type": "string"
+        },
+        "race_id": {
+          "type": "string"
+        },
+        "subrace_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "class_id",
+              "level"
+            ],
+            "properties": {
+              "class_id": {
+                "type": "string"
+              },
+              "level": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "subclass_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "is_pact_class": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "level_total": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "experience": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proficiency_bonus": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 6
+        },
+        "stats": {
+          "$ref": "#/$defs/custom_stats_block"
+        },
+        "derived_stats": {
+          "$ref": "#/$defs/derived_stats_block"
+        },
+        "meters": {
+          "$ref": "#/$defs/meters_block"
+        },
+        "hp": {
+          "$ref": "#/$defs/hp_block"
+        },
+        "hit_dice": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hit_dice_entry"
+          }
+        },
+        "armor_class": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "speed_feet": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "initiative_mod": {
+          "$ref": "#/$defs/modifier"
+        },
+        "skill_proficiencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skill_expertise": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "save_proficiencies": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          }
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tool_proficiencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alignment_descriptor": {
+          "$ref": "#/$defs/alignment_descriptor"
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition_active_instance"
+          }
+        },
+        "spell_slots": {
+          "$ref": "#/$defs/spell_slot_table"
+        },
+        "pact_slots": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
+            "current": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
+            "slot_level": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          }
+        },
+        "known_spells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/known_spell_entry"
+          }
+        },
+        "spellbook_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "concentration": {
+          "type": "object",
+          "properties": {
+            "active_spell_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "started_at": {
+              "$ref": "#/$defs/world_time"
+            }
+          }
+        },
+        "abilities_known": {
+          "type": "array"
+        },
+        "abilities_hidden": {
+          "type": "array"
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inventory_entry"
+          }
+        },
+        "attunement_slots": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/attunement_slot"
+          }
+        },
+        "currency": {
+          "$ref": "#/$defs/currency_amount"
+        },
+        "carry_weight_kg": {
+          "type": "number",
+          "minimum": 0
+        },
+        "relationships": {
+          "type": "object"
+        },
+        "reputation_profile": {
+          "type": "object",
+          "properties": {
+            "per_faction": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/bounded_int_neg10_pos10"
+              }
+            },
+            "per_region": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/bounded_int_neg10_pos10"
+              }
+            },
+            "notoriety": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "faith_meters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/faith_meter_entry"
+          }
+        },
+        "path_ledger": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path_ledger_entry"
+          }
+        },
+        "canon_progression_ledger": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/canon_progression_entry"
+          }
+        },
+        "pact_state": {
+          "type": "object",
+          "properties": {
+            "patron_id": {
+              "type": "string"
+            },
+            "pact_kind": {
+              "type": "string"
+            },
+            "debt_floor": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "active_pact_clauses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "resolution_required_before_multiclass_out": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "feats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inspiration_token": {
+          "type": "boolean",
+          "default": false
+        },
+        "body_modifications": {
+          "$ref": "#/$defs/body_modifications_block"
+        },
+        "death_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "is_dead": {
+              "type": "boolean"
+            },
+            "death_day": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "death_event_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ending_kind": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                null,
+                "physical_death",
+                "X12_apotheosis",
+                "X13_unmaking",
+                "X14_withdrawal",
+                "X15_pact_collection",
+                "X16_corruption_transformation"
+              ]
+            },
+            "form_of_ending_narration": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "R-88-A: Narrator-generated terminal text (postcard-shaped). Per Narrator Form-of-Ending prompt. Persisted for Death/Legacy screen rendering."
+            }
+          }
+        },
+        "body_modifications_block": {
+          "$ref": "#/$defs/body_modifications_block",
+          "description": "Deferred bundle (mad-sci track). Schema slot pre-wired per v0.4 Bundle A; awaiting design pass."
+        },
+        "knowledge_state": {
+          "type": "object",
+          "properties": {
+            "locations_known": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "fog_state": {
+                    "type": "string",
+                    "enum": [
+                      "unknown",
+                      "glimpsed",
+                      "visited",
+                      "known"
+                    ]
+                  },
+                  "first_seen_event_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "R-107-C: per-location knowledge map (deferred bundle: exploration_system)"
+            },
+            "facts_known": {
+              "type": "array"
+            },
+            "rumors_heard": {
+              "type": "array"
+            }
+          },
+          "x_deferred_bundle_field": "locations_known"
+        },
+        "portrait_state": {
+          "type": "object",
+          "properties": {
+            "procedural_layers": {
+              "type": "object",
+              "properties": {
+                "race_silhouette": {
+                  "type": "string"
+                },
+                "class_glyph": {
+                  "type": "string"
+                },
+                "alignment_tint": {
+                  "type": "string"
+                },
+                "condition_overlay": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "body_mod_overlay": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "meter_overlay": {
+                  "type": "object"
+                },
+                "tilt": {
+                  "type": "number"
+                }
+              }
+            },
+            "curated_overlays": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "References to portrait_layer_definition entries"
+            },
+            "ai_cosmetic_slot": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "AI-generated cosmetic image path (set at character creation)"
+            }
+          },
+          "description": "R-111-D: Portrait System state per FDR Part 1.5 spec."
+        },
+        "knowledge_posture_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "posture": {
+                "type": "string",
+                "enum": [
+                  "mechanical",
+                  "interpretive",
+                  "performative",
+                  "credulous",
+                  "skeptical"
+                ]
+              },
+              "switched_on_day": {
+                "type": "integer"
+              },
+              "switched_event_id": {
+                "type": "string"
+              },
+              "switched_by": {
+                "type": "string",
+                "enum": [
+                  "player_explicit",
+                  "consequence",
+                  "narrative_trigger"
+                ]
+              }
+            }
+          },
+          "description": "R-115-D: posture switches over time; affects achievement eligibility per v0.1 Ch V."
+        },
+        "session_state": {
+          "type": "object",
+          "properties": {
+            "last_main_scene_focus_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time",
+              "description": "R-119-E: per Glance Bar mechanism (FDR Part 2.3)"
+            },
+            "current_session_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "transient_flags": {
+              "type": "object"
+            }
+          },
+          "description": "Transient session state on player; cleared on session boundary."
+        },
+        "scrip_speculation_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "speculation_id": {
+                "type": "string"
+              },
+              "scrip_kind": {
+                "type": "string"
+              },
+              "bought_at_rate": {
+                "type": "number"
+              },
+              "sold_at_rate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "profit_loss_cp": {
+                "type": "integer"
+              },
+              "day": {
+                "type": "integer"
+              }
+            }
+          },
+          "description": "R-124-E: speculative-profit tracking for R-65 (scrip speculation cap at 25% gain)."
+        },
+        "dream_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "dream_substrate_id": {
+              "type": "string"
+            },
+            "last_dreamt_day": {
+              "type": "integer"
+            },
+            "dream_canon_progression_credit": {
+              "type": "object"
+            },
+            "dream_witnessed_events": {
+              "type": "array"
+            }
+          },
+          "description": "R-128-F (speculative): a separate substrate where dream-region content could play. v0.3 framing.",
+          "x_speculative": true
+        },
+        "legacy_inherited_substrate_weight": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "R-131-F (speculative): per-substrate weight inherited from prior characters. Per X.12/X.16 legacy seeding; multi-character campaign play.",
+          "x_speculative": true
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "event_type",
+        "truth",
+        "timestamp",
+        "affected_systems"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "$ref": "#/$defs/world_time"
+        },
+        "event_type": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "physical_conflict",
+            "social_conflict",
+            "faith_conflict",
+            "economic_conflict",
+            "memory_conflict",
+            "reality_pressure",
+            "discovery",
+            "transformation",
+            "deicide",
+            "deity_birth",
+            "regional_apostasy",
+            "substrate_exposure",
+            "rite",
+            "oath_made",
+            "oath_broken",
+            "oath_fulfilled",
+            "craft",
+            "salvage",
+            "loot_taken",
+            "loot_refused",
+            "notice_convergence",
+            "other",
+            "notice_threshold_cross",
+            "body_modification_applied",
+            "body_modification_removed",
+            "adaptagen_consumed",
+            "mutation_canon_event"
+          ]
+        },
+        "location_id": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "actors": {
+          "type": "array"
+        },
+        "cause_event_ids": {
+          "type": "array"
+        },
+        "truth": {
+          "type": "string"
+        },
+        "player_intent": {
+          "type": "string"
+        },
+        "visible_outcome": {
+          "type": "string"
+        },
+        "hidden_outcome": {
+          "type": "string"
+        },
+        "mechanics": {
+          "type": "object"
+        },
+        "affected_entities": {
+          "type": "array"
+        },
+        "affected_systems": {
+          "type": "array"
+        },
+        "severity": {
+          "type": "integer"
+        },
+        "visibility": {
+          "type": "integer"
+        },
+        "known_by_player": {
+          "type": "boolean"
+        },
+        "known_by": {
+          "type": "array"
+        },
+        "rumors_created": {
+          "type": "array"
+        },
+        "beliefs_created": {
+          "type": "array"
+        },
+        "consequences_created": {
+          "type": "array"
+        },
+        "contradictions_created": {
+          "type": "array"
+        },
+        "canon_progression_credit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "stat"
+            ],
+            "properties": {
+              "stat": {
+                "enum": [
+                  "authority",
+                  "ruin",
+                  "creation"
+                ]
+              },
+              "satisfies_criterion": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              }
+            }
+          },
+          "properties": {
+            "per_actor": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "authority": {
+                    "type": "integer",
+                    "default": 0
+                  },
+                  "ruin": {
+                    "type": "integer",
+                    "default": 0
+                  },
+                  "creation": {
+                    "type": "integer",
+                    "default": 0
+                  },
+                  "corruption": {
+                    "type": "integer",
+                    "default": 0
+                  }
+                }
+              },
+              "description": "R-143-P: per-actor canon credit (companion_id or player_id → credit object). Replaces v0.4 player-only."
+            }
+          }
+        },
+        "path_credits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "domain",
+              "weight"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5
+              }
+            }
+          }
+        },
+        "party_member_witnesses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "R-147-P: companion_ids that witnessed this event. Multi-witness mechanics — Bell Court testimony, Drowned Church doctrinal weighting."
+        },
+        "agent_provenance": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "R-95-B: map of event-field-path → agent_name that produced it. Debug aid + replay determinism."
+        },
+        "combat_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "initiative_order": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "actor_id": {
+                    "type": "string"
+                  },
+                  "actor_kind": {
+                    "type": "string",
+                    "enum": [
+                      "player",
+                      "companion",
+                      "npc",
+                      "creature",
+                      "environment"
+                    ]
+                  },
+                  "initiative_roll": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "description": "R-146-P: party-aware initiative order"
+            },
+            "round_number": {
+              "type": "integer"
+            },
+            "current_actor_index": {
+              "type": "integer"
+            }
+          },
+          "description": "R-146-P: combat state inside event. No separate combat entity in v0.5 (deferred bundle)."
+        },
+        "diegetic_elements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "element_id": {
+                "type": "string"
+              },
+              "element_kind": {
+                "type": "string",
+                "enum": [
+                  "fountain",
+                  "bell",
+                  "ledger",
+                  "tithing_cup",
+                  "vials_shelf",
+                  "bell_forge",
+                  "marrow_wax_candle",
+                  "salt_pan",
+                  "litany_card"
+                ]
+              },
+              "state": {
+                "type": "object"
+              },
+              "is_clickable": {
+                "type": "boolean"
+              }
+            }
+          },
+          "description": "R-114-D: per-scene catalog of clickable diegetic UI elements with their state. Scoped to events because event has scene context."
+        },
+        "public_summary_for_ticker": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80,
+          "description": "R-118-D: optional ticker-ready summary populated by Narrator. Null when event is not surfaceable."
+        },
+        "scene_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "R-122-E: groups events by scene for easier filtering. Replaces implicit grouping."
+        }
+      }
+    },
+    "faction": {
+      "type": "object",
+      "required": [
+        "faction_id",
+        "name",
+        "core_goal",
+        "resources",
+        "stance_to_player"
+      ],
+      "properties": {
+        "faction_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "core_goal": {
+          "type": "string"
+        },
+        "fear": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array"
+        },
+        "territory": {
+          "type": "array"
+        },
+        "leadership": {
+          "type": "array"
+        },
+        "internal_unity": {
+          "type": "integer"
+        },
+        "public_legitimacy": {
+          "type": "integer"
+        },
+        "player_awareness": {
+          "type": "integer"
+        },
+        "stance_to_player": {
+          "type": "string"
+        },
+        "fear_of_player": {
+          "type": "integer"
+        },
+        "trust_in_player": {
+          "type": "integer"
+        },
+        "dependency_on_player": {
+          "type": "integer"
+        },
+        "containment_priority": {
+          "type": "integer"
+        },
+        "active_plans": {
+          "type": "array"
+        },
+        "beliefs": {
+          "type": "array"
+        },
+        "faction_obligation_state_per_companion": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "obligation_kind": {
+                "type": "string",
+                "enum": [
+                  "loan",
+                  "contract",
+                  "gift_debt",
+                  "tithe",
+                  "vigil"
+                ]
+              },
+              "obligation_terms": {
+                "type": "string"
+              },
+              "days_remaining": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "violation_state": {
+                "type": "string",
+                "enum": [
+                  "honored",
+                  "drifting",
+                  "violated"
+                ]
+              }
+            }
+          },
+          "description": "R-145-P: faction-mediated terms per-companion. Keyed by companion_id."
+        },
+        "scheduled_actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scheduled_action_id": {
+                "type": "string"
+              },
+              "action_kind": {
+                "type": "string"
+              },
+              "scheduled_for_day": {
+                "type": "integer"
+              },
+              "scheduled_for_scene_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "preconditions": {
+                "type": "array"
+              },
+              "cancellation_conditions": {
+                "type": "array"
+              }
+            }
+          },
+          "description": "R-123-E: faction plans with scheduled execution day. Per Notice Ladder Tracker timing R-79."
+        }
+      }
+    },
+    "npc": {
+      "type": "object",
+      "required": [
+        "npc_id",
+        "name",
+        "role",
+        "desire",
+        "fear",
+        "current_plan"
+      ],
+      "properties": {
+        "npc_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "race_id": {
+          "type": "string"
+        },
+        "faction_links": {
+          "type": "array"
+        },
+        "desire": {
+          "type": "string"
+        },
+        "fear": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array"
+        },
+        "relationship_to_player": {
+          "type": "string"
+        },
+        "current_plan": {
+          "type": "string"
+        },
+        "next_action": {
+          "type": "string"
+        },
+        "betrayal_threshold": {
+          "type": "integer"
+        },
+        "loyalty_threshold": {
+          "type": "integer"
+        },
+        "corruption_exposure": {
+          "type": "integer"
+        },
+        "memory": {
+          "type": "object"
+        },
+        "stats_optional": {
+          "$ref": "#/$defs/derived_stats_block"
+        },
+        "hp_optional": {
+          "$ref": "#/$defs/hp_block"
+        },
+        "tracker_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "target_player_id": {
+              "type": "string"
+            },
+            "assigned_by_faction_id": {
+              "type": "string"
+            },
+            "assignment_event_id": {
+              "type": "string"
+            },
+            "last_observation_event_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "next_scheduled_action_day": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "tracker_kind": {
+              "type": "string",
+              "enum": [
+                "observer",
+                "agent_provocateur",
+                "binder",
+                "executioner"
+              ]
+            }
+          },
+          "description": "R-98-B: per-NPC tracker fields when operating as a Notice-Ladder tracker. Per R-82 Notice Ladder."
+        },
+        "recruitable_via_bond": {
+          "type": "boolean",
+          "default": false,
+          "description": "R-139-P: NPC can be recruited via bond-path (organic-trust-build over multiple scenes)."
+        },
+        "recruitable_via_canon_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "R-140-P: NPC becomes recruitable on this canon-event-kind firing. event_kind reference or null."
+        },
+        "behavior_tree_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "x_deferred_bundle": "npc_behavior_trees",
+          "properties": {
+            "current_node": {
+              "type": "string"
+            },
+            "goal_stack": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "blocked_by": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tree_version": {
+              "type": "string"
+            }
+          },
+          "description": "R-108-C (deferred): behavior tree state for NPCs. Awaiting v0.5 NPC behavior tree design pass."
+        },
+        "grudge_ledger": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target_actor_id": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": -10,
+                "maximum": 10
+              },
+              "source_event_id": {
+                "type": "string"
+              },
+              "established_day": {
+                "type": "integer"
+              },
+              "decay_rate_per_day": {
+                "type": "number",
+                "default": 0.05
+              }
+            }
+          },
+          "description": "R-110-C (deferred): persistent grudges with weight + source_event_id. NPC memory beyond current_plan.",
+          "x_deferred_bundle": "npc_behavior_trees"
+        },
+        "witness_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string"
+              },
+              "witnessed_on_day": {
+                "type": "integer"
+              },
+              "perception_quality": {
+                "type": "string",
+                "enum": [
+                  "direct",
+                  "overheard",
+                  "inferred",
+                  "told_about"
+                ]
+              }
+            }
+          },
+          "description": "R-121-E: NPC's witness history. NPC Evaluator uses this for response generation."
+        }
+      }
+    },
+    "rumor": {
+      "type": "object",
+      "required": [
+        "rumor_id",
+        "source_event_id",
+        "current_claim",
+        "truth_accuracy"
+      ],
+      "properties": {
+        "rumor_id": {
+          "type": "string"
+        },
+        "source_event_id": {
+          "type": "string"
+        },
+        "current_claim": {
+          "type": "string"
+        },
+        "truth_accuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "distortion_type": {
+          "type": "string"
+        },
+        "emotional_tone": {
+          "type": "string"
+        },
+        "spread_level": {
+          "type": "integer"
+        },
+        "regions_reached": {
+          "type": "array"
+        },
+        "factions_amplifying": {
+          "type": "array"
+        },
+        "factions_suppressing": {
+          "type": "array"
+        },
+        "versions": {
+          "type": "array"
+        },
+        "player_reputation_effect": {
+          "type": "object"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "belief": {
+      "type": "object",
+      "required": [
+        "belief_id",
+        "holder_type",
+        "holder_id",
+        "claim",
+        "truth_status",
+        "confidence"
+      ],
+      "properties": {
+        "belief_id": {
+          "type": "string"
+        },
+        "holder_type": {
+          "type": "string"
+        },
+        "holder_id": {
+          "type": "string"
+        },
+        "claim": {
+          "type": "string"
+        },
+        "truth_status": {
+          "enum": [
+            "true",
+            "false",
+            "partial",
+            "unknown",
+            "contested"
+          ]
+        },
+        "confidence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "source_ids": {
+          "type": "array"
+        },
+        "emotional_charge": {
+          "type": "string"
+        },
+        "behavior_effects": {
+          "type": "array"
+        }
+      }
+    },
+    "consequence": {
+      "type": "object",
+      "required": [
+        "consequence_id",
+        "source_event_id",
+        "trigger_type",
+        "effect_type",
+        "status"
+      ],
+      "properties": {
+        "consequence_id": {
+          "type": "string"
+        },
+        "source_event_id": {
+          "type": "string"
+        },
+        "trigger_type": {
+          "enum": [
+            "time",
+            "condition",
+            "threshold",
+            "random",
+            "discovery"
+          ]
+        },
+        "trigger_value": {
+          "type": "string"
+        },
+        "effect_type": {
+          "type": "string"
+        },
+        "affected_entities": {
+          "type": "array"
+        },
+        "affected_systems": {
+          "type": "array"
+        },
+        "severity": {
+          "type": "integer"
+        },
+        "visibility_to_player": {
+          "type": "string"
+        },
+        "preventable": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "triggered",
+            "resolved",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "resolution_options": {
+          "type": "array"
+        }
+      }
+    },
+    "state_diff": {
+      "type": "object",
+      "required": [
+        "state_diff_id",
+        "source_event",
+        "approved",
+        "changes"
+      ],
+      "properties": {
+        "state_diff_id": {
+          "type": "string"
+        },
+        "source_event": {
+          "type": "string"
+        },
+        "approved": {
+          "type": "boolean"
+        },
+        "approved_by": {
+          "const": "state_manager"
+        },
+        "validator_chain_pass": {
+          "type": "object",
+          "properties": {
+            "stage_1_input": {
+              "type": "boolean"
+            },
+            "stage_2_rules": {
+              "type": "boolean"
+            },
+            "stage_3_canon_consistency": {
+              "type": "boolean"
+            },
+            "stage_4_canon_progression": {
+              "type": "boolean"
+            },
+            "stage_5_contradiction_check": {
+              "type": "boolean"
+            },
+            "stage_6_content_boundary": {
+              "type": "boolean"
+            }
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "operation",
+              "value"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "operation": {
+                "enum": [
+                  "set",
+                  "increment",
+                  "append",
+                  "remove",
+                  "replace"
+                ]
+              },
+              "value": {}
+            }
+          }
+        },
+        "created_records": {
+          "type": "object"
+        },
+        "replay_seed": {
+          "type": "string",
+          "description": "R-92-B: RNG seed that produced this state_diff. Required for tests/replay_determinism.py."
+        },
+        "validator_chain_pass_detailed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/validator_stage_result"
+          },
+          "description": "R-94-B: per-stage validator result with reason on failure. Expansion of v0.4 boolean validator_chain_pass."
+        },
+        "dependency_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "R-96-B: event_ids this diff depends on having committed first. Required for replay ordering."
+        }
+      }
+    },
+    "contradiction_ledger_entry": {
+      "type": "object",
+      "required": [
+        "contradiction_id",
+        "kind",
+        "source_event_id",
+        "resolved"
+      ],
+      "properties": {
+        "contradiction_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "race_extinction",
+            "deity_death",
+            "deity_birth",
+            "race_emergence",
+            "region_transformation",
+            "rumor_vs_canon",
+            "memory_vs_record",
+            "unmade_event",
+            "named_unnamed",
+            "substrate_exposed",
+            "substrate_dispersed",
+            "other",
+            "companion_memory_disagreement"
+          ]
+        },
+        "source_event_id": {
+          "type": "string"
+        },
+        "previous_state_summary": {
+          "type": "string"
+        },
+        "new_state_summary": {
+          "type": "string"
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "resolution_event_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "surfacing_state": {
+          "type": "string",
+          "enum": [
+            "dormant",
+            "surfacing_to_player",
+            "resolved"
+          ],
+          "default": "dormant",
+          "description": "R-126-E: contradiction surfacing trigger. R-81 closure."
+        },
+        "surface_after_day": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "R-126-E: day at which contradiction should surface to player. Null = never auto-surface."
+        }
+      }
+    },
+    "class": {
+      "type": "object",
+      "required": [
+        "class_id",
+        "default_calling_name",
+        "hit_die",
+        "primary_abilities",
+        "save_proficiencies"
+      ],
+      "properties": {
+        "class_id": {
+          "enum": [
+            "barbarian",
+            "bard",
+            "cleric",
+            "druid",
+            "fighter",
+            "monk",
+            "paladin",
+            "ranger",
+            "rogue",
+            "sorcerer",
+            "warlock",
+            "wizard"
+          ]
+        },
+        "default_calling_name": {
+          "type": "string"
+        },
+        "hit_die": {
+          "enum": [
+            6,
+            8,
+            10,
+            12
+          ]
+        },
+        "primary_abilities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          }
+        },
+        "save_proficiencies": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "enum": [
+              "str",
+              "dex",
+              "con",
+              "int",
+              "wis",
+              "cha"
+            ]
+          }
+        },
+        "skill_choices": {
+          "type": "object",
+          "properties": {
+            "choose": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "from": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "multiclass_prereq": {
+          "type": "object",
+          "properties": {
+            "ability_minimums": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 13
+              }
+            },
+            "regional_restrictions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "custom_stat_hooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "hook_id",
+              "description"
+            ],
+            "properties": {
+              "hook_id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "triggers_on": {
+                "type": "string"
+              },
+              "modifier_source": {
+                "enum": [
+                  "body",
+                  "grace",
+                  "sense",
+                  "mind",
+                  "will",
+                  "presence",
+                  "authority",
+                  "ruin",
+                  "creation"
+                ]
+              }
+            }
+          }
+        },
+        "spellcasting_kind": {
+          "enum": [
+            "none",
+            "full",
+            "half",
+            "third",
+            "pact"
+          ]
+        }
+      }
+    },
+    "race": {
+      "type": "object",
+      "required": [
+        "race_id",
+        "name",
+        "ability_bonuses",
+        "size",
+        "speed_feet"
+      ],
+      "properties": {
+        "race_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ability_bonuses": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": -2,
+            "maximum": 3
+          }
+        },
+        "size": {
+          "enum": [
+            "tiny",
+            "small",
+            "medium",
+            "large"
+          ]
+        },
+        "speed_feet": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "darkvision_feet": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "languages_known": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "languages_choices": {
+          "type": "object",
+          "properties": {
+            "choose": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "from": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "trait_id",
+              "description"
+            ],
+            "properties": {
+              "trait_id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "custom_stat_hooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "subraces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "world_mutation_state": {
+          "enum": [
+            "baseline",
+            "emergent",
+            "drift_subrace",
+            "endangered",
+            "extinct"
+          ],
+          "default": "baseline"
+        },
+        "custom_stat_tilt": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "number"
+            },
+            "grace": {
+              "type": "number"
+            },
+            "sense": {
+              "type": "number"
+            },
+            "mind": {
+              "type": "number"
+            },
+            "will": {
+              "type": "number"
+            },
+            "presence": {
+              "type": "number"
+            },
+            "authority": {
+              "type": "number"
+            },
+            "ruin": {
+              "type": "number"
+            },
+            "creation": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "subrace": {
+      "type": "object",
+      "required": [
+        "subrace_id",
+        "parent_race_id",
+        "name"
+      ],
+      "properties": {
+        "subrace_id": {
+          "type": "string"
+        },
+        "parent_race_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ability_bonuses": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": -2,
+            "maximum": 3
+          }
+        },
+        "extra_traits": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "world_mutation_state": {
+          "enum": [
+            "baseline",
+            "emergent",
+            "drift_subrace",
+            "endangered",
+            "extinct"
+          ],
+          "default": "baseline"
+        }
+      }
+    },
+    "deity": {
+      "type": "object",
+      "required": [
+        "deity_id",
+        "name",
+        "alignment",
+        "domains"
+      ],
+      "properties": {
+        "deity_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "alternative_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alignment": {
+          "$ref": "#/$defs/alignment_descriptor"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "knowledge",
+              "life",
+              "light",
+              "nature",
+              "tempest",
+              "trickery",
+              "war",
+              "death"
+            ]
+          }
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "symbol_motif": {
+          "type": "string"
+        },
+        "notice_threshold_d100": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "origin": {
+          "enum": [
+            "baseline",
+            "regional",
+            "heretical_reading",
+            "emergent",
+            "fragmentary",
+            "dead",
+            "unknown"
+          ],
+          "default": "baseline"
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "worshipped",
+            "dormant",
+            "sleeping",
+            "dead",
+            "newborn",
+            "contested"
+          ],
+          "default": "worshipped"
+        },
+        "death_event_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "succession_rule": {
+          "type": "object",
+          "properties": {
+            "on_death": {
+              "enum": [
+                "void",
+                "successor_appointed",
+                "domain_redistributed",
+                "fragment_into_lesser",
+                "no_successor"
+              ]
+            },
+            "successor_candidate_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "mythological_substrate_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "substrate_id",
+              "reading_mode"
+            ],
+            "properties": {
+              "substrate_id": {
+                "type": "string"
+              },
+              "reading_mode": {
+                "enum": [
+                  "inherit",
+                  "distort",
+                  "deny",
+                  "accidental"
+                ],
+                "default": "inherit"
+              }
+            }
+          }
+        }
+      }
+    },
+    "pantheon": {
+      "type": "object",
+      "required": [
+        "pantheon_id",
+        "origin_label",
+        "deity_ids"
+      ],
+      "properties": {
+        "pantheon_id": {
+          "type": "string"
+        },
+        "origin_label": {
+          "type": "string"
+        },
+        "deity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "region_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "enum": [
+            "active",
+            "regional",
+            "heretical",
+            "dormant",
+            "extinct"
+          ],
+          "default": "active"
+        },
+        "mythological_substrate_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regional_configuration": {
+          "type": "object",
+          "properties": {
+            "region_id": {
+              "type": "string"
+            },
+            "worshipped_deities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "deity_id",
+                  "reading_mode"
+                ],
+                "properties": {
+                  "deity_id": {
+                    "type": "string"
+                  },
+                  "reading_mode": {
+                    "enum": [
+                      "orthodox",
+                      "heretical_reading",
+                      "distorted",
+                      "silent_majority",
+                      "suppressed_minority"
+                    ]
+                  },
+                  "local_epithet": {
+                    "type": "string"
+                  },
+                  "doctrine_summary": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "heretical_reading_patterns": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "demoted_mother",
+                  "silent_twin",
+                  "buried_domain",
+                  "forgotten_dawn",
+                  "unnamed_among_names",
+                  "recanted_heresy"
+                ]
+              }
+            }
+          }
+        },
+        "faith_meter_negative_value_ui_treatment": {
+          "type": "string",
+          "enum": [
+            "hidden_in_ui",
+            "shown_as_apostate",
+            "shown_as_explicit_negative"
+          ],
+          "default": "shown_as_apostate",
+          "description": "R-125-E: how negative faith values render in UI. R-83 closure."
+        }
+      }
+    },
+    "spell": {
+      "type": "object",
+      "required": [
+        "spell_id",
+        "name",
+        "level",
+        "school",
+        "casting_time",
+        "range",
+        "duration",
+        "components",
+        "classes_allowed"
+      ],
+      "properties": {
+        "spell_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "school": {
+          "enum": [
+            "abjuration",
+            "conjuration",
+            "divination",
+            "enchantment",
+            "evocation",
+            "illusion",
+            "necromancy",
+            "transmutation",
+            "regional"
+          ]
+        },
+        "regional_school_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "regional_pantheon_alignment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "casting_time": {
+          "type": "string"
+        },
+        "range": {
+          "type": "string"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "v": {
+              "type": "boolean"
+            },
+            "s": {
+              "type": "boolean"
+            },
+            "m": {
+              "type": "boolean"
+            },
+            "m_text": {
+              "type": "string"
+            },
+            "m_consumed": {
+              "type": "boolean"
+            },
+            "m_cost_gp": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "duration": {
+          "$ref": "#/$defs/duration_object"
+        },
+        "concentration": {
+          "type": "boolean"
+        },
+        "ritual_eligible": {
+          "type": "boolean"
+        },
+        "save_type": {
+          "enum": [
+            null,
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "attack_kind": {
+          "enum": [
+            null,
+            "melee",
+            "ranged"
+          ]
+        },
+        "damage_dice": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "damage_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classes_allowed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_aligned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cost_layer": {
+          "$ref": "#/$defs/spell_cost_layer"
+        },
+        "description_template": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tooling/content tags (slice_eligible, imposed_eligible, etc.). Replaces semantic misuse of domain_aligned for tagging."
+        },
+        "creates_canon_event_on_cast": {
+          "type": "boolean",
+          "default": false,
+          "description": "Explicit flag: this spell creates a canon event when cast. Helps State Manager event-emission logic vs. inferring from cost_layer."
+        },
+        "subschool": {
+          "type": "string",
+          "enum": [
+            "forbiddings",
+            "witness_spells",
+            "listening",
+            "marking_spells",
+            "naming_spells",
+            "contradiction_burst",
+            "resonance",
+            "unbecoming",
+            "memory_spells",
+            "echoes",
+            "lattice_shifts",
+            "inversions",
+            "half_summon",
+            "borrowed_things"
+          ],
+          "description": "Subschool within parent school. 14 subschools used in v0.4.3 originals."
+        },
+        "wild_twist": {
+          "type": "string",
+          "description": "One-line distinctive mechanical twist of an original spell. Surfaced in spell-picker UI for discoverability."
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "required": [
+        "condition_id",
+        "name",
+        "scope",
+        "ui_glyph"
+      ],
+      "properties": {
+        "condition_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "universal",
+            "regional"
+          ]
+        },
+        "source_pack": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "abbreviation": {
+          "type": "string",
+          "maxLength": 4
+        },
+        "ui_glyph": {
+          "type": "string"
+        },
+        "ui_category": {
+          "enum": [
+            "metaphysical",
+            "social_legal",
+            "physical",
+            "lethal_tracking"
+          ]
+        },
+        "stackable": {
+          "type": "boolean",
+          "default": false
+        },
+        "level_based": {
+          "type": "boolean",
+          "default": false
+        },
+        "max_level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "duration_types_allowed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effect_rules": {
+          "type": "string"
+        },
+        "removal_methods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "required": [
+        "item_id",
+        "name",
+        "type",
+        "rarity"
+      ],
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "weapon",
+            "armor",
+            "shield",
+            "ammunition",
+            "tool",
+            "trinket",
+            "consumable",
+            "wondrous",
+            "book",
+            "key",
+            "currency_token"
+          ]
+        },
+        "subtype": {
+          "type": "string"
+        },
+        "rarity": {
+          "enum": [
+            "common",
+            "uncommon",
+            "rare",
+            "very_rare",
+            "legendary",
+            "artifact"
+          ]
+        },
+        "identification_dc": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "identification_requires": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "time_1hr",
+              "identify_spell",
+              "contemplation",
+              "canon_event",
+              "quest"
+            ]
+          }
+        },
+        "attunement_required": {
+          "type": "boolean"
+        },
+        "attunement_ceremony": {
+          "enum": [
+            null,
+            "short_rest",
+            "salt_immersion",
+            "sworn_oath",
+            "blood_consecration"
+          ]
+        },
+        "weight_kg": {
+          "type": "number",
+          "minimum": 0
+        },
+        "value_cp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "value_currency_alt": {
+          "$ref": "#/$defs/currency_amount"
+        },
+        "equip_slot": {
+          "enum": [
+            null,
+            "main_hand",
+            "off_hand",
+            "two_handed",
+            "armor",
+            "shield",
+            "helm",
+            "cloak",
+            "boots",
+            "gloves",
+            "ring",
+            "amulet",
+            "belt"
+          ]
+        },
+        "tinting_class": {
+          "enum": [
+            "vellum_mundane",
+            "brass_greywake",
+            "tide_bloom_metaphysical",
+            "verdigris_consumable",
+            "drowned_red_cursed",
+            "bone_relic"
+          ]
+        },
+        "bound_to_you": {
+          "type": "boolean",
+          "default": false
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "damage_dice": {
+          "type": "string"
+        },
+        "damage_type": {
+          "type": "string"
+        },
+        "weapon_properties": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "finesse",
+              "light",
+              "heavy",
+              "two_handed",
+              "versatile",
+              "reach",
+              "thrown",
+              "loading",
+              "ammunition",
+              "special",
+              "ritual",
+              "salt_marked",
+              "witness_marked"
+            ]
+          }
+        },
+        "armor_ac_base": {
+          "type": "integer"
+        },
+        "armor_dex_cap": {
+          "type": "integer"
+        },
+        "armor_strength_min": {
+          "type": "integer"
+        },
+        "armor_stealth_disadvantage": {
+          "type": "boolean"
+        },
+        "effects_on_equip": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effects_on_attune": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effects_on_use": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "charges": {
+          "type": "object",
+          "properties": {
+            "max": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "current": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "recharge": {
+              "type": "string"
+            }
+          }
+        },
+        "curse_kind": {
+          "type": "string"
+        },
+        "deicidal": {
+          "type": "boolean",
+          "default": false
+        },
+        "soul_template": {
+          "type": "object"
+        },
+        "memory_template": {
+          "type": "object"
+        },
+        "transformable_hooks": {
+          "type": "object",
+          "properties": {
+            "graft_kind": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parasite_symbiote": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fused_flesh_target_slot": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "effects_on_attune_structured": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "effect_kind": {
+                "type": "string",
+                "enum": [
+                  "stat_modifier",
+                  "meter_delta",
+                  "condition_apply",
+                  "condition_remove",
+                  "spell_cast",
+                  "save_advantage",
+                  "save_disadvantage",
+                  "damage_resist",
+                  "damage_vulnerability",
+                  "skill_bonus",
+                  "auto_succeed",
+                  "auto_fail",
+                  "trigger_event",
+                  "set_flag"
+                ]
+              },
+              "magnitude_int": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "magnitude_dice": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "condition_target": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "spell_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "trigger_event_kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "charges_per_use": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "duration_in_world_hours": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "description": "SC-16: structured replacement for effects_on_attune (string[]). Tooling-parseable. Original effects_on_attune field retained for backward compat."
+        },
+        "effects_on_equip_structured": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "effect_kind": {
+                "type": "string",
+                "enum": [
+                  "stat_modifier",
+                  "meter_delta",
+                  "condition_apply",
+                  "condition_remove",
+                  "spell_cast",
+                  "save_advantage",
+                  "save_disadvantage",
+                  "damage_resist",
+                  "damage_vulnerability",
+                  "skill_bonus",
+                  "auto_succeed",
+                  "auto_fail",
+                  "trigger_event",
+                  "set_flag"
+                ]
+              },
+              "magnitude_int": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "magnitude_dice": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "condition_target": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "spell_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "trigger_event_kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "charges_per_use": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "duration_in_world_hours": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "description": "SC-16: structured replacement for effects_on_equip (string[]). Tooling-parseable. Original effects_on_equip field retained for backward compat."
+        },
+        "effects_on_use_structured": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "effect_kind": {
+                "type": "string",
+                "enum": [
+                  "stat_modifier",
+                  "meter_delta",
+                  "condition_apply",
+                  "condition_remove",
+                  "spell_cast",
+                  "save_advantage",
+                  "save_disadvantage",
+                  "damage_resist",
+                  "damage_vulnerability",
+                  "skill_bonus",
+                  "auto_succeed",
+                  "auto_fail",
+                  "trigger_event",
+                  "set_flag"
+                ]
+              },
+              "magnitude_int": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "magnitude_dice": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "condition_target": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "spell_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "trigger_event_kind": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "charges_per_use": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "duration_in_world_hours": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "effect_kind"
+            ]
+          },
+          "description": "SC-16: structured replacement for effects_on_use (string[]). Tooling-parseable. Original effects_on_use field retained for backward compat."
+        },
+        "witness_payload": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "soul_kind": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                null,
+                "fragment",
+                "echo",
+                "transferred",
+                "bound",
+                "composed"
+              ],
+              "description": "R-73: soul_kind gating — what kind of soul-substrate this item carries. Bound at craft-commit per Bundle A."
+            },
+            "soul_source_event_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "soul_intensity": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 10
+            },
+            "provenance_chain": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Witness-bearing payload on items. R-73 (Bundle A) + SC-07."
+        },
+        "adaptagen_kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            null,
+            "mutagen",
+            "stabilizer",
+            "reverser",
+            "binding_serum",
+            "sleeping_grafts"
+          ],
+          "description": "R-103-C (deferred mad-sci): item is an adaptagen of this kind. Null for non-adaptagen items.",
+          "x_deferred_bundle": "mad_sci_track"
+        },
+        "adaptagen_duration_hours": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "x_deferred_bundle": "mad_sci_track"
+        },
+        "adaptagen_effect_payload": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "x_deferred_bundle": "mad_sci_track"
+        },
+        "evolution_ledger": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evolution_id": {
+                "type": "string"
+              },
+              "evolved_on_day": {
+                "type": "integer"
+              },
+              "evolution_kind": {
+                "type": "string",
+                "enum": [
+                  "rust",
+                  "polish",
+                  "patina",
+                  "soul_thickening",
+                  "ritual_brightening",
+                  "decay"
+                ]
+              },
+              "evolution_event_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "description": "R-129-F (speculative): items that change over time without crafting. The rust pattern on a long-held weapon. World-remembers extension.",
+          "x_speculative": true
+        },
+        "description_long": {
+          "type": "string"
+        },
+        "description_short": {
+          "type": "string"
+        },
+        "effects_passive_structured": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "stackable": {
+          "type": "boolean"
+        },
+        "stack_size_max": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "requires_attunement": {
+          "type": "boolean"
+        },
+        "intermediate_for_recipe_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "is_intermediate": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "regional_pack_id": {
+          "type": "string"
+        },
+        "attunement_slot_cost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "weight_lb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "value_in_scrip": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "value_note": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "crafting": {
+          "type": "object",
+          "properties": {
+            "recipe_id": {
+              "type": "string"
+            },
+            "intermediate_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "primary_craft_station": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "acquisition_method": {
+          "type": "string"
+        },
+        "charges_max": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "charges_recover": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "title": "weapon_item",
+          "properties": {
+            "type": {
+              "const": "weapon"
+            },
+            "subtype": {
+              "enum": [
+                null,
+                "simple_melee",
+                "simple_ranged",
+                "martial_melee",
+                "martial_ranged"
+              ]
+            },
+            "damage_dice": {
+              "type": "string"
+            },
+            "damage_type": {
+              "enum": [
+                "bludgeoning",
+                "piercing",
+                "slashing",
+                "fire",
+                "cold",
+                "lightning",
+                "thunder",
+                "force",
+                "radiant",
+                "necrotic",
+                "psychic",
+                "acid",
+                "poison"
+              ]
+            },
+            "weapon_properties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "damage_dice",
+            "damage_type"
+          ]
+        },
+        {
+          "title": "armor_item",
+          "properties": {
+            "type": {
+              "const": "armor"
+            },
+            "subtype": {
+              "enum": [
+                "light",
+                "medium",
+                "heavy"
+              ]
+            },
+            "armor_ac_base": {
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 25
+            },
+            "armor_dex_cap": {
+              "type": "integer"
+            },
+            "armor_stealth_disadvantage": {
+              "type": "boolean"
+            },
+            "armor_strength_min": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "armor_ac_base"
+          ]
+        },
+        {
+          "title": "shield_item",
+          "properties": {
+            "type": {
+              "const": "shield"
+            },
+            "armor_ac_base": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "required": [
+            "armor_ac_base"
+          ]
+        },
+        {
+          "title": "ammunition_item",
+          "properties": {
+            "type": {
+              "const": "ammunition"
+            },
+            "subtype": {
+              "enum": [
+                "arrows",
+                "bolts",
+                "sling_stones",
+                "bullets",
+                "needles",
+                "darts"
+              ]
+            }
+          },
+          "required": [
+            "subtype"
+          ]
+        },
+        {
+          "title": "tool_item",
+          "properties": {
+            "type": {
+              "const": "tool"
+            }
+          }
+        },
+        {
+          "title": "trinket_item",
+          "properties": {
+            "type": {
+              "const": "trinket"
+            }
+          }
+        },
+        {
+          "title": "consumable_item",
+          "properties": {
+            "type": {
+              "const": "consumable"
+            }
+          }
+        },
+        {
+          "title": "wondrous_item",
+          "properties": {
+            "type": {
+              "const": "wondrous"
+            }
+          }
+        },
+        {
+          "title": "book_item",
+          "properties": {
+            "type": {
+              "const": "book"
+            }
+          }
+        },
+        {
+          "title": "key_item",
+          "properties": {
+            "type": {
+              "const": "key"
+            }
+          }
+        },
+        {
+          "title": "currency_token_item",
+          "properties": {
+            "type": {
+              "const": "currency_token"
+            }
+          }
+        }
+      ]
+    },
+    "recipe": {
+      "type": "object",
+      "required": [
+        "recipe_id",
+        "name",
+        "materials",
+        "produces_item_id"
+      ],
+      "properties": {
+        "recipe_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "track": {
+          "enum": [
+            "forging",
+            "tinkering",
+            "alchemy"
+          ]
+        },
+        "tool_required": {
+          "type": "string"
+        },
+        "station_required": {
+          "type": "string"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "item_id",
+              "quantity"
+            ],
+            "properties": {
+              "item_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "consumed": {
+                "type": "boolean",
+                "default": true
+              }
+            }
+          }
+        },
+        "output_item_id": {
+          "type": "string"
+        },
+        "output_quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "workday_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "gp_cost": {
+          "type": "number",
+          "minimum": 0
+        },
+        "difficulty_dc": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ability_check": {
+          "enum": [
+            null,
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branching_outcomes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "dc_band"
+                ],
+                "properties": {
+                  "dc_band": {
+                    "type": "string"
+                  },
+                  "outcome_item_id": {
+                    "type": "string"
+                  },
+                  "side_effect_kind": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "witness_inheritance": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array"
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        },
+        "invisible_work": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array"
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        },
+        "station_alternative_routes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fallback_station_id": {
+                "type": "string"
+              },
+              "dc_modifier": {
+                "type": "integer"
+              },
+              "yield_modifier": {
+                "type": "number"
+              },
+              "narrative_consequence": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "R-120-E: M2 finding R-85. If primary station inaccessible, list of fallbacks with consequences."
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "material_id",
+              "quantity"
+            ],
+            "properties": {
+              "material_id": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "consent_required_at_acquisition": {
+                "type": "boolean"
+              },
+              "is_witness_bearing": {
+                "type": "boolean"
+              },
+              "consumed_in_minting": {
+                "type": "boolean"
+              },
+              "partial_consumption_units": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "produces_item_id": {
+          "type": "string"
+        },
+        "primary_station_id": {
+          "type": "string"
+        },
+        "alternative_station_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_in_world_hours": {
+          "type": [
+            "integer",
+            "number"
+          ],
+          "minimum": 0
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "craft_track": {
+          "type": "string"
+        },
+        "skill_check": {
+          "type": "string"
+        },
+        "dc": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 40
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "required": [
+        "region_id",
+        "name",
+        "status"
+      ],
+      "properties": {
+        "region_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "starting",
+            "transformed",
+            "lost",
+            "dream",
+            "abyssal",
+            "future"
+          ]
+        },
+        "framing_notes": {
+          "type": "string"
+        },
+        "regional_pack_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/regional_pack_ref"
+          }
+        },
+        "active_pantheon_id": {
+          "type": "string"
+        },
+        "active_pantheon_config_id": {
+          "type": "string"
+        },
+        "currency_pack_id": {
+          "type": "string"
+        },
+        "conditions_pack_id": {
+          "type": "string"
+        },
+        "magic_traditions_pack_id": {
+          "type": "string"
+        },
+        "cult_institution_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "heretical_reading_pattern_refs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "demoted_mother",
+              "silent_twin",
+              "buried_domain",
+              "forgotten_dawn",
+              "unnamed_among_names",
+              "recanted_heresy"
+            ]
+          }
+        },
+        "substrate_exposed_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weather_state": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "current_weather_kind": {
+              "type": "string"
+            },
+            "since_day": {
+              "type": "integer"
+            },
+            "intensity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "description": "R-130-F (speculative): weather as world-state. Currently narrated, not modeled.",
+          "x_speculative": true
+        },
+        "weather_history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "R-130-F (speculative): historical weather log.",
+          "x_speculative": true
+        }
+      }
+    },
+    "regional_pack": {
+      "type": "object",
+      "required": [
+        "pack_id",
+        "region_id",
+        "kind"
+      ],
+      "properties": {
+        "pack_id": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "conditions",
+            "currencies",
+            "magic_traditions",
+            "pantheon",
+            "items",
+            "recipes",
+            "factions",
+            "deities",
+            "litanies",
+            "marginalia",
+            "substrate",
+            "loot_tables",
+            "materials",
+            "cult_institutions",
+            "environment"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "contents_path": {
+          "type": "string"
+        }
+      }
+    },
+    "mythological_substrate_entry": {
+      "type": "object",
+      "required": [
+        "substrate_id",
+        "kind",
+        "status"
+      ],
+      "properties": {
+        "substrate_id": {
+          "type": "string"
+        },
+        "name_descriptor": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "pattern",
+            "proto_deity",
+            "era_marker",
+            "fragment"
+          ]
+        },
+        "era_band": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            }
+          }
+        },
+        "status": {
+          "enum": [
+            "dormant",
+            "exposed",
+            "bound",
+            "dispersed",
+            "renamed"
+          ]
+        },
+        "patterns_invoked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fragments_known": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "active_deity_readings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exposure_method": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "world_impact_if_exposed": {
+          "type": "string"
+        },
+        "min_exposure_cooldown_days": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 7
+        },
+        "drawn_from": {
+          "type": "string"
+        },
+        "what_we_did_not_take": {
+          "type": "string"
+        }
+      }
+    },
+    "loot_table": {
+      "type": "object",
+      "required": [
+        "loot_table_id",
+        "scope",
+        "trigger_event_kind",
+        "rolls"
+      ],
+      "properties": {
+        "loot_table_id": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "carried",
+            "hidden",
+            "yielded",
+            "canon_event_drop"
+          ]
+        },
+        "trigger_event_kind": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "faction_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rolls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "guaranteed",
+                  "weighted",
+                  "memory"
+                ]
+              },
+              "item_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "qty_die": {
+                "type": "string"
+              },
+              "weights": {
+                "type": "array"
+              },
+              "creates_item_id_template": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "condition": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "refusal_consequences": {
+          "type": "object",
+          "properties": {
+            "claimable_by_factions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "decay_pattern": {
+              "type": "string"
+            },
+            "rumor_risk": {
+              "type": "boolean"
+            }
+          }
+        },
+        "template_grammar_version": {
+          "type": "string",
+          "enum": [
+            "v0.5"
+          ],
+          "description": "Version flag indicating creates_item_id_template fields parse against the v0.5 grammar: variables marked as ${var_name}, substitutions resolved by State Manager at canon-event."
+        }
+      }
+    },
+    "material": {
+      "type": "object",
+      "required": [
+        "material_id",
+        "name",
+        "category"
+      ],
+      "properties": {
+        "material_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "material_metal",
+            "material_stone",
+            "material_wood",
+            "material_fiber",
+            "material_reagent"
+          ]
+        },
+        "tinting_class": {
+          "enum": [
+            "vellum_mundane",
+            "brass_greywake",
+            "tide_bloom_metaphysical",
+            "verdigris_consumable",
+            "drowned_red_cursed",
+            "bone_relic",
+            "cursed_substrate"
+          ]
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "weight_kg_per_unit": {
+          "type": "number",
+          "minimum": 0
+        },
+        "value_cp_per_unit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "witness_payload": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "witness_summary": {
+                  "type": "string"
+                },
+                "binding_dc": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "carries_soul_kind": {
+                  "enum": [
+                    null,
+                    "witness",
+                    "spirit",
+                    "fragment",
+                    "echo"
+                  ]
+                },
+                "carries_memory_tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "provenance_chain": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "holder_id": {
+                        "type": "string"
+                      },
+                      "held_from_day": {
+                        "type": "integer"
+                      },
+                      "held_until_day": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "transfer_event_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "transfer_kind": {
+                        "type": "string",
+                        "enum": [
+                          "gifted",
+                          "stolen",
+                          "won",
+                          "inherited",
+                          "harvested",
+                          "salvaged"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "SC-07: ordered history of past holders/uses, for items that carry deep memory."
+                }
+              }
+            }
+          ]
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "T1",
+            "T2",
+            "T3",
+            "T4"
+          ],
+          "description": "Material tier; T1<=50cp, T2=51-500, T3=501-5000, T4>5000. Was previously inferred from value_cp_per_unit bands."
+        },
+        "slice_eligible": {
+          "type": "boolean",
+          "description": "Material is approved for M8 Greywake slice ship. Replaces memory_tag interim flag."
+        },
+        "is_intermediate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Material is a craft-intermediate, not a primary harvestable resource. E.g., vial_of_practiced_name_water."
+        },
+        "sourcing_geography": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Where this material is sourced: biome / region kind / institution control. E.g., ['salt_marsh', 'coastal', 'drowned_church_grounds']."
+        },
+        "decay_states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "decay_kind": {
+                "type": "string",
+                "enum": [
+                  "region_locked",
+                  "time_locked",
+                  "ritual_locked",
+                  "concentration_locked"
+                ]
+              },
+              "decay_trigger": {
+                "type": "string"
+              },
+              "decay_outcome": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Decay rules — material crumbles or transforms outside given context. E.g., salt-rime outside region_greywake."
+        },
+        "craft_tracks_eligible": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "forging",
+              "alchemy",
+              "tinkering",
+              "scribing",
+              "ritual"
+            ]
+          },
+          "description": "Explicit list of craft tracks that may use this material."
+        },
+        "acquisition_method": {
+          "type": "string",
+          "enum": [
+            "purchased",
+            "gifted_only",
+            "harvested",
+            "quest_reward",
+            "canon_event_only",
+            "crafted"
+          ],
+          "description": "How this material becomes obtainable. Some (e.g., mat_listening_child_pebble) cannot be purchased."
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "regional_currency_state": {
+      "type": "object",
+      "required": [
+        "currency_id",
+        "region_id",
+        "base_value_gp",
+        "volatility_modifier",
+        "crisis_intensity_modifier"
+      ],
+      "properties": {
+        "currency_id": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "base_value_gp": {
+          "type": "number",
+          "minimum": 0
+        },
+        "volatility_modifier": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 2.0
+        },
+        "crisis_intensity_modifier": {
+          "enum": [
+            1.0,
+            0.85,
+            0.6,
+            0.4,
+            1.2,
+            0.05
+          ]
+        },
+        "crisis_label": {
+          "enum": [
+            "calm",
+            "rumored_crisis",
+            "declared_crisis",
+            "acute_crisis",
+            "resolved",
+            "collapsed"
+          ]
+        },
+        "last_recompute_event_id": {
+          "type": "string"
+        }
+      }
+    },
+    "cult_institution": {
+      "type": "object",
+      "required": [
+        "cult_institution_id",
+        "faction_id",
+        "region_id"
+      ],
+      "properties": {
+        "cult_institution_id": {
+          "type": "string"
+        },
+        "faction_id": {
+          "type": "string"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "primary_deity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "clerical_archetype": {
+          "type": "string"
+        },
+        "doctrines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "doctrine_id",
+              "text"
+            ],
+            "properties": {
+              "doctrine_id": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "faith_meter_aligned": {
+                "type": "object",
+                "properties": {
+                  "deity_id": {
+                    "type": "string"
+                  },
+                  "alignment_kind": {
+                    "enum": [
+                      "tenets_aligned",
+                      "tenets_violating"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "taboos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "taboo_id",
+              "text",
+              "violation_consequence"
+            ],
+            "properties": {
+              "taboo_id": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "violation_consequence": {
+                "type": "object",
+                "properties": {
+                  "notice_delta": {
+                    "type": "integer"
+                  },
+                  "path_credit": {
+                    "type": "object"
+                  },
+                  "faith_delta": {
+                    "type": "object"
+                  },
+                  "social_response": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rite_kinds": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "daily",
+              "weekly",
+              "seasonal",
+              "lunar",
+              "tidal",
+              "canon_event"
+            ]
+          }
+        },
+        "heretical_figures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "creature_material": {
+      "type": "object",
+      "x_severity": "HIGH",
+      "x_load_bearing": "19 v0.4.2 baseline records depend on this gap closing",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "creature_material_id": {
+          "type": "string",
+          "pattern": "^cmat_[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "source_creature_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "harvest_kind": {
+          "type": "string",
+          "enum": [
+            "hide",
+            "blood",
+            "bone",
+            "scale",
+            "tooth",
+            "organ",
+            "feather",
+            "venom",
+            "ichor",
+            "shell"
+          ]
+        },
+        "yield_per_creature": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
+        },
+        "harvest_dc": {
+          "type": "integer",
+          "description": "Dice DC for clean harvest"
+        },
+        "harvest_skill": {
+          "type": "string",
+          "enum": [
+            "body",
+            "grace",
+            "sense",
+            "mind",
+            "will"
+          ]
+        },
+        "preservation_required": {
+          "type": "boolean"
+        },
+        "preservation_method": {
+          "type": "string"
+        },
+        "value_cp_per_unit": {
+          "type": "integer"
+        },
+        "witness_payload": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Some creature materials carry witness (e.g., a Drowned Church saint's bone)"
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "T1",
+            "T2",
+            "T3",
+            "T4"
+          ]
+        },
+        "craft_tracks_eligible": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decay_states": {
+          "type": "array"
+        },
+        "regional_pack_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "creature_material_id",
+        "name",
+        "source_creature_kinds",
+        "harvest_kind"
+      ]
+    },
+    "material_substitution": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "substitution_id": {
+          "type": "string"
+        },
+        "recipe_id": {
+          "type": "string"
+        },
+        "primary_material_id": {
+          "type": "string"
+        },
+        "alternative_material_id": {
+          "type": "string"
+        },
+        "dc_modifier": {
+          "type": "integer",
+          "description": "DC adjustment when alternative is used (typically positive)"
+        },
+        "yield_modifier": {
+          "type": "number",
+          "description": "Multiplier on yield when alternative used"
+        },
+        "narrative_tag": {
+          "type": "string",
+          "description": "Why this substitution exists in-world"
+        }
+      },
+      "required": [
+        "substitution_id",
+        "recipe_id",
+        "primary_material_id",
+        "alternative_material_id"
+      ]
+    },
+    "companion": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "companion_id": {
+          "type": "string",
+          "pattern": "^comp_[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "underlying_npc_id": {
+          "type": "string"
+        },
+        "recruitment_path": {
+          "type": "string",
+          "enum": [
+            "quest",
+            "bond",
+            "faction_mediated",
+            "canon_event_emergent"
+          ]
+        },
+        "recruited_on_day": {
+          "type": "integer"
+        },
+        "recruited_event_id": {
+          "type": "string"
+        },
+        "terms": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "kind": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                null,
+                "gift",
+                "loan",
+                "contract"
+              ]
+            },
+            "duration_days": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "scheduled_recall_day": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "obligations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "violation_consequence": {
+              "type": "string"
+            }
+          },
+          "description": "R-135-P: faction-mediated terms (loan/contract/gift)"
+        },
+        "autonomous_drivers": {
+          "type": "object",
+          "properties": {
+            "loyalty": {
+              "type": "integer",
+              "minimum": -10,
+              "maximum": 10
+            },
+            "personality_tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "quirks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "References to quirk schema entries"
+            },
+            "faith_meters": {
+              "type": "object"
+            },
+            "path_alignment": {
+              "type": "object"
+            },
+            "faction_loyalty": {
+              "type": "object"
+            },
+            "witness_state": {
+              "type": "object"
+            },
+            "desire_fear": {
+              "type": "object",
+              "properties": {
+                "desires": {
+                  "type": "array"
+                },
+                "fears": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "description": "R-136-P: 8-driver layer governing autonomous behavior between scenes"
+        },
+        "party_tier_state": {
+          "type": "string",
+          "enum": [
+            "with_player",
+            "separately_acting",
+            "dismissed_or_resting"
+          ],
+          "description": "R-141-P: lifecycle state"
+        },
+        "witnessed_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "R-142-P: events this companion has witnessed (for witness-bearing mechanics)"
+        },
+        "canon_progression_credit": {
+          "type": "object",
+          "properties": {
+            "authority": {
+              "type": "integer",
+              "default": 0
+            },
+            "ruin": {
+              "type": "integer",
+              "default": 0
+            },
+            "creation": {
+              "type": "integer",
+              "default": 0
+            },
+            "corruption": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          "description": "R-143-P: companions accumulate their own canon-progression credit; can experience X.12-X.16 endings"
+        },
+        "stats_block": {
+          "type": "object",
+          "description": "Full stat block; same shape as player.stats_block"
+        },
+        "inventory": {
+          "type": "array"
+        },
+        "hp_block": {
+          "$ref": "#/$defs/hp_block"
+        },
+        "meters_block": {
+          "$ref": "#/$defs/meters_block"
+        },
+        "conditions_active": {
+          "type": "array"
+        },
+        "is_dead": {
+          "type": "boolean",
+          "default": false
+        },
+        "death_state": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "companion_id",
+        "name",
+        "underlying_npc_id",
+        "recruitment_path",
+        "recruited_on_day"
+      ]
+    },
+    "orchestrator_session": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "campaign_id": {
+          "type": "string"
+        },
+        "player_user_id": {
+          "type": "string"
+        },
+        "session_start_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "session_end_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "rng_seed": {
+          "type": "string",
+          "description": "Deterministic seed for this session's RNG stream"
+        },
+        "rng_stream_position": {
+          "type": "integer",
+          "description": "Number of RNG draws consumed so far"
+        },
+        "agent_call_log": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "agent_name": {
+                "type": "string"
+              },
+              "called_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "envelope_id": {
+                "type": "string"
+              },
+              "tokens_in": {
+                "type": "integer"
+              },
+              "tokens_out": {
+                "type": "integer"
+              },
+              "model_id": {
+                "type": "string"
+              },
+              "latency_ms": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "last_state_diff_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "session_id",
+        "campaign_id",
+        "rng_seed"
+      ]
+    },
+    "agent_envelope": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "envelope_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "agent_name": {
+          "type": "string",
+          "enum": [
+            "input_interpreter",
+            "rules_agent",
+            "npc_evaluator",
+            "faction_evaluator",
+            "domain_evaluator",
+            "world_director",
+            "dice_resolution",
+            "state_manager",
+            "narrator",
+            "content_boundary_validator"
+          ]
+        },
+        "stage_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "input_payload": {
+          "type": "object"
+        },
+        "output_payload": {
+          "type": "object"
+        },
+        "validator_pass": {
+          "type": "boolean"
+        },
+        "called_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "tokens_in": {
+          "type": "integer"
+        },
+        "tokens_out": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "envelope_id",
+        "session_id",
+        "agent_name",
+        "stage_index"
+      ]
+    },
+    "quirk": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "quirk_id": {
+          "type": "string",
+          "pattern": "^quirk_[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description_template": {
+          "type": "string"
+        },
+        "behavioral_modifier": {
+          "type": "object",
+          "properties": {
+            "scene_kind_attraction": {
+              "type": "object"
+            },
+            "scene_kind_aversion": {
+              "type": "object"
+            },
+            "interjection_trigger": {
+              "type": "string"
+            },
+            "suggestion_bias": {
+              "type": "object"
+            }
+          }
+        },
+        "intensity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "quirk_id",
+        "name",
+        "description_template"
+      ]
+    },
+    "recruitment_quest": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "quest_id": {
+          "type": "string"
+        },
+        "target_companion_id": {
+          "type": "string"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "completion_criteria": {
+                "type": "string"
+              },
+              "rewards": {
+                "type": "array"
+              },
+              "branching_outcomes": {
+                "type": "array"
+              }
+            }
+          }
+        },
+        "completion_offer": {
+          "type": "object",
+          "description": "What is offered to the player at quest completion (often the companion joining)"
+        },
+        "abandonment_consequences": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "quest_id",
+        "target_companion_id"
+      ]
+    },
+    "location": {
+      "type": "object",
+      "x_deferred_bundle": "exploration_system",
+      "x_design_pass_status": "PENDING_v0.5_or_v0.6",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "location_id": {
+          "type": "string",
+          "pattern": "^loc_[a-z0-9_]+$"
+        },
+        "region_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "discovered_by_player_event_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fog_of_knowledge_state": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "glimpsed",
+            "visited",
+            "known"
+          ]
+        },
+        "parent_location_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "location_id",
+        "region_id",
+        "name"
+      ]
+    },
+    "travel_route": {
+      "type": "object",
+      "x_deferred_bundle": "exploration_system",
+      "x_design_pass_status": "PENDING_v0.5_or_v0.6",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "route_id": {
+          "type": "string"
+        },
+        "from_location_id": {
+          "type": "string"
+        },
+        "to_location_id": {
+          "type": "string"
+        },
+        "traversal_cost_hours": {
+          "type": "integer"
+        },
+        "traversal_risk": {
+          "type": "string",
+          "enum": [
+            "safe",
+            "watched",
+            "dangerous",
+            "deadly"
+          ]
+        },
+        "knowledge_required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "route_id",
+        "from_location_id",
+        "to_location_id"
+      ]
+    },
+    "conflict_envelope": {
+      "type": "object",
+      "x_deferred_bundle": "conflict_engine_variants",
+      "x_design_pass_status": "PENDING_v0.5_or_v0.6",
+      "x_introduced_in": "v0.5",
+      "properties": {
+        "envelope_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "physical",
+            "social",
+            "magical",
+            "ritual",
+            "economic",
+            "factional",
+            "mythological",
+            "metaphysical"
+          ]
+        },
+        "parties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stakes": {
+          "type": "string"
+        },
+        "resolution_path": {
+          "type": "string"
+        },
+        "kind_specific_fields": {
+          "type": "object",
+          "description": "Variant payload per kind; shape determined by kind value (deferred design pass)"
+        }
+      },
+      "required": [
+        "envelope_id",
+        "kind",
+        "parties"
+      ]
+    },
+    "portrait_layer_definition": {
+      "type": "object",
+      "x_introduced_in": "v0.5",
+      "x_kind": "content_registry",
+      "properties": {
+        "layer_id": {
+          "type": "string"
+        },
+        "layer_kind": {
+          "type": "string",
+          "enum": [
+            "race_silhouette",
+            "class_glyph",
+            "alignment_tint",
+            "condition_overlay",
+            "body_mod_overlay",
+            "curated_event_overlay"
+          ]
+        },
+        "svg_path": {
+          "type": "string"
+        },
+        "triggered_by": {
+          "type": "object",
+          "description": "What state condition (e.g., faith>=5_to_unnamed, condition_id=bonded_to_marrow_saint) triggers this overlay"
+        },
+        "anchor_point": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "layer_id",
+        "layer_kind",
+        "svg_path"
+      ]
+    },
+    "imposed_spell": {
+      "type": "object",
+      "required": [
+        "spell_id",
+        "name",
+        "level",
+        "school",
+        "casting_time",
+        "range",
+        "duration",
+        "components",
+        "classes_allowed",
+        "regional_origin_id",
+        "regional_school_id"
+      ],
+      "properties": {
+        "spell_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "school": {
+          "enum": [
+            "abjuration",
+            "conjuration",
+            "divination",
+            "enchantment",
+            "evocation",
+            "illusion",
+            "necromancy",
+            "transmutation",
+            "regional"
+          ]
+        },
+        "regional_school_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regional_origin_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regional_pantheon_alignment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "casting_time": {
+          "type": "string"
+        },
+        "range": {
+          "type": "string"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "v": {
+              "type": "boolean"
+            },
+            "s": {
+              "type": "boolean"
+            },
+            "m": {
+              "type": "boolean"
+            },
+            "m_text": {
+              "type": "string"
+            },
+            "m_consumed": {
+              "type": "boolean"
+            },
+            "m_cost_gp": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "duration": {
+          "$ref": "#/$defs/duration_object"
+        },
+        "concentration": {
+          "type": "boolean"
+        },
+        "ritual_eligible": {
+          "type": "boolean"
+        },
+        "save_type": {
+          "enum": [
+            null,
+            "str",
+            "dex",
+            "con",
+            "int",
+            "wis",
+            "cha"
+          ]
+        },
+        "attack_kind": {
+          "enum": [
+            null,
+            "melee",
+            "ranged"
+          ]
+        },
+        "damage_dice": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "damage_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "classes_allowed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "domain_aligned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cost_layer": {
+          "$ref": "#/$defs/spell_cost_layer"
+        },
+        "description_template": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tooling/content tags (slice_eligible, imposed_eligible, etc.). Replaces semantic misuse of domain_aligned for tagging."
+        },
+        "creates_canon_event_on_cast": {
+          "type": "boolean",
+          "default": false,
+          "description": "Explicit flag: this spell creates a canon event when cast. Helps State Manager event-emission logic vs. inferring from cost_layer."
+        },
+        "subschool": {
+          "type": "string",
+          "enum": [
+            "forbiddings",
+            "witness_spells",
+            "listening",
+            "marking_spells",
+            "naming_spells",
+            "contradiction_burst",
+            "resonance",
+            "unbecoming",
+            "memory_spells",
+            "echoes",
+            "lattice_shifts",
+            "inversions",
+            "half_summon",
+            "borrowed_things"
+          ],
+          "description": "Subschool within parent school. 14 subschools used in v0.4.3 originals."
+        },
+        "wild_twist": {
+          "type": "string",
+          "description": "One-line distinctive mechanical twist of an original spell. Surfaced in spell-picker UI for discoverability."
+        }
+      }
+    },
+    "litany": {
+      "type": "object",
+      "required": [
+        "litany_id",
+        "title",
+        "text_body"
+      ],
+      "properties": {
+        "litany_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text_body": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mechanical_effect": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
+        },
+        "voice_register": {
+          "type": "string"
+        },
+        "rite_kind": {
+          "type": "string"
+        },
+        "faction_origin": {
+          "type": "string"
+        },
+        "first_heard_default_npc": {
+          "type": "string"
+        },
+        "origin_institution": {
+          "type": "string"
+        },
+        "canonical_use": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tone_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "schema_version": {
+          "enum": [
+            "v1",
+            "v2"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "marginalia": {
+      "type": "object",
+      "required": [
+        "marginalia_id",
+        "text"
+      ],
+      "properties": {
+        "marginalia_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trigger_kind": {
+          "enum": [
+            "canon_progression_event",
+            "state_threshold",
+            "item_acquired",
+            "item_event",
+            "location_entered",
+            "npc_interaction",
+            "npc_speech_anomaly",
+            "scene_end",
+            "rite",
+            "manual",
+            "faction_action",
+            "social_conflict",
+            "weather_omen",
+            "time_progression"
+          ]
+        },
+        "trigger_event_kind": {
+          "type": "string"
+        },
+        "trigger_condition": {
+          "type": "string"
+        },
+        "display_context": {
+          "enum": [
+            "player_journal_at_end_of_scene",
+            "inline_in_narration",
+            "inline_during_scene",
+            "inline_at_scene_open",
+            "inline_at_scene_close",
+            "tome_unlock",
+            "world_pulse_ticker"
+          ]
+        },
+        "tone_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regional_origin_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "schema_version": {
+          "enum": [
+            "v1",
+            "v2"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "validator_chain_required_stages": [
+    "stage_1_input",
+    "stage_2_rules",
+    "stage_3_canon_consistency",
+    "stage_4_canon_progression",
+    "stage_5_contradiction_check",
+    "stage_6_content_boundary"
+  ],
+  "writer_authority": {
+    "state_manager_only_paths": [
+      "player.canon_progression_ledger.*.current_value",
+      "player.canon_progression_ledger.*.threshold_spent_until_day",
+      "player.path_ledger",
+      "player.faith_meters",
+      "player.body_modifications",
+      "contradiction_ledger_entry",
+      "deity.status",
+      "race.world_mutation_state",
+      "region.status",
+      "region.substrate_exposed_refs",
+      "mythological_substrate_entry.status",
+      "regional_currency_state.crisis_intensity_modifier",
+      "regional_currency_state.volatility_modifier"
+    ],
+    "protected_paths": [
+      "player.death_state.form_of_ending_narration",
+      "campaign.party_state.slots",
+      "campaign.former_party_members",
+      "companion.canon_progression_credit",
+      "event.canon_progression_credit_per_actor",
+      "contradiction_ledger_entry.surfacing_state"
+    ],
+    "write_owner": "state_manager_only"
+  },
+  "x_required_content_for_slice_ship": [
+    {
+      "kind": "condition",
+      "id": "marked_by_attention",
+      "scope": "universal",
+      "source": "R-89-A (Notice Ladder closure)"
+    },
+    {
+      "kind": "condition",
+      "id": "hunted_by_faction",
+      "scope": "universal",
+      "source": "R-89-A (Notice Ladder closure)"
+    }
+  ],
+  "x_deferred_bundle_pending_design_pass": [
+    "R-100-C",
+    "R-101-C",
+    "R-102-C",
+    "R-103-C",
+    "R-104-C",
+    "R-105-C",
+    "R-106-C",
+    "R-107-C",
+    "R-108-C",
+    "R-109-C",
+    "R-110-C",
+    "R-99-C"
+  ],
+  "x_v05_candidate_application_index": {
+    "summary": {
+      "total_candidates_applied": 80,
+      "by_category": {
+        "A": 12,
+        "B": 16,
+        "C": 12,
+        "D": 8,
+        "E": 8,
+        "F": 5,
+        "SC": 19
+      },
+      "deferred_bundle_items_annotated": 12
+    },
+    "applied_by_category": {
+      "A": [
+        "R-88-A",
+        "R-89-A",
+        "R-90-A",
+        "R-132-P",
+        "R-133-P",
+        "R-134-P",
+        "R-135-P",
+        "R-136-P",
+        "R-142-P",
+        "R-143-P",
+        "R-147-P",
+        "R-148-P"
+      ],
+      "B": [
+        "R-91-B",
+        "R-92-B",
+        "R-93-B",
+        "R-94-B",
+        "R-95-B",
+        "R-96-B",
+        "R-97-B",
+        "R-98-B",
+        "R-137-P",
+        "R-138-P",
+        "R-139-P",
+        "R-140-P",
+        "R-141-P",
+        "R-144-P",
+        "R-145-P",
+        "R-146-P"
+      ],
+      "C": [
+        "R-99-C",
+        "R-100-C",
+        "R-101-C",
+        "R-102-C",
+        "R-103-C",
+        "R-104-C",
+        "R-105-C",
+        "R-106-C",
+        "R-107-C",
+        "R-108-C",
+        "R-109-C",
+        "R-110-C"
+      ],
+      "D": [
+        "R-111-D",
+        "R-112-D",
+        "R-113-D",
+        "R-114-D",
+        "R-115-D",
+        "R-116-D",
+        "R-117-D",
+        "R-118-D"
+      ],
+      "E": [
+        "R-119-E",
+        "R-120-E",
+        "R-121-E",
+        "R-122-E",
+        "R-123-E",
+        "R-124-E",
+        "R-125-E",
+        "R-126-E"
+      ],
+      "F": [
+        "R-127-F",
+        "R-128-F",
+        "R-129-F",
+        "R-130-F",
+        "R-131-F"
+      ],
+      "SC": [
+        "SC-01",
+        "SC-02",
+        "SC-03",
+        "SC-04",
+        "SC-05",
+        "SC-06",
+        "SC-07",
+        "SC-08",
+        "SC-09",
+        "SC-10",
+        "SC-11",
+        "SC-12",
+        "SC-13",
+        "SC-14",
+        "SC-15",
+        "SC-16",
+        "SC-17",
+        "SC-18",
+        "R-73"
+      ]
+    }
+  }
+}

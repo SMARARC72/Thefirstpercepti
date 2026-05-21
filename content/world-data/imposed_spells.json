@@ -1,0 +1,227 @@
+{
+  "imposed_spells": [
+    {
+      "spell_id": "hear_the_fountain",
+      "name": "Hear the Fountain",
+      "level": 1,
+      "school": "regional",
+      "regional_school_id": "greywake_imposed",
+      "regional_origin_id": "greywake",
+      "regional_pantheon_alignment": "greywake_drowned_church_config",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a drop of practicing water or fountain water",
+        "m_consumed": true,
+        "m_cost_gp": 0
+      },
+      "duration": {
+        "kind": "instant"
+      },
+      "concentration": false,
+      "ritual_eligible": false,
+      "save_type": "wis",
+      "attack_kind": null,
+      "damage_dice": null,
+      "damage_type": null,
+      "classes_allowed": [
+        "warlock",
+        "cleric",
+        "druid"
+      ],
+      "domain_aligned": [
+        "knowledge",
+        "trickery"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L1: as listed. Upcast L2+: fatigue +1 per slot level above 1; notice +1 at L3+. Imposed authority cost does not scale (always 1)."
+      },
+      "description_template": "Touching a drop of practicing water or fountain water to the throat or wrist, the caster compels target within 30 ft (WIS save resists) to reveal one belief or one rumor they hold. The target experiences this as remembering something they had forgotten; the rumor or belief is what they would have said if asked, never a hidden truth they did not believe. Target gains awareness that they were the source. Caster takes Fatigue +1, Authority +1 (canon-progression event credit if used to discover a Greywake faction's plan)."
+    },
+    {
+      "spell_id": "salt_mark",
+      "name": "Salt-Mark",
+      "level": 1,
+      "school": "regional",
+      "regional_school_id": "greywake_imposed",
+      "regional_origin_id": "greywake",
+      "regional_pantheon_alignment": "greywake_drowned_church_config",
+      "casting_time": "1 bonus action",
+      "range": "touch",
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a pinch of butcher's salt or salt-rime",
+        "m_consumed": true,
+        "m_cost_gp": 0
+      },
+      "duration": {
+        "kind": "n_scenes",
+        "n": 1
+      },
+      "concentration": false,
+      "ritual_eligible": false,
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": null,
+      "damage_type": null,
+      "classes_allowed": [
+        "warlock",
+        "cleric",
+        "druid"
+      ],
+      "domain_aligned": [
+        "trickery"
+      ],
+      "cost_layer": {
+        "fatigue": 1,
+        "notice": 0,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 0,
+        "scaling_rule": "L1: as listed. Upcast L2+: target gains bell-marked condition (level 1) instead of salt-rimed; fatigue +1 per slot level above 1; notice +1 at L3+."
+      },
+      "description_template": "Caster touches the target (consenting or grappled) and presses salt into skin or cloth. Target gains the salt-rimed (level 1) condition for 1 scene. Drowned Church witnesses recognize the mark on sight; Bell Court does not. The mark is invisible to most NPCs; visible to anyone with Drowned Church Faith Meter >= 4."
+    },
+    {
+      "spell_id": "unrecord",
+      "name": "Unrecord",
+      "level": 3,
+      "school": "regional",
+      "regional_school_id": "greywake_imposed",
+      "regional_origin_id": "greywake",
+      "regional_pantheon_alignment": "greywake_drowned_church_config",
+      "casting_time": "1 action",
+      "range": "30 ft",
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a vial of unrecorded ink (consumed)",
+        "m_consumed": true,
+        "m_cost_gp": 35
+      },
+      "duration": {
+        "kind": "permanent"
+      },
+      "concentration": false,
+      "ritual_eligible": false,
+      "save_type": "wis",
+      "attack_kind": null,
+      "damage_dice": null,
+      "damage_type": null,
+      "classes_allowed": [
+        "warlock",
+        "wizard"
+      ],
+      "domain_aligned": [],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 1,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 1,
+        "creation": 0,
+        "scaling_rule": "L3: as listed. Upcast L4+: may target larger events (severity threshold +1 per slot level above 3); notice scaling +1 per slot above L4."
+      },
+      "description_template": "Caster names a single witnessed event (must have occurred within the last 7 in-world days, severity <= 3). Target NPC (WIS save resists) loses memory of having witnessed that event. The event still occurred — canon ledger preserves it — but the target's memory does not. If the target was the only witness, the event becomes contradiction-ledgered (kind: 'memory_vs_record'). Bell Court visitor ledger entries are not affected. State Manager commits the unrecord via state_diff with full validator chain."
+    },
+    {
+      "spell_id": "compose",
+      "name": "Compose",
+      "level": 4,
+      "school": "regional",
+      "regional_school_id": "greywake_imposed",
+      "regional_origin_id": "greywake",
+      "regional_pantheon_alignment": "greywake_drowned_church_config",
+      "casting_time": "1 hour",
+      "range": "self",
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "significance material commensurate with the object brought into canon (minimum 100 gp value or canon-event significance >= 3)",
+        "m_consumed": true,
+        "m_cost_gp": 100
+      },
+      "duration": {
+        "kind": "permanent"
+      },
+      "concentration": false,
+      "ritual_eligible": true,
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": null,
+      "damage_type": null,
+      "classes_allowed": [
+        "wizard",
+        "warlock"
+      ],
+      "domain_aligned": [],
+      "cost_layer": {
+        "fatigue": 2,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 0,
+        "ruin": 0,
+        "creation": 2,
+        "scaling_rule": "L4: brings one minor mundane object into canon (e.g., a key, a coin, a tool). Upcast L5+: significance and material cost scale linearly; L7+ allows minor uncommon-rarity items; L9 can bring a complete object including memory/witness payload. Creation cost +1 per slot above L4."
+      },
+      "description_template": "Over 1 hour of ritual, caster names a single object and brings it into canon by speaking its history three times. The object must be plausible for the region and the caster's circumstance. State Manager validates plausibility and commits the object as a state_diff with the caster's path_ledger crediting +2 path:creation. Witnesses within line of sight at the ritual conclusion may experience the object as 'remembered' rather than 'created' — this is the doctrinal preference of the Drowned Church. The composed object carries witness_payload from the significance material consumed."
+    },
+    {
+      "spell_id": "harden_contradiction",
+      "name": "Harden Contradiction",
+      "level": 5,
+      "school": "regional",
+      "regional_school_id": "greywake_imposed",
+      "regional_origin_id": "greywake",
+      "regional_pantheon_alignment": "greywake_drowned_church_config",
+      "casting_time": "1 action",
+      "range": "60 ft",
+      "components": {
+        "v": true,
+        "s": true,
+        "m": true,
+        "m_text": "a copy of the record that is being contradicted (e.g., torn page from a ledger, fragment of a rumor written down)",
+        "m_consumed": true,
+        "m_cost_gp": 0
+      },
+      "duration": {
+        "kind": "permanent"
+      },
+      "concentration": false,
+      "ritual_eligible": false,
+      "save_type": null,
+      "attack_kind": null,
+      "damage_dice": null,
+      "damage_type": null,
+      "classes_allowed": [
+        "warlock",
+        "wizard"
+      ],
+      "domain_aligned": [],
+      "cost_layer": {
+        "fatigue": 3,
+        "notice": 2,
+        "corruption": 0,
+        "authority": 1,
+        "ruin": 0,
+        "creation": 1,
+        "scaling_rule": "L5: as listed. Upcast L6+ may resolve larger contradictions (severity threshold +1 per slot). At L7+, Corruption +1 begins to apply (the harder the contradiction, the more it scars the caster's perception)."
+      },
+      "description_template": "Caster names an active contradiction in the canon ledger (a rumor vs canon, memory vs record, or unmade event entry). The contradiction is forced to resolve in the caster's stated favor: one side becomes canonical, the other becomes contradiction-ledger preserved only. State Manager commits the resolution via state_diff with mandatory validator chain stage 5 (contradiction check) re-run. If the chosen resolution conflicts with a higher-severity canon-event committed by another actor (NPC, faction, deity-touched event), the spell fails and the caster takes the cost_layer regardless. Resolved contradictions cannot be re-opened by ordinary means; only canon-events of severity >= 4 may overturn them."
+    }
+  ]
+}
