@@ -37,6 +37,12 @@ export interface LLMClient {
  *   - "auto"     — server decides (Anthropic if key present, else Moonshot)
  *   - "claude"   — force Anthropic; fail if key missing
  *   - "kimi"     — force Moonshot; fail if key missing
+ *
+ * Note: OpenAI access is via the Phase 21 throttle path
+ * (POST /api/llm with `agent` + optional `force_model_id`), not via the
+ * legacy `provider` field. Adding "openai" to LLMProvider would require
+ * wiring it into llm-router.ts's resolvePrimary/resolveFallback, which
+ * isn't needed since the throttle handles dispatch via ClientRegistry.
  */
 export type LLMProvider = "auto" | "claude" | "kimi";
 
