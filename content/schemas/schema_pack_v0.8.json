@@ -310,6 +310,45 @@
       },
       "additionalProperties": false
     },
+    "session_state_block": {
+      "type": "object",
+      "description": "Phase 4a.5 — Session-state per Bundle H Hardening. Carries Phase 23b ending-detection flags + Phase 22.6 ticker queue + transient per-session state. Lives on Player as session_state field. Bundle H L.VIII-SC-01..04 may extend.",
+      "properties": {
+        "current_session_id": {
+          "type": ["string", "null"],
+          "description": "FK to session entity (when Bundle H session schema lands)."
+        },
+        "ending_committed": {
+          "type": "boolean",
+          "default": false,
+          "description": "Phase 23b PROD-601 guard — endingDetector setting this prevents re-fire."
+        },
+        "notice_thresholds_fired": {
+          "type": "array",
+          "items": { "type": "integer", "enum": [7, 8, 9, 10] },
+          "description": "Phase 23b PROD-602 — notice ladder transitions already fired this session."
+        },
+        "ticker_queue": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Phase 23b PROD-603 — WorldPulse ticker items pending surface. Item shape: world_pulse_ticker_item $def."
+        },
+        "apotheosis_accepted_this_turn": { "type": "boolean", "description": "Phase 23b SEM-604 — set by apotheosis command parser; consumed by endingDetector." },
+        "withdrawal_triggered_this_turn": { "type": "boolean", "description": "Phase 23b — X.14 trigger flag." },
+        "pact_collection_triggered_this_turn": { "type": "boolean", "description": "Phase 23b — X.15 trigger flag." },
+        "transient_flags": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" },
+          "description": "Free-form per-turn flags cleared on session boundary."
+        },
+        "last_main_scene_focus_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "R-119-E per Glance Bar mechanism (FDR Part 2.3)."
+        }
+      },
+      "additionalProperties": false
+    },
     "focus_block": {
       "type": "object",
       "description": "Phase 24b §4.1 — NEW $def per Khoja Option B ratification (OPEN_QUESTIONS.md). Mirrors HpBlock structure. Required on PlayerSchema in v0.8. Focus is mechanically distinct from meters (meters = world-state perceptions; focus = character resource pool).",
@@ -2136,9 +2175,11 @@
         "derived_stats",
         "meters",
         "hp",
+        "focus",
         "current_location",
         "alignment_descriptor",
-        "level_total"
+        "level_total",
+        "tags"
       ],
       "properties": {
         "player_id": {
@@ -2623,27 +2664,21 @@
           "description": "R-115-D: posture switches over time; affects achievement eligibility per v0.1 Ch V."
         },
         "session_state": {
-          "type": "object",
-          "properties": {
-            "last_main_scene_focus_at": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "format": "date-time",
-              "description": "R-119-E: per Glance Bar mechanism (FDR Part 2.3)"
-            },
-            "current_session_id": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "transient_flags": {
-              "type": "object"
-            }
-          },
-          "description": "Transient session state on player; cleared on session boundary."
+          "$ref": "#/$defs/session_state_block",
+          "description": "Phase 4a.5 — Replaced inline shape with $ref to session_state_block (carries Phase 22.6/23b runtime flags + Bundle H session fields)."
+        },
+        "focus": {
+          "$ref": "#/$defs/focus_block",
+          "description": "Phase 4a.5 — REQUIRED per Khoja Option B (focus_block as symmetric HpBlock-pair resource pool)."
+        },
+        "action_economy": {
+          "$ref": "#/$defs/action_economy_block",
+          "description": "Phase 4a.5 — Optional per-turn action budget. Non-combatant scenes don't populate."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phase 4a.5 — Cross-cutting tags primitive sweep (#2)."
         },
         "scrip_speculation_history": {
           "type": "array",
@@ -3125,6 +3160,11 @@
             }
           },
           "description": "R-123-E: faction plans with scheduled execution day. Per Notice Ladder Tracker timing R-79."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phase 4a.5 — Cross-cutting tags primitive sweep."
         }
       }
     },
@@ -3142,7 +3182,10 @@
         "closing_conditions",
         "memory_archetype",
         "ambition_tick",
-        "schedule_nesting"
+        "schedule_nesting",
+        "stats",
+        "derived_stats",
+        "tags"
       ],
       "properties": {
         "npc_id": {
@@ -3372,6 +3415,19 @@
         "schedule_nesting": {
           "$ref": "#/$defs/schedule_nesting",
           "description": "Phase 24b / Bundle A / L.I-SC-06 — Per-NPC schedule nested under institution. REQUIRED in v0.8."
+        },
+        "stats": {
+          "$ref": "#/$defs/custom_stats_block",
+          "description": "Phase 4a.5 / Khoja Decision #2 — ALL NPCs get 9-CoreStat Tide-Stained stats. Scenery-tier NPCs use median baseline (10 across the 6 core; 0 across authority/ruin/creation)."
+        },
+        "derived_stats": {
+          "$ref": "#/$defs/derived_stats_block",
+          "description": "Phase 4a.5 / Khoja Decision #2 — ALL NPCs get 5e ability scores via deterministic translation from stats (translation rules at Session 4c)."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phase 4a.5 — Cross-cutting tags primitive sweep (#2)."
         }
       }
     },
@@ -5669,6 +5725,11 @@
           },
           "description": "R-130-F (speculative): historical weather log.",
           "x_speculative": true
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phase 4a.5 — Cross-cutting tags primitive sweep."
         }
       }
     },
@@ -7631,7 +7692,9 @@
         "archetype",
         "discovery_channel",
         "closing_state",
-        "subplot_graph_relation"
+        "subplot_graph_relation",
+        "campaign_id",
+        "session_id"
       ],
       "properties": {
         "quest_id": { "type": "string" },
@@ -7700,7 +7763,17 @@
           "type": ["string", "null"],
           "description": "Region the quest is rooted in. FK to region.region_id; null for cross-regional."
         },
-        "emerged_at_day": { "type": "integer", "minimum": 0 }
+        "emerged_at_day": { "type": "integer", "minimum": 0 },
+        "campaign_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep. FK to campaign.",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep. FK to session (or save_snapshot until session entity exists)."
+        }
       },
       "additionalProperties": false,
       "x_schema_namespace": "state"
@@ -7708,7 +7781,7 @@
     "surfacing_threshold_config": {
       "type": "object",
       "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).",
-      "required": ["max_surfaced_per_region", "pressure_threshold", "recency_weight", "channel_priority"],
+      "required": ["max_surfaced_per_region", "pressure_threshold", "recency_weight", "channel_priority", "campaign_id"],
       "properties": {
         "max_surfaced_per_region": {
           "type": "integer",
@@ -7724,6 +7797,16 @@
             "enum": ["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"]
           },
           "description": "Ordered list of channels; engine fires first eligible."
+        },
+        "campaign_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — engine.* ownership sweep. FK to campaign (engine state may be cross-session but per-campaign).",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": {
+          "type": ["string", "null"],
+          "description": "Phase 4a.5 — engine.* ownership sweep. Optional FK; engine config may be cross-session."
         }
       },
       "additionalProperties": false,
@@ -7779,7 +7862,9 @@
         "institution_id",
         "trigger_event_id",
         "proposed_response",
-        "decision_window"
+        "decision_window",
+        "campaign_id",
+        "session_id"
       ],
       "properties": {
         "id": { "type": "string" },
@@ -7810,6 +7895,16 @@
           "x_enum_strategy": "native",
           "x_enum_name": "institution_response_resolution_kind",
           "description": "Null while pending; populated when window closes or member NPC acts. Null permitted via column type; enum values list excludes null since Postgres ENUMs are non-nullable as a type."
+        },
+        "campaign_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep. FK to campaign.",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep."
         }
       },
       "additionalProperties": false,

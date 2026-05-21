@@ -133,13 +133,13 @@ describe("Bundle B — Institution entity", () => {
 });
 
 describe("Bundle B / L.II-SC-02 — institution_response_queue_entry", () => {
+  // Phase 4a.5 — state.* ownership sweep adds campaign_id + session_id REQUIRED.
+  const stateOwnership = {
+    campaign_id: "campaign_khojen_001",
+    session_id: "sess_001",
+  };
+
   it("accepts a pending queue entry (resolution_kind omitted while open)", () => {
-    // Note: schema permits null OR undefined for resolution_kind while pending.
-    // Generated Zod emits .optional() not .nullable() because the underlying
-    // generator simplifies type: [string, null] + enum → .optional() (undefined-permitting).
-    // Phase 4.3 finding: generator nullable-enum handling is a Desktop refinement
-    // tracked in repo_mirror/phase_24b/OPEN_QUESTIONS.md (TBD). For now, runtime
-    // semantics work — engine omits the field while pending.
     const r = InstitutionResponseQueueEntrySchemaZ.safeParse({
       id: "queue_001",
       institution_id: "fac_civic_bell_court",
@@ -147,6 +147,7 @@ describe("Bundle B / L.II-SC-02 — institution_response_queue_entry", () => {
       proposed_response: "Issue writ of summons by 7th bell.",
       decision_window: { start_day: 12, close_day: 14 },
       resolved_by_npc_ids: [],
+      ...stateOwnership,
     });
     expect(r.success).toBe(true);
   });
@@ -160,6 +161,7 @@ describe("Bundle B / L.II-SC-02 — institution_response_queue_entry", () => {
       decision_window: { start_day: 12, close_day: 14 },
       resolved_by_npc_ids: ["npc_orro"],
       resolution_kind: "decisive",
+      ...stateOwnership,
     });
     expect(r.success).toBe(true);
   });

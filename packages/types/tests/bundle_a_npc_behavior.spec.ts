@@ -205,6 +205,13 @@ describe("Bundle A / L.I-SC-04 — memory_archetype (via NpcSchema)", () => {
       nested_under_institution_id: null,
       variance_seed: 42,
     },
+    // Phase 4a.5 / Khoja Decision #2 + tags sweep — REQUIRED on all NPCs
+    stats: {
+      body: 10, grace: 10, sense: 10, mind: 10, will: 10, presence: 10,
+      authority: 0, ruin: 0, creation: 0,
+    },
+    derived_stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    tags: [],
   };
 
   it("accepts a valid memory_archetype enum value", () => {
@@ -328,6 +335,12 @@ describe("Bundle A / L.I-SC-06 — schedule_nesting", () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 describe("Bundle A interlock — NpcSchema requires all 6 anchors", () => {
+  const medianStats = {
+    stats: { body: 10, grace: 10, sense: 10, mind: 10, will: 10, presence: 10, authority: 0, ruin: 0, creation: 0 },
+    derived_stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+    tags: [],
+  };
+
   it("rejects NPC missing want_model", () => {
     const result = NpcSchemaZ.safeParse({
       npc_id: "x",
@@ -345,6 +358,7 @@ describe("Bundle A interlock — NpcSchema requires all 6 anchors", () => {
       memory_archetype: "peasant",
       ambition_tick: { cadence: "monthly", success_streak: 0 },
       schedule_nesting: { local_pattern: { summary: "x" }, nested_under_institution_id: null, variance_seed: 0 },
+      ...medianStats,
     });
     expect(result.success).toBe(false);
   });
@@ -370,6 +384,7 @@ describe("Bundle A interlock — NpcSchema requires all 6 anchors", () => {
       memory_archetype: "peasant",
       ambition_tick: { cadence: "monthly", success_streak: 0 },
       schedule_nesting: { local_pattern: { summary: "x" }, nested_under_institution_id: null, variance_seed: 0 },
+      ...medianStats,
     });
     expect(result.success).toBe(false);
   });

@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T22:08:34.134Z
+ * Generated at:   2026-05-21T23:27:16.067Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (54)
+// $defs (55)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -144,6 +144,21 @@ export const FactionPlanBlockZ = z.object({
     }).strict();
 export type FactionPlanBlock = z.infer<typeof FactionPlanBlockZ>;
 
+export const SessionStateBlockZ = z.object({
+      "current_session_id": z.string().nullable().optional(),
+      "ending_committed": z.boolean().optional(),
+      "notice_thresholds_fired": z.array(z.enum([7, 8, 9, 10])).optional(),
+      "ticker_queue": z.array(z.object({
+    })).optional(),
+      "apotheosis_accepted_this_turn": z.boolean().optional(),
+      "withdrawal_triggered_this_turn": z.boolean().optional(),
+      "pact_collection_triggered_this_turn": z.boolean().optional(),
+      "transient_flags": z.object({
+    }).catchall(z.boolean()).optional(),
+      "last_main_scene_focus_at": z.string().datetime().nullable().optional(),
+    }).strict();
+export type SessionStateBlock = z.infer<typeof SessionStateBlockZ>;
+
 export const FocusBlockZ = z.object({
       "current": z.number().int().min(0),
       "max": z.number().int().min(0),
@@ -239,12 +254,12 @@ export const FactionReachZ = z.object({
       "public_reach": z.array(z.object({
       "domain": z.string(),
       "range": z.number().int().min(1).max(5),
-      "visible_to_player": z.boolean(),
+      "visible_to_player": z.literal(true),
     }).strict()),
       "actual_reach": z.array(z.object({
       "domain": z.string(),
       "range": z.number().int().min(1).max(5),
-      "visible_to_player": z.boolean(),
+      "visible_to_player": z.literal(false),
     }).strict()),
     }).strict();
 export type FactionReach = z.infer<typeof FactionReachZ>;
@@ -444,24 +459,24 @@ export const AlignmentDescriptorZ = z.enum(["LG", "NG", "CG", "LN", "N", "CN", "
 export type AlignmentDescriptor = z.infer<typeof AlignmentDescriptorZ>;
 
 export const DurationObjectZ = z.union([z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("instant").optional(),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("n_turns").optional(),
       "n": z.number().int().min(1),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("n_scenes").optional(),
       "n": z.number().int().min(1),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("until_long_rest").optional(),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("until_short_rest").optional(),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("until_canon_event").optional(),
       "event_id": z.string(),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("permanent").optional(),
     }), z.object({
-      "kind": z.unknown().optional(),
+      "kind": z.literal("concentration").optional(),
       "max_minutes": z.number().int().min(1).optional(),
     })]);
 export type DurationObject = z.infer<typeof DurationObjectZ>;
@@ -665,7 +680,7 @@ export const CampaignSchemaZ = z.object({
       "accessibility_settings": z.object({
       "reduced_motion": z.boolean().optional(),
       "screen_reader_mode": z.boolean().optional(),
-      "color_blind_palette_id": z.enum([null, "deuteranopia", "protanopia", "tritanopia"]).optional(),
+      "color_blind_palette_id": z.enum(["deuteranopia", "protanopia", "tritanopia"]).nullable().optional(),
       "high_contrast": z.boolean().optional(),
       "adaptive_prose_density": z.enum(["compact", "standard", "expanded"]).optional(),
     }).optional(),
@@ -765,7 +780,7 @@ export const PlayerSchemaZ = z.object({
       "is_dead": z.boolean().optional(),
       "death_day": z.number().int().nullable().optional(),
       "death_event_id": z.string().nullable().optional(),
-      "ending_kind": z.enum([null, "physical_death", "X12_apotheosis", "X13_unmaking", "X14_withdrawal", "X15_pact_collection", "X16_corruption_transformation"]).optional(),
+      "ending_kind": z.enum(["physical_death", "X12_apotheosis", "X13_unmaking", "X14_withdrawal", "X15_pact_collection", "X16_corruption_transformation"]).nullable().optional(),
       "form_of_ending_narration": z.string().nullable().optional(),
     }).optional(),
       "body_modifications_block": BodyModificationsBlockZ.optional(),
@@ -798,12 +813,10 @@ export const PlayerSchemaZ = z.object({
       "switched_event_id": z.string().optional(),
       "switched_by": z.enum(["player_explicit", "consequence", "narrative_trigger"]).optional(),
     })).optional(),
-      "session_state": z.object({
-      "last_main_scene_focus_at": z.string().datetime().nullable().optional(),
-      "current_session_id": z.string().nullable().optional(),
-      "transient_flags": z.object({
-    }).optional(),
-    }).optional(),
+      "session_state": SessionStateBlockZ.optional(),
+      "focus": FocusBlockZ,
+      "action_economy": ActionEconomyBlockZ.optional(),
+      "tags": z.array(z.string()),
       "scrip_speculation_history": z.array(z.object({
       "speculation_id": z.string().optional(),
       "scrip_kind": z.string().optional(),
@@ -917,6 +930,7 @@ export const FactionSchemaZ = z.object({
       "preconditions": z.array(z.unknown()).optional(),
       "cancellation_conditions": z.array(z.unknown()).optional(),
     })).optional(),
+      "tags": z.array(z.string()).optional(),
     });
 export type FactionSchema = z.infer<typeof FactionSchemaZ>;
 
@@ -974,6 +988,9 @@ export const NpcSchemaZ = z.object({
       "memory_archetype": z.enum(["peasant", "soldier", "scholar", "devout", "magistrate", "broker", "aspirant_divine", "child", "contradiction_bearing"]),
       "ambition_tick": AmbitionTickZ,
       "schedule_nesting": ScheduleNestingZ,
+      "stats": CustomStatsBlockZ,
+      "derived_stats": DerivedStatsBlockZ,
+      "tags": z.array(z.string()),
     });
 export type NpcSchema = z.infer<typeof NpcSchemaZ>;
 
@@ -1028,7 +1045,7 @@ export const StateDiffSchemaZ = z.object({
       "state_diff_id": z.string(),
       "source_event": z.string(),
       "approved": z.boolean(),
-      "approved_by": z.unknown().optional(),
+      "approved_by": z.literal("state_manager").optional(),
       "validator_chain_pass": z.object({
       "stage_1_input": z.boolean().optional(),
       "stage_2_rules": z.boolean().optional(),
@@ -1233,38 +1250,38 @@ export const ConditionSchemaZ = z.object({
 export type ConditionSchema = z.infer<typeof ConditionSchemaZ>;
 
 export const ItemSchemaZ = z.union([z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("weapon").optional(),
       "subtype": z.enum([null, "simple_melee", "simple_ranged", "martial_melee", "martial_ranged"]).optional(),
       "damage_dice": z.string(),
       "damage_type": z.enum(["bludgeoning", "piercing", "slashing", "fire", "cold", "lightning", "thunder", "force", "radiant", "necrotic", "psychic", "acid", "poison"]),
       "weapon_properties": z.array(z.string()).optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("armor").optional(),
       "subtype": z.enum(["light", "medium", "heavy"]).optional(),
       "armor_ac_base": z.number().int().min(10).max(25),
       "armor_dex_cap": z.number().int().optional(),
       "armor_stealth_disadvantage": z.boolean().optional(),
       "armor_strength_min": z.number().int().optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("shield").optional(),
       "armor_ac_base": z.number().int().min(1).max(5),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("ammunition").optional(),
       "subtype": z.enum(["arrows", "bolts", "sling_stones", "bullets", "needles", "darts"]),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("tool").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("trinket").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("consumable").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("wondrous").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("book").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("key").optional(),
     }), z.object({
-      "type": z.unknown().optional(),
+      "type": z.literal("currency_token").optional(),
     })]);
 export type ItemSchema = z.infer<typeof ItemSchemaZ>;
 
@@ -1342,6 +1359,7 @@ export const RegionSchemaZ = z.object({
     }).optional(),
       "weather_history": z.array(z.object({
     })).optional(),
+      "tags": z.array(z.string()).optional(),
     });
 export type RegionSchema = z.infer<typeof RegionSchemaZ>;
 
@@ -1521,7 +1539,7 @@ export const CompanionSchemaZ = z.object({
       "recruited_on_day": z.number().int(),
       "recruited_event_id": z.string().optional(),
       "terms": z.object({
-      "kind": z.enum([null, "gift", "loan", "contract"]).optional(),
+      "kind": z.enum(["gift", "loan", "contract"]).nullable().optional(),
       "duration_days": z.number().int().nullable().optional(),
       "scheduled_recall_day": z.number().int().nullable().optional(),
       "obligations": z.array(z.string()).optional(),
@@ -1824,14 +1842,18 @@ export const QuestSchemaZ = z.object({
       "primary_faction_ids": z.array(z.string()).optional(),
       "primary_region_id": z.string().nullable().optional(),
       "emerged_at_day": z.number().int().min(0).optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
     }).strict();
 export type QuestSchema = z.infer<typeof QuestSchemaZ>;
 
 export const SurfacingThresholdConfigSchemaZ = z.object({
-      "max_surfaced_per_region": z.number().int(),
+      "max_surfaced_per_region": z.literal(7),
       "pressure_threshold": z.number().min(0).max(10),
       "recency_weight": z.number().min(0).max(2),
       "channel_priority": z.array(z.enum(["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"])),
+      "campaign_id": z.string(),
+      "session_id": z.string().nullable().optional(),
     }).strict();
 export type SurfacingThresholdConfigSchema = z.infer<typeof SurfacingThresholdConfigSchemaZ>;
 
@@ -1857,9 +1879,11 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
       "close_day": z.number().int().min(0),
     }).strict(),
       "resolved_by_npc_ids": z.array(z.string()).optional(),
-      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).optional(),
+      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).nullable().optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
     }).strict();
 export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
 
-// 54 $defs · 48 entities
+// 55 $defs · 48 entities
 // END OF GENERATED Zod VALIDATORS

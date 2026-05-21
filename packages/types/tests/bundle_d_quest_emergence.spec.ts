@@ -135,6 +135,8 @@ describe("Bundle D — Quest entity", () => {
       primary_npc_ids: ["npc_ilyra", "npc_butcher_who_repeats"],
       primary_faction_ids: ["fac_drowned"],
       emerged_at_day: 4,
+      campaign_id: "campaign_khojen_001",
+      session_id: "sess_001",
     });
     expect(r.success).toBe(true);
   });
@@ -171,6 +173,7 @@ describe("Bundle D / L.IV-SC-04 — surfacing_threshold_config (House governor)"
       pressure_threshold: 6,
       recency_weight: 1.2,
       channel_priority: ["witnessed", "overheard", "requested"],
+      campaign_id: "campaign_khojen_001",
     });
     expect(r.success).toBe(true);
   });

@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T22:08:33.359Z
+-- Generated at:   2026-05-21T23:27:13.828Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -33,8 +33,130 @@ CREATE SCHEMA IF NOT EXISTS "behavior";
 CREATE SCHEMA IF NOT EXISTS "engine";
 
 -- ----------------------------------------------------------------------------
--- Native Postgres ENUM types (per ARD-011 §2)
+-- Native Postgres ENUM types (per ARD-011 §2; Khoja Decision #3 'native' criteria)
 -- ----------------------------------------------------------------------------
+-- public.defs_skill_check_block_properties_stat_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_skill_check_block_properties_stat_enum" AS ENUM (
+    'body',
+    'grace',
+    'sense',
+    'mind',
+    'will',
+    'presence',
+    'authority',
+    'ruin',
+    'creation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_dialogue_state_block_properties_topic_history_items_properties_last_response_band_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_dialogue_state_block_properties_topic_history_items_properties_last_response_band_enum" AS ENUM (
+    'open',
+    'guarded',
+    'selective',
+    'silent'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_goal_block_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_goal_block_properties_kind_enum" AS ENUM (
+    'acquire',
+    'destroy',
+    'preserve',
+    'transform',
+    'reveal',
+    'conceal',
+    'name',
+    'unname'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_goal_block_properties_target_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_goal_block_properties_target_kind_enum" AS ENUM (
+    'individual',
+    'institution',
+    'concept',
+    'item',
+    'location',
+    'self'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_trigger_block_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_trigger_block_properties_kind_enum" AS ENUM (
+    'time',
+    'condition',
+    'threshold',
+    'random',
+    'discovery',
+    'narrative_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_effect_block_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_effect_block_properties_kind_enum" AS ENUM (
+    'stat_modifier',
+    'hp_delta',
+    'meter_delta',
+    'condition_apply',
+    'condition_remove',
+    'spawn_entity',
+    'remove_entity',
+    'scene_route',
+    'faction_stance_shift',
+    'rumor_spawn'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_faction_plan_block_properties_cadence_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_faction_plan_block_properties_cadence_enum" AS ENUM (
+    'seasonal_4x_year',
+    'monthly',
+    'irregular_per_assignment',
+    'liturgical_12x_year',
+    'civic_6x_year',
+    'trade_season_8x_year',
+    'theological_irregular',
+    'special'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_faction_plan_block_properties_plan_steps_items_properties_result_band_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_faction_plan_block_properties_plan_steps_items_properties_result_band_enum" AS ENUM (
+    'success',
+    'partial',
+    'setback',
+    'failure'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_session_state_block_properties_notice_thresholds_fired_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_session_state_block_properties_notice_thresholds_fired_items_enum" AS ENUM (
+    '7',
+    '8',
+    '9',
+    '10'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_focus_block_properties_source_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_focus_block_properties_source_kind_enum" AS ENUM (
+    'natural',
+    'pact',
+    'ritual'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.npc_closing_state
 DO $$ BEGIN
   CREATE TYPE "public"."npc_closing_state" AS ENUM (
@@ -69,6 +191,16 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 -- public.knowledge_says_policy
 DO $$ BEGIN
   CREATE TYPE "public"."knowledge_says_policy" AS ENUM (
+    'open',
+    'guarded',
+    'selective',
+    'silent'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_knowledge_tri_layer_properties_says_properties_per_audience_overrides_additional_properties_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_knowledge_tri_layer_properties_says_properties_per_audience_overrides_additional_properties_enum" AS ENUM (
     'open',
     'guarded',
     'selective',
@@ -139,6 +271,14 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.defs_faction_tick_resolution_properties_delta_ledger_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_faction_tick_resolution_properties_delta_ledger_properties_kind_enum" AS ENUM (
+    'scrip',
+    'salt_coin'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.commodity_unit
 DO $$ BEGIN
   CREATE TYPE "public"."commodity_unit" AS ENUM (
@@ -184,6 +324,469 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.defs_world_time_properties_tide_phase_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_world_time_properties_tide_phase_enum" AS ENUM (
+    'low',
+    'rising',
+    'high',
+    'falling',
+    'still'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_hit_dice_entry_properties_die_size_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_hit_dice_entry_properties_die_size_enum" AS ENUM (
+    '6',
+    '8',
+    '10',
+    '12'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_alignment_descriptor_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_alignment_descriptor_enum" AS ENUM (
+    'LG',
+    'NG',
+    'CG',
+    'LN',
+    'N',
+    'CN',
+    'LE',
+    'NE',
+    'CE'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_regional_pack_ref_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_regional_pack_ref_properties_kind_enum" AS ENUM (
+    'conditions',
+    'currencies',
+    'magic_traditions',
+    'pantheon',
+    'items',
+    'recipes',
+    'factions',
+    'deities',
+    'litanies',
+    'marginalia',
+    'substrate',
+    'loot_tables',
+    'materials',
+    'cult_institutions',
+    'environment'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_attunement_slot_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_attunement_slot_properties_status_enum" AS ENUM (
+    'empty',
+    'attuned',
+    'sworn',
+    'cursed',
+    'scarred'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_attunement_slot_properties_ceremony_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_attunement_slot_properties_ceremony_kind_enum" AS ENUM (
+    'short_rest',
+    'salt_immersion',
+    'sworn_oath',
+    'blood_consecration',
+    'involuntary_curse'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_attunement_slot_properties_break_conditions_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_attunement_slot_properties_break_conditions_items_enum" AS ENUM (
+    'dis-engagement',
+    'trauma',
+    'competing_claim',
+    'remove_curse',
+    'canon_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_path_ledger_entry_properties_domain_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_path_ledger_entry_properties_domain_enum" AS ENUM (
+    'law',
+    'faith',
+    'mercy',
+    'cruelty',
+    'promise',
+    'oath',
+    'debt',
+    'ruin',
+    'creation',
+    'loyalty',
+    'betrayal',
+    'curiosity',
+    'silence',
+    'hubris',
+    'tithe',
+    'tapu_violation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_canon_progression_entry_properties_stat_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_canon_progression_entry_properties_stat_enum" AS ENUM (
+    'authority',
+    'ruin',
+    'creation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_inventory_entry_properties_equipped_slot_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_inventory_entry_properties_equipped_slot_enum" AS ENUM (
+    'main_hand',
+    'off_hand',
+    'two_handed',
+    'armor',
+    'shield',
+    'helm',
+    'cloak',
+    'boots',
+    'gloves',
+    'ring_1',
+    'ring_2',
+    'amulet',
+    'belt'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_inventory_entry_properties_soul_instance_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_inventory_entry_properties_soul_instance_properties_kind_enum" AS ENUM (
+    'witness',
+    'spirit',
+    'fragment',
+    'echo'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_inventory_entry_properties_soul_instance_properties_speaks_threshold_properties_meter_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_inventory_entry_properties_soul_instance_properties_speaks_threshold_properties_meter_enum" AS ENUM (
+    'fatigue',
+    'clarity',
+    'debt',
+    'notice',
+    'corruption'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_inventory_entry_properties_memory_instance_properties_readable_via_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_inventory_entry_properties_memory_instance_properties_readable_via_items_enum" AS ENUM (
+    'legend_lore_spell',
+    'speak_with_dead_on_origin',
+    'imposed_unrecord_inverted',
+    'alchemy_purgative_inversion',
+    'sense_check'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_known_spell_entry_properties_source_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_known_spell_entry_properties_source_enum" AS ENUM (
+    'class',
+    'race',
+    'feat',
+    'item',
+    'pact',
+    'canon_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_body_modifications_block_properties_grafts_items_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_body_modifications_block_properties_grafts_items_properties_kind_enum" AS ENUM (
+    'brass_spinal_brace',
+    'bone_lattice_lung',
+    'salt_iron_jaw_brace',
+    'marrow_wax_eye',
+    'drowned_amber_hand',
+    'bell_iron_chest_plate'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_body_modifications_block_properties_symbionts_items_properties_host_relationship_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_body_modifications_block_properties_symbionts_items_properties_host_relationship_enum" AS ENUM (
+    'parasitic',
+    'commensal',
+    'mutualist',
+    'contested'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_validator_stage_result_properties_stage_id_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_validator_stage_result_properties_stage_id_enum" AS ENUM (
+    'stage_1_input',
+    'stage_2_rules',
+    'stage_3_canon_consistency',
+    'stage_4_canon_progression',
+    'stage_5_contradiction_check',
+    'stage_6_content_boundary'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_world_pulse_ticker_item_properties_ticker_class_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_world_pulse_ticker_item_properties_ticker_class_enum" AS ENUM (
+    'faction_action',
+    'rumor',
+    'weather',
+    'rite',
+    'canon_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_mode_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_mode_enum" AS ENUM (
+    'standard',
+    'immersive',
+    'tactical',
+    'hardcore',
+    'creator_debug'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_status_enum" AS ENUM (
+    'active',
+    'dead',
+    'legacy',
+    'ended'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_leveling_mode_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_leveling_mode_enum" AS ENUM (
+    'xp',
+    'milestone'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_former_party_members_items_properties_departure_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_former_party_members_items_properties_departure_kind_enum" AS ENUM (
+    'dismissed',
+    'betrayed',
+    'died',
+    'recalled_by_faction',
+    'departed_X12',
+    'departed_X13',
+    'departed_X14',
+    'departed_X15',
+    'departed_X16',
+    'obligation_expired'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_accessibility_settings_properties_color_blind_palette_id_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_accessibility_settings_properties_color_blind_palette_id_enum" AS ENUM (
+    'deuteranopia',
+    'protanopia',
+    'tritanopia'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_accessibility_settings_properties_adaptive_prose_density_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_accessibility_settings_properties_adaptive_prose_density_enum" AS ENUM (
+    'compact',
+    'standard',
+    'expanded'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_campaign_properties_ui_preference_state_properties_tooltip_density_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_campaign_properties_ui_preference_state_properties_tooltip_density_enum" AS ENUM (
+    'minimal',
+    'standard',
+    'verbose'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_player_properties_save_proficiencies_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_player_properties_save_proficiencies_items_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_player_properties_death_state_properties_ending_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_player_properties_death_state_properties_ending_kind_enum" AS ENUM (
+    'physical_death',
+    'X12_apotheosis',
+    'X13_unmaking',
+    'X14_withdrawal',
+    'X15_pact_collection',
+    'X16_corruption_transformation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_player_properties_knowledge_state_properties_locations_known_additional_properties_properties_fog_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_player_properties_knowledge_state_properties_locations_known_additional_properties_properties_fog_state_enum" AS ENUM (
+    'unknown',
+    'glimpsed',
+    'visited',
+    'known'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_player_properties_knowledge_posture_history_items_properties_posture_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_player_properties_knowledge_posture_history_items_properties_posture_enum" AS ENUM (
+    'mechanical',
+    'interpretive',
+    'performative',
+    'credulous',
+    'skeptical'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_player_properties_knowledge_posture_history_items_properties_switched_by_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_player_properties_knowledge_posture_history_items_properties_switched_by_enum" AS ENUM (
+    'player_explicit',
+    'consequence',
+    'narrative_trigger'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_event_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_event_properties_kind_enum" AS ENUM (
+    'physical_conflict',
+    'social_conflict',
+    'faith_conflict',
+    'economic_conflict',
+    'memory_conflict',
+    'reality_pressure',
+    'discovery',
+    'transformation',
+    'deicide',
+    'deity_birth',
+    'regional_apostasy',
+    'substrate_exposure',
+    'rite',
+    'oath_made',
+    'oath_broken',
+    'oath_fulfilled',
+    'craft',
+    'salvage',
+    'loot_taken',
+    'loot_refused',
+    'notice_convergence',
+    'other',
+    'notice_threshold_cross',
+    'body_modification_applied',
+    'body_modification_removed',
+    'adaptagen_consumed',
+    'mutation_canon_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_event_properties_canon_progression_credit_items_properties_stat_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_event_properties_canon_progression_credit_items_properties_stat_enum" AS ENUM (
+    'authority',
+    'ruin',
+    'creation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_event_properties_combat_state_properties_initiative_order_items_properties_actor_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_event_properties_combat_state_properties_initiative_order_items_properties_actor_kind_enum" AS ENUM (
+    'player',
+    'companion',
+    'npc',
+    'creature',
+    'environment'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_event_properties_diegetic_elements_items_properties_element_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_event_properties_diegetic_elements_items_properties_element_kind_enum" AS ENUM (
+    'fountain',
+    'bell',
+    'ledger',
+    'tithing_cup',
+    'vials_shelf',
+    'bell_forge',
+    'marrow_wax_candle',
+    'salt_pan',
+    'litany_card'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_faction_properties_faction_obligation_state_per_companion_additional_properties_properties_obligation_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_faction_properties_faction_obligation_state_per_companion_additional_properties_properties_obligation_kind_enum" AS ENUM (
+    'loan',
+    'contract',
+    'gift_debt',
+    'tithe',
+    'vigil'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_faction_properties_faction_obligation_state_per_companion_additional_properties_properties_violation_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_faction_properties_faction_obligation_state_per_companion_additional_properties_properties_violation_state_enum" AS ENUM (
+    'honored',
+    'drifting',
+    'violated'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_npc_properties_tracker_state_properties_tracker_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_npc_properties_tracker_state_properties_tracker_kind_enum" AS ENUM (
+    'observer',
+    'agent_provocateur',
+    'binder',
+    'executioner'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_npc_properties_witness_history_items_properties_perception_quality_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_npc_properties_witness_history_items_properties_perception_quality_enum" AS ENUM (
+    'direct',
+    'overheard',
+    'inferred',
+    'told_about'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.npc_memory_archetype
 DO $$ BEGIN
   CREATE TYPE "public"."npc_memory_archetype" AS ENUM (
@@ -196,6 +799,1111 @@ DO $$ BEGIN
     'aspirant_divine',
     'child',
     'contradiction_bearing'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_belief_properties_truth_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_belief_properties_truth_status_enum" AS ENUM (
+    'true',
+    'false',
+    'partial',
+    'unknown',
+    'contested'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_consequence_properties_trigger_type_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_consequence_properties_trigger_type_enum" AS ENUM (
+    'time',
+    'condition',
+    'threshold',
+    'random',
+    'discovery'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_consequence_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_consequence_properties_status_enum" AS ENUM (
+    'pending',
+    'triggered',
+    'resolved',
+    'failed',
+    'cancelled'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_state_diff_properties_changes_items_properties_operation_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_state_diff_properties_changes_items_properties_operation_enum" AS ENUM (
+    'set',
+    'increment',
+    'append',
+    'remove',
+    'replace'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_contradiction_ledger_entry_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_contradiction_ledger_entry_properties_kind_enum" AS ENUM (
+    'race_extinction',
+    'deity_death',
+    'deity_birth',
+    'race_emergence',
+    'region_transformation',
+    'rumor_vs_canon',
+    'memory_vs_record',
+    'unmade_event',
+    'named_unnamed',
+    'substrate_exposed',
+    'substrate_dispersed',
+    'other',
+    'companion_memory_disagreement'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_contradiction_ledger_entry_properties_surfacing_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_contradiction_ledger_entry_properties_surfacing_state_enum" AS ENUM (
+    'dormant',
+    'surfacing_to_player',
+    'resolved'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_class_id_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_class_id_enum" AS ENUM (
+    'barbarian',
+    'bard',
+    'cleric',
+    'druid',
+    'fighter',
+    'monk',
+    'paladin',
+    'ranger',
+    'rogue',
+    'sorcerer',
+    'warlock',
+    'wizard'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_hit_die_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_hit_die_enum" AS ENUM (
+    '6',
+    '8',
+    '10',
+    '12'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_primary_abilities_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_primary_abilities_items_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_save_proficiencies_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_save_proficiencies_items_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_custom_stat_hooks_items_properties_modifier_source_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_custom_stat_hooks_items_properties_modifier_source_enum" AS ENUM (
+    'body',
+    'grace',
+    'sense',
+    'mind',
+    'will',
+    'presence',
+    'authority',
+    'ruin',
+    'creation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_class_properties_spellcasting_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_class_properties_spellcasting_kind_enum" AS ENUM (
+    'none',
+    'full',
+    'half',
+    'third',
+    'pact'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_race_properties_size_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_race_properties_size_enum" AS ENUM (
+    'tiny',
+    'small',
+    'medium',
+    'large'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_race_properties_world_mutation_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_race_properties_world_mutation_state_enum" AS ENUM (
+    'baseline',
+    'emergent',
+    'drift_subrace',
+    'endangered',
+    'extinct'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_subrace_properties_world_mutation_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_subrace_properties_world_mutation_state_enum" AS ENUM (
+    'baseline',
+    'emergent',
+    'drift_subrace',
+    'endangered',
+    'extinct'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_deity_properties_domains_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_deity_properties_domains_items_enum" AS ENUM (
+    'knowledge',
+    'life',
+    'light',
+    'nature',
+    'tempest',
+    'trickery',
+    'war',
+    'death'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_deity_properties_origin_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_deity_properties_origin_enum" AS ENUM (
+    'baseline',
+    'regional',
+    'heretical_reading',
+    'emergent',
+    'fragmentary',
+    'dead',
+    'unknown'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_deity_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_deity_properties_status_enum" AS ENUM (
+    'worshipped',
+    'dormant',
+    'sleeping',
+    'dead',
+    'newborn',
+    'contested'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_deity_properties_succession_rule_properties_on_death_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_deity_properties_succession_rule_properties_on_death_enum" AS ENUM (
+    'void',
+    'successor_appointed',
+    'domain_redistributed',
+    'fragment_into_lesser',
+    'no_successor'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_deity_properties_mythological_substrate_refs_items_properties_reading_mode_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_deity_properties_mythological_substrate_refs_items_properties_reading_mode_enum" AS ENUM (
+    'inherit',
+    'distort',
+    'deny',
+    'accidental'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_pantheon_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_pantheon_properties_status_enum" AS ENUM (
+    'active',
+    'regional',
+    'heretical',
+    'dormant',
+    'extinct'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_pantheon_properties_regional_configuration_properties_worshipped_deities_items_properties_reading_mode_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_pantheon_properties_regional_configuration_properties_worshipped_deities_items_properties_reading_mode_enum" AS ENUM (
+    'orthodox',
+    'heretical_reading',
+    'distorted',
+    'silent_majority',
+    'suppressed_minority'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_pantheon_properties_regional_configuration_properties_heretical_reading_patterns_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_pantheon_properties_regional_configuration_properties_heretical_reading_patterns_items_enum" AS ENUM (
+    'demoted_mother',
+    'silent_twin',
+    'buried_domain',
+    'forgotten_dawn',
+    'unnamed_among_names',
+    'recanted_heresy'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_pantheon_properties_faith_meter_negative_value_ui_treatment_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_pantheon_properties_faith_meter_negative_value_ui_treatment_enum" AS ENUM (
+    'hidden_in_ui',
+    'shown_as_apostate',
+    'shown_as_explicit_negative'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_spell_properties_school_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_spell_properties_school_enum" AS ENUM (
+    'abjuration',
+    'conjuration',
+    'divination',
+    'enchantment',
+    'evocation',
+    'illusion',
+    'necromancy',
+    'transmutation',
+    'regional'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_spell_properties_save_type_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_spell_properties_save_type_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_spell_properties_attack_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_spell_properties_attack_kind_enum" AS ENUM (
+    'melee',
+    'ranged'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_spell_properties_subschool_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_spell_properties_subschool_enum" AS ENUM (
+    'forbiddings',
+    'witness_spells',
+    'listening',
+    'marking_spells',
+    'naming_spells',
+    'contradiction_burst',
+    'resonance',
+    'unbecoming',
+    'memory_spells',
+    'echoes',
+    'lattice_shifts',
+    'inversions',
+    'half_summon',
+    'borrowed_things'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_condition_properties_scope_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_condition_properties_scope_enum" AS ENUM (
+    'universal',
+    'regional'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_condition_properties_ui_category_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_condition_properties_ui_category_enum" AS ENUM (
+    'metaphysical',
+    'social_legal',
+    'physical',
+    'lethal_tracking'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_type_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_type_enum" AS ENUM (
+    'weapon',
+    'armor',
+    'shield',
+    'ammunition',
+    'tool',
+    'trinket',
+    'consumable',
+    'wondrous',
+    'book',
+    'key',
+    'currency_token'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_rarity_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_rarity_enum" AS ENUM (
+    'common',
+    'uncommon',
+    'rare',
+    'very_rare',
+    'legendary',
+    'artifact'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_identification_requires_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_identification_requires_items_enum" AS ENUM (
+    'time_1hr',
+    'identify_spell',
+    'contemplation',
+    'canon_event',
+    'quest'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_attunement_ceremony_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_attunement_ceremony_enum" AS ENUM (
+    'short_rest',
+    'salt_immersion',
+    'sworn_oath',
+    'blood_consecration'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_equip_slot_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_equip_slot_enum" AS ENUM (
+    'main_hand',
+    'off_hand',
+    'two_handed',
+    'armor',
+    'shield',
+    'helm',
+    'cloak',
+    'boots',
+    'gloves',
+    'ring',
+    'amulet',
+    'belt'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_tinting_class_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_tinting_class_enum" AS ENUM (
+    'vellum_mundane',
+    'brass_greywake',
+    'tide_bloom_metaphysical',
+    'verdigris_consumable',
+    'drowned_red_cursed',
+    'bone_relic'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_weapon_properties_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_weapon_properties_items_enum" AS ENUM (
+    'finesse',
+    'light',
+    'heavy',
+    'two_handed',
+    'versatile',
+    'reach',
+    'thrown',
+    'loading',
+    'ammunition',
+    'special',
+    'ritual',
+    'salt_marked',
+    'witness_marked'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_effects_on_attune_structured_items_properties_effect_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_effects_on_attune_structured_items_properties_effect_kind_enum" AS ENUM (
+    'stat_modifier',
+    'meter_delta',
+    'condition_apply',
+    'condition_remove',
+    'spell_cast',
+    'save_advantage',
+    'save_disadvantage',
+    'damage_resist',
+    'damage_vulnerability',
+    'skill_bonus',
+    'auto_succeed',
+    'auto_fail',
+    'trigger_event',
+    'set_flag'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_effects_on_equip_structured_items_properties_effect_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_effects_on_equip_structured_items_properties_effect_kind_enum" AS ENUM (
+    'stat_modifier',
+    'meter_delta',
+    'condition_apply',
+    'condition_remove',
+    'spell_cast',
+    'save_advantage',
+    'save_disadvantage',
+    'damage_resist',
+    'damage_vulnerability',
+    'skill_bonus',
+    'auto_succeed',
+    'auto_fail',
+    'trigger_event',
+    'set_flag'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_effects_on_use_structured_items_properties_effect_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_effects_on_use_structured_items_properties_effect_kind_enum" AS ENUM (
+    'stat_modifier',
+    'meter_delta',
+    'condition_apply',
+    'condition_remove',
+    'spell_cast',
+    'save_advantage',
+    'save_disadvantage',
+    'damage_resist',
+    'damage_vulnerability',
+    'skill_bonus',
+    'auto_succeed',
+    'auto_fail',
+    'trigger_event',
+    'set_flag'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_witness_payload_properties_soul_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_witness_payload_properties_soul_kind_enum" AS ENUM (
+    'fragment',
+    'echo',
+    'transferred',
+    'bound',
+    'composed'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_adaptagen_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_adaptagen_kind_enum" AS ENUM (
+    'mutagen',
+    'stabilizer',
+    'reverser',
+    'binding_serum',
+    'sleeping_grafts'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_properties_evolution_ledger_items_properties_evolution_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_properties_evolution_ledger_items_properties_evolution_kind_enum" AS ENUM (
+    'rust',
+    'polish',
+    'patina',
+    'soul_thickening',
+    'ritual_brightening',
+    'decay'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_one_of_properties_subtype_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_one_of_properties_subtype_enum" AS ENUM (
+    'simple_melee',
+    'simple_ranged',
+    'martial_melee',
+    'martial_ranged'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_item_one_of_properties_damage_type_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_item_one_of_properties_damage_type_enum" AS ENUM (
+    'bludgeoning',
+    'piercing',
+    'slashing',
+    'fire',
+    'cold',
+    'lightning',
+    'thunder',
+    'force',
+    'radiant',
+    'necrotic',
+    'psychic',
+    'acid',
+    'poison'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_recipe_properties_track_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_recipe_properties_track_enum" AS ENUM (
+    'forging',
+    'tinkering',
+    'alchemy'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_recipe_properties_ability_check_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_recipe_properties_ability_check_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_region_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_region_properties_status_enum" AS ENUM (
+    'active',
+    'starting',
+    'transformed',
+    'lost',
+    'dream',
+    'abyssal',
+    'future'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_region_properties_heretical_reading_pattern_refs_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_region_properties_heretical_reading_pattern_refs_items_enum" AS ENUM (
+    'demoted_mother',
+    'silent_twin',
+    'buried_domain',
+    'forgotten_dawn',
+    'unnamed_among_names',
+    'recanted_heresy'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_regional_pack_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_regional_pack_properties_kind_enum" AS ENUM (
+    'conditions',
+    'currencies',
+    'magic_traditions',
+    'pantheon',
+    'items',
+    'recipes',
+    'factions',
+    'deities',
+    'litanies',
+    'marginalia',
+    'substrate',
+    'loot_tables',
+    'materials',
+    'cult_institutions',
+    'environment'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_mythological_substrate_entry_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_mythological_substrate_entry_properties_kind_enum" AS ENUM (
+    'pattern',
+    'proto_deity',
+    'era_marker',
+    'fragment'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_mythological_substrate_entry_properties_status_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_mythological_substrate_entry_properties_status_enum" AS ENUM (
+    'dormant',
+    'exposed',
+    'bound',
+    'dispersed',
+    'renamed'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_loot_table_properties_scope_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_loot_table_properties_scope_enum" AS ENUM (
+    'carried',
+    'hidden',
+    'yielded',
+    'canon_event_drop'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_loot_table_properties_rolls_items_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_loot_table_properties_rolls_items_properties_kind_enum" AS ENUM (
+    'guaranteed',
+    'weighted',
+    'memory'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_loot_table_properties_template_grammar_version_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_loot_table_properties_template_grammar_version_enum" AS ENUM (
+    'v0.5'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_category_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_category_enum" AS ENUM (
+    'material_metal',
+    'material_stone',
+    'material_wood',
+    'material_fiber',
+    'material_reagent'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_tinting_class_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_tinting_class_enum" AS ENUM (
+    'vellum_mundane',
+    'brass_greywake',
+    'tide_bloom_metaphysical',
+    'verdigris_consumable',
+    'drowned_red_cursed',
+    'bone_relic',
+    'cursed_substrate'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_witness_payload_one_of_properties_carries_soul_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_witness_payload_one_of_properties_carries_soul_kind_enum" AS ENUM (
+    'witness',
+    'spirit',
+    'fragment',
+    'echo'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_witness_payload_one_of_properties_provenance_chain_items_properties_transfer_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_witness_payload_one_of_properties_provenance_chain_items_properties_transfer_kind_enum" AS ENUM (
+    'gifted',
+    'stolen',
+    'won',
+    'inherited',
+    'harvested',
+    'salvaged'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_tier_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_tier_enum" AS ENUM (
+    'T1',
+    'T2',
+    'T3',
+    'T4'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_decay_states_items_properties_decay_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_decay_states_items_properties_decay_kind_enum" AS ENUM (
+    'region_locked',
+    'time_locked',
+    'ritual_locked',
+    'concentration_locked'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_craft_tracks_eligible_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_craft_tracks_eligible_items_enum" AS ENUM (
+    'forging',
+    'alchemy',
+    'tinkering',
+    'scribing',
+    'ritual'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_material_properties_acquisition_method_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_material_properties_acquisition_method_enum" AS ENUM (
+    'purchased',
+    'gifted_only',
+    'harvested',
+    'quest_reward',
+    'canon_event_only',
+    'crafted'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_regional_currency_state_properties_crisis_intensity_modifier_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_regional_currency_state_properties_crisis_intensity_modifier_enum" AS ENUM (
+    '1',
+    '0.85',
+    '0.6',
+    '0.4',
+    '1.2',
+    '0.05'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_regional_currency_state_properties_crisis_label_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_regional_currency_state_properties_crisis_label_enum" AS ENUM (
+    'calm',
+    'rumored_crisis',
+    'declared_crisis',
+    'acute_crisis',
+    'resolved',
+    'collapsed'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_cult_institution_properties_doctrines_items_properties_faith_meter_aligned_properties_alignment_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_cult_institution_properties_doctrines_items_properties_faith_meter_aligned_properties_alignment_kind_enum" AS ENUM (
+    'tenets_aligned',
+    'tenets_violating'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_cult_institution_properties_rite_kinds_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_cult_institution_properties_rite_kinds_items_enum" AS ENUM (
+    'daily',
+    'weekly',
+    'seasonal',
+    'lunar',
+    'tidal',
+    'canon_event'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_creature_material_properties_harvest_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_creature_material_properties_harvest_kind_enum" AS ENUM (
+    'hide',
+    'blood',
+    'bone',
+    'scale',
+    'tooth',
+    'organ',
+    'feather',
+    'venom',
+    'ichor',
+    'shell'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_creature_material_properties_harvest_skill_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_creature_material_properties_harvest_skill_enum" AS ENUM (
+    'body',
+    'grace',
+    'sense',
+    'mind',
+    'will'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_creature_material_properties_tier_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_creature_material_properties_tier_enum" AS ENUM (
+    'T1',
+    'T2',
+    'T3',
+    'T4'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_companion_properties_recruitment_path_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_companion_properties_recruitment_path_enum" AS ENUM (
+    'quest',
+    'bond',
+    'faction_mediated',
+    'canon_event_emergent'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_companion_properties_terms_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_companion_properties_terms_properties_kind_enum" AS ENUM (
+    'gift',
+    'loan',
+    'contract'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_companion_properties_party_tier_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_companion_properties_party_tier_state_enum" AS ENUM (
+    'with_player',
+    'separately_acting',
+    'dismissed_or_resting'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_agent_envelope_properties_agent_name_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_agent_envelope_properties_agent_name_enum" AS ENUM (
+    'input_interpreter',
+    'rules_agent',
+    'npc_evaluator',
+    'faction_evaluator',
+    'domain_evaluator',
+    'world_director',
+    'dice_resolution',
+    'state_manager',
+    'narrator',
+    'content_boundary_validator'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_location_properties_fog_of_knowledge_state_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_location_properties_fog_of_knowledge_state_enum" AS ENUM (
+    'unknown',
+    'glimpsed',
+    'visited',
+    'known'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_travel_route_properties_traversal_risk_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_travel_route_properties_traversal_risk_enum" AS ENUM (
+    'safe',
+    'watched',
+    'dangerous',
+    'deadly'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_conflict_envelope_properties_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_conflict_envelope_properties_kind_enum" AS ENUM (
+    'physical',
+    'social',
+    'magical',
+    'ritual',
+    'economic',
+    'factional',
+    'mythological',
+    'metaphysical'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_portrait_layer_definition_properties_layer_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_portrait_layer_definition_properties_layer_kind_enum" AS ENUM (
+    'race_silhouette',
+    'class_glyph',
+    'alignment_tint',
+    'condition_overlay',
+    'body_mod_overlay',
+    'curated_event_overlay'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_imposed_spell_properties_school_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_imposed_spell_properties_school_enum" AS ENUM (
+    'abjuration',
+    'conjuration',
+    'divination',
+    'enchantment',
+    'evocation',
+    'illusion',
+    'necromancy',
+    'transmutation',
+    'regional'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_imposed_spell_properties_save_type_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_imposed_spell_properties_save_type_enum" AS ENUM (
+    'str',
+    'dex',
+    'con',
+    'int',
+    'wis',
+    'cha'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_imposed_spell_properties_attack_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_imposed_spell_properties_attack_kind_enum" AS ENUM (
+    'melee',
+    'ranged'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_imposed_spell_properties_subschool_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_imposed_spell_properties_subschool_enum" AS ENUM (
+    'forbiddings',
+    'witness_spells',
+    'listening',
+    'marking_spells',
+    'naming_spells',
+    'contradiction_burst',
+    'resonance',
+    'unbecoming',
+    'memory_spells',
+    'echoes',
+    'lattice_shifts',
+    'inversions',
+    'half_summon',
+    'borrowed_things'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_litany_properties_schema_version_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_litany_properties_schema_version_enum" AS ENUM (
+    'v1',
+    'v2'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_marginalia_properties_trigger_kind_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_marginalia_properties_trigger_kind_enum" AS ENUM (
+    'canon_progression_event',
+    'state_threshold',
+    'item_acquired',
+    'item_event',
+    'location_entered',
+    'npc_interaction',
+    'npc_speech_anomaly',
+    'scene_end',
+    'rite',
+    'manual',
+    'faction_action',
+    'social_conflict',
+    'weather_omen',
+    'time_progression'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_marginalia_properties_display_context_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_marginalia_properties_display_context_enum" AS ENUM (
+    'player_journal_at_end_of_scene',
+    'inline_in_narration',
+    'inline_during_scene',
+    'inline_at_scene_open',
+    'inline_at_scene_close',
+    'tome_unlock',
+    'world_pulse_ticker'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_marginalia_properties_schema_version_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_marginalia_properties_schema_version_enum" AS ENUM (
+    'v1',
+    'v2'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_opex_event_properties_agent_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_opex_event_properties_agent_enum" AS ENUM (
+    'narrator',
+    'state_manager',
+    'validator_input',
+    'validator_rules',
+    'validator_consistency',
+    'validator_progression',
+    'validator_contradiction',
+    'validator_boundary',
+    'form_of_ending',
+    'postcard',
+    'voice_evaluator',
+    'other'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_opex_event_properties_tier_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_opex_event_properties_tier_enum" AS ENUM (
+    'premium',
+    'mid',
+    'cheap'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_opex_event_properties_fallback_reason_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_opex_event_properties_fallback_reason_enum" AS ENUM (
+    'daily_cap_hit',
+    'session_budget_exhausted',
+    'primary_failure',
+    'manual_override',
+    'tier_policy_default'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_model_tier_policy_properties_agent_tiers_pattern_properties_^[a-z_]+$_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_model_tier_policy_properties_agent_tiers_pattern_properties_^[a-z_]+$_enum" AS ENUM (
+    'premium',
+    'mid',
+    'cheap'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -234,6 +1942,18 @@ DO $$ BEGIN
     'expired',
     'failed',
     'deferred'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_surfacing_threshold_config_properties_channel_priority_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_surfacing_threshold_config_properties_channel_priority_items_enum" AS ENUM (
+    'overheard',
+    'witnessed',
+    'requested',
+    'stumbled',
+    'recruited',
+    'prophecy'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -343,13 +2063,18 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "knowledge_state" JSONB,
   "portrait_state" JSONB,
   "knowledge_posture_history" JSONB,
-  "session_state" JSONB,
+  "session_state" JSONB  -- $ref: #/$defs/session_state_block,
+  "focus" JSONB NOT NULL  -- $ref: #/$defs/focus_block,
+  "action_economy" JSONB  -- $ref: #/$defs/action_economy_block,
+  "tags" JSONB NOT NULL,
   "scrip_speculation_history" JSONB,
   "dream_state" JSONB,
   "legacy_inherited_substrate_weight" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_player_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
+  CONSTRAINT "fk_player_subrace_id" FOREIGN KEY ("subrace_id") REFERENCES "public"."subrace"("subrace_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level_total" >= 1),
   CHECK ("level_total" <= 20),
   CHECK ("experience" >= 0),
@@ -396,7 +2121,9 @@ CREATE TABLE IF NOT EXISTS "public"."event" (
   "scene_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_event_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
+  CONSTRAINT "fk_event_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."event" ENABLE ROW LEVEL SECURITY;
 
@@ -423,9 +2150,11 @@ CREATE TABLE IF NOT EXISTS "public"."faction" (
   "beliefs" JSONB,
   "faction_obligation_state_per_companion" JSONB,
   "scheduled_actions" JSONB,
+  "tags" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_faction_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."faction" ENABLE ROW LEVEL SECURITY;
 
@@ -461,9 +2190,13 @@ CREATE TABLE IF NOT EXISTS "public"."npc" (
   "memory_archetype" "public"."npc_memory_archetype" NOT NULL,
   "ambition_tick" JSONB NOT NULL  -- $ref: #/$defs/ambition_tick,
   "schedule_nesting" JSONB NOT NULL  -- $ref: #/$defs/schedule_nesting,
+  "stats" JSONB NOT NULL  -- $ref: #/$defs/custom_stats_block,
+  "derived_stats" JSONB NOT NULL  -- $ref: #/$defs/derived_stats_block,
+  "tags" JSONB NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_npc_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."npc" ENABLE ROW LEVEL SECURITY;
 
@@ -782,6 +2515,7 @@ CREATE TABLE IF NOT EXISTS "public"."item" (
   CHECK ("weight_kg" >= 0),
   CHECK ("value_cp" >= 0),
   CHECK ("stack_size_max" >= 1),
+  CONSTRAINT "fk_item_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("attunement_slot_cost" >= 0),
   CHECK ("attunement_slot_cost" <= 3),
   CHECK ("weight_lb" >= 0),
@@ -848,6 +2582,7 @@ CREATE TABLE IF NOT EXISTS "public"."region" (
   "substrate_exposed_refs" JSONB,
   "weather_state" JSONB,
   "weather_history" JSONB,
+  "tags" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -863,7 +2598,8 @@ CREATE TABLE IF NOT EXISTS "public"."regional_pack" (
   "contents_path" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_regional_pack_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."regional_pack" ENABLE ROW LEVEL SECURITY;
 
@@ -902,7 +2638,10 @@ CREATE TABLE IF NOT EXISTS "public"."loot_table" (
   "template_grammar_version" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_loot_table_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
+  CONSTRAINT "fk_loot_table_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
+  CONSTRAINT "fk_loot_table_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."loot_table" ENABLE ROW LEVEL SECURITY;
 
@@ -944,6 +2683,7 @@ CREATE TABLE IF NOT EXISTS "public"."regional_currency_state" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_regional_currency_state_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("base_value_gp" >= 0),
   CHECK ("volatility_modifier" >= 0.5),
   CHECK ("volatility_modifier" <= 2)
@@ -963,7 +2703,9 @@ CREATE TABLE IF NOT EXISTS "public"."cult_institution" (
   "heretical_figures" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_cult_institution_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
+  CONSTRAINT "fk_cult_institution_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."cult_institution" ENABLE ROW LEVEL SECURITY;
 
@@ -986,7 +2728,8 @@ CREATE TABLE IF NOT EXISTS "public"."creature_material" (
   "regional_pack_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_creature_material_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."creature_material" ENABLE ROW LEVEL SECURITY;
 
@@ -1001,7 +2744,8 @@ CREATE TABLE IF NOT EXISTS "public"."material_substitution" (
   "narrative_tag" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_material_substitution_recipe_id" FOREIGN KEY ("recipe_id") REFERENCES "public"."recipe"("recipe_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."material_substitution" ENABLE ROW LEVEL SECURITY;
 
@@ -1045,7 +2789,8 @@ CREATE TABLE IF NOT EXISTS "public"."orchestrator_session" (
   "last_state_diff_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_orchestrator_session_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."orchestrator_session" ENABLE ROW LEVEL SECURITY;
 
@@ -1096,7 +2841,8 @@ CREATE TABLE IF NOT EXISTS "public"."recruitment_quest" (
   "abandonment_consequences" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_recruitment_quest_quest_id" FOREIGN KEY ("quest_id") REFERENCES "state"."quest"("quest_id") ON DELETE CASCADE  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."recruitment_quest" ENABLE ROW LEVEL SECURITY;
 
@@ -1110,7 +2856,8 @@ CREATE TABLE IF NOT EXISTS "public"."location" (
   "parent_location_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_location_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
 );
 ALTER TABLE "public"."location" ENABLE ROW LEVEL SECURITY;
 
@@ -1185,6 +2932,7 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_imposed_spell_spell_id" FOREIGN KEY ("spell_id") REFERENCES "public"."spell"("spell_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level" >= 0),
   CHECK ("level" <= 9)
 );
@@ -1262,6 +3010,7 @@ CREATE TABLE IF NOT EXISTS "public"."opex_event" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_opex_event_event_id" FOREIGN KEY ("event_id") REFERENCES "public"."event"("event_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("tokens_in" >= 0),
   CHECK ("tokens_out" >= 0),
   CHECK ("est_cost_usd" >= 0),
@@ -1311,7 +3060,7 @@ CREATE TABLE IF NOT EXISTS "content"."institution" (
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("jurisdictional_strength" >= 0),
   CHECK ("jurisdictional_strength" <= 100),
-  FOREIGN KEY ("parent_faction_id") REFERENCES "content"."faction"(id) ON DELETE SET NULL
+  CONSTRAINT "fk_institution_parent_faction_id" FOREIGN KEY ("parent_faction_id") REFERENCES "content"."faction"("id") ON DELETE SET NULL
 );
 COMMENT ON TABLE "content"."institution" IS "Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.";
 ALTER TABLE "content"."institution" ENABLE ROW LEVEL SECURITY;
@@ -1329,9 +3078,9 @@ CREATE TABLE IF NOT EXISTS "content"."trade_route_v08" (
   "capacity_per_season" INTEGER NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  FOREIGN KEY ("origin_location_id") REFERENCES "content"."location"(id) ON DELETE RESTRICT,
-  FOREIGN KEY ("destination_location_id") REFERENCES "content"."location"(id) ON DELETE RESTRICT,
-  FOREIGN KEY ("controlling_faction_id") REFERENCES "content"."faction"(id) ON DELETE SET NULL,
+  CONSTRAINT "fk_trade_route_v08_origin_location_id" FOREIGN KEY ("origin_location_id") REFERENCES "content"."location"("id") ON DELETE RESTRICT,
+  CONSTRAINT "fk_trade_route_v08_destination_location_id" FOREIGN KEY ("destination_location_id") REFERENCES "content"."location"("id") ON DELETE RESTRICT,
+  CONSTRAINT "fk_trade_route_v08_controlling_faction_id" FOREIGN KEY ("controlling_faction_id") REFERENCES "content"."faction"("id") ON DELETE SET NULL,
   CHECK ("capacity_per_season" >= 0)
 );
 COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.";
@@ -1356,10 +3105,13 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
   "primary_faction_ids" JSONB,
   "primary_region_id" TEXT,
   "emerged_at_day" INTEGER,
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CHECK ("emerged_at_day" >= 0)
+  CHECK ("emerged_at_day" >= 0),
+  CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
 );
 COMMENT ON TABLE "state"."quest" IS "Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.";
 ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
@@ -1374,10 +3126,13 @@ CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
   "decision_window" JSONB NOT NULL,
   "resolved_by_npc_ids" JSONB,
   "resolution_kind" "state"."institution_response_resolution_kind",
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  FOREIGN KEY ("institution_id") REFERENCES "state"."institution"(id) ON DELETE CASCADE
+  CONSTRAINT "fk_institution_response_queue_entry_institution_id" FOREIGN KEY ("institution_id") REFERENCES "state"."institution"("id") ON DELETE CASCADE,
+  CONSTRAINT "fk_institution_response_queue_entry_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
 );
 COMMENT ON TABLE "state"."institution_response_queue_entry" IS "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.";
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
@@ -1392,17 +3147,20 @@ CREATE TABLE IF NOT EXISTS "engine"."surfacing_threshold_config" (
   "pressure_threshold" NUMERIC NOT NULL,
   "recency_weight" NUMERIC NOT NULL,
   "channel_priority" JSONB NOT NULL,
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("pressure_threshold" >= 0),
   CHECK ("pressure_threshold" <= 10),
   CHECK ("recency_weight" >= 0),
-  CHECK ("recency_weight" <= 2)
+  CHECK ("recency_weight" <= 2),
+  CONSTRAINT "fk_surfacing_threshold_config_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "engine"."campaign"("id") ON DELETE CASCADE
 );
 COMMENT ON TABLE "engine"."surfacing_threshold_config" IS "Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).";
 ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 48 entities · 20 enums · 5 schemas
+-- 48 entities · 161 enums · 5 schemas
 -- ----------------------------------------------------------------------------

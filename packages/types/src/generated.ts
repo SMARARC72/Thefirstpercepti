@@ -303,17 +303,13 @@ export interface FirstPerceptionSchemaPack {
       switched_event_id?: string;
       switched_by?: "player_explicit" | "consequence" | "narrative_trigger";
     }[];
+    session_state?: SessionStateBlock;
+    focus: FocusBlock;
+    action_economy?: ActionEconomyBlock;
     /**
-     * Transient session state on player; cleared on session boundary.
+     * Phase 4a.5 — Cross-cutting tags primitive sweep (#2).
      */
-    session_state?: {
-      /**
-       * R-119-E: per Glance Bar mechanism (FDR Part 2.3)
-       */
-      last_main_scene_focus_at?: string | null;
-      current_session_id?: string | null;
-      transient_flags?: {};
-    };
+    tags: string[];
     /**
      * R-124-E: speculative-profit tracking for R-65 (scrip speculation cap at 25% gain).
      */
@@ -495,6 +491,10 @@ export interface FirstPerceptionSchemaPack {
       preconditions?: unknown[];
       cancellation_conditions?: unknown[];
     }[];
+    /**
+     * Phase 4a.5 — Cross-cutting tags primitive sweep.
+     */
+    tags?: string[];
   };
   npc?: {
     npc_id: string;
@@ -584,6 +584,12 @@ export interface FirstPerceptionSchemaPack {
       | "contradiction_bearing";
     ambition_tick: AmbitionTick;
     schedule_nesting: ScheduleNesting;
+    stats: CustomStatsBlock1;
+    derived_stats: DerivedStatsBlock1;
+    /**
+     * Phase 4a.5 — Cross-cutting tags primitive sweep (#2).
+     */
+    tags: string[];
   };
   rumor?: {
     rumor_id: string;
@@ -1017,6 +1023,10 @@ export interface FirstPerceptionSchemaPack {
      * R-130-F (speculative): historical weather log.
      */
     weather_history?: {}[];
+    /**
+     * Phase 4a.5 — Cross-cutting tags primitive sweep.
+     */
+    tags?: string[];
   };
   regional_pack?: {
     pack_id: string;
@@ -1720,6 +1730,14 @@ export interface FirstPerceptionSchemaPack {
      */
     primary_region_id?: string | null;
     emerged_at_day?: number;
+    /**
+     * Phase 4a.5 — state.* ownership sweep. FK to campaign.
+     */
+    campaign_id: string;
+    /**
+     * Phase 4a.5 — state.* ownership sweep. FK to session (or save_snapshot until session entity exists).
+     */
+    session_id: string;
   };
   /**
    * Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).
@@ -1735,6 +1753,14 @@ export interface FirstPerceptionSchemaPack {
      * Ordered list of channels; engine fires first eligible.
      */
     channel_priority: ("overheard" | "witnessed" | "requested" | "stumbled" | "recruited" | "prophecy")[];
+    /**
+     * Phase 4a.5 — engine.* ownership sweep. FK to campaign (engine state may be cross-session but per-campaign).
+     */
+    campaign_id: string;
+    /**
+     * Phase 4a.5 — engine.* ownership sweep. Optional FK; engine config may be cross-session.
+     */
+    session_id?: string | null;
   };
   /**
    * Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
@@ -1781,6 +1807,14 @@ export interface FirstPerceptionSchemaPack {
      * Null while pending; populated when window closes or member NPC acts. Null permitted via column type; enum values list excludes null since Postgres ENUMs are non-nullable as a type.
      */
     resolution_kind?: ("decisive" | "deferred" | "escalated" | "ignored") | null;
+    /**
+     * Phase 4a.5 — state.* ownership sweep. FK to campaign.
+     */
+    campaign_id: string;
+    /**
+     * Phase 4a.5 — state.* ownership sweep.
+     */
+    session_id: string;
   };
 }
 export interface WorldTime {
@@ -2062,6 +2096,84 @@ export interface BodyModificationsBlock1 {
   adaptagen_active?: {}[];
 }
 /**
+ * Phase 4a.5 — Replaced inline shape with $ref to session_state_block (carries Phase 22.6/23b runtime flags + Bundle H session fields).
+ */
+export interface SessionStateBlock {
+  /**
+   * FK to session entity (when Bundle H session schema lands).
+   */
+  current_session_id?: string | null;
+  /**
+   * Phase 23b PROD-601 guard — endingDetector setting this prevents re-fire.
+   */
+  ending_committed?: boolean;
+  /**
+   * Phase 23b PROD-602 — notice ladder transitions already fired this session.
+   */
+  notice_thresholds_fired?: (7 | 8 | 9 | 10)[];
+  /**
+   * Phase 23b PROD-603 — WorldPulse ticker items pending surface. Item shape: world_pulse_ticker_item $def.
+   */
+  ticker_queue?: {}[];
+  /**
+   * Phase 23b SEM-604 — set by apotheosis command parser; consumed by endingDetector.
+   */
+  apotheosis_accepted_this_turn?: boolean;
+  /**
+   * Phase 23b — X.14 trigger flag.
+   */
+  withdrawal_triggered_this_turn?: boolean;
+  /**
+   * Phase 23b — X.15 trigger flag.
+   */
+  pact_collection_triggered_this_turn?: boolean;
+  /**
+   * Free-form per-turn flags cleared on session boundary.
+   */
+  transient_flags?: {
+    [k: string]: boolean;
+  };
+  /**
+   * R-119-E per Glance Bar mechanism (FDR Part 2.3).
+   */
+  last_main_scene_focus_at?: string | null;
+}
+/**
+ * Phase 4a.5 — REQUIRED per Khoja Option B (focus_block as symmetric HpBlock-pair resource pool).
+ */
+export interface FocusBlock {
+  current: number;
+  /**
+   * Varies by class/level/feats/pact.
+   */
+  max: number;
+  /**
+   * Per-rest recovery; null = none. Engine reads at long-rest.
+   */
+  recovery_rate?: number;
+  /**
+   * Narrative context for the focus source.
+   */
+  source_kind?: "natural" | "pact" | "ritual";
+}
+/**
+ * Phase 4a.5 — Optional per-turn action budget. Non-combatant scenes don't populate.
+ */
+export interface ActionEconomyBlock {
+  /**
+   * Main action available this turn.
+   */
+  action: boolean;
+  /**
+   * Bonus action available this turn.
+   */
+  bonus_action: boolean;
+  /**
+   * Reaction available until next turn start.
+   */
+  reaction: boolean;
+}
+/**
  * Phase 24b / Bundle A / L.I-SC-01 — NPC drive/barter/kill_for/fear_loss. REQUIRED in v0.8.
  */
 export interface WantModel {
@@ -2229,6 +2341,31 @@ export interface ScheduleNesting {
    * Per-playthrough perturbation seed (House governor: variance bands on stack initialization).
    */
   variance_seed: number;
+}
+/**
+ * Phase 4a.5 / Khoja Decision #2 — ALL NPCs get 9-CoreStat Tide-Stained stats. Scenery-tier NPCs use median baseline (10 across the 6 core; 0 across authority/ruin/creation).
+ */
+export interface CustomStatsBlock1 {
+  body: number;
+  grace: number;
+  sense: number;
+  mind: number;
+  will: number;
+  presence: number;
+  authority: number;
+  ruin: number;
+  creation: number;
+}
+/**
+ * Phase 4a.5 / Khoja Decision #2 — ALL NPCs get 5e ability scores via deterministic translation from stats (translation rules at Session 4c).
+ */
+export interface DerivedStatsBlock1 {
+  str: AbilityScore;
+  dex: AbilityScore;
+  con: AbilityScore;
+  int: AbilityScore;
+  wis: AbilityScore;
+  cha: AbilityScore;
 }
 export interface ValidatorStageResult {
   stage_id:
@@ -2455,6 +2592,6 @@ export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSch
 // ============================================================================
 // Generated from schema_pack v0.8.0
 // Entity count: 48
-// $defs count:  54
+// $defs count:  55
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================
