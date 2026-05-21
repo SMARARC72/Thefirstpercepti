@@ -16,7 +16,7 @@ import {
   type CharacterSheetTab,
   type SpellEntry,
 } from "../CharacterSheet.js";
-import type { Item, Player, PathLedgerEntry, Condition } from "@first-perception/types";
+import type { Item, Player, PathLedgerEntry, ConditionInstance } from "@first-perception/types";
 
 function makePlayer(overrides: Partial<Player> = {}): Player {
   return {
@@ -288,7 +288,7 @@ describe("CharacterSheet — Spells tab (R-51 cost layer)", () => {
 });
 
 describe("CharacterSheet — Conditions tab", () => {
-  const marked: Condition = {
+  const marked: ConditionInstance = {
     id: "cnd_marked",
     typeId: "marked_by_attention",
     name: "Marked by Attention",

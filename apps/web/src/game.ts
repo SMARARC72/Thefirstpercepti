@@ -151,14 +151,14 @@ import type {
   AppState,
   SuggestedAction,
   Item,
-  Condition,
+  ConditionInstance,
   LocationNode,
-  Region,
-  Consequence,
-  Rumor,
+  RegionState,
+  ConsequenceState,
+  RumorState,
 } from "@first-perception/types";
 
-export type { Player as PlayerState, FactionState, NpcState, TaleEntry, FateRecord, JournalEntry, MapPoint, WorldState, GameState, AppState, SuggestedAction, Item, Condition, LocationNode, Region, Consequence, Rumor };
+export type { Player as PlayerState, FactionState, NpcState, TaleEntry, FateRecord, JournalEntry, MapPoint, WorldState, GameState, AppState, SuggestedAction, Item, ConditionInstance, LocationNode, RegionState, ConsequenceState, RumorState };
 
 interface SavedPayload {
   version: 1;

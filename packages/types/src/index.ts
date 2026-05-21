@@ -10,6 +10,15 @@
 
 import type { RarityTierId, AttunementRequirement } from './items-5e.js';
 import type { Item } from './items-v06.js';
+import type {
+  AlignmentDescriptor,
+  CurrencyAmount,
+  DerivedStatsBlock,
+  FaithMeterEntry,
+  HpBlock,
+  MetersBlock,
+  PathLedgerEntry,
+} from './generated.js';
 
 // =============================================================================
 // PRIMITIVES
@@ -172,28 +181,186 @@ export interface ActionEconomy {
   reaction: boolean;
 }
 
+/**
+ * Phase 24a / RECON-208a — Player runtime envelope.
+ *
+ * The base shape is the original hand-rolled v0.7-era Player; the
+ * Phase 24a sub-tickets (208a/d/e/f then 208b/c) progressively pull
+ * in schema-richer fields from PlayerSchema so v0.8 Session 4 has a
+ * complete reconciliation target.
+ *
+ * Fields below the "RECON-208a identity block" comment are NEW in 24a,
+ * landed as OPTIONAL during the v0.7 era. v0.8 Session 4 promotes them
+ * to REQUIRED at the schema level + reconciles naming (camelCase →
+ * snake_case per cross-cutting recommendation #3 in
+ * SCHEMA_GAPS_FOR_V08.md).
+ *
+ * Per Khoja ratification (OPEN_QUESTIONS.md):
+ *   - Stats: Option C (dual blocks) — landed in RECON-208b
+ *   - Focus: Option B (focus_block) — landed in RECON-208c
+ */
 export interface Player {
+  // Original v0.7-era hand-rolled fields
   id: UUID;
   name: string;
   form: CharacterForm;
-  formLabel: string;
+  formLabel: string;     // B4 reject — UI projection of CharacterForm enum
   posture: KnowledgePosture;
-  postureLabel: string;
-  domain: Domain;
-  stats: Stats;
-  hp: number;
-  maxHp: number;
-  focus: number;
-  maxFocus: number;
-  conditions: Condition[];
+  postureLabel: string;  // B4 reject — UI projection of KnowledgePosture enum
+  domain: Domain;        // B4 gap (per ratification: PROMOTE in v0.8)
+  stats: Stats;          // Symmetric divergence — reconciled in 208b (Option C dual blocks)
+  hp: number;            // B1 drift (flat → HpBlock) — reconciled in 208c
+  maxHp: number;         // (paired with hp)
+  focus: number;         // B4 gap — focus_block per Option B, landed in 208c
+  maxFocus: number;      // (paired with focus)
+  conditions: ConditionInstance[];
   inventory: Item[];
-  tags: string[];
+  tags: string[];        // B4 gap → cross-entity primitive (208f promotes)
   proficiencyBonus: number;
   hitDice: HitDicePool;
   savingThrowProficiencies: ReadonlyArray<CoreStat>;
   attunementSlots: AttunementSlots;
   spellSlots?: Record<number, SpellSlotLevel>;
   actionEconomy?: ActionEconomy;
+
+  // ── RECON-208a identity block (NEW; schema-richer pull-in) ────────────
+  // Per Khoja ratification: optional in v0.7 runtime; v0.8 promotes to
+  // required + snake_case names. camelCase here to minimize 24a churn.
+  /** PlayerSchema.first_perception — character's first sensory anchor */
+  firstPerception?: string;
+  /** PlayerSchema.race_id — required at v0.8; optional in 24a */
+  raceId?: string;
+  /** PlayerSchema.subrace_id — null when no subrace */
+  subraceId?: string | null;
+  /** PlayerSchema.classes — class/subclass stack with levels (5e-style multiclass) */
+  classes?: Array<{
+    classId: string;
+    level: number;
+    subclassId?: string | null;
+    isPactClass?: boolean;
+  }>;
+  /** PlayerSchema.level_total — sum of classes[].level */
+  levelTotal?: number;
+  /** PlayerSchema.experience — XP accumulated */
+  experience?: number;
+  /** PlayerSchema.alignment_descriptor — 9-axis D&D-style alignment */
+  alignmentDescriptor?: AlignmentDescriptor;
+
+  // ── RECON-208d inventory + attunement + spell slots + pact + concentration ─
+  // Schema-richer pull-ins. Existing runtime fields (inventory, attunementSlots,
+  // spellSlots) are kept as-is for v0.7-era compatibility; new fields are added
+  // as optional. v0.8 Session 4 reconciles shapes (InventoryEntry vs Item discriminated
+  // union; SpellSlotTable vs Record; AttunementSlot tuple vs AttunementSlots wrapper).
+  /** PlayerSchema.pact_slots — Warlock-specific. Khojen is a warlock per memory. */
+  pactSlots?: {
+    max?: number;
+    current?: number;
+    slotLevel?: number;
+  };
+  /** PlayerSchema.known_spells — spells the character knows (separate from prepared) */
+  knownSpells?: Array<{
+    spellId: string;
+    source?: "race" | "class" | "feat" | "item" | "pact_boon" | "ritual" | "scroll";
+    prepared?: boolean;
+  }>;
+  /** PlayerSchema.spellbook_ids — for wizards / similar list-casters */
+  spellbookIds?: string[];
+  /** PlayerSchema.concentration — single-spell concentration tracking */
+  concentration?: {
+    activeSpellId?: string | null;
+    startedAt?: { day?: number; phase_id?: string };
+  };
+  /** PlayerSchema.abilities_known — class/race features known to the player */
+  abilitiesKnown?: unknown[];
+  /** PlayerSchema.abilities_hidden — features the character has but doesn't know about */
+  abilitiesHidden?: unknown[];
+
+  // ── RECON-208e reputation + faith + path ledger + currency ────────────
+  // Phase 22.6 + 23b dependency surface: CharacterSheet v3 Path Ledger tab
+  // (Phase 22.6 WIRING-404) reads pathLedger; FormOfEnding template
+  // context (Phase 23b PROD-601) reads faithMeters. Pulling these into
+  // runtime closes those dependency gaps cleanly.
+  /** PlayerSchema.currency — multi-denomination currency holdings */
+  currency?: CurrencyAmount;
+  /** PlayerSchema.carry_weight_kg — encumbrance tracking */
+  carryWeightKg?: number;
+  /** PlayerSchema.relationships — loose-typed in schema; Session 4 tightens */
+  relationships?: Record<string, unknown>;
+  /** PlayerSchema.reputation_profile — per-faction / per-region reputation + notoriety */
+  reputationProfile?: {
+    perFaction?: Record<string, number>;
+    perRegion?: Record<string, number>;
+    notoriety?: number;
+  };
+  /** PlayerSchema.faith_meters — active deity attestations (Phase 23b dependency) */
+  faithMeters?: FaithMeterEntry[];
+  /** PlayerSchema.path_ledger — weighted domain entries (Phase 22.6 CharacterSheet v3 dependency) */
+  pathLedger?: PathLedgerEntry[];
+
+  // ── RECON-208f action economy + tags primitive + session_state ────────
+  // Note: `tags: string[]` and `actionEconomy?: ActionEconomy` already exist
+  // as required/optional fields above (v0.7-era hand-rolled). 208f formalizes
+  // them as v0.8 candidates:
+  //   - tags promotes to cross-entity primitive (NPC + Region + LocationNode etc.)
+  //   - actionEconomy promotes as `action_economy_block` $def in Session 4
+  // Speculative fields per schema R-128-F / R-131-F / R-65 deferred to v0.9
+  // (dream_state, legacy_inherited_substrate_weight, scrip_speculation_history).
+
+  /** PlayerSchema.traits — class/race traits; opaque in schema, Session 4 tightens */
+  traits?: unknown[];
+  /** PlayerSchema.class_switch_history — multi-class respec audit trail */
+  classSwitchHistory?: Array<{
+    fromClassId: string;
+    toClassId: string;
+    onDayId?: string;
+    switchedBy?: "player_explicit" | "consequence" | "narrative_trigger";
+  }>;
+  /** PlayerSchema.session_state — transient per-session flags (Bundle H Hardening) */
+  sessionState?: {
+    lastMainSceneFocusAt?: string | null;
+    currentSessionId?: string | null;
+    transientFlags?: Record<string, unknown>;
+  };
+
+  // ── RECON-208b stats reconciliation per Khoja Option C ────────────────
+  // Dual stat-block storage. Per Khoja ratification (OPEN_QUESTIONS.md):
+  //   - stats: CustomStatsBlock (existing; 9-CoreStat Tide-Stained)
+  //   - derivedStats: DerivedStatsBlock (NEW; 5e str/dex/con/int/wis/cha)
+  //   - Deterministic translation rule lands in Session 4 at
+  //     content/schemas/translation_rules_v0.8.md
+  //   - Runtime `stats: Stats` is structurally compatible with
+  //     CustomStatsBlock (same 9 keys + number values).
+  //   - 5e SRD-compatible content reads from derivedStats; engine narrative
+  //     systems read from stats.
+  /** PlayerSchema.derived_stats — 5e ability scores. Required in v0.8; optional in 24a. */
+  derivedStats?: DerivedStatsBlock;
+
+  // ── RECON-208c meters + HP + focus per Khoja Option B ─────────────────
+  // Per Khoja ratification:
+  //   - Meters: pull in MetersBlock (fatigue/clarity/debt/notice/corruption)
+  //   - HP: pull in HpBlock (current/max/temp/death_save_successes/death_save_failures)
+  //   - Focus: focus_block as NEW $def in v0.8 (HpBlock-mirror shape)
+  //
+  // Phase 24a runtime adds these as OPTIONAL; v0.8 promotes to REQUIRED.
+  // Legacy `hp: number` + `maxHp: number` and `focus: number` + `maxFocus: number`
+  // are preserved for v0.7-era compatibility. Consumers can begin reading from
+  // the structured blocks; v0.8 deprecates the flat fields.
+  /** PlayerSchema.meters — MetersBlock (Phase 23b SEM-605 producer dependency) */
+  meters?: MetersBlock;
+  /** PlayerSchema.hp as HpBlock — structured replacement for flat hp/maxHp fields */
+  hpBlock?: HpBlock;
+  /**
+   * Phase 23b / Option B — new focus_block $def proposed for v0.8.
+   * Per Khoja ratification: mirrors HpBlock structure; supports
+   * class/level scaling on max. Recovery + source_kind for narrative
+   * context. Schema authoring in Session 4.
+   */
+  focusBlock?: {
+    current: number;
+    max: number;
+    recoveryRate?: number;
+    sourceKind?: "natural" | "pact" | "ritual";
+  };
 }
 
 // =============================================================================
@@ -202,7 +369,24 @@ export interface Player {
 
 export type ConditionCategory = "physical" | "mental" | "social" | "magical" | "divine" | "environmental";
 
-export interface Condition {
+/**
+ * Phase 24a / RECON-204 — Renamed from `Condition` to `ConditionInstance`.
+ *
+ * Runtime active-instance shape (a condition currently applied to a character,
+ * with duration + stacks). Per Desktop Q3.3: NOT renamed to `ConditionState`
+ * (would be semantically misleading — this is an instance, not a state-machine
+ * state). Closest schema analog is `ConditionActiveInstance` (a slim instance
+ * shape without UI display fields).
+ *
+ * No bare `Condition` alias is exported — the schema's `ConditionSchema`
+ * (condition definition with ui_glyph, removal_methods) is conceptually
+ * distinct from instances. Consumers needing the runtime instance import
+ * `ConditionInstance`; consumers needing the schema definition import
+ * `ConditionSchema` explicitly.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Condition section).
+ */
+export interface ConditionInstance {
   id: UUID;
   typeId: string;
   name: string;
@@ -271,7 +455,17 @@ export interface POI {
 // WORLD — REGION & WEATHER
 // =============================================================================
 
-export interface Region {
+/**
+ * Phase 24a / RECON-201 — Renamed from `Region` to `RegionState`.
+ *
+ * Runtime world-state envelope (current world simulation tracks per-region).
+ * Distinct from `RegionSchema` (campaign-config region with status enum,
+ * pantheon refs, weather_state object) which is re-exported from generated.ts
+ * and accessible as `RegionSchema` or the convenience alias `Region` below.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Region section).
+ */
+export interface RegionState {
   id: UUID;
   name: string;
   description: string;
@@ -440,7 +634,18 @@ export interface Effect {
   description: string;
 }
 
-export interface Consequence {
+/**
+ * Phase 24a / RECON-203 — Renamed from `Consequence` to `ConsequenceState`.
+ *
+ * Runtime resolution-state envelope (whether a consequence has fired,
+ * its effects, its narrative outcome). Distinct from `ConsequenceSchema`
+ * (campaign-event design with trigger_type enum, affected_systems,
+ * preventable flag, status enum). The bare `Consequence` alias resolves
+ * to the schema shape.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Consequence section).
+ */
+export interface ConsequenceState {
   id: UUID;
   type: ConsequenceType;
   trigger: Trigger;
@@ -497,13 +702,13 @@ export interface Legacy {
 
 export interface WorldMutation {
   factionShifts: { factionId: UUID; trustDelta: number; fearDelta: number }[];
-  rumors: Rumor[];
+  rumors: RumorState[];
   locationChanges: { locationId: UUID; tagsAdded: string[]; tagsRemoved: string[] }[];
 }
 
 export interface Inheritance {
   item?: Item;
-  curse?: Condition;
+  curse?: ConditionInstance;
   reputation?: Record<UUID, number>;
   alteredFactions?: UUID[];
   startingAdvantage?: string;
@@ -513,7 +718,17 @@ export interface Inheritance {
 // RUMORS
 // =============================================================================
 
-export interface Rumor {
+/**
+ * Phase 24a / RECON-202 — Renamed from `Rumor` to `RumorState`.
+ *
+ * Runtime propagation-state envelope (how a rumor moves through the world).
+ * Distinct from `RumorSchema` (rumor design with versions, distortion_type,
+ * factions_amplifying) which is re-exported from generated.ts. The bare
+ * `Rumor` alias now resolves to the schema shape.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Rumor section).
+ */
+export interface RumorState {
   id: UUID;
   content: string;
   sourceNpcId?: UUID;
@@ -562,12 +777,12 @@ export interface SaveSnapshot {
   rngState: number;
   player: Player;
   locations: LocationNode[];
-  regions: Region[];
+  regions: RegionState[];
   factions: Faction[];
   npcs: NPC[];
   tale: TaleEntry[];
   journal: JournalEntry[];
-  consequences: Consequence[];
+  consequences: ConsequenceState[];
   world: WorldSnapshot;
   legacy?: Legacy;
   settings: GameSettings;
@@ -677,7 +892,7 @@ export interface NpcState {
   knowledge?: string[];
   secrets?: Secret[];
   memories?: unknown[];
-  conditions?: Condition[];
+  conditions?: ConditionInstance[];
   inventory?: Item[];
   alive?: boolean;
   isAnomaly?: boolean;
@@ -722,14 +937,14 @@ export interface GameState {
   player: Player;
   currentLocationId: UUID;
   locations: LocationNode[];
-  regions: Region[];
+  regions: RegionState[];
   factions: FactionState[];
   npcs: NpcState[];
   tale: TaleEntry[];
   journal: JournalEntry[];
   fate: FateRecord[];
-  consequences: Consequence[];
-  rumors: Rumor[];
+  consequences: ConsequenceState[];
+  rumors: RumorState[];
   suggestedActions: SuggestedAction[];
   lastFeedback: string;
   onboardingDismissed: boolean;
@@ -746,7 +961,7 @@ export interface ActionResult {
   patches: StatePatch[];
   rolls: RollResult[];
   narrative: TaleEntry[];
-  consequences: Consequence[];
+  consequences: ConsequenceState[];
   soundCue?: string;
   animation?: string;
   feedback: string;
@@ -871,3 +1086,47 @@ export type {
 
 export * from "./generated.js";
 export * from "./items-v06.js";
+
+// =============================================================================
+// PHASE 24a RUNTIME ↔ SCHEMA ALIASES (RECON-201..207)
+// =============================================================================
+//
+// Bare-name aliases that expose the SCHEMA shape for entities where the runtime
+// envelope has been renamed to `XxxState` / `XxxInstance`. After Phase 24a:
+//
+//   - `Region` (this alias)   = `RegionSchema` (campaign-config shape)
+//   - `RegionState` (above)   = runtime world-simulation envelope
+//
+// Consumers that need the runtime envelope import `RegionState` explicitly.
+// Consumers that need the schema shape can use either `Region` or `RegionSchema`.
+//
+// Per Desktop's Q3.3 decision: `XxxState` is the canonical suffix for renamed
+// runtime envelopes. Exceptions: `ConditionInstance` (instance semantics),
+// `LocationNode` (graph-node semantics), `Player` (no rename — too many consumers).
+// =============================================================================
+
+export type { RegionSchema as Region } from "./generated.js";
+export type { RumorSchema as Rumor } from "./generated.js";
+export type { ConsequenceSchema as Consequence } from "./generated.js";
+
+// RECON-205/206 (Desktop Q3.2): NPC and Faction have TWO competing
+// hand-rolled shapes in the runtime — `Faction` + `FactionState`,
+// `NPC` + `NpcState`. Both are heavily used (13+6 and 33+7 consumers
+// respectively). Per Desktop, do NOT rename. Instead, re-export the
+// schema-derived shapes alongside under their canonical schema-suffix
+// names so callers that need the design-contract shape can pick it
+// explicitly. v0.8 Session 4 will resolve the tri-shape situation.
+//
+// Note: `FactionSchema` and `NpcSchema` are already exported via
+// `export * from "./generated.js"` above. These explicit re-exports
+// are documentation aids — they make the intentional duality visible
+// at the import site rather than hidden under a wildcard re-export.
+export type { FactionSchema, NpcSchema } from "./generated.js";
+
+// RECON-207 (Desktop Q3.3): LocationNode keeps its name. The "Node"
+// suffix carries graph-topology semantics (exits, POIs, edges) that
+// "State" would obscure. The schema's slim `LocationSchema` (location_id,
+// region_id, name, fog_of_knowledge_state, parent_location_id) is the
+// campaign-config side and is re-exported here for explicit access.
+// v0.8 Session 4 promotes Exit / POI / LockRequirement / SkillCheck.
+export type { LocationSchema } from "./generated.js";

@@ -1,15 +1,15 @@
-import type { GameState, Consequence, StatePatch, TriggerKind } from '@first-perception/types';
+import type { GameState, ConsequenceState, StatePatch, TriggerKind } from '@first-perception/types';
 import { SeededRNG } from '../engine/DiceEngine';
 import { patchReplace, patchIncrement, patchRemove, makeId } from '../engine-utils';
 
 export class ConsequenceScheduler {
-  private queue: Consequence[] = [];
+  private queue: ConsequenceState[] = [];
 
-  add(consequence: Consequence): void {
+  add(consequence: ConsequenceState): void {
     this.queue.push(consequence);
   }
 
-  getQueue(): Consequence[] {
+  getQueue(): ConsequenceState[] {
     return this.queue;
   }
 
@@ -17,8 +17,8 @@ export class ConsequenceScheduler {
     this.queue = this.queue.filter((c) => !c.resolved);
   }
 
-  evaluate(game: GameState, rng: SeededRNG): { resolved: Consequence[]; patches: StatePatch[] } {
-    const resolved: Consequence[] = [];
+  evaluate(game: GameState, rng: SeededRNG): { resolved: ConsequenceState[]; patches: StatePatch[] } {
+    const resolved: ConsequenceState[] = [];
     const patches: StatePatch[] = [];
 
     for (const consequence of this.queue) {
@@ -44,7 +44,7 @@ export class ConsequenceScheduler {
     return { resolved, patches };
   }
 
-  private checkTrigger(consequence: Consequence, game: GameState, rng: SeededRNG): boolean {
+  private checkTrigger(consequence: ConsequenceState, game: GameState, rng: SeededRNG): boolean {
     const trigger = consequence.trigger;
     switch (trigger.kind) {
       case 'immediate':
@@ -66,7 +66,7 @@ export class ConsequenceScheduler {
     }
   }
 
-  private applyEffect(effect: Consequence['effects'][number], _game: GameState, patches: StatePatch[]): void {
+  private applyEffect(effect: ConsequenceState['effects'][number], _game: GameState, patches: StatePatch[]): void {
     switch (effect.type) {
       case 'damage':
         patches.push(patchIncrement('/player/hp', -(effect.value ?? 1)));

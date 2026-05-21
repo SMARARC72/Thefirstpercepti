@@ -1,24 +1,24 @@
-import type { Region, WeatherPattern, UUID } from '@first-perception/types';
+import type { RegionState, WeatherPattern, UUID } from '@first-perception/types';
 import { SeededRNG } from '../engine/DiceEngine';
 
 export class RegionManager {
-  private regions: Map<UUID, Region> = new Map();
+  private regions: Map<UUID, RegionState> = new Map();
 
-  constructor(regions: Region[] = []) {
+  constructor(regions: RegionState[] = []) {
     for (const r of regions) {
       this.regions.set(r.id, r);
     }
   }
 
-  addRegion(region: Region): void {
+  addRegion(region: RegionState): void {
     this.regions.set(region.id, region);
   }
 
-  getRegion(id: UUID): Region | undefined {
+  getRegion(id: UUID): RegionState | undefined {
     return this.regions.get(id);
   }
 
-  getAllRegions(): Region[] {
+  getAllRegions(): RegionState[] {
     return Array.from(this.regions.values());
   }
 

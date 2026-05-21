@@ -1,11 +1,11 @@
 import type {
   LocationNode,
-  Region,
+  RegionState,
   FactionState,
   NpcState,
   Exit,
   POI,
-  Condition,
+  ConditionInstance,
   ConditionEffect,
   Item,
   LockRequirement,
@@ -21,10 +21,10 @@ import forgingRecipesData from "./forging-recipes.json";
 
 export interface WorldData {
   locations: LocationNode[];
-  regions: Region[];
+  regions: RegionState[];
   factions: FactionState[];
   npcs: NpcState[];
-  conditions: Condition[];
+  conditions: ConditionInstance[];
   items: Item[];
   forgingRecipes: ForgeRecipe[];
 }
@@ -116,7 +116,7 @@ interface RawCondition {
   typeId: string;
   name: string;
   description: string;
-  category?: Condition["category"];
+  category?: ConditionInstance["category"];
   isHarmful?: boolean;
   turnsRemaining?: number | null;
   stacks?: number;
@@ -170,8 +170,8 @@ function mapLocations(raw: RawLocation[]): LocationNode[] {
   }));
 }
 
-function mapRegionsFromLocations(locations: LocationNode[]): Region[] {
-  const regionMap = new Map<string, Region>();
+function mapRegionsFromLocations(locations: LocationNode[]): RegionState[] {
+  const regionMap = new Map<string, RegionState>();
   for (const loc of locations) {
     if (!regionMap.has(loc.regionId)) {
       regionMap.set(loc.regionId, {
@@ -228,7 +228,7 @@ function mapNpcs(raw: RawNpc[]): NpcState[] {
   }));
 }
 
-function mapConditions(raw: RawCondition[]): Condition[] {
+function mapConditions(raw: RawCondition[]): ConditionInstance[] {
   return raw.map((c) => ({
     id: c.id,
     typeId: c.typeId,

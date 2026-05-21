@@ -15,7 +15,7 @@
 import type {
   GameState,
   ActionResult,
-  Consequence,
+  ConsequenceState,
   Item,
   Player,
   RollBand,
@@ -169,7 +169,7 @@ export function combatReducer(game: GameState, command: string, rng: SeededRNG):
 
   const patches: StatePatch[] = [];
   const narrative = [];
-  const consequences: Consequence[] = [];
+  const consequences: ConsequenceState[] = [];
 
   // Slot is charged for any verb that gets past the gate, hit or miss.
   // Patch the whole actionEconomy object rather than the nested slot so

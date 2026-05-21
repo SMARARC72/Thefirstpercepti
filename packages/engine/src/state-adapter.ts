@@ -6,12 +6,12 @@ import type {
   Player,
   LocationNode,
   Exit,
-  Region,
+  RegionState,
   FactionState,
   NpcState,
-  Condition,
+  ConditionInstance,
   Item,
-  Consequence,
+  ConsequenceState,
   Trigger,
   Effect,
   TaleEntry,
@@ -49,8 +49,8 @@ export function resetUuidCounter(): void {
   _idCounter = 0;
 }
 
-function oldConditionToNew(old: OldCondition): Condition {
-  const categoryMap: Record<string, Condition['category']> = {
+function oldConditionToNew(old: OldCondition): ConditionInstance {
+  const categoryMap: Record<string, ConditionInstance['category']> = {
     injured: 'physical',
     wounded: 'physical',
     critical: 'physical',
@@ -81,13 +81,13 @@ function oldConditionToNew(old: OldCondition): Condition {
     stacks: old.severity,
     maxStacks: 10,
     effects: Object.entries(old.statModifiers).map(([stat, value]) => ({
-      stat: stat as Condition['effects'][number]['stat'],
+      stat: stat as ConditionInstance['effects'][number]['stat'],
       modifier: value,
     })),
   };
 }
 
-function newConditionToOld(n: Condition): OldCondition {
+function newConditionToOld(n: ConditionInstance): OldCondition {
   const statModifiers: Record<string, number> = {};
   for (const eff of n.effects) {
     if (eff.stat) statModifiers[eff.stat] = (statModifiers[eff.stat] ?? 0) + (eff.modifier ?? 0);
@@ -238,7 +238,7 @@ export function newLocationToOldPartial(n: LocationNode): Partial<OldLocation> {
   };
 }
 
-function oldRegionToNew(old: OldRegion): Region {
+function oldRegionToNew(old: OldRegion): RegionState {
   const weatherPattern: WeatherPattern = {
     type: old.weather,
     description: `Current weather: ${old.weather}`,
@@ -300,7 +300,7 @@ function oldNpcToNew(old: OldNPC): NpcState {
   };
 }
 
-function oldConsequenceToNew(old: OldConsequence): Consequence {
+function oldConsequenceToNew(old: OldConsequence): ConsequenceState {
   const trigger: Trigger = {
     kind: old.trigger.type === 'time' ? 'turns_remaining'
       : old.trigger.type === 'action' ? 'action'
