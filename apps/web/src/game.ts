@@ -363,9 +363,9 @@ export function createGameFromCreation(creation: CreationState): GameState {
       maxFocus,
       tags: [formLabel, postureLabel, domainLabel(domain)],
       inventory: [
-        { id: "item-start", name: creation.desiredItem.trim() || "a dull iron token", type: "misc", description: "", rarity: "common" },
-        { id: "item-matches", name: "three dry matches", type: "tool", description: "", rarity: "common" },
-        { id: "item-testimony", name: "a sealed scrap of testimony", type: "document", description: "", rarity: "common" },
+        { item_id: "item-start", name: creation.desiredItem.trim() || "a dull iron token", type: "trinket", rarity: "common" },
+        { item_id: "item-matches", name: "three dry matches", type: "tool", rarity: "common" },
+        { item_id: "item-testimony", name: "a sealed scrap of testimony", type: "book", rarity: "common" },
       ],
       conditions: worldData.conditions.filter((c) => c.typeId === "salt_touched"),
       proficiencyBonus: 2,
