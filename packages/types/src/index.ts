@@ -10,7 +10,12 @@
 
 import type { RarityTierId, AttunementRequirement } from './items-5e.js';
 import type { Item } from './items-v06.js';
-import type { AlignmentDescriptor } from './generated.js';
+import type {
+  AlignmentDescriptor,
+  CurrencyAmount,
+  FaithMeterEntry,
+  PathLedgerEntry,
+} from './generated.js';
 
 // =============================================================================
 // PRIMITIVES
@@ -266,6 +271,28 @@ export interface Player {
   abilitiesKnown?: unknown[];
   /** PlayerSchema.abilities_hidden — features the character has but doesn't know about */
   abilitiesHidden?: unknown[];
+
+  // ── RECON-208e reputation + faith + path ledger + currency ────────────
+  // Phase 22.6 + 23b dependency surface: CharacterSheet v3 Path Ledger tab
+  // (Phase 22.6 WIRING-404) reads pathLedger; FormOfEnding template
+  // context (Phase 23b PROD-601) reads faithMeters. Pulling these into
+  // runtime closes those dependency gaps cleanly.
+  /** PlayerSchema.currency — multi-denomination currency holdings */
+  currency?: CurrencyAmount;
+  /** PlayerSchema.carry_weight_kg — encumbrance tracking */
+  carryWeightKg?: number;
+  /** PlayerSchema.relationships — loose-typed in schema; Session 4 tightens */
+  relationships?: Record<string, unknown>;
+  /** PlayerSchema.reputation_profile — per-faction / per-region reputation + notoriety */
+  reputationProfile?: {
+    perFaction?: Record<string, number>;
+    perRegion?: Record<string, number>;
+    notoriety?: number;
+  };
+  /** PlayerSchema.faith_meters — active deity attestations (Phase 23b dependency) */
+  faithMeters?: FaithMeterEntry[];
+  /** PlayerSchema.path_ledger — weighted domain entries (Phase 22.6 CharacterSheet v3 dependency) */
+  pathLedger?: PathLedgerEntry[];
 }
 
 // =============================================================================
