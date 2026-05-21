@@ -14,6 +14,7 @@ import type { LLMClient, LLMRequest, LLMResponse } from "./types.js";
 import { LLMClientError } from "./types.js";
 import { DeepSeekClient } from "./DeepSeekClient.js";
 import { MistralClient } from "./MistralClient.js";
+import { OpenAIClient } from "./OpenAIClient.js";
 import { AnthropicClient } from "../AnthropicClient.js";
 import { MoonshotClient } from "../MoonshotClient.js";
 import type {
@@ -95,6 +96,9 @@ function findEnvVar(canonical: string): string | undefined {
   if (canonical === "MOONSHOT_API_KEY") {
     targets.add("moonshoot_api_key");
   }
+  if (canonical === "OPENAI_API_KEY") {
+    targets.add("open_api_key"); // Vercel env var named "Open_API_Key" (lowercased)
+  }
   for (const [k, v] of Object.entries(process.env)) {
     if (v && targets.has(k.toLowerCase())) return v;
   }
@@ -143,6 +147,18 @@ export function getClientForModel(modelId: string): LLMClient {
   }
   if (modelId.startsWith("mistral-")) {
     return get("mistral", () => new MistralClient());
+  }
+  if (modelId.startsWith("gpt-") || modelId.startsWith("o1-") || modelId.startsWith("o3-")) {
+    return get("openai", () => {
+      const apiKey = findEnvVar("OPENAI_API_KEY");
+      if (!apiKey) {
+        throw new LLMClientError(
+          "OPENAI_API_KEY not set; cannot route gpt-/o1-/o3- model",
+          "openai",
+        );
+      }
+      return new OpenAIClient(apiKey);
+    });
   }
   throw new LLMClientError(
     `No client registered for model_id "${modelId}". Add to ClientRegistry.getClientForModel().`,

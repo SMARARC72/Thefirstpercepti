@@ -24,6 +24,14 @@ interface LLMRequestEnvelope {
    */
   agent?: string;
   session_id?: string;
+  /**
+   * Phase 22.6 — when set alongside `agent`, override tier-policy model
+   * selection and force a specific model_id. Useful for ad-hoc smoke
+   * testing of a single provider (e.g. force_model_id:"gpt-4o-mini" to
+   * exercise OpenAI without putting it in any agent's tier chain).
+   * Production traffic should leave this unset — let tier_policy decide.
+   */
+  force_model_id?: string;
 }
 
 export default withErrors(async (req: IncomingMessage, res: ServerResponse) => {
@@ -57,6 +65,7 @@ export default withErrors(async (req: IncomingMessage, res: ServerResponse) => {
         {
           agent: envelope.agent as Parameters<typeof callLLM>[0]["agent"],
           session_id: envelope.session_id,
+          force_model_id: envelope.force_model_id,
         },
         {
           system: systemMsg?.content,
