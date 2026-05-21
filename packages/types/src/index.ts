@@ -13,7 +13,10 @@ import type { Item } from './items-v06.js';
 import type {
   AlignmentDescriptor,
   CurrencyAmount,
+  DerivedStatsBlock,
   FaithMeterEntry,
+  HpBlock,
+  MetersBlock,
   PathLedgerEntry,
 } from './generated.js';
 
@@ -317,6 +320,46 @@ export interface Player {
     lastMainSceneFocusAt?: string | null;
     currentSessionId?: string | null;
     transientFlags?: Record<string, unknown>;
+  };
+
+  // ── RECON-208b stats reconciliation per Khoja Option C ────────────────
+  // Dual stat-block storage. Per Khoja ratification (OPEN_QUESTIONS.md):
+  //   - stats: CustomStatsBlock (existing; 9-CoreStat Tide-Stained)
+  //   - derivedStats: DerivedStatsBlock (NEW; 5e str/dex/con/int/wis/cha)
+  //   - Deterministic translation rule lands in Session 4 at
+  //     content/schemas/translation_rules_v0.8.md
+  //   - Runtime `stats: Stats` is structurally compatible with
+  //     CustomStatsBlock (same 9 keys + number values).
+  //   - 5e SRD-compatible content reads from derivedStats; engine narrative
+  //     systems read from stats.
+  /** PlayerSchema.derived_stats — 5e ability scores. Required in v0.8; optional in 24a. */
+  derivedStats?: DerivedStatsBlock;
+
+  // ── RECON-208c meters + HP + focus per Khoja Option B ─────────────────
+  // Per Khoja ratification:
+  //   - Meters: pull in MetersBlock (fatigue/clarity/debt/notice/corruption)
+  //   - HP: pull in HpBlock (current/max/temp/death_save_successes/death_save_failures)
+  //   - Focus: focus_block as NEW $def in v0.8 (HpBlock-mirror shape)
+  //
+  // Phase 24a runtime adds these as OPTIONAL; v0.8 promotes to REQUIRED.
+  // Legacy `hp: number` + `maxHp: number` and `focus: number` + `maxFocus: number`
+  // are preserved for v0.7-era compatibility. Consumers can begin reading from
+  // the structured blocks; v0.8 deprecates the flat fields.
+  /** PlayerSchema.meters — MetersBlock (Phase 23b SEM-605 producer dependency) */
+  meters?: MetersBlock;
+  /** PlayerSchema.hp as HpBlock — structured replacement for flat hp/maxHp fields */
+  hpBlock?: HpBlock;
+  /**
+   * Phase 23b / Option B — new focus_block $def proposed for v0.8.
+   * Per Khoja ratification: mirrors HpBlock structure; supports
+   * class/level scaling on max. Recovery + source_kind for narrative
+   * context. Schema authoring in Session 4.
+   */
+  focusBlock?: {
+    current: number;
+    max: number;
+    recoveryRate?: number;
+    sourceKind?: "natural" | "pact" | "ritual";
   };
 }
 
