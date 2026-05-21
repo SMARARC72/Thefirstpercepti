@@ -955,3 +955,11 @@ export type { ConsequenceSchema as Consequence } from "./generated.js";
 // are documentation aids — they make the intentional duality visible
 // at the import site rather than hidden under a wildcard re-export.
 export type { FactionSchema, NpcSchema } from "./generated.js";
+
+// RECON-207 (Desktop Q3.3): LocationNode keeps its name. The "Node"
+// suffix carries graph-topology semantics (exits, POIs, edges) that
+// "State" would obscure. The schema's slim `LocationSchema` (location_id,
+// region_id, name, fog_of_knowledge_state, parent_location_id) is the
+// campaign-config side and is re-exported here for explicit access.
+// v0.8 Session 4 promotes Exit / POI / LockRequirement / SkillCheck.
+export type { LocationSchema } from "./generated.js";
