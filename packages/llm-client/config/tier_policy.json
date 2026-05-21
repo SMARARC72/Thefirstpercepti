@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../content/schemas/schema_pack_v0.7.json",
+  "policy_id": "v1_solo_playtest_2026_05",
+  "version": "0.1.0",
+  "last_updated_iso": "2026-05-20T00:00:00Z",
+  "daily_cap_usd": 5.00,
+  "per_session_token_budget": 250000,
+  "max_fallback_attempts": 3,
+  "cap_buffer_pct": 0.10,
+
+  "agent_tiers": {
+    "narrator":               "premium",
+    "form_of_ending":         "premium",
+    "state_manager":          "mid",
+    "voice_evaluator":        "cheap",
+    "validator_input":        "cheap",
+    "validator_rules":        "cheap",
+    "validator_consistency":  "cheap",
+    "validator_progression":  "cheap",
+    "validator_contradiction":"cheap",
+    "validator_boundary":     "cheap",
+    "postcard":               "premium",
+    "other":                  "cheap"
+  },
+
+  "fallback_chains": {
+    "premium": ["claude-sonnet-4-6", "kimi-k2"],
+    "mid":     ["claude-haiku-4-5",  "kimi-k2", "mistral-medium-2"],
+    "cheap":   ["deepseek-chat",     "mistral-medium-2", "kimi-k2"]
+  },
+  "fallback_chain_rationale": "premium chain ends at kimi-k2 (voice score 0.72, warn band but acceptable). deepseek-chat scored 0.69 (fail band for Narrator voice) so it is EXCLUDED from premium chain. If both Sonnet and Kimi fail, throttle middleware returns the canned 'world pauses' graceful fallback. See packages/narrative/src/voice/fallback_baselines.json for methodology.",
+
+  "notes": {
+    "narrator_in_premium":         "Voice fidelity is load-bearing. Falls back to Kimi K2 (mid tier voice scores ~0.72 in re-baseline) only when daily cap is hit.",
+    "form_of_ending_in_premium":   "Terminal narration is canonical. Treat as Narrator-tier.",
+    "validators_in_cheap":         "Stage 6 has known false-positive risk regardless of model; cheap-tier choice is fine.",
+    "voice_evaluator_in_cheap":    "Just regex + heuristics; doesn't actually need LLM for v1.",
+    "postcard_in_premium":         "Postcard format is the player's takeaway artifact. Worth the cost."
+  }
+}

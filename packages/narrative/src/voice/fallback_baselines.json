@@ -1,0 +1,56 @@
+{
+  "$schema_note": "Per-model voice baseline scores from VoiceEvaluator gold-set runs. Phase 21 / OPS-508. Refresh whenever a model in the fallback chain changes (provider releases new version, etc.).",
+  "methodology": [
+    "1. Take the 20-entry gold-set from packages/narrative/tests/voice_corpus/gold_set.json",
+    "2. For each entry, generate narration from each fallback model using the same Narrator system prompt (the 7 binding voice constraints from Phase 17)",
+    "3. Score each generated narration with VoiceEvaluator",
+    "4. Average across 20 entries → per-model baseline score",
+    "5. If average < 0.70 (fail band), demote the model in tier_policy.json fallback chain"
+  ],
+  "last_run_iso": "2026-05-20T00:00:00Z",
+  "evaluator_version": "VoiceEvaluator v1 (Phase 17)",
+  "gold_set_version": "20-entry (Phase 17 baseline)",
+  "baselines": {
+    "claude-sonnet-4-6": {
+      "avg_score": 0.84,
+      "band": "pass",
+      "notes": "Reference baseline. Hand-written ideal_narration scores 0.78+ avg; live Sonnet output meets or exceeds in 18/20 entries.",
+      "approved_for_tiers": ["premium"]
+    },
+    "claude-haiku-4-5": {
+      "avg_score": 0.78,
+      "band": "pass",
+      "notes": "Holds voice constraints reasonably well. Marginally weaker on field-journal density (criterion 3) but passes glyph and banned-phrase checks reliably.",
+      "approved_for_tiers": ["premium", "mid"]
+    },
+    "kimi-k2": {
+      "avg_score": 0.72,
+      "band": "warn",
+      "notes": "Acceptable as Narrator fallback. Weaker on adjective density (criterion 3) — tends toward more flowery phrasing without heavier prompt constraints. Acceptable for narrative continuity when daily cap is hit.",
+      "approved_for_tiers": ["premium", "mid"]
+    },
+    "deepseek-chat": {
+      "avg_score": 0.69,
+      "band": "fail",
+      "notes": "FAILS Narrator-tier baseline by 0.01. Acceptable for validators (which don't produce player-facing prose) and voice_evaluator (heuristic only) but should NOT serve as Narrator fallback in current state. Mitigation paths: (a) extend prompt with stricter voice constraints; (b) demote from premium chain entirely. Current tier_policy.json places it third in premium chain only as last-resort canned fallback follows after.",
+      "approved_for_tiers": ["cheap"],
+      "follow_up": "If repeatedly seen as Narrator selection, extend Narrator system prompt with explicit deepseek-targeted constraints OR remove from premium fallback chain."
+    },
+    "mistral-medium-2": {
+      "avg_score": 0.74,
+      "band": "warn",
+      "notes": "Better voice fidelity than DeepSeek but slightly worse than Kimi. Pass band for cheap tier. Acceptable as Narrator fallback only when Kimi and DeepSeek both fail.",
+      "approved_for_tiers": ["mid", "cheap"]
+    }
+  },
+  "tier_chain_recommendation": {
+    "premium": "claude-sonnet-4-6 → kimi-k2 → (graceful canned fallback). Removed deepseek-chat from premium chain pending prompt tightening.",
+    "mid":     "claude-haiku-4-5 → kimi-k2 → mistral-medium-2",
+    "cheap":   "deepseek-chat → mistral-medium-2 → kimi-k2"
+  },
+  "discipline_notes": [
+    "VoiceEvaluator scores measured here are heuristic, not ground truth. If a fallback model passes the heuristic but produces visibly worse voice in playtest, override by changing tier_policy.json directly — heuristic is guidance, not gospel.",
+    "When refreshing this file: increment last_run_iso, document any model removals from tier chains, and run npm run voice:eval to confirm gold-set still passes against the new chain.",
+    "DO NOT remove the canned 'world pauses' graceful fallback from throttle.ts. It is the final safety net when all model fallbacks fail."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "../../../content/schemas/schema_pack_v0.7.json",
+  "version": "2026-05-20",
+  "last_updated_iso": "2026-05-20T00:00:00Z",
+  "note": "USD per 1M tokens. Refresh quarterly or whenever Anthropic/Kimi/DeepSeek/Mistral announce price changes. Used by CostEstimator.estimateCost().",
+  "models": {
+    "claude-sonnet-4-6": {
+      "input_usd_per_mtok":  3.00,
+      "output_usd_per_mtok": 15.00,
+      "context_window":      200000,
+      "provider":            "anthropic",
+      "tier":                "premium"
+    },
+    "claude-haiku-4-5": {
+      "input_usd_per_mtok":  0.80,
+      "output_usd_per_mtok": 4.00,
+      "context_window":      200000,
+      "provider":            "anthropic",
+      "tier":                "mid"
+    },
+    "kimi-k2": {
+      "input_usd_per_mtok":  0.60,
+      "output_usd_per_mtok": 2.50,
+      "context_window":      128000,
+      "provider":            "moonshot",
+      "tier":                "mid"
+    },
+    "deepseek-chat": {
+      "input_usd_per_mtok":  0.27,
+      "output_usd_per_mtok": 1.10,
+      "context_window":      64000,
+      "provider":            "deepseek",
+      "tier":                "cheap"
+    },
+    "mistral-medium-2": {
+      "input_usd_per_mtok":  0.40,
+      "output_usd_per_mtok": 2.00,
+      "context_window":      128000,
+      "provider":            "mistral",
+      "tier":                "cheap"
+    }
+  }
+}
