@@ -26,7 +26,7 @@
  */
 
 import type { Player, Item, EquipSlot } from "@first-perception/types";
-import type { PathLedgerEntry, Condition } from "@first-perception/types";
+import type { PathLedgerEntry, ConditionInstance } from "@first-perception/types";
 import { createInventoryPanel } from "./InventoryPanel.js";
 
 export type CharacterSheetTab = "stats" | "inventory" | "spells" | "conditions" | "path";
@@ -350,7 +350,7 @@ function renderConditionsTab(props: CharacterSheetProps): HTMLElement {
   list.dataset.testid = "conditions-list";
   list.setAttribute("role", "list");
 
-  const conditions: Condition[] = props.player.conditions ?? [];
+  const conditions: ConditionInstance[] = props.player.conditions ?? [];
   if (conditions.length === 0) {
     const empty = document.createElement("li");
     empty.className = "empty-note";

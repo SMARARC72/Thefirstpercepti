@@ -1,4 +1,4 @@
-import type { GameState, ActionResult, Consequence } from '@first-perception/types';
+import type { GameState, ActionResult, ConsequenceState } from '@first-perception/types';
 import { resultBandToRollBand } from '@first-perception/types';
 import { SeededRNG } from '../engine/DiceEngine';
 import {
@@ -65,7 +65,7 @@ export function moveReducer(game: GameState, command: string, rng: SeededRNG): A
 
   const patches = [];
   const narrative = [];
-  const consequences: Consequence[] = [];
+  const consequences: ConsequenceState[] = [];
 
   // Branch on the coarse 4-band RollBand so partial-failure rolls produce
   // partial outcomes (not the prior bug where they fell into full-success).

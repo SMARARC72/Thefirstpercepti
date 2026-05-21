@@ -11,7 +11,7 @@ import type {
   ActionResult,
   TaleEntry,
   SuggestedAction,
-  Consequence,
+  ConsequenceState,
   Domain,
   CoreStat,
   ResultBand,
@@ -127,7 +127,7 @@ export function buildActionResult(params: {
   patches?: StatePatch[];
   rolls?: RollResult[];
   narrative?: TaleEntry[];
-  consequences?: Consequence[];
+  consequences?: ConsequenceState[];
   feedback?: string;
   suggestions?: SuggestedAction[];
   journal?: { id: string; turn: number; label: string; detail: string; category: 'perception' | 'evidence' | 'rumor' | 'world' | 'npc' | 'faction' | 'legacy' };

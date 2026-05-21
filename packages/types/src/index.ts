@@ -185,7 +185,7 @@ export interface Player {
   maxHp: number;
   focus: number;
   maxFocus: number;
-  conditions: Condition[];
+  conditions: ConditionInstance[];
   inventory: Item[];
   tags: string[];
   proficiencyBonus: number;
@@ -202,7 +202,24 @@ export interface Player {
 
 export type ConditionCategory = "physical" | "mental" | "social" | "magical" | "divine" | "environmental";
 
-export interface Condition {
+/**
+ * Phase 24a / RECON-204 — Renamed from `Condition` to `ConditionInstance`.
+ *
+ * Runtime active-instance shape (a condition currently applied to a character,
+ * with duration + stacks). Per Desktop Q3.3: NOT renamed to `ConditionState`
+ * (would be semantically misleading — this is an instance, not a state-machine
+ * state). Closest schema analog is `ConditionActiveInstance` (a slim instance
+ * shape without UI display fields).
+ *
+ * No bare `Condition` alias is exported — the schema's `ConditionSchema`
+ * (condition definition with ui_glyph, removal_methods) is conceptually
+ * distinct from instances. Consumers needing the runtime instance import
+ * `ConditionInstance`; consumers needing the schema definition import
+ * `ConditionSchema` explicitly.
+ *
+ * Schema gaps documented in SCHEMA_GAPS_FOR_V08.md (Condition section).
+ */
+export interface ConditionInstance {
   id: UUID;
   typeId: string;
   name: string;
@@ -518,13 +535,13 @@ export interface Legacy {
 
 export interface WorldMutation {
   factionShifts: { factionId: UUID; trustDelta: number; fearDelta: number }[];
-  rumors: Rumor[];
+  rumors: RumorState[];
   locationChanges: { locationId: UUID; tagsAdded: string[]; tagsRemoved: string[] }[];
 }
 
 export interface Inheritance {
   item?: Item;
-  curse?: Condition;
+  curse?: ConditionInstance;
   reputation?: Record<UUID, number>;
   alteredFactions?: UUID[];
   startingAdvantage?: string;
@@ -593,12 +610,12 @@ export interface SaveSnapshot {
   rngState: number;
   player: Player;
   locations: LocationNode[];
-  regions: Region[];
+  regions: RegionState[];
   factions: Faction[];
   npcs: NPC[];
   tale: TaleEntry[];
   journal: JournalEntry[];
-  consequences: Consequence[];
+  consequences: ConsequenceState[];
   world: WorldSnapshot;
   legacy?: Legacy;
   settings: GameSettings;
@@ -708,7 +725,7 @@ export interface NpcState {
   knowledge?: string[];
   secrets?: Secret[];
   memories?: unknown[];
-  conditions?: Condition[];
+  conditions?: ConditionInstance[];
   inventory?: Item[];
   alive?: boolean;
   isAnomaly?: boolean;
@@ -753,14 +770,14 @@ export interface GameState {
   player: Player;
   currentLocationId: UUID;
   locations: LocationNode[];
-  regions: Region[];
+  regions: RegionState[];
   factions: FactionState[];
   npcs: NpcState[];
   tale: TaleEntry[];
   journal: JournalEntry[];
   fate: FateRecord[];
-  consequences: Consequence[];
-  rumors: Rumor[];
+  consequences: ConsequenceState[];
+  rumors: RumorState[];
   suggestedActions: SuggestedAction[];
   lastFeedback: string;
   onboardingDismissed: boolean;
@@ -777,7 +794,7 @@ export interface ActionResult {
   patches: StatePatch[];
   rolls: RollResult[];
   narrative: TaleEntry[];
-  consequences: Consequence[];
+  consequences: ConsequenceState[];
   soundCue?: string;
   animation?: string;
   feedback: string;
