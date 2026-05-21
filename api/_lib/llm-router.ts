@@ -33,8 +33,15 @@ export function hasAnthropicKey(): boolean {
   return Boolean(process.env.ANTHROPIC_API_KEY);
 }
 
+// TODO(phase-22.7-or-later): drop MOONSHOOT_API_KEY fallback once the env
+// var is renamed in Vercel (the canonical spelling is MOONSHOT_API_KEY).
+// See repo_mirror/phase_22_6/PRECONDITION_FAILED.md for context.
+function readMoonshotKey(): string | undefined {
+  return process.env.MOONSHOT_API_KEY ?? process.env.MOONSHOOT_API_KEY;
+}
+
 export function hasMoonshotKey(): boolean {
-  return Boolean(process.env.MOONSHOT_API_KEY);
+  return Boolean(readMoonshotKey());
 }
 
 export function getAnthropic(): AnthropicClient {
@@ -48,7 +55,7 @@ export function getAnthropic(): AnthropicClient {
 
 export function getMoonshot(): MoonshotClient {
   if (!globalThis.__tfp_llm_moonshot) {
-    const apiKey = process.env.MOONSHOT_API_KEY;
+    const apiKey = readMoonshotKey();
     if (!apiKey) throw new Error("MOONSHOT_API_KEY not set");
     globalThis.__tfp_llm_moonshot = new MoonshotClient({ apiKey });
   }
