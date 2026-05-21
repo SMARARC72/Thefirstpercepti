@@ -314,7 +314,12 @@
 /* ── Game Screen ── */
 .game-screen {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  /* Rows: header → world-ticker → game-grid (fills) → tab-nav (bottom on mobile).
+     The ticker slot stays at intrinsic height (~46px after padding); the grid
+     keeps the 1fr middle slot it had before WIRING-402 inserted a 4th DOM
+     child. Without this extra row, the ticker would steal the 1fr and squash
+     the entire game content area. */
+  grid-template-rows: auto auto 1fr auto;
   gap: 0.75rem;
   padding: 0.75rem;
   padding-bottom: 0;
@@ -1186,7 +1191,11 @@ dd {
   }
 
   .game-screen {
-    grid-template-rows: auto auto 1fr;
+    /* Tablet: header → tab-nav (sticky-top, sits in row 2) → ticker → grid.
+       DOM order is still header, ticker, tab-nav, grid; the sticky tab-nav
+       visually pins at top. We add a row so the ticker keeps an auto slot
+       and the game-grid keeps the trailing 1fr. */
+    grid-template-rows: auto auto auto 1fr;
   }
 }
 
@@ -1195,7 +1204,9 @@ dd {
   .game-screen {
     height: 100svh;
     overflow: hidden;
-    grid-template-rows: auto 1fr;
+    /* Desktop hides .tab-nav, so children rendered: header, ticker, grid.
+       The ticker stays at auto height and the grid takes 1fr. */
+    grid-template-rows: auto auto 1fr;
   }
 
   .tab-nav {
@@ -2636,3 +2647,725 @@ dd {
   cursor: not-allowed;
 }
 /* ===== END AnvilPanel (Phase 9b) ===== */
+
+/* ============================================================================
+ * PHASE 20 / WAVE J — Surface stylesheets
+ * Audit fix: the wireframe CSS was never ported when the Phase 22.6 wiring
+ * landed. The component DOM uses class names from the Tide-Stained
+ * design system (saltline / brass / lantern / tide-bloom / drowned-red).
+ * Tokens live in packages/ui-system/src/styles.css. Rules below are the
+ * runtime port of:
+ *   • PORTRAIT_RECOMPOSE.html  → .specimen-jar
+ *   • WORLD_TICKER.html        → .world-ticker / .crawl-bar
+ *   • NOTICE_07/08/09/10.html  → .notice-banner
+ *   • CHAR3_02/03/06.html      → .character-sheet (v3, 5-tab)
+ *   • END_X12.html             → .form-of-ending-postcard
+ *   • LeanModeBadge inline-style is left intact; this file only sizes/
+ *     positions the slot it occupies.
+ * ============================================================================ */
+
+/* ── Shared chrome the new surfaces lean on ────────────────────────────── */
+/* Eyebrow / label-caps used in stamps and headers across postcard, banner,
+   and ticker. Composes with the Tide-Stained type scale. */
+.notice-banner .eb,
+.form-of-ending-postcard .eb,
+.world-ticker .lab {
+  font-family: var(--font-display, var(--font-display, serif));
+  font-size: var(--t-display-xs, 11px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-3, var(--brass-dim, #8A724A));
+  margin: 0;
+}
+.notice-banner .mono {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--t-display-xs, 11px);
+  letter-spacing: 0.08em;
+  color: var(--saltline, #4A5A6A);
+}
+.notice-banner .row,
+.form-of-ending-postcard .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.notice-banner .btn,
+.form-of-ending-postcard .btn {
+  font-family: var(--font-display, serif);
+  font-size: var(--text-sm, 13px);
+  letter-spacing: 0.06em;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm, 4px);
+  border: 1px solid var(--saltline, #4A5A6A);
+  background: var(--salt-bleach, #F5EFE0);
+  color: var(--tide-ink, #1A1F2A);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.notice-banner .btn:hover,
+.form-of-ending-postcard .btn:hover {
+  background: var(--saltline-wash, rgba(74, 90, 106, 0.10));
+}
+.notice-banner .btn.ghost,
+.form-of-ending-postcard .btn.ghost {
+  background: transparent;
+  border-color: var(--bone, #C8BFA8);
+  color: var(--saltline, #4A5A6A);
+}
+.notice-banner .btn.lant {
+  background: var(--lantern-wash, rgba(232, 184, 92, 0.20));
+  border-color: var(--lantern, #E8B85C);
+  color: var(--tide-ink, #1A1F2A);
+}
+
+/* ── SpecimenJar (UI-401) ───────────────────────────────────────────────
+ * Wireframe: PORTRAIT_RECOMPOSE.html
+ * Layered SVG: race / class / meter-overlays / condition pins, ~120×120 viewBox.
+ * Default state: vellum card chrome, no per-rung styling.
+ * data-* attrs the SVG sets:
+ *   data-veined=true       — corruption ≥ 4
+ *   data-fatigued=true     — fatigue ≥ 7
+ *   data-haloed=true       — notice ≥ 7
+ *   data-tide-bloom-edge=true — clarity < 4
+ *   data-alignment=LG|CG|… — alignment tint */
+.specimen-jar-panel {
+  /* Override the .panel default display:none for this informational tile so
+     it renders at every breakpoint where the left rail is visible.
+     Background + border are inherited from .panel via the base rules. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.85rem 0.9rem 0.75rem;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+.specimen-jar {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  display: block;
+  /* Cross-fade hook: 80ms linear per the wireframe motion contract.
+     recomposeSpecimenJar() toggles data-recomposing="true" → "false" on
+     the next frame; the swap happens during the transition window. */
+  transition: filter 80ms linear, opacity 80ms linear;
+}
+.specimen-jar > svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.specimen-jar[data-animate="false"],
+[data-reduced-motion="true"] .specimen-jar {
+  transition: none;
+}
+.specimen-jar[data-recomposing="true"] {
+  opacity: 0.92;
+}
+/* Alignment tints — applied as a faint inner glow via box-shadow inset.
+   Closed palette only; LE / CE / CN lean drowned-red, LG / NG / CG lean
+   brass, NN / LN / TN stay neutral saltline. */
+.specimen-jar > svg[data-alignment="LG"],
+.specimen-jar > svg[data-alignment="NG"],
+.specimen-jar > svg[data-alignment="CG"] {
+  filter: drop-shadow(0 0 6px var(--brass-wash, rgba(184, 152, 104, 0.18)));
+}
+.specimen-jar > svg[data-alignment="LE"],
+.specimen-jar > svg[data-alignment="NE"],
+.specimen-jar > svg[data-alignment="CE"] {
+  filter: drop-shadow(0 0 6px var(--drowned-red-wash, rgba(138, 46, 46, 0.06)));
+}
+/* Layer-D effects compose via the SVG's own classes; the viewBox already
+   places them in the right positions. We only need to color them via tokens. */
+.specimen-jar .layer-veining { color: var(--drowned-red, #8A2E2E); }
+.specimen-jar .layer-clarity { color: var(--tide-bloom, #6B3F8E); }
+.specimen-jar .layer-notice  { color: var(--lantern, #E8B85C); }
+
+/* ── World Ticker (UI-402) ──────────────────────────────────────────────
+ * Wireframe: WORLD_TICKER.html approach B "Crawl · Above the Scene"
+ * 38px-tall slate bar with right-to-left scroll at ~30px/s. Reduced-motion
+ * mode pins items and offers prev/next arrow controls. */
+.world-ticker-mount {
+  /* The mount itself is just a container; the bar inside owns the chrome. */
+  display: block;
+  width: 100%;
+}
+.world-ticker {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  gap: 0.65rem;
+  padding: 0 0.85rem;
+  background: var(--bg-tide, var(--tide-ink, #1A1F2A));
+  color: var(--fg-on-dark, var(--vellum, #E8DFC8));
+  border: 1px solid var(--saltline, #4A5A6A);
+  border-radius: var(--radius-sm, 4px);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: var(--text-xs, 11px);
+  overflow: hidden;
+  position: relative;
+}
+.world-ticker-label {
+  flex: 0 0 auto;
+  letter-spacing: 0.14em;
+  color: var(--lantern, #E8B85C);
+  text-transform: uppercase;
+}
+.world-ticker-track {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
+}
+/* Scroll animation — keyframe applied only when not reduced-motion.
+   The track's items repeat naturally; we translate the inner content. */
+@keyframes world-ticker-crawl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+.world-ticker:not([data-reduced-motion="true"]) .world-ticker-track {
+  /* 30px/s ≈ 8s per viewport-width of content. We bind to a slower duration
+     so short queues don't whip past; consumers can tune per-item if needed. */
+  animation: world-ticker-crawl 32s linear infinite;
+}
+.world-ticker[data-reduced-motion="true"] .world-ticker-track {
+  animation: none;
+  overflow-x: auto;
+}
+.world-ticker:hover .world-ticker-track {
+  animation-play-state: paused;
+}
+.world-ticker-empty {
+  color: var(--bone, #C8BFA8);
+  font-style: italic;
+  opacity: 0.7;
+}
+.world-ticker-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--fg-on-dark, var(--vellum, #E8DFC8));
+}
+.world-ticker-src {
+  color: var(--lantern, #E8B85C);
+  letter-spacing: 0.1em;
+}
+.world-ticker-summary { color: var(--vellum, #E8DFC8); }
+.world-ticker-spacer  { color: var(--saltline, #4A5A6A); padding: 0 0.4rem; }
+.world-ticker-item.ticker-class-canon_event .world-ticker-src { color: var(--drowned-red, #8A2E2E); }
+.world-ticker-item.ticker-class-rite        .world-ticker-src { color: var(--tide-bloom, #6B3F8E); }
+.world-ticker-item.ticker-class-weather     .world-ticker-src { color: var(--verdigris, #4F7A6A); }
+.world-ticker-item[role="button"]:focus-visible {
+  outline: 1px solid var(--lantern, #E8B85C);
+  outline-offset: 2px;
+}
+.world-ticker-controls {
+  flex: 0 0 auto;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+.world-ticker-controls button {
+  background: transparent;
+  border: 1px solid var(--saltline, #4A5A6A);
+  color: var(--vellum, #E8DFC8);
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+}
+.world-ticker-controls button:hover { background: rgba(232, 223, 200, 0.08); }
+
+/* Lean-mode badge slot — the badge itself is inline-styled; we just give
+   it a baseline alignment inside the world-strip. */
+.lean-badge-slot {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+}
+
+/* ── Notice Banner (UI-403) ────────────────────────────────────────────
+ * Wireframe: NOTICE_07/08/09/10.html — Pulse-Threshold Banner
+ * 11-segment meter (0..10), rung-keyed escalation, optional apotheosis gate.
+ * Composes with the existing .panel chrome from the base CSS. */
+.notice-banner-slot {
+  display: flex;
+  flex-direction: column;
+}
+.notice-banner-slot:empty { display: none; }
+
+.notice-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.65rem;
+  /* .panel already gives border+bg; we add per-rung accents on top. */
+}
+.notice-banner[data-rung="7"]  { border-left: 3px solid var(--lantern, #E8B85C); }
+.notice-banner[data-rung="8"]  { border-left: 3px solid var(--brass, #B89968); }
+.notice-banner[data-rung="9"]  { border-left: 3px solid var(--drowned-red, #8A2E2E); }
+.notice-banner[data-rung="10"] {
+  border-left: 3px solid var(--drowned-red, #8A2E2E);
+  background: var(--drowned-red-wash, rgba(138, 46, 46, 0.06));
+}
+.notice-banner-head { gap: 1rem; }
+/* The 11-segment meter renders horizontally; each segment shows its index. */
+.notice-banner .notice-meter {
+  display: flex;
+  gap: 3px;
+  align-items: stretch;
+  padding: 0;
+}
+.notice-banner .notice-meter .seg {
+  flex: 1 1 0;
+  min-width: 22px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  color: var(--saltline, #4A5A6A);
+  background: var(--bone-200, #C8BFA8);
+  border: 1px solid var(--bone, #C8BFA8);
+  border-radius: 2px;
+  opacity: 0.55;
+}
+.notice-banner .notice-meter .seg.filled {
+  background: var(--brass, #B89968);
+  color: var(--vellum, #E8DFC8);
+  opacity: 1;
+}
+.notice-banner .notice-meter .seg.threshold {
+  background: var(--lantern, #E8B85C);
+  color: var(--tide-ink, #1A1F2A);
+  border-color: var(--lantern, #E8B85C);
+  opacity: 1;
+  font-weight: 700;
+}
+.notice-banner[data-rung="9"]  .notice-meter .seg.threshold,
+.notice-banner[data-rung="10"] .notice-meter .seg.threshold {
+  background: var(--drowned-red, #8A2E2E);
+  color: var(--vellum, #E8DFC8);
+  border-color: var(--drowned-red, #8A2E2E);
+}
+.notice-banner-block {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 0.85rem;
+  align-items: start;
+}
+.notice-banner-badge {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  color: var(--vellum, #E8DFC8);
+  background: var(--saltline, #4A5A6A);
+  border-radius: var(--radius-sm, 4px);
+}
+.notice-banner[data-rung="9"]  .notice-banner-badge,
+.notice-banner[data-rung="10"] .notice-banner-badge {
+  background: var(--drowned-red, #8A2E2E);
+}
+.notice-banner-body p { margin: 0 0 0.25rem 0; }
+.notice-banner-copy {
+  font-family: var(--font-body, serif);
+  font-style: italic;
+  font-size: var(--text-sm, 14px);
+  color: var(--tide-ink, #1A1F2A);
+  line-height: 1.45;
+}
+.notice-banner-factions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+.notice-banner .pulse-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.8fr) minmax(120px, 2fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+.notice-banner .pulse-row .fc { color: var(--saltline, #4A5A6A); }
+.notice-banner .pulse-row .bar {
+  background: var(--bone-200, rgba(200, 191, 168, 0.4));
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.notice-banner .pulse-row .bar i {
+  display: block;
+  height: 100%;
+  background: var(--saltline, #4A5A6A);
+}
+.notice-banner .pulse-row .bar i.aware {
+  background: var(--drowned-red, #8A2E2E);
+}
+.notice-banner .pulse-row .n { color: var(--brass-dim, #8A724A); text-align: right; }
+.notice-banner-actions { margin-top: 0.25rem; }
+
+/* ── CharacterSheet v3 (UI-404) ────────────────────────────────────────
+ * Wireframe: CHAR3_02 / CHAR3_03 / CHAR3_06.html
+ * 5 tabs (Stats / Inventory / Spells / Conditions / Path Ledger) with
+ * arrow-key navigation and a roving tabindex. */
+.character-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.character-sheet-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--bone, #C8BFA8);
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+.character-sheet-tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 0.9rem;
+  font-family: var(--font-display, serif);
+  font-size: var(--text-sm, 13px);
+  letter-spacing: 0.06em;
+  color: var(--brass-dim, #8A724A);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.character-sheet-tab:hover { color: var(--tide-ink, #1A1F2A); }
+.character-sheet-tab[aria-selected="true"] {
+  color: var(--tide-ink, #1A1F2A);
+  border-bottom-color: var(--lantern, #E8B85C);
+}
+.character-sheet-tab:focus-visible {
+  outline: 1px solid var(--lantern, #E8B85C);
+  outline-offset: 2px;
+}
+.character-sheet-panel-host {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.character-sheet-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.character-sheet .stats-identity { margin: 0 0 0.35rem 0; }
+.character-sheet .stats-name {
+  font-family: var(--font-display, serif);
+  font-size: var(--t-display-m, 20px);
+  margin: 0;
+  color: var(--tide-ink, #1A1F2A);
+}
+.character-sheet .stats-form {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--saltline, #4A5A6A);
+  margin: 0;
+}
+.character-sheet .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.35rem 0.85rem;
+  margin: 0;
+}
+.character-sheet .stats-grid dt {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brass-dim, #8A724A);
+  margin: 0;
+}
+.character-sheet .stats-grid dd {
+  font-family: var(--font-display, serif);
+  font-size: var(--text-md, 15px);
+  color: var(--tide-ink, #1A1F2A);
+  margin: 0 0 0.25rem 0;
+}
+.character-sheet .spell-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--bone, #C8BFA8);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--saltline-wash, rgba(74, 90, 106, 0.06));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+.character-sheet .spell-slot-level {
+  letter-spacing: 0.08em;
+  color: var(--saltline, #4A5A6A);
+  margin-right: 0.15rem;
+}
+.character-sheet .slot-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lantern, #E8B85C);
+  margin-right: 2px;
+}
+.character-sheet .slot-dot.spent {
+  background: transparent;
+  border: 1px solid var(--bone, #C8BFA8);
+}
+.character-sheet .spell-list,
+.character-sheet .conditions-list,
+.character-sheet .path-ledger {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.character-sheet .spell-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0.45rem;
+  border-bottom: 1px dashed var(--bone, #C8BFA8);
+  font-family: var(--font-body, serif);
+  font-size: var(--text-sm, 13px);
+  color: var(--tide-ink, #1A1F2A);
+}
+.character-sheet .spell-row.imp {
+  border-left: 2px solid var(--tide-bloom, #6B3F8E);
+  padding-left: 0.55rem;
+}
+.character-sheet .spell-row-bullet { color: var(--lantern, #E8B85C); }
+.character-sheet .spell-row-cost {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--brass-dim, #8A724A);
+}
+.character-sheet .spell-row-cast {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--saltline, #4A5A6A);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--tide-ink, #1A1F2A);
+  font-family: var(--font-display, serif);
+  font-size: 11px;
+  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.character-sheet .spell-row-cast:hover { background: var(--lantern-wash, rgba(232, 184, 92, 0.20)); }
+.character-sheet .condition-row {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0.45rem;
+  border-bottom: 1px dashed var(--bone, #C8BFA8);
+  font-family: var(--font-body, serif);
+  font-size: var(--text-sm, 13px);
+}
+.character-sheet .condition-glyph {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--vellum, #E8DFC8);
+  background: var(--saltline, #4A5A6A);
+  padding: 0.15rem 0.35rem;
+  border-radius: 2px;
+  text-align: center;
+}
+.character-sheet .condition-remaining {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  color: var(--brass-dim, #8A724A);
+}
+.character-sheet .path-entry {
+  display: grid;
+  grid-template-columns: 80px auto 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.35rem 0.45rem;
+  border-bottom: 1px dashed var(--bone, #C8BFA8);
+}
+.character-sheet .path-entry-domain {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim, #8A724A);
+}
+.character-sheet .path-entry-weight {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--tide-bloom, #6B3F8E);
+}
+.character-sheet .path-entry-phrase {
+  font-family: var(--font-body, serif);
+  font-style: italic;
+  font-size: var(--text-sm, 13px);
+  color: var(--tide-ink, #1A1F2A);
+  margin: 0;
+}
+.character-sheet .empty-note {
+  font-family: var(--font-body, serif);
+  font-style: italic;
+  color: var(--brass-dim, #8A724A);
+  padding: 0.5rem 0.25rem;
+}
+
+/* ── Form-of-Ending Postcard (UI-405) ──────────────────────────────────
+ * Wireframe: END_X12.html approach B "Letter to the One You Are Becoming"
+ * Postcard chrome with stamp eyebrow, Garamond body, gutter aside, and
+ * voice-shift indicator in the footer. */
+.form-of-ending-slot {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 0 0;
+}
+.form-of-ending-slot:empty { display: none; }
+
+.form-of-ending-postcard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  max-width: 540px;
+  width: 100%;
+  padding: 1.1rem 1.3rem;
+  background: var(--salt-bleach, #F5EFE0);
+  border: 1px solid var(--saltline, #4A5A6A);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: 0 6px 18px rgba(26, 31, 42, 0.12);
+  color: var(--tide-ink, #1A1F2A);
+  position: relative;
+}
+.form-of-ending-postcard[data-ending-tag="X.13"] { border-color: var(--drowned-red, #8A2E2E); }
+.form-of-ending-postcard[data-ending-tag="X.14"] { border-color: var(--tide-bloom, #6B3F8E); }
+.form-of-ending-postcard[data-ending-tag="X.16"] { border-color: var(--brass, #B89968); }
+.form-of-ending-postcard .postcard-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.form-of-ending-postcard .postcard-stamp {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass-dim, #8A724A);
+  margin: 0;
+}
+.form-of-ending-postcard .postcard-title {
+  font-family: var(--font-display, serif);
+  font-size: var(--t-display-m, 20px);
+  color: var(--tide-ink, #1A1F2A);
+  margin: 0;
+}
+.form-of-ending-postcard .postcard-greeting {
+  font-family: var(--font-body, serif);
+  font-style: italic;
+  color: var(--saltline, #4A5A6A);
+  margin: 0;
+}
+.form-of-ending-postcard .postcard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-family: var(--font-body, serif);
+  font-size: var(--text-md, 15px);
+  line-height: 1.5;
+  color: var(--tide-ink, #1A1F2A);
+}
+.form-of-ending-postcard .postcard-line { margin: 0; }
+.form-of-ending-postcard .postcard-gutter {
+  font-family: var(--font-margin, cursive);
+  font-size: 12px;
+  color: var(--brass-dim, #8A724A);
+  text-align: right;
+  margin: 0;
+  padding-right: 0.25rem;
+}
+.form-of-ending-postcard .postcard-footer {
+  border-top: 1px dashed var(--bone, #C8BFA8);
+  padding-top: 0.45rem;
+}
+.form-of-ending-postcard .postcard-voice {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--brass-dim, #8A724A);
+}
+.form-of-ending-postcard .postcard-voice[data-voice-shift-applied="true"] {
+  color: var(--tide-bloom, #6B3F8E);
+}
+
+/* ── Mobile-panels reveal for functional tabs at desktop ───────────────
+ * Audit fix: CharacterSheet v3 (and Inventory / Anvil) are wired only into
+ * renderMobilePanel because the original screens had no desktop rail mount
+ * for the functional tabs. The base CSS hides .mobile-panels at desktop
+ * (≥1200px), so clicking "The Sheet" tab on desktop reveals nothing.
+ *
+ * Fix: when any functional mobile-panel is active, allow .mobile-panels to
+ * occupy the stage column and hide the tale-panel temporarily. Keeps the
+ * left/right rails (specimen jar, world, factions, status, fate, npcs) in
+ * place — only the center stage swaps. */
+@media (min-width: 1200px) {
+  .game-grid:has(#panel-sheet.active-panel,
+                 #panel-trove.active-panel,
+                 #panel-anvil.active-panel) .mobile-panels {
+    display: flex;
+    flex-direction: column;
+    grid-area: stage;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .game-grid:has(#panel-sheet.active-panel,
+                 #panel-trove.active-panel,
+                 #panel-anvil.active-panel) .stage {
+    display: none !important;
+  }
+  /* The active functional panel inside the desktop-stage container needs
+     the same chrome the rail panels get. */
+  .game-grid:has(#panel-sheet.active-panel,
+                 #panel-trove.active-panel,
+                 #panel-anvil.active-panel)
+    .mobile-panel.active-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+/* Mobile: hide the left rail's specimen-jar tile when the rail itself is
+   hidden. The rail rule already does this via `.rail { display: none }`,
+   but we add an explicit safety in case the rail rule is overridden later. */
+@media (max-width: 1199px) {
+  .specimen-jar-panel { display: none; }
+}
+
