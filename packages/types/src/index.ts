@@ -10,6 +10,7 @@
 
 import type { RarityTierId, AttunementRequirement } from './items-5e.js';
 import type { Item } from './items-v06.js';
+import type { AlignmentDescriptor } from './generated.js';
 
 // =============================================================================
 // PRIMITIVES
@@ -172,28 +173,70 @@ export interface ActionEconomy {
   reaction: boolean;
 }
 
+/**
+ * Phase 24a / RECON-208a — Player runtime envelope.
+ *
+ * The base shape is the original hand-rolled v0.7-era Player; the
+ * Phase 24a sub-tickets (208a/d/e/f then 208b/c) progressively pull
+ * in schema-richer fields from PlayerSchema so v0.8 Session 4 has a
+ * complete reconciliation target.
+ *
+ * Fields below the "RECON-208a identity block" comment are NEW in 24a,
+ * landed as OPTIONAL during the v0.7 era. v0.8 Session 4 promotes them
+ * to REQUIRED at the schema level + reconciles naming (camelCase →
+ * snake_case per cross-cutting recommendation #3 in
+ * SCHEMA_GAPS_FOR_V08.md).
+ *
+ * Per Khoja ratification (OPEN_QUESTIONS.md):
+ *   - Stats: Option C (dual blocks) — landed in RECON-208b
+ *   - Focus: Option B (focus_block) — landed in RECON-208c
+ */
 export interface Player {
+  // Original v0.7-era hand-rolled fields
   id: UUID;
   name: string;
   form: CharacterForm;
-  formLabel: string;
+  formLabel: string;     // B4 reject — UI projection of CharacterForm enum
   posture: KnowledgePosture;
-  postureLabel: string;
-  domain: Domain;
-  stats: Stats;
-  hp: number;
-  maxHp: number;
-  focus: number;
-  maxFocus: number;
+  postureLabel: string;  // B4 reject — UI projection of KnowledgePosture enum
+  domain: Domain;        // B4 gap (per ratification: PROMOTE in v0.8)
+  stats: Stats;          // Symmetric divergence — reconciled in 208b (Option C dual blocks)
+  hp: number;            // B1 drift (flat → HpBlock) — reconciled in 208c
+  maxHp: number;         // (paired with hp)
+  focus: number;         // B4 gap — focus_block per Option B, landed in 208c
+  maxFocus: number;      // (paired with focus)
   conditions: ConditionInstance[];
   inventory: Item[];
-  tags: string[];
+  tags: string[];        // B4 gap → cross-entity primitive (208f promotes)
   proficiencyBonus: number;
   hitDice: HitDicePool;
   savingThrowProficiencies: ReadonlyArray<CoreStat>;
   attunementSlots: AttunementSlots;
   spellSlots?: Record<number, SpellSlotLevel>;
   actionEconomy?: ActionEconomy;
+
+  // ── RECON-208a identity block (NEW; schema-richer pull-in) ────────────
+  // Per Khoja ratification: optional in v0.7 runtime; v0.8 promotes to
+  // required + snake_case names. camelCase here to minimize 24a churn.
+  /** PlayerSchema.first_perception — character's first sensory anchor */
+  firstPerception?: string;
+  /** PlayerSchema.race_id — required at v0.8; optional in 24a */
+  raceId?: string;
+  /** PlayerSchema.subrace_id — null when no subrace */
+  subraceId?: string | null;
+  /** PlayerSchema.classes — class/subclass stack with levels (5e-style multiclass) */
+  classes?: Array<{
+    classId: string;
+    level: number;
+    subclassId?: string | null;
+    isPactClass?: boolean;
+  }>;
+  /** PlayerSchema.level_total — sum of classes[].level */
+  levelTotal?: number;
+  /** PlayerSchema.experience — XP accumulated */
+  experience?: number;
+  /** PlayerSchema.alignment_descriptor — 9-axis D&D-style alignment */
+  alignmentDescriptor?: AlignmentDescriptor;
 }
 
 // =============================================================================
