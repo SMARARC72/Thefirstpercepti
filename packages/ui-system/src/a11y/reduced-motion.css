@@ -1,0 +1,78 @@
+/* ============================================================
+   Phase 22 / A11Y-601 — Reduced-motion CSS module
+   ============================================================
+   Respects prefers-reduced-motion: reduce.
+
+   Discipline (per Phase 14 design system):
+   - The codex already disallows bounce/spring/elastic motion.
+   - This module further disables transforms, scales, rotations, and
+     transitions exceeding 150ms when the user requests reduced motion.
+   - Fades and crossfades ≤150ms are preserved (vestibular-safe).
+   - GSAP animations are handled separately in gsap-motion.ts.
+
+   Import order (in apps/web entry CSS):
+     @import "@first-perception/ui-system/a11y/reduced-motion.css";
+     ... (other styles after)
+
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  /* Disable all transforms (translate, scale, rotate, skew). */
+  *,
+  *::before,
+  *::after {
+    transform: none !important;
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Re-allow short fades (opacity-only transitions ≤150ms).
+     Targeted by explicit class so devs opt-in to motion-safe fades. */
+  .motion-safe-fade,
+  .motion-safe-fade::before,
+  .motion-safe-fade::after {
+    transition-property: opacity !important;
+    transition-duration: 150ms !important;
+  }
+
+  /* Disable infinite or pulsing animations entirely. */
+  [class*="pulse"],
+  [class*="spin"],
+  [class*="bounce"],
+  [class*="shake"],
+  [class*="float"] {
+    animation: none !important;
+  }
+
+  /* Force ticker / marquee scroll to instant snap. */
+  .world-pulse-ticker,
+  .world-pulse-ticker__item {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+   Default motion guardrails (always-on, not gated by media query):
+   - Max transition-duration cap of 300ms on all elements
+   - Disallowed easing functions guarded at design system review time
+   ============================================================ */
+
+* {
+  /* No transition longer than 300ms by default. Components needing
+     a longer duration must explicitly override (signals intent). */
+  transition-duration: var(--motion-duration, 200ms);
+}
+
+:root {
+  --motion-duration: 200ms;
+  --motion-duration-fast: 120ms;
+  --motion-duration-slow: 300ms;
+  /* Allowed easings (Phase 14 discipline): linear, ease-in-out, step. */
+  --motion-easing-default: ease-in-out;
+  --motion-easing-fast:    linear;
+  --motion-easing-step:    step-end;
+}
