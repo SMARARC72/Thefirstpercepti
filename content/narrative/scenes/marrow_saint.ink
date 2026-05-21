@@ -96,7 +96,7 @@ ILYRA: "The fountain practices. We do not interrupt. Some who listen long enough
 
 ILYRA: "If you find yourself answering it, come back here. Bring whatever the fountain gave you."
 
-{ has_item("item-listening-childs-pebble"):
+{ has_item("item_listening_childs_pebble"):
     Her eyes go to your pocket where the pebble warms against your hand. She does not name what she has seen.
 }
 
@@ -105,7 +105,7 @@ ILYRA: "If you find yourself answering it, come back here. Bring whatever the fo
 === ilyra_salt_immersion ===
 ILYRA: "Bring the salt-rime to me. I will read what it weighs. What you carry that is not yours will be set aside. What you carry that is yours will be salt-marked. Some of it will be marked you cannot remove. Sit with that before you ask."
 
-{ has_item("item-salt-rime-shard"):
+{ has_item("item_salt_rime_shard"):
     She has noticed the salt-rime in your possession without your having shown it. Her gaze returns to the candle.
 }
 

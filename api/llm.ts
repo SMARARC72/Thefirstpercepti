@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { LLMProvider, LLMRequest, LLMResponse } from "@first-perception/llm-client";
+import { callLLM } from "@first-perception/llm-client/middleware";
 import { apiError, apiOk } from "@first-perception/persistence";
 import { readJsonBody, withErrors } from "./_lib/repo.js";
 import {
@@ -12,6 +13,17 @@ import {
 interface LLMRequestEnvelope {
   request?: LLMRequest;
   provider?: LLMProvider;
+  /**
+   * Phase 22.5 / OPS-511 — when set, the request is dispatched through the
+   * Phase 21 throttle middleware (callLLM) which enforces the daily cap,
+   * per-session token budget, and writes an opex_event ledger entry per call.
+   * Tier (premium/mid/cheap) and model selection come from tier_policy.json
+   * for the given agent; the `provider` field is ignored on this path.
+   * The legacy provider-routing path below is preserved for callers that
+   * haven't migrated yet (no breaking change).
+   */
+  agent?: string;
+  session_id?: string;
 }
 
 export default withErrors(async (req: IncomingMessage, res: ServerResponse) => {
@@ -31,6 +43,68 @@ export default withErrors(async (req: IncomingMessage, res: ServerResponse) => {
     );
     return;
   }
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Phase 22.5 / OPS-511 — agent-tagged path: route through throttle.
+  // Daily cap, per-session budget, opex_event ledger writes.
+  // ─────────────────────────────────────────────────────────────────────
+  if (envelope.agent) {
+    try {
+      const messages = envelope.request.messages;
+      const systemMsg = messages.find((m) => m.role === "system");
+      const nonSystem = messages.filter((m) => m.role !== "system");
+      const throttleResult = await callLLM(
+        {
+          agent: envelope.agent as Parameters<typeof callLLM>[0]["agent"],
+          session_id: envelope.session_id,
+        },
+        {
+          system: systemMsg?.content,
+          messages: nonSystem.map((m) => ({
+            role: m.role as "user" | "assistant",
+            content: m.content,
+          })),
+          max_tokens: envelope.request.max_tokens,
+          temperature: envelope.request.temperature,
+          response_format: envelope.request.response_format ? "json_object" : "text",
+        },
+      );
+
+      // callLLM never throws — it returns model_id="graceful_fallback" /
+      // finish_reason="error" when the fallback chain is exhausted.
+      const isGraceful = throttleResult.model_id === "graceful_fallback";
+      const llmResponse: LLMResponse = {
+        id: `tfp-${Date.now().toString(36)}`,
+        content: throttleResult.content,
+        usage: {
+          prompt_tokens: throttleResult.tokens_in,
+          completion_tokens: throttleResult.tokens_out,
+          total_tokens: throttleResult.tokens_in + throttleResult.tokens_out,
+        },
+        latencyMs: 0,
+      };
+      res.statusCode = isGraceful ? 503 : 200;
+      res.setHeader("content-type", "application/json; charset=utf-8");
+      res.setHeader("cache-control", "no-store");
+      res.setHeader("x-llm-throttle", isGraceful ? "graceful_fallback" : "active");
+      res.setHeader("x-llm-model", throttleResult.model_id);
+      res.setHeader("x-llm-tier", throttleResult.effective_tier);
+      if (throttleResult.fell_back_from_primary) {
+        res.setHeader("x-llm-fell-back", "true");
+      }
+      res.end(JSON.stringify(apiOk(llmResponse)));
+      return;
+    } catch (err) {
+      // Throttle path is meant to be no-throw; a real exception here means
+      // ClientRegistry or opex pool errored out. Surface in a header and
+      // fall through to the legacy router so the call doesn't 500.
+      res.setHeader(
+        "x-llm-throttle",
+        `error:${((err as Error).message ?? "unknown").slice(0, 80)}`,
+      );
+    }
+  }
+
   const provider: LLMProvider = envelope.provider ?? "auto";
 
   let resolved;
