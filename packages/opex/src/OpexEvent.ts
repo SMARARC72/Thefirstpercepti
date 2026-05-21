@@ -3,8 +3,11 @@
  *
  * Every callLLM invocation produces one opex_event row. Append-only.
  * Used by FinOps queries (cost-per-day, cost-per-agent, fallback rate).
+ *
+ * Failure discipline: writes are best-effort. Postgres failure here MUST NOT
+ * throw — the LLM call already succeeded; we just lost a ledger entry.
  */
-import { sql } from "@vercel/postgres";
+import { sql } from "./db.js";
 import { randomUUID } from "node:crypto";
 
 export type AgentId =
@@ -47,8 +50,7 @@ export interface OpexEventInput {
 
 /**
  * Write one opex_event row. Returns event_id (UUID).
- * Failures here MUST NOT throw — log and continue. The LLM call already
- * succeeded; we just lost a ledger entry.
+ * Failures here MUST NOT throw — log and continue.
  */
 export async function recordOpexEvent(input: OpexEventInput): Promise<string> {
   const eventId = randomUUID();
@@ -67,7 +69,6 @@ export async function recordOpexEvent(input: OpexEventInput): Promise<string> {
       )
     `;
   } catch (err) {
-    // Ledger write must not break the LLM call. Log and continue.
     console.warn("[opex] failed to record event:", err);
   }
   return eventId;
