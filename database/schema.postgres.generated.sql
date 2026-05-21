@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T21:44:48.509Z
+-- Generated at:   2026-05-21T21:51:53.432Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -90,6 +90,36 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.institution_schedule_tier
+DO $$ BEGIN
+  CREATE TYPE "public"."institution_schedule_tier" AS ENUM (
+    'ngo_internal',
+    'civic_weekly',
+    'regional_seasonal',
+    'cosmological_yearly'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.institution_baseline_unit
+DO $$ BEGIN
+  CREATE TYPE "public"."institution_baseline_unit" AS ENUM (
+    'game_day',
+    'game_week',
+    'game_season',
+    'game_year'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.internal_faction_alignment
+DO $$ BEGIN
+  CREATE TYPE "public"."internal_faction_alignment" AS ENUM (
+    'loyal',
+    'factional',
+    'reformist',
+    'schismatic'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.npc_memory_archetype
 DO $$ BEGIN
   CREATE TYPE "public"."npc_memory_archetype" AS ENUM (
@@ -102,6 +132,26 @@ DO $$ BEGIN
     'aspirant_divine',
     'child',
     'contradiction_bearing'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.institutional_memory_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."institutional_memory_archetype" AS ENUM (
+    'devout',
+    'magistrate',
+    'scholar',
+    'broker'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.institution_response_resolution_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."institution_response_resolution_kind" AS ENUM (
+    'decisive',
+    'deferred',
+    'escalated',
+    'ignored'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -1141,7 +1191,52 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 );
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
+-- ============================================================================
+-- CONTENT schema — 1 entities
+-- ============================================================================
+-- institution (content.institution)
+-- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
+CREATE TABLE IF NOT EXISTS "content"."institution" (
+  "institution_id" TEXT PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "tags" JSONB,
+  "institution_cadence" JSONB NOT NULL  -- $ref: #/$defs/institution_cadence,
+  "jurisdictional_strength" SMALLINT NOT NULL,
+  "internal_factions" JSONB NOT NULL,
+  "institutional_memory_archetype" "content"."institutional_memory_archetype" NOT NULL,
+  "parent_faction_id" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK ("jurisdictional_strength" >= 0),
+  CHECK ("jurisdictional_strength" <= 100),
+  FOREIGN KEY ("parent_faction_id") REFERENCES "content"."faction"(id) ON DELETE SET NULL
+);
+COMMENT ON TABLE "content"."institution" IS "Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.";
+ALTER TABLE "content"."institution" ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================================
+-- STATE schema — 1 entities
+-- ============================================================================
+-- institution_response_queue_entry (state.institution_response_queue_entry)
+-- Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
+CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
+  "id" TEXT PRIMARY KEY NOT NULL,
+  "institution_id" TEXT NOT NULL,
+  "trigger_event_id" TEXT NOT NULL,
+  "proposed_response" TEXT NOT NULL,
+  "decision_window" JSONB NOT NULL,
+  "resolved_by_npc_ids" JSONB,
+  "resolution_kind" "state"."institution_response_resolution_kind",
+  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  FOREIGN KEY ("institution_id") REFERENCES "state"."institution"(id) ON DELETE CASCADE
+);
+COMMENT ON TABLE "state"."institution_response_queue_entry" IS "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.";
+ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
+
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 43 entities · 6 enums · 5 schemas
+-- 45 entities · 11 enums · 5 schemas
 -- ----------------------------------------------------------------------------

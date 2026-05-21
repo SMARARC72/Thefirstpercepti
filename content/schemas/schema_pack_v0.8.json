@@ -506,6 +506,52 @@
       },
       "additionalProperties": false
     },
+    "institution_cadence": {
+      "type": "object",
+      "description": "Phase 24b §4.3 / Bundle B / L.II-SC-01 — Institutional decision rhythm. Nests above NpcSchema.schedule_nesting (L.I-SC-06).",
+      "required": ["schedule_tier", "baseline_resolution_unit", "decision_cycle_per_unit", "member_npc_ids"],
+      "properties": {
+        "schedule_tier": {
+          "type": "string",
+          "enum": ["ngo_internal", "civic_weekly", "regional_seasonal", "cosmological_yearly"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "institution_schedule_tier"
+        },
+        "baseline_resolution_unit": {
+          "type": "string",
+          "enum": ["game_day", "game_week", "game_season", "game_year"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "institution_baseline_unit"
+        },
+        "decision_cycle_per_unit": { "type": "integer", "minimum": 1, "description": "Decisions/attempts per baseline_resolution_unit." },
+        "member_npc_ids": {
+          "type": "array",
+          "items": { "type": "string", "description": "FK to npc.npc_id" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "internal_faction_entry": {
+      "type": "object",
+      "description": "Phase 24b §4.3 / Bundle B / L.II-SC-04 — Sub-faction within an institution. Allows visible internal coalitions (e.g. Drowned Church reformists vs traditionalists).",
+      "required": ["sub_faction_id", "sub_faction_name", "alignment_with_parent", "influence_weight"],
+      "properties": {
+        "sub_faction_id": { "type": "string" },
+        "sub_faction_name": { "type": "string" },
+        "member_npc_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "alignment_with_parent": {
+          "type": "string",
+          "enum": ["loyal", "factional", "reformist", "schismatic"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "internal_faction_alignment"
+        },
+        "influence_weight": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": false
+    },
     "schedule_nesting": {
       "type": "object",
       "description": "Phase 24b §4.2 / Bundle A / L.I-SC-06 — Per-NPC schedule nested under an institution. Bridge to Bundle B (institutional schedules) + Bundle C (faction-scale scheduling). Source: Sec L.I (codex lines 8759-8771).",
@@ -7284,6 +7330,102 @@
         }
       },
       "additionalProperties": false
+    },
+    "institution": {
+      "type": "object",
+      "description": "Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.",
+      "required": [
+        "institution_id",
+        "name",
+        "institution_cadence",
+        "jurisdictional_strength",
+        "internal_factions",
+        "institutional_memory_archetype"
+      ],
+      "properties": {
+        "institution_id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string", "description": "v0.8 cross-cutting description primitive." },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "v0.8 cross-cutting tags primitive."
+        },
+        "institution_cadence": {
+          "$ref": "#/$defs/institution_cadence",
+          "description": "Bundle B / L.II-SC-01 — Institutional decision rhythm."
+        },
+        "jurisdictional_strength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Bundle B / L.II-SC-03 — Jurisdictional reach 0..100. Drives engine decisions when institution jurisdictions overlap."
+        },
+        "internal_factions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/internal_faction_entry" },
+          "description": "Bundle B / L.II-SC-04 — Sub-factions within the institution (reformists, traditionalists, etc.)."
+        },
+        "institutional_memory_archetype": {
+          "type": "string",
+          "enum": ["devout", "magistrate", "scholar", "broker"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "institutional_memory_archetype",
+          "description": "Bundle B / L.II-SC-05 — Institution-scale memory pattern. Strict subset of NPC memory_archetype (excludes peasant/soldier/aspirant_divine/child/contradiction_bearing — those don't scale to institutional level per L.II)."
+        },
+        "parent_faction_id": {
+          "type": ["string", "null"],
+          "description": "Optional FK to FactionSchema if the institution is a sub-org of a larger faction. Null for standalone institutions.",
+          "x_fk_target": "faction",
+          "x_fk_policy": { "on_delete": "SET NULL" }
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "content"
+    },
+    "institution_response_queue_entry": {
+      "type": "object",
+      "description": "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.",
+      "required": [
+        "id",
+        "institution_id",
+        "trigger_event_id",
+        "proposed_response",
+        "decision_window"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "institution_id": {
+          "type": "string",
+          "description": "FK → institution.institution_id",
+          "x_fk_target": "institution",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "trigger_event_id": { "type": "string", "description": "FK → event that requires institutional response." },
+        "proposed_response": { "type": "string" },
+        "decision_window": {
+          "type": "object",
+          "required": ["start_day", "close_day"],
+          "properties": {
+            "start_day": { "type": "integer", "minimum": 0 },
+            "close_day": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "resolved_by_npc_ids": {
+          "type": "array",
+          "items": { "type": "string", "description": "FK → npc.npc_id for member who acted." }
+        },
+        "resolution_kind": {
+          "type": ["string", "null"],
+          "enum": ["decisive", "deferred", "escalated", "ignored"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "institution_response_resolution_kind",
+          "description": "Null while pending; populated when window closes or member NPC acts. Null permitted via column type; enum values list excludes null since Postgres ENUMs are non-nullable as a type."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "state"
     }
   },
   "validator_chain_required_stages": [

@@ -1634,6 +1634,62 @@ export interface FirstPerceptionSchemaPack {
      */
     cap_buffer_pct?: number;
   };
+  /**
+   * Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
+   */
+  institution?: {
+    institution_id: string;
+    name: string;
+    /**
+     * v0.8 cross-cutting description primitive.
+     */
+    description?: string;
+    /**
+     * v0.8 cross-cutting tags primitive.
+     */
+    tags?: string[];
+    institution_cadence: InstitutionCadence;
+    /**
+     * Bundle B / L.II-SC-03 — Jurisdictional reach 0..100. Drives engine decisions when institution jurisdictions overlap.
+     */
+    jurisdictional_strength: number;
+    /**
+     * Bundle B / L.II-SC-04 — Sub-factions within the institution (reformists, traditionalists, etc.).
+     */
+    internal_factions: InternalFactionEntry[];
+    /**
+     * Bundle B / L.II-SC-05 — Institution-scale memory pattern. Strict subset of NPC memory_archetype (excludes peasant/soldier/aspirant_divine/child/contradiction_bearing — those don't scale to institutional level per L.II).
+     */
+    institutional_memory_archetype: "devout" | "magistrate" | "scholar" | "broker";
+    /**
+     * Optional FK to FactionSchema if the institution is a sub-org of a larger faction. Null for standalone institutions.
+     */
+    parent_faction_id?: string | null;
+  };
+  /**
+   * Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
+   */
+  institution_response_queue_entry?: {
+    id: string;
+    /**
+     * FK → institution.institution_id
+     */
+    institution_id: string;
+    /**
+     * FK → event that requires institutional response.
+     */
+    trigger_event_id: string;
+    proposed_response: string;
+    decision_window: {
+      start_day: number;
+      close_day: number;
+    };
+    resolved_by_npc_ids?: string[];
+    /**
+     * Null while pending; populated when window closes or member NPC acts. Null permitted via column type; enum values list excludes null since Postgres ENUMs are non-nullable as a type.
+     */
+    resolution_kind?: ("decisive" | "deferred" | "escalated" | "ignored") | null;
+  };
 }
 export interface WorldTime {
   day: number;
@@ -2167,6 +2223,28 @@ export interface KeyItem {
 export interface CurrencyTokenItem {
   type?: "currency_token";
 }
+/**
+ * Bundle B / L.II-SC-01 — Institutional decision rhythm.
+ */
+export interface InstitutionCadence {
+  schedule_tier: "ngo_internal" | "civic_weekly" | "regional_seasonal" | "cosmological_yearly";
+  baseline_resolution_unit: "game_day" | "game_week" | "game_season" | "game_year";
+  /**
+   * Decisions/attempts per baseline_resolution_unit.
+   */
+  decision_cycle_per_unit: number;
+  member_npc_ids: string[];
+}
+/**
+ * Phase 24b §4.3 / Bundle B / L.II-SC-04 — Sub-faction within an institution. Allows visible internal coalitions (e.g. Drowned Church reformists vs traditionalists).
+ */
+export interface InternalFactionEntry {
+  sub_faction_id: string;
+  sub_faction_name: string;
+  member_npc_ids?: string[];
+  alignment_with_parent: "loyal" | "factional" | "reformist" | "schismatic";
+  influence_weight: number;
+}
 
 
 // ============================================================================
@@ -2217,11 +2295,13 @@ export type MarginaliaSchema = NonNullable<FirstPerceptionSchemaPack["marginalia
 export type OpexStateSchema = NonNullable<FirstPerceptionSchemaPack["opex_state"]>;
 export type OpexEventSchema = NonNullable<FirstPerceptionSchemaPack["opex_event"]>;
 export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model_tier_policy"]>;
+export type InstitutionSchema = NonNullable<FirstPerceptionSchemaPack["institution"]>;
+export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 43
-// $defs count:  44
+// Entity count: 45
+// $defs count:  46
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

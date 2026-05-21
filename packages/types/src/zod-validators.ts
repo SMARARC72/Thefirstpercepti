@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T21:44:49.455Z
+ * Generated at:   2026-05-21T21:51:54.480Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (44)
+// $defs (46)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -217,6 +217,23 @@ export const AmbitionTickZ = z.object({
       "next_scheduled_attempt": z.string().nullable().optional(),
     }).strict();
 export type AmbitionTick = z.infer<typeof AmbitionTickZ>;
+
+export const InstitutionCadenceZ = z.object({
+      "schedule_tier": z.enum(["ngo_internal", "civic_weekly", "regional_seasonal", "cosmological_yearly"]),
+      "baseline_resolution_unit": z.enum(["game_day", "game_week", "game_season", "game_year"]),
+      "decision_cycle_per_unit": z.number().int().min(1),
+      "member_npc_ids": z.array(z.string()),
+    }).strict();
+export type InstitutionCadence = z.infer<typeof InstitutionCadenceZ>;
+
+export const InternalFactionEntryZ = z.object({
+      "sub_faction_id": z.string(),
+      "sub_faction_name": z.string(),
+      "member_npc_ids": z.array(z.string()).optional(),
+      "alignment_with_parent": z.enum(["loyal", "factional", "reformist", "schismatic"]),
+      "influence_weight": z.number().int().min(1).max(5),
+    }).strict();
+export type InternalFactionEntry = z.infer<typeof InternalFactionEntryZ>;
 
 export const ScheduleNestingZ = z.object({
       "local_pattern": z.object({
@@ -494,7 +511,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (43)
+// Top-level entities (45)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -1673,5 +1690,32 @@ export const ModelTierPolicySchemaZ = z.object({
     }).strict();
 export type ModelTierPolicySchema = z.infer<typeof ModelTierPolicySchemaZ>;
 
-// 44 $defs · 43 entities
+export const InstitutionSchemaZ = z.object({
+      "institution_id": z.string(),
+      "name": z.string(),
+      "description": z.string().optional(),
+      "tags": z.array(z.string()).optional(),
+      "institution_cadence": InstitutionCadenceZ,
+      "jurisdictional_strength": z.number().int().min(0).max(100),
+      "internal_factions": z.array(InternalFactionEntryZ),
+      "institutional_memory_archetype": z.enum(["devout", "magistrate", "scholar", "broker"]),
+      "parent_faction_id": z.string().nullable().optional(),
+    }).strict();
+export type InstitutionSchema = z.infer<typeof InstitutionSchemaZ>;
+
+export const InstitutionResponseQueueEntrySchemaZ = z.object({
+      "id": z.string(),
+      "institution_id": z.string(),
+      "trigger_event_id": z.string(),
+      "proposed_response": z.string(),
+      "decision_window": z.object({
+      "start_day": z.number().int().min(0),
+      "close_day": z.number().int().min(0),
+    }).strict(),
+      "resolved_by_npc_ids": z.array(z.string()).optional(),
+      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).optional(),
+    }).strict();
+export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
+
+// 46 $defs · 45 entities
 // END OF GENERATED Zod VALIDATORS
