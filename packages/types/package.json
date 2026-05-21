@@ -15,6 +15,10 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.json"
   },
+  "dependencies": {
+    "the-first-perception": "file:../..",
+    "zod": "^3.23.8"
+  },
   "devDependencies": {
     "typescript": "^5.8.3"
   }
