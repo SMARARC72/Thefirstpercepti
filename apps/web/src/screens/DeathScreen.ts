@@ -2,6 +2,8 @@ import gsap from "gsap";
 import type { GameState } from "../game";
 import { domainLabel } from "../game";
 import { ParticleCanvas } from "../components/ParticleCanvas";
+import { createFormOfEndingPostcard } from "../components/FormOfEndingPostcard";
+import { fetchFormOfEnding } from "../state/formOfEndingFetch";
 
 interface DeathScreenProps {
   game: GameState;
@@ -138,6 +140,26 @@ export class DeathScreen {
     }
 
     main.appendChild(card);
+
+    // Form-of-Ending postcard — async-mounted. The throttle dispatches via
+    // the form_of_ending agent (premium tier). On any failure (network /
+    // parse / missing fields) the slot stays empty and the legacy epitaph
+    // path above remains the player's final narration.
+    const postcardSlot = document.createElement("div");
+    postcardSlot.className = "form-of-ending-slot";
+    main.appendChild(postcardSlot);
+    void fetchFormOfEnding(game).then((output) => {
+      if (!output || !output.text || !postcardSlot.isConnected) return;
+      const postcard = createFormOfEndingPostcard({
+        ending_kind: "physical_death",
+        output,
+        day: record?.worldSnapshot?.day ?? game.day ?? 0,
+        scene_index: game.turnCount ?? 0,
+        player_identifier: record?.characterName ?? game.player.name,
+        legacy_stream_field: output.legacy_artifact_id || undefined,
+      });
+      postcardSlot.appendChild(postcard);
+    });
 
     const actions = document.createElement("nav");
     actions.className = "death-actions";
