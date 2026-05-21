@@ -1,0 +1,3 @@
+# Supabase local dev artifacts — never commit
+.branches
+.temp

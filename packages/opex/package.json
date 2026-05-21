@@ -1,7 +1,7 @@
 {
   "name": "@first-perception/opex",
-  "version": "0.1.0",
-  "description": "Opex throttle layer — daily-cap counter, per-session token budget, opex_event ledger on Vercel Postgres",
+  "version": "0.2.0",
+  "description": "Opex throttle layer — daily-cap counter, per-session token budget, opex_event ledger on Supabase Postgres (via postgres SDK pointed at POSTGRES_URL)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0",
+    "postgres": "^3.4.0",
     "@first-perception/types": "^2.0.0"
   },
   "devDependencies": {

@@ -1,0 +1,28 @@
+# Supabase project config — committed to repo for `supabase` CLI.
+# Project ref derived from URL: https://kbjzemtvxhwnmdwnfnmx.supabase.co/
+# Phase 21 / Wave K.
+
+project_id = "kbjzemtvxhwnmdwnfnmx"
+
+[db]
+# Standard Supabase port; CLI uses this for local dev only.
+# Production runs on the hosted Supabase Postgres instance.
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+# Transaction pooler (port 6543) — what serverless functions use.
+# The `postgres` SDK in @first-perception/opex points here via POSTGRES_URL.
+enabled = true
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public"]
+max_rows = 1000
