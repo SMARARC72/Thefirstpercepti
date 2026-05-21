@@ -53,8 +53,19 @@ export class PostgresRepository implements GameRepository {
           "PostgresRepository: no connection string available (set POSTGRES_URL_NON_POOLING or POSTGRES_URL)",
         );
       }
+      // Vercel↔Supabase auto-sets POSTGRES_URL with ?sslmode=require, which
+      // some `pg` versions hand off to a TLS context built from the URL —
+      // bypassing the Pool's explicit ssl config. The symptom is
+      // "self-signed certificate in certificate chain" on the AWS pooler
+      // host despite our Pool config saying rejectUnauthorized:false.
+      // Strip sslmode from the URL so the Pool's ssl option is the single
+      // source of truth.
+      const cleanedConnectionString = this.connectionString.replace(
+        /([?&])sslmode=[^&]*(&|$)/,
+        (_match, prefix, suffix) => (suffix === "&" ? prefix : ""),
+      );
       this.pool = new Pool({
-        connectionString: this.connectionString,
+        connectionString: cleanedConnectionString,
         max: 5,
         idleTimeoutMillis: 30_000,
         ssl: { rejectUnauthorized: false },
