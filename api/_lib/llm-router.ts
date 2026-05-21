@@ -29,15 +29,34 @@ export interface ResolvedClient {
   provider: "claude" | "kimi";
 }
 
-export function hasAnthropicKey(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+// Look up an env var by canonical UPPERCASE name, tolerating case
+// variations and the MOONSHOOT typo. Vercel preserves whatever case the
+// user typed in the dashboard, so `Anthropic_API_key` won't match a
+// `process.env.ANTHROPIC_API_KEY` read. This helper scans all env keys
+// case-insensitively as a fallback. ~10 vars in serverless env so the
+// O(n) scan is cheap on cold start.
+function findEnvVar(canonical: string): string | undefined {
+  if (process.env[canonical]) return process.env[canonical];
+  const targets = new Set<string>([canonical.toLowerCase()]);
+  if (canonical === "MOONSHOT_API_KEY") {
+    targets.add("moonshoot_api_key"); // user typo: three Os
+  }
+  for (const [k, v] of Object.entries(process.env)) {
+    if (v && targets.has(k.toLowerCase())) return v;
+  }
+  return undefined;
 }
 
-// TODO(phase-22.7-or-later): drop MOONSHOOT_API_KEY fallback once the env
-// var is renamed in Vercel (the canonical spelling is MOONSHOT_API_KEY).
-// See repo_mirror/phase_22_6/PRECONDITION_FAILED.md for context.
+function readAnthropicKey(): string | undefined {
+  return findEnvVar("ANTHROPIC_API_KEY");
+}
+
 function readMoonshotKey(): string | undefined {
-  return process.env.MOONSHOT_API_KEY ?? process.env.MOONSHOOT_API_KEY;
+  return findEnvVar("MOONSHOT_API_KEY");
+}
+
+export function hasAnthropicKey(): boolean {
+  return Boolean(readAnthropicKey());
 }
 
 export function hasMoonshotKey(): boolean {
@@ -46,7 +65,7 @@ export function hasMoonshotKey(): boolean {
 
 export function getAnthropic(): AnthropicClient {
   if (!globalThis.__tfp_llm_anthropic) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = readAnthropicKey();
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
     globalThis.__tfp_llm_anthropic = new AnthropicClient({ apiKey });
   }
