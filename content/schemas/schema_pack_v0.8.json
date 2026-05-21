@@ -688,6 +688,75 @@
       },
       "additionalProperties": false
     },
+    "discovery_channel": {
+      "type": "object",
+      "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-02 — How a thread surfaces to the player. Six channels per L.IV (pull-not-push per House L.I governor).",
+      "required": ["kind", "surface_at_day"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "discovery_channel_kind"
+        },
+        "surface_at_day": { "type": "integer", "minimum": 0 },
+        "surface_via_npc_id": { "type": "string", "description": "FK to npc.npc_id when channel involves an NPC source." },
+        "surface_at_location_id": { "type": "string", "description": "FK to location.location_id where the thread surfaced." },
+        "required_player_skill": { "$ref": "#/$defs/skill_check_block", "description": "Optional gating check for the channel (e.g. stumbled needs perception)." }
+      },
+      "additionalProperties": false
+    },
+    "collision_pressure": {
+      "type": "object",
+      "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-03 — Cross-NPC tension that may emerge as a quest when it crosses surfacing_threshold.pressure_threshold.",
+      "required": ["npc_id_a", "npc_id_b", "pressure_value", "collision_kind", "emerged_at_day"],
+      "properties": {
+        "npc_id_a": { "type": "string" },
+        "npc_id_b": { "type": "string" },
+        "pressure_value": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "collision_kind": {
+          "type": "string",
+          "enum": ["want_overlap", "knowledge_asymmetry", "schedule_conflict", "faction_clash"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "collision_pressure_kind"
+        },
+        "emerged_at_day": { "type": "integer", "minimum": 0 },
+        "resolved_at_day": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "subplot_graph_relation": {
+      "type": "object",
+      "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-05 — Quest-to-quest relational primitive. Bundle E clusters via parent_plot_id; related_quest_ids tracks the subplot graph.",
+      "required": ["quest_id", "related_quest_ids", "emergence_path"],
+      "properties": {
+        "quest_id": { "type": "string" },
+        "parent_plot_id": { "type": ["string", "null"], "description": "FK to Bundle E plot.plot_id once Bundle E lands." },
+        "related_quest_ids": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["quest_id", "relation_kind"],
+            "properties": {
+              "quest_id": { "type": "string" },
+              "relation_kind": {
+                "type": "string",
+                "enum": ["contains", "blocks", "enables", "mirrors", "subplot_of"],
+                "x_enum_strategy": "native",
+                "x_enum_name": "subplot_relation_kind"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "emergence_path": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered list of trigger event_ids that produced this quest."
+        }
+      },
+      "additionalProperties": false
+    },
     "scrip_stability_model": {
       "type": "object",
       "description": "Phase 24b §4.4 / Bundle C / L.III-SC-07 — Scrip stability engine state. Feeds Bundle E pan_world_plot P-02 (The Scrip Run).",
@@ -7552,6 +7621,113 @@
       },
       "additionalProperties": false,
       "x_schema_namespace": "content"
+    },
+    "quest": {
+      "type": "object",
+      "description": "Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.",
+      "required": [
+        "quest_id",
+        "name",
+        "archetype",
+        "discovery_channel",
+        "closing_state",
+        "subplot_graph_relation"
+      ],
+      "properties": {
+        "quest_id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string", "description": "v0.8 cross-cutting." },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "v0.8 cross-cutting tags primitive."
+        },
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "want_collision",
+            "institutional_failure",
+            "faction_reach_attempt",
+            "rumor_investigation",
+            "discovery",
+            "succession",
+            "doctrinal",
+            "economic"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "quest_archetype",
+          "description": "Bundle D / L.IV-SC-01 — 8-value archetype taxonomy."
+        },
+        "discovery_channel": {
+          "$ref": "#/$defs/discovery_channel",
+          "description": "Bundle D / L.IV-SC-02 — How the quest surfaces."
+        },
+        "collision_pressure": {
+          "$ref": "#/$defs/collision_pressure",
+          "description": "Bundle D / L.IV-SC-03 — Optional; populated for want_collision archetype quests."
+        },
+        "closing_state": {
+          "type": "string",
+          "enum": [
+            "open",
+            "active",
+            "completed_success",
+            "completed_betrayal",
+            "completed_walked",
+            "expired",
+            "failed",
+            "deferred"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "quest_closing_state",
+          "description": "Bundle D / L.IV-SC-06 — Quest-scoped closing state (parallel to NPC closing_conditions but quest-level)."
+        },
+        "subplot_graph_relation": {
+          "$ref": "#/$defs/subplot_graph_relation",
+          "description": "Bundle D / L.IV-SC-05 — Subplot graph + parent plot ref."
+        },
+        "primary_npc_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "NPCs central to the quest. FK to npc.npc_id."
+        },
+        "primary_faction_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Factions central to the quest. FK to faction.faction_id."
+        },
+        "primary_region_id": {
+          "type": ["string", "null"],
+          "description": "Region the quest is rooted in. FK to region.region_id; null for cross-regional."
+        },
+        "emerged_at_day": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "state"
+    },
+    "surfacing_threshold_config": {
+      "type": "object",
+      "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).",
+      "required": ["max_surfaced_per_region", "pressure_threshold", "recency_weight", "channel_priority"],
+      "properties": {
+        "max_surfaced_per_region": {
+          "type": "integer",
+          "const": 7,
+          "description": "Hard cap per House governor. v0.8 frozen."
+        },
+        "pressure_threshold": { "type": "number", "minimum": 0, "maximum": 10 },
+        "recency_weight": { "type": "number", "minimum": 0, "maximum": 2 },
+        "channel_priority": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"]
+          },
+          "description": "Ordered list of channels; engine fires first eligible."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "engine"
     },
     "trade_route_v08": {
       "type": "object",

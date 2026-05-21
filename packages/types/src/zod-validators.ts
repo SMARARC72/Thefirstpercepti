@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T21:59:05.511Z
+ * Generated at:   2026-05-21T22:08:34.134Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (51)
+// $defs (54)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -295,6 +295,36 @@ export const CommodityCatalogEntryZ = z.object({
       "region_of_origin": z.string().optional(),
     }).strict();
 export type CommodityCatalogEntry = z.infer<typeof CommodityCatalogEntryZ>;
+
+export const DiscoveryChannelZ = z.object({
+      "kind": z.enum(["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"]),
+      "surface_at_day": z.number().int().min(0),
+      "surface_via_npc_id": z.string().optional(),
+      "surface_at_location_id": z.string().optional(),
+      "required_player_skill": SkillCheckBlockZ.optional(),
+    }).strict();
+export type DiscoveryChannel = z.infer<typeof DiscoveryChannelZ>;
+
+export const CollisionPressureZ = z.object({
+      "npc_id_a": z.string(),
+      "npc_id_b": z.string(),
+      "pressure_value": z.number().int().min(0).max(10),
+      "collision_kind": z.enum(["want_overlap", "knowledge_asymmetry", "schedule_conflict", "faction_clash"]),
+      "emerged_at_day": z.number().int().min(0),
+      "resolved_at_day": z.number().int().nullable().optional(),
+    }).strict();
+export type CollisionPressure = z.infer<typeof CollisionPressureZ>;
+
+export const SubplotGraphRelationZ = z.object({
+      "quest_id": z.string(),
+      "parent_plot_id": z.string().nullable().optional(),
+      "related_quest_ids": z.array(z.object({
+      "quest_id": z.string(),
+      "relation_kind": z.enum(["contains", "blocks", "enables", "mirrors", "subplot_of"]),
+    }).strict()),
+      "emergence_path": z.array(z.string()),
+    }).strict();
+export type SubplotGraphRelation = z.infer<typeof SubplotGraphRelationZ>;
 
 export const ScripStabilityModelZ = z.object({
       "current_peg": z.object({
@@ -588,7 +618,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (46)
+// Top-level entities (48)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -1780,6 +1810,31 @@ export const InstitutionSchemaZ = z.object({
     }).strict();
 export type InstitutionSchema = z.infer<typeof InstitutionSchemaZ>;
 
+export const QuestSchemaZ = z.object({
+      "quest_id": z.string(),
+      "name": z.string(),
+      "description": z.string().optional(),
+      "tags": z.array(z.string()).optional(),
+      "archetype": z.enum(["want_collision", "institutional_failure", "faction_reach_attempt", "rumor_investigation", "discovery", "succession", "doctrinal", "economic"]),
+      "discovery_channel": DiscoveryChannelZ,
+      "collision_pressure": CollisionPressureZ.optional(),
+      "closing_state": z.enum(["open", "active", "completed_success", "completed_betrayal", "completed_walked", "expired", "failed", "deferred"]),
+      "subplot_graph_relation": SubplotGraphRelationZ,
+      "primary_npc_ids": z.array(z.string()).optional(),
+      "primary_faction_ids": z.array(z.string()).optional(),
+      "primary_region_id": z.string().nullable().optional(),
+      "emerged_at_day": z.number().int().min(0).optional(),
+    }).strict();
+export type QuestSchema = z.infer<typeof QuestSchemaZ>;
+
+export const SurfacingThresholdConfigSchemaZ = z.object({
+      "max_surfaced_per_region": z.number().int(),
+      "pressure_threshold": z.number().min(0).max(10),
+      "recency_weight": z.number().min(0).max(2),
+      "channel_priority": z.array(z.enum(["overheard", "witnessed", "requested", "stumbled", "recruited", "prophecy"])),
+    }).strict();
+export type SurfacingThresholdConfigSchema = z.infer<typeof SurfacingThresholdConfigSchemaZ>;
+
 export const TradeRouteV08SchemaZ = z.object({
       "route_id": z.string(),
       "origin_location_id": z.string(),
@@ -1806,5 +1861,5 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
     }).strict();
 export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
 
-// 51 $defs · 46 entities
+// 54 $defs · 48 entities
 // END OF GENERATED Zod VALIDATORS

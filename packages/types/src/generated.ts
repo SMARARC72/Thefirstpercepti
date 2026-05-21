@@ -1667,6 +1667,76 @@ export interface FirstPerceptionSchemaPack {
     parent_faction_id?: string | null;
   };
   /**
+   * Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
+   */
+  quest?: {
+    quest_id: string;
+    name: string;
+    /**
+     * v0.8 cross-cutting.
+     */
+    description?: string;
+    /**
+     * v0.8 cross-cutting tags primitive.
+     */
+    tags?: string[];
+    /**
+     * Bundle D / L.IV-SC-01 — 8-value archetype taxonomy.
+     */
+    archetype:
+      | "want_collision"
+      | "institutional_failure"
+      | "faction_reach_attempt"
+      | "rumor_investigation"
+      | "discovery"
+      | "succession"
+      | "doctrinal"
+      | "economic";
+    discovery_channel: DiscoveryChannel;
+    collision_pressure?: CollisionPressure;
+    /**
+     * Bundle D / L.IV-SC-06 — Quest-scoped closing state (parallel to NPC closing_conditions but quest-level).
+     */
+    closing_state:
+      | "open"
+      | "active"
+      | "completed_success"
+      | "completed_betrayal"
+      | "completed_walked"
+      | "expired"
+      | "failed"
+      | "deferred";
+    subplot_graph_relation: SubplotGraphRelation;
+    /**
+     * NPCs central to the quest. FK to npc.npc_id.
+     */
+    primary_npc_ids?: string[];
+    /**
+     * Factions central to the quest. FK to faction.faction_id.
+     */
+    primary_faction_ids?: string[];
+    /**
+     * Region the quest is rooted in. FK to region.region_id; null for cross-regional.
+     */
+    primary_region_id?: string | null;
+    emerged_at_day?: number;
+  };
+  /**
+   * Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).
+   */
+  surfacing_threshold_config?: {
+    /**
+     * Hard cap per House governor. v0.8 frozen.
+     */
+    max_surfaced_per_region: 7;
+    pressure_threshold: number;
+    recency_weight: number;
+    /**
+     * Ordered list of channels; engine fires first eligible.
+     */
+    channel_priority: ("overheard" | "witnessed" | "requested" | "stumbled" | "recruited" | "prophecy")[];
+  };
+  /**
    * Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
    */
   trade_route_v08?: {
@@ -2267,6 +2337,64 @@ export interface InternalFactionEntry {
   alignment_with_parent: "loyal" | "factional" | "reformist" | "schismatic";
   influence_weight: number;
 }
+/**
+ * Bundle D / L.IV-SC-02 — How the quest surfaces.
+ */
+export interface DiscoveryChannel {
+  kind: "overheard" | "witnessed" | "requested" | "stumbled" | "recruited" | "prophecy";
+  surface_at_day: number;
+  /**
+   * FK to npc.npc_id when channel involves an NPC source.
+   */
+  surface_via_npc_id?: string;
+  /**
+   * FK to location.location_id where the thread surfaced.
+   */
+  surface_at_location_id?: string;
+  required_player_skill?: SkillCheckBlock;
+}
+/**
+ * Phase 24b §4.1 / 24a-surfaced — Generic skill check shape. Uses CoreStat per Khoja Option C dual-stats decision (engine narrative system reads custom_stats; SRD layers read derived_stats via translation rule).
+ */
+export interface SkillCheckBlock {
+  /**
+   * 9-CoreStat Tide-Stained system. v0.8 stat system per Khoja Option C.
+   */
+  stat: "body" | "grace" | "sense" | "mind" | "will" | "presence" | "authority" | "ruin" | "creation";
+  /**
+   * Difficulty class threshold the d20 roll + stat modifier must meet or exceed.
+   */
+  dc: number;
+}
+/**
+ * Bundle D / L.IV-SC-03 — Optional; populated for want_collision archetype quests.
+ */
+export interface CollisionPressure {
+  npc_id_a: string;
+  npc_id_b: string;
+  pressure_value: number;
+  collision_kind: "want_overlap" | "knowledge_asymmetry" | "schedule_conflict" | "faction_clash";
+  emerged_at_day: number;
+  resolved_at_day?: number | null;
+}
+/**
+ * Bundle D / L.IV-SC-05 — Subplot graph + parent plot ref.
+ */
+export interface SubplotGraphRelation {
+  quest_id: string;
+  /**
+   * FK to Bundle E plot.plot_id once Bundle E lands.
+   */
+  parent_plot_id?: string | null;
+  related_quest_ids: {
+    quest_id: string;
+    relation_kind: "contains" | "blocks" | "enables" | "mirrors" | "subplot_of";
+  }[];
+  /**
+   * Ordered list of trigger event_ids that produced this quest.
+   */
+  emergence_path: string[];
+}
 
 
 // ============================================================================
@@ -2318,13 +2446,15 @@ export type OpexStateSchema = NonNullable<FirstPerceptionSchemaPack["opex_state"
 export type OpexEventSchema = NonNullable<FirstPerceptionSchemaPack["opex_event"]>;
 export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model_tier_policy"]>;
 export type InstitutionSchema = NonNullable<FirstPerceptionSchemaPack["institution"]>;
+export type QuestSchema = NonNullable<FirstPerceptionSchemaPack["quest"]>;
+export type SurfacingThresholdConfigSchema = NonNullable<FirstPerceptionSchemaPack["surfacing_threshold_config"]>;
 export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 46
-// $defs count:  51
+// Entity count: 48
+// $defs count:  54
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

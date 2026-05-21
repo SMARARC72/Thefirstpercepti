@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T21:59:04.677Z
+-- Generated at:   2026-05-21T22:08:33.359Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -151,6 +151,39 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.discovery_channel_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."discovery_channel_kind" AS ENUM (
+    'overheard',
+    'witnessed',
+    'requested',
+    'stumbled',
+    'recruited',
+    'prophecy'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.collision_pressure_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."collision_pressure_kind" AS ENUM (
+    'want_overlap',
+    'knowledge_asymmetry',
+    'schedule_conflict',
+    'faction_clash'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.subplot_relation_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."subplot_relation_kind" AS ENUM (
+    'contains',
+    'blocks',
+    'enables',
+    'mirrors',
+    'subplot_of'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.npc_memory_archetype
 DO $$ BEGIN
   CREATE TYPE "public"."npc_memory_archetype" AS ENUM (
@@ -173,6 +206,34 @@ DO $$ BEGIN
     'magistrate',
     'scholar',
     'broker'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.quest_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."quest_archetype" AS ENUM (
+    'want_collision',
+    'institutional_failure',
+    'faction_reach_attempt',
+    'rumor_investigation',
+    'discovery',
+    'succession',
+    'doctrinal',
+    'economic'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.quest_closing_state
+DO $$ BEGIN
+  CREATE TYPE "public"."quest_closing_state" AS ENUM (
+    'open',
+    'active',
+    'completed_success',
+    'completed_betrayal',
+    'completed_walked',
+    'expired',
+    'failed',
+    'deferred'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -1277,8 +1338,32 @@ COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.
 ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- STATE schema — 1 entities
+-- STATE schema — 2 entities
 -- ============================================================================
+-- quest (state.quest)
+-- Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
+CREATE TABLE IF NOT EXISTS "state"."quest" (
+  "quest_id" TEXT PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "tags" JSONB,
+  "archetype" "state"."quest_archetype" NOT NULL,
+  "discovery_channel" JSONB NOT NULL  -- $ref: #/$defs/discovery_channel,
+  "collision_pressure" JSONB  -- $ref: #/$defs/collision_pressure,
+  "closing_state" "state"."quest_closing_state" NOT NULL,
+  "subplot_graph_relation" JSONB NOT NULL  -- $ref: #/$defs/subplot_graph_relation,
+  "primary_npc_ids" JSONB,
+  "primary_faction_ids" JSONB,
+  "primary_region_id" TEXT,
+  "emerged_at_day" INTEGER,
+  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK ("emerged_at_day" >= 0)
+);
+COMMENT ON TABLE "state"."quest" IS "Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.";
+ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
+
 -- institution_response_queue_entry (state.institution_response_queue_entry)
 -- Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
 CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
@@ -1297,7 +1382,27 @@ CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
 COMMENT ON TABLE "state"."institution_response_queue_entry" IS "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.";
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
 
+-- ============================================================================
+-- ENGINE schema — 1 entities
+-- ============================================================================
+-- surfacing_threshold_config (engine.surfacing_threshold_config)
+-- Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).
+CREATE TABLE IF NOT EXISTS "engine"."surfacing_threshold_config" (
+  "max_surfaced_per_region" INTEGER NOT NULL,
+  "pressure_threshold" NUMERIC NOT NULL,
+  "recency_weight" NUMERIC NOT NULL,
+  "channel_priority" JSONB NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK ("pressure_threshold" >= 0),
+  CHECK ("pressure_threshold" <= 10),
+  CHECK ("recency_weight" >= 0),
+  CHECK ("recency_weight" <= 2)
+);
+COMMENT ON TABLE "engine"."surfacing_threshold_config" IS "Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).";
+ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
+
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 46 entities · 15 enums · 5 schemas
+-- 48 entities · 20 enums · 5 schemas
 -- ----------------------------------------------------------------------------
