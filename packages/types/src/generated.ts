@@ -561,6 +561,29 @@ export interface FirstPerceptionSchemaPack {
       witnessed_on_day?: number;
       perception_quality?: "direct" | "overheard" | "inferred" | "told_about";
     }[];
+    want_model: WantModel;
+    knowledge_tri_layer: KnowledgeTriLayer;
+    /**
+     * Phase 24b / Bundle A / L.I-SC-03 — Death's binding rule: ≥2 entries; ≥1 MUST have player_reachable=true (engine validation enforces; can't express in pure JSON Schema). REQUIRED in v0.8.
+     *
+     * @minItems 2
+     */
+    closing_conditions: [NpcClosingConditionEntry, NpcClosingConditionEntry, ...NpcClosingConditionEntry[]];
+    /**
+     * Phase 24b / Bundle A / L.I-SC-04 — Memory-pattern archetype. 'contradiction_bearing' documents Death's binding rule waiver (Listening Child, Butcher Who Repeats). Native Postgres ENUM. REQUIRED in v0.8.
+     */
+    memory_archetype:
+      | "peasant"
+      | "soldier"
+      | "scholar"
+      | "devout"
+      | "magistrate"
+      | "broker"
+      | "aspirant_divine"
+      | "child"
+      | "contradiction_bearing";
+    ambition_tick: AmbitionTick;
+    schedule_nesting: ScheduleNesting;
   };
   rumor?: {
     rumor_id: string;
@@ -1890,6 +1913,175 @@ export interface BodyModificationsBlock1 {
    */
   adaptagen_active?: {}[];
 }
+/**
+ * Phase 24b / Bundle A / L.I-SC-01 — NPC drive/barter/kill_for/fear_loss. REQUIRED in v0.8.
+ */
+export interface WantModel {
+  drive: {
+    /**
+     * What the NPC wants. E.g. 'be named by The Unnamed before any rival'.
+     */
+    description: string;
+    /**
+     * Drive strength 1..5.
+     */
+    intensity: number;
+    /**
+     * Drive intensity decays over this many in-world days unless reinforced.
+     */
+    freshness_decay: number;
+  };
+  /**
+   * Trade offers. Empty array = non-barterer.
+   */
+  barter: {
+    offered: string;
+    cost_to_npc: number;
+    refusal_if_audience_includes?: string[];
+  }[];
+  kill_for: {
+    trigger_condition: string;
+    threshold: "warning" | "danger" | "critical" | "absolute";
+    target_class: "individual" | "institution" | "concept" | "self";
+    /**
+     * Timestamp / world_time of last threshold check.
+     */
+    last_evaluated?: string;
+  };
+  fear_loss: {
+    /**
+     * What the NPC dreads losing. E.g. 'her sister's parish standing'.
+     */
+    what: string;
+    urgency: number;
+    /**
+     * If true, NPC drops their drive when fear_loss becomes imminent.
+     */
+    abandons_drive_if_imminent: boolean;
+  };
+}
+/**
+ * Phase 24b / Bundle A / L.I-SC-02 — knows/says/believes. REQUIRED in v0.8.
+ */
+export interface KnowledgeTriLayer {
+  /**
+   * Facts the NPC has direct evidence of. May be empty for stub NPCs.
+   */
+  knows: {
+    /**
+     * Ref to event/belief/document the NPC knows.
+     */
+    fact_id: string;
+    source_event_id?: string;
+    certainty: number;
+    last_recalled?: string;
+  }[];
+  says: {
+    default_policy: "open" | "guarded" | "selective" | "silent";
+    /**
+     * Per-audience-class policy overrides (regional packs add audience classes).
+     */
+    per_audience_overrides?: {
+      [k: string]: "open" | "guarded" | "selective" | "silent";
+    };
+  };
+  /**
+   * Convictions distinct from knows. May be empty.
+   */
+  believes: {
+    proposition: string;
+    conviction: number;
+    /**
+     * How resistant to contradicting evidence (1=easily swayed, 5=immovable).
+     */
+    evidence_resistance: number;
+  }[];
+}
+/**
+ * Phase 24b §4.1 — Sub-$def used by Bundle A L.I-SC-03 closing_conditions field. Each NPC carries an array of ≥2 entries; ≥1 must be player_reachable=true (Death's binding rule).
+ */
+export interface NpcClosingConditionEntry {
+  /**
+   * Closing-state taxonomy. Native Postgres ENUM at DDL emission time.
+   */
+  kind: "success_state" | "passover_state" | "death_state" | "transfer_state" | "special_state";
+  description: string;
+  player_reachable: boolean;
+  /**
+   * Engine annotation for what the world looks like after this closure fires.
+   */
+  consequence_summary?: string;
+  /**
+   * Populated on passover_state only — becomes new active drive after passover fires.
+   */
+  residue_drive?: {
+    description: string;
+    intensity: number;
+  };
+  /**
+   * Populated on transfer_state only — FK to receiving NPC.
+   */
+  transfer_target_npc_id?: string;
+}
+/**
+ * Phase 24b / Bundle A / L.I-SC-05 — NPC's drive-attempt cadence. REQUIRED in v0.8.
+ */
+export interface AmbitionTick {
+  /**
+   * Tick cadence. 'special' is contradiction-bearing; engine handles per-case.
+   */
+  cadence:
+    | "seasonal_4x_year"
+    | "monthly"
+    | "irregular_per_assignment"
+    | "liturgical_12x_year"
+    | "civic_6x_year"
+    | "trade_season_8x_year"
+    | "theological_irregular"
+    | "special";
+  /**
+   * Timestamp / world_time of last attempt. Null = never.
+   */
+  last_attempt?: string | null;
+  /**
+   * Signed integer. Positive = recent successes; negative = setback streak (House setback-bias governor reads this).
+   */
+  success_streak: number;
+  /**
+   * Engine-computed from last_attempt + cadence. Null for 'special' cadence.
+   */
+  next_scheduled_attempt?: string | null;
+}
+/**
+ * Phase 24b / Bundle A / L.I-SC-06 — Per-NPC schedule nested under institution. REQUIRED in v0.8.
+ */
+export interface ScheduleNesting {
+  local_pattern: {
+    /**
+     * Free-form per-game-hour pattern; engine renders as ink scheduling or per-scene routing.
+     */
+    summary: string;
+    typical_locations_per_hour?: {
+      /**
+       * [start_hour, end_hour] in 24h.
+       *
+       * @minItems 2
+       * @maxItems 2
+       */
+      hour_range: [number, number];
+      location_id: string;
+      activity: string;
+    }[];
+  };
+  /**
+   * FK to faction (or new Bundle B institution entity). Null = unaffiliated.
+   */
+  nested_under_institution_id: string | null;
+  /**
+   * Per-playthrough perturbation seed (House governor: variance bands on stack initialization).
+   */
+  variance_seed: number;
+}
 export interface ValidatorStageResult {
   stage_id:
     | "stage_1_input"
@@ -2030,6 +2222,6 @@ export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model
 // ============================================================================
 // Generated from schema_pack v0.8.0
 // Entity count: 43
-// $defs count:  40
+// $defs count:  44
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

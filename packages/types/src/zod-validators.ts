@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T21:32:45.817Z
+ * Generated at:   2026-05-21T21:44:49.455Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (40)
+// $defs (44)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -39,6 +39,19 @@ export const WeatherPatternZ = z.object({
     }).strict(),
     }).strict();
 export type WeatherPattern = z.infer<typeof WeatherPatternZ>;
+
+export const SkillCheckBlockZ = z.object({
+      "stat": z.enum(["body", "grace", "sense", "mind", "will", "presence", "authority", "ruin", "creation"]),
+      "dc": z.number().int().min(1),
+    }).strict();
+export type SkillCheckBlock = z.infer<typeof SkillCheckBlockZ>;
+
+export const LockRequirementBlockZ = z.object({
+      "key_item_id": z.string().optional(),
+      "skill_check": SkillCheckBlockZ.optional(),
+      "description": z.string(),
+    }).strict();
+export type LockRequirementBlock = z.infer<typeof LockRequirementBlockZ>;
 
 export const ExitBlockZ = z.object({
       "to_location_id": z.string(),
@@ -58,19 +71,6 @@ export const PoiBlockZ = z.object({
       "tags": z.array(z.string()).optional(),
     }).strict();
 export type PoiBlock = z.infer<typeof PoiBlockZ>;
-
-export const LockRequirementBlockZ = z.object({
-      "key_item_id": z.string().optional(),
-      "skill_check": SkillCheckBlockZ.optional(),
-      "description": z.string(),
-    }).strict();
-export type LockRequirementBlock = z.infer<typeof LockRequirementBlockZ>;
-
-export const SkillCheckBlockZ = z.object({
-      "stat": z.enum(["body", "grace", "sense", "mind", "will", "presence", "authority", "ruin", "creation"]),
-      "dc": z.number().int().min(1),
-    }).strict();
-export type SkillCheckBlock = z.infer<typeof SkillCheckBlockZ>;
 
 export const SecretBlockZ = z.object({
       "id": z.string(),
@@ -164,6 +164,73 @@ export const NpcClosingConditionEntryZ = z.object({
       "transfer_target_npc_id": z.string().optional(),
     }).strict();
 export type NpcClosingConditionEntry = z.infer<typeof NpcClosingConditionEntryZ>;
+
+export const WantModelZ = z.object({
+      "drive": z.object({
+      "description": z.string(),
+      "intensity": z.number().int().min(1).max(5),
+      "freshness_decay": z.number().int().min(0),
+    }).strict(),
+      "barter": z.array(z.object({
+      "offered": z.string(),
+      "cost_to_npc": z.number().int().min(1).max(5),
+      "refusal_if_audience_includes": z.array(z.string()).optional(),
+    }).strict()),
+      "kill_for": z.object({
+      "trigger_condition": z.string(),
+      "threshold": z.enum(["warning", "danger", "critical", "absolute"]),
+      "target_class": z.enum(["individual", "institution", "concept", "self"]),
+      "last_evaluated": z.string().optional(),
+    }).strict(),
+      "fear_loss": z.object({
+      "what": z.string(),
+      "urgency": z.number().int().min(1).max(5),
+      "abandons_drive_if_imminent": z.boolean(),
+    }).strict(),
+    }).strict();
+export type WantModel = z.infer<typeof WantModelZ>;
+
+export const KnowledgeTriLayerZ = z.object({
+      "knows": z.array(z.object({
+      "fact_id": z.string(),
+      "source_event_id": z.string().optional(),
+      "certainty": z.number().int().min(1).max(5),
+      "last_recalled": z.string().optional(),
+    }).strict()),
+      "says": z.object({
+      "default_policy": z.enum(["open", "guarded", "selective", "silent"]),
+      "per_audience_overrides": z.object({
+    }).catchall(z.enum(["open", "guarded", "selective", "silent"])).optional(),
+    }).strict(),
+      "believes": z.array(z.object({
+      "proposition": z.string(),
+      "conviction": z.number().int().min(1).max(5),
+      "evidence_resistance": z.number().int().min(1).max(5),
+    }).strict()),
+    }).strict();
+export type KnowledgeTriLayer = z.infer<typeof KnowledgeTriLayerZ>;
+
+export const AmbitionTickZ = z.object({
+      "cadence": z.enum(["seasonal_4x_year", "monthly", "irregular_per_assignment", "liturgical_12x_year", "civic_6x_year", "trade_season_8x_year", "theological_irregular", "special"]),
+      "last_attempt": z.string().nullable().optional(),
+      "success_streak": z.number().int(),
+      "next_scheduled_attempt": z.string().nullable().optional(),
+    }).strict();
+export type AmbitionTick = z.infer<typeof AmbitionTickZ>;
+
+export const ScheduleNestingZ = z.object({
+      "local_pattern": z.object({
+      "summary": z.string(),
+      "typical_locations_per_hour": z.array(z.object({
+      "hour_range": z.array(z.number().int().min(0).max(23)).min(2).max(2),
+      "location_id": z.string(),
+      "activity": z.string(),
+    }).strict()).optional(),
+    }).strict(),
+      "nested_under_institution_id": z.string().nullable(),
+      "variance_seed": z.number().int(),
+    }).strict();
+export type ScheduleNesting = z.infer<typeof ScheduleNestingZ>;
 
 export const WorldTimeZ = z.object({
       "day": z.number().int().min(0),
@@ -777,6 +844,12 @@ export const NpcSchemaZ = z.object({
       "witnessed_on_day": z.number().int().optional(),
       "perception_quality": z.enum(["direct", "overheard", "inferred", "told_about"]).optional(),
     })).optional(),
+      "want_model": WantModelZ,
+      "knowledge_tri_layer": KnowledgeTriLayerZ,
+      "closing_conditions": z.array(NpcClosingConditionEntryZ).min(2),
+      "memory_archetype": z.enum(["peasant", "soldier", "scholar", "devout", "magistrate", "broker", "aspirant_divine", "child", "contradiction_bearing"]),
+      "ambition_tick": AmbitionTickZ,
+      "schedule_nesting": ScheduleNestingZ,
     });
 export type NpcSchema = z.infer<typeof NpcSchemaZ>;
 
@@ -1600,5 +1673,5 @@ export const ModelTierPolicySchemaZ = z.object({
     }).strict();
 export type ModelTierPolicySchema = z.infer<typeof ModelTierPolicySchemaZ>;
 
-// 40 $defs · 43 entities
+// 44 $defs · 43 entities
 // END OF GENERATED Zod VALIDATORS

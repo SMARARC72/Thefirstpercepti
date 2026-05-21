@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T21:32:44.633Z
+-- Generated at:   2026-05-21T21:44:48.509Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -31,6 +31,79 @@ CREATE SCHEMA IF NOT EXISTS "content";
 CREATE SCHEMA IF NOT EXISTS "state";
 CREATE SCHEMA IF NOT EXISTS "behavior";
 CREATE SCHEMA IF NOT EXISTS "engine";
+
+-- ----------------------------------------------------------------------------
+-- Native Postgres ENUM types (per ARD-011 §2)
+-- ----------------------------------------------------------------------------
+-- public.npc_closing_state
+DO $$ BEGIN
+  CREATE TYPE "public"."npc_closing_state" AS ENUM (
+    'success_state',
+    'passover_state',
+    'death_state',
+    'transfer_state',
+    'special_state'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.want_model_kill_threshold
+DO $$ BEGIN
+  CREATE TYPE "public"."want_model_kill_threshold" AS ENUM (
+    'warning',
+    'danger',
+    'critical',
+    'absolute'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.want_model_target_class
+DO $$ BEGIN
+  CREATE TYPE "public"."want_model_target_class" AS ENUM (
+    'individual',
+    'institution',
+    'concept',
+    'self'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.knowledge_says_policy
+DO $$ BEGIN
+  CREATE TYPE "public"."knowledge_says_policy" AS ENUM (
+    'open',
+    'guarded',
+    'selective',
+    'silent'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.ambition_tick_cadence
+DO $$ BEGIN
+  CREATE TYPE "public"."ambition_tick_cadence" AS ENUM (
+    'seasonal_4x_year',
+    'monthly',
+    'irregular_per_assignment',
+    'liturgical_12x_year',
+    'civic_6x_year',
+    'trade_season_8x_year',
+    'theological_irregular',
+    'special'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.npc_memory_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."npc_memory_archetype" AS ENUM (
+    'peasant',
+    'soldier',
+    'scholar',
+    'devout',
+    'magistrate',
+    'broker',
+    'aspirant_divine',
+    'child',
+    'contradiction_bearing'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ============================================================================
 -- PUBLIC schema — 43 entities
@@ -231,6 +304,12 @@ CREATE TABLE IF NOT EXISTS "public"."npc" (
   "behavior_tree_state" JSONB,
   "grudge_ledger" JSONB,
   "witness_history" JSONB,
+  "want_model" JSONB NOT NULL  -- $ref: #/$defs/want_model,
+  "knowledge_tri_layer" JSONB NOT NULL  -- $ref: #/$defs/knowledge_tri_layer,
+  "closing_conditions" JSONB NOT NULL,
+  "memory_archetype" "public"."npc_memory_archetype" NOT NULL,
+  "ambition_tick" JSONB NOT NULL  -- $ref: #/$defs/ambition_tick,
+  "schedule_nesting" JSONB NOT NULL  -- $ref: #/$defs/schedule_nesting,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -1064,5 +1143,5 @@ ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 43 entities · 0 enums · 5 schemas
+-- 43 entities · 6 enums · 5 schemas
 -- ----------------------------------------------------------------------------

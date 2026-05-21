@@ -111,6 +111,31 @@
       },
       "additionalProperties": false
     },
+    "skill_check_block": {
+      "type": "object",
+      "description": "Phase 24b §4.1 / 24a-surfaced — Generic skill check shape. Uses CoreStat per Khoja Option C dual-stats decision (engine narrative system reads custom_stats; SRD layers read derived_stats via translation rule).",
+      "required": ["stat", "dc"],
+      "properties": {
+        "stat": {
+          "type": "string",
+          "enum": ["body", "grace", "sense", "mind", "will", "presence", "authority", "ruin", "creation"],
+          "description": "9-CoreStat Tide-Stained system. v0.8 stat system per Khoja Option C."
+        },
+        "dc": { "type": "integer", "minimum": 1, "description": "Difficulty class threshold the d20 roll + stat modifier must meet or exceed." }
+      },
+      "additionalProperties": false
+    },
+    "lock_requirement_block": {
+      "type": "object",
+      "description": "Phase 24b §4.1 / 24a-surfaced — Exit.locked structured shape. Either a key-item, a skill check, or both gate the exit.",
+      "required": ["description"],
+      "properties": {
+        "key_item_id": { "type": "string", "description": "FK → item.item_id; null if no key required." },
+        "skill_check": { "$ref": "#/$defs/skill_check_block" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "exit_block": {
       "type": "object",
       "description": "Phase 24b §4.1 / 24a-surfaced — LocationNode.exits structured shape. Reconciles with v0.7 travel_route $def (inverse direction); v0.8 keeps both; engine adapter translates at scene-load boundary.",
@@ -139,31 +164,6 @@
           "items": { "type": "string" },
           "description": "Cross-cutting tags primitive (v0.8 cross-cutting convention #1)."
         }
-      },
-      "additionalProperties": false
-    },
-    "lock_requirement_block": {
-      "type": "object",
-      "description": "Phase 24b §4.1 / 24a-surfaced — Exit.locked structured shape. Either a key-item, a skill check, or both gate the exit.",
-      "required": ["description"],
-      "properties": {
-        "key_item_id": { "type": "string", "description": "FK → item.item_id; null if no key required." },
-        "skill_check": { "$ref": "#/$defs/skill_check_block" },
-        "description": { "type": "string" }
-      },
-      "additionalProperties": false
-    },
-    "skill_check_block": {
-      "type": "object",
-      "description": "Phase 24b §4.1 / 24a-surfaced — Generic skill check shape. Uses CoreStat per Khoja Option C dual-stats decision (engine narrative system reads custom_stats; SRD layers read derived_stats via translation rule).",
-      "required": ["stat", "dc"],
-      "properties": {
-        "stat": {
-          "type": "string",
-          "enum": ["body", "grace", "sense", "mind", "will", "presence", "authority", "ruin", "creation"],
-          "description": "9-CoreStat Tide-Stained system. v0.8 stat system per Khoja Option C."
-        },
-        "dc": { "type": "integer", "minimum": 1, "description": "Difficulty class threshold the d20 roll + stat modifier must meet or exceed." }
       },
       "additionalProperties": false
     },
@@ -334,7 +334,9 @@
         "kind": {
           "type": "string",
           "enum": ["success_state", "passover_state", "death_state", "transfer_state", "special_state"],
-          "description": "Closing-state taxonomy. Native Postgres ENUM at DDL emission time."
+          "description": "Closing-state taxonomy. Native Postgres ENUM at DDL emission time.",
+          "x_enum_strategy": "native",
+          "x_enum_name": "npc_closing_state"
         },
         "description": { "type": "string" },
         "player_reachable": { "type": "boolean" },
@@ -350,6 +352,199 @@
           "additionalProperties": false
         },
         "transfer_target_npc_id": { "type": "string", "description": "Populated on transfer_state only — FK to receiving NPC." }
+      },
+      "additionalProperties": false
+    },
+    "want_model": {
+      "type": "object",
+      "description": "Phase 24b §4.2 / Bundle A / L.I-SC-01 — NPC drive/barter/kill_for/fear_loss model. Lands on NpcSchema as REQUIRED. Aggregated up to FactionSchema in Bundle C. Source: Sec L.I Layer 1 (codex lines 8683-8691).",
+      "required": ["drive", "barter", "kill_for", "fear_loss"],
+      "properties": {
+        "drive": {
+          "type": "object",
+          "required": ["description", "intensity", "freshness_decay"],
+          "properties": {
+            "description": { "type": "string", "description": "What the NPC wants. E.g. 'be named by The Unnamed before any rival'." },
+            "intensity": { "type": "integer", "minimum": 1, "maximum": 5, "description": "Drive strength 1..5." },
+            "freshness_decay": { "type": "integer", "minimum": 0, "description": "Drive intensity decays over this many in-world days unless reinforced." }
+          },
+          "additionalProperties": false
+        },
+        "barter": {
+          "type": "array",
+          "description": "Trade offers. Empty array = non-barterer.",
+          "items": {
+            "type": "object",
+            "required": ["offered", "cost_to_npc"],
+            "properties": {
+              "offered": { "type": "string" },
+              "cost_to_npc": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "refusal_if_audience_includes": {
+                "type": "array",
+                "items": { "type": "string", "description": "npc_id refs that, if present in audience, cause NPC to refuse this trade." }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "kill_for": {
+          "type": "object",
+          "required": ["trigger_condition", "threshold", "target_class"],
+          "properties": {
+            "trigger_condition": { "type": "string" },
+            "threshold": {
+              "type": "string",
+              "enum": ["warning", "danger", "critical", "absolute"],
+              "x_enum_strategy": "native",
+              "x_enum_name": "want_model_kill_threshold"
+            },
+            "target_class": {
+              "type": "string",
+              "enum": ["individual", "institution", "concept", "self"],
+              "x_enum_strategy": "native",
+              "x_enum_name": "want_model_target_class"
+            },
+            "last_evaluated": { "type": "string", "description": "Timestamp / world_time of last threshold check." }
+          },
+          "additionalProperties": false
+        },
+        "fear_loss": {
+          "type": "object",
+          "required": ["what", "urgency", "abandons_drive_if_imminent"],
+          "properties": {
+            "what": { "type": "string", "description": "What the NPC dreads losing. E.g. 'her sister's parish standing'." },
+            "urgency": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "abandons_drive_if_imminent": { "type": "boolean", "description": "If true, NPC drops their drive when fear_loss becomes imminent." }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "knowledge_tri_layer": {
+      "type": "object",
+      "description": "Phase 24b §4.2 / Bundle A / L.I-SC-02 — knows/says/believes triangle (Garak's flag). Foundation for Bundle G Information Economy. Source: Sec L.I Layer 3 (codex lines 8718-8724).",
+      "required": ["knows", "says", "believes"],
+      "properties": {
+        "knows": {
+          "type": "array",
+          "description": "Facts the NPC has direct evidence of. May be empty for stub NPCs.",
+          "items": {
+            "type": "object",
+            "required": ["fact_id", "certainty"],
+            "properties": {
+              "fact_id": { "type": "string", "description": "Ref to event/belief/document the NPC knows." },
+              "source_event_id": { "type": "string" },
+              "certainty": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "last_recalled": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "says": {
+          "type": "object",
+          "required": ["default_policy"],
+          "properties": {
+            "default_policy": {
+              "type": "string",
+              "enum": ["open", "guarded", "selective", "silent"],
+              "x_enum_strategy": "native",
+              "x_enum_name": "knowledge_says_policy"
+            },
+            "per_audience_overrides": {
+              "type": "object",
+              "description": "Per-audience-class policy overrides (regional packs add audience classes).",
+              "additionalProperties": {
+                "type": "string",
+                "enum": ["open", "guarded", "selective", "silent"]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "believes": {
+          "type": "array",
+          "description": "Convictions distinct from knows. May be empty.",
+          "items": {
+            "type": "object",
+            "required": ["proposition", "conviction", "evidence_resistance"],
+            "properties": {
+              "proposition": { "type": "string" },
+              "conviction": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "evidence_resistance": { "type": "integer", "minimum": 1, "maximum": 5, "description": "How resistant to contradicting evidence (1=easily swayed, 5=immovable)." }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ambition_tick": {
+      "type": "object",
+      "description": "Phase 24b §4.2 / Bundle A / L.I-SC-05 — NPC's cadence for attempts at their drive. Feeds Bundle C faction_tick_resolution at faction scale. Source: Sec L.I Layer 5 (codex lines 8742-8758).",
+      "required": ["cadence", "success_streak"],
+      "properties": {
+        "cadence": {
+          "type": "string",
+          "enum": [
+            "seasonal_4x_year",
+            "monthly",
+            "irregular_per_assignment",
+            "liturgical_12x_year",
+            "civic_6x_year",
+            "trade_season_8x_year",
+            "theological_irregular",
+            "special"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "ambition_tick_cadence",
+          "description": "Tick cadence. 'special' is contradiction-bearing; engine handles per-case."
+        },
+        "last_attempt": { "type": ["string", "null"], "description": "Timestamp / world_time of last attempt. Null = never." },
+        "success_streak": { "type": "integer", "description": "Signed integer. Positive = recent successes; negative = setback streak (House setback-bias governor reads this)." },
+        "next_scheduled_attempt": { "type": ["string", "null"], "description": "Engine-computed from last_attempt + cadence. Null for 'special' cadence." }
+      },
+      "additionalProperties": false
+    },
+    "schedule_nesting": {
+      "type": "object",
+      "description": "Phase 24b §4.2 / Bundle A / L.I-SC-06 — Per-NPC schedule nested under an institution. Bridge to Bundle B (institutional schedules) + Bundle C (faction-scale scheduling). Source: Sec L.I (codex lines 8759-8771).",
+      "required": ["local_pattern", "nested_under_institution_id", "variance_seed"],
+      "properties": {
+        "local_pattern": {
+          "type": "object",
+          "required": ["summary"],
+          "properties": {
+            "summary": { "type": "string", "description": "Free-form per-game-hour pattern; engine renders as ink scheduling or per-scene routing." },
+            "typical_locations_per_hour": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["hour_range", "location_id", "activity"],
+                "properties": {
+                  "hour_range": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": { "type": "integer", "minimum": 0, "maximum": 23 },
+                    "description": "[start_hour, end_hour] in 24h."
+                  },
+                  "location_id": { "type": "string" },
+                  "activity": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "nested_under_institution_id": {
+          "type": ["string", "null"],
+          "description": "FK to faction (or new Bundle B institution entity). Null = unaffiliated.",
+          "x_fk_target": "faction",
+          "x_fk_policy": { "on_delete": "SET NULL" }
+        },
+        "variance_seed": { "type": "integer", "description": "Per-playthrough perturbation seed (House governor: variance bands on stack initialization)." }
       },
       "additionalProperties": false
     },
@@ -2656,7 +2851,13 @@
         "role",
         "desire",
         "fear",
-        "current_plan"
+        "current_plan",
+        "want_model",
+        "knowledge_tri_layer",
+        "closing_conditions",
+        "memory_archetype",
+        "ambition_tick",
+        "schedule_nesting"
       ],
       "properties": {
         "npc_id": {
@@ -2843,6 +3044,49 @@
             }
           },
           "description": "R-121-E: NPC's witness history. NPC Evaluator uses this for response generation."
+        },
+        "want_model": {
+          "$ref": "#/$defs/want_model",
+          "description": "Phase 24b / Bundle A / L.I-SC-01 — NPC drive/barter/kill_for/fear_loss. REQUIRED in v0.8."
+        },
+        "knowledge_tri_layer": {
+          "$ref": "#/$defs/knowledge_tri_layer",
+          "description": "Phase 24b / Bundle A / L.I-SC-02 — knows/says/believes. REQUIRED in v0.8."
+        },
+        "closing_conditions": {
+          "type": "array",
+          "minItems": 2,
+          "description": "Phase 24b / Bundle A / L.I-SC-03 — Death's binding rule: ≥2 entries; ≥1 MUST have player_reachable=true (engine validation enforces; can't express in pure JSON Schema). REQUIRED in v0.8.",
+          "items": { "$ref": "#/$defs/npc_closing_condition_entry" },
+          "x_validation": {
+            "rule": "at_least_one_player_reachable",
+            "description": "Engine validator rejects NpcSchema when no closing_conditions[i].player_reachable === true."
+          }
+        },
+        "memory_archetype": {
+          "type": "string",
+          "enum": [
+            "peasant",
+            "soldier",
+            "scholar",
+            "devout",
+            "magistrate",
+            "broker",
+            "aspirant_divine",
+            "child",
+            "contradiction_bearing"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "npc_memory_archetype",
+          "description": "Phase 24b / Bundle A / L.I-SC-04 — Memory-pattern archetype. 'contradiction_bearing' documents Death's binding rule waiver (Listening Child, Butcher Who Repeats). Native Postgres ENUM. REQUIRED in v0.8."
+        },
+        "ambition_tick": {
+          "$ref": "#/$defs/ambition_tick",
+          "description": "Phase 24b / Bundle A / L.I-SC-05 — NPC's drive-attempt cadence. REQUIRED in v0.8."
+        },
+        "schedule_nesting": {
+          "$ref": "#/$defs/schedule_nesting",
+          "description": "Phase 24b / Bundle A / L.I-SC-06 — Per-NPC schedule nested under institution. REQUIRED in v0.8."
         }
       }
     },
