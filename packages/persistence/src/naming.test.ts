@@ -18,6 +18,18 @@ import {
   entityChangesHandler,
   entityAdditionHandler,
   entityRemovalHandler,
+  // Pass 2 handlers
+  playerHandler,
+  npcHandler,
+  locationHandler,
+  regionHandler,
+  factionHandler,
+  itemHandler,
+  rumorHandler,
+  beliefHandler,
+  consequenceHandler,
+  eventHandler,
+  campaignHandler,
   NAMING_HANDLERS,
 } from "./naming.js";
 
@@ -91,9 +103,40 @@ describe("naming / Pass 1 handler round-trips", () => {
   }
 });
 
+describe("naming / Pass 2 handler round-trips (Category T promoted from Category 1)", () => {
+  const cases = [
+    { name: "player", handler: playerHandler, sample: { id: "p1", name: "Khojen", firstPerception: "salt" } },
+    { name: "npc", handler: npcHandler, sample: { id: "npc_ilyra", name: "Ilyra", locationId: "loc_1", hp: 12, maxHp: 12 } },
+    { name: "location", handler: locationHandler, sample: { id: "loc_market", regionId: "greywake", parentLocationId: undefined } },
+    { name: "region", handler: regionHandler, sample: { id: "greywake", name: "Greywake", dangerModifier: 2 } },
+    { name: "faction", handler: factionHandler, sample: { id: "fac_drowned", name: "Drowned Church", jurisdictionalStrength: 7 } },
+    { name: "item", handler: itemHandler, sample: { id: "itm_bell", name: "Drowned Bell", itemCategory: "key" } },
+    { name: "rumor", handler: rumorHandler, sample: { id: "rmr_001", sourceNpcId: "npc_orro", emergedAtDay: 4 } },
+    { name: "belief", handler: beliefHandler, sample: { id: "bel_001", statement: "x", isTrue: true, confidenceLevel: "high" } },
+    { name: "consequence", handler: consequenceHandler, sample: { id: "csq_001", triggerKind: "time", scheduledAtDay: 5 } },
+    { name: "event", handler: eventHandler, sample: { id: "evt_001", actorId: "npc_orro", eventKind: "speech" } },
+    { name: "campaign", handler: campaignHandler, sample: { id: "campaign_khojen", activeCharacterId: "p1" } },
+  ];
+
+  for (const { name, handler, sample } of cases) {
+    it(`${name} round-trips lossless (Pass 2 shallow stub)`, () => {
+      const persisted = handler.toSnake(sample);
+      const restored = handler.toCamel(persisted);
+      expect(restored).toEqual(sample);
+    });
+
+    it(`${name}.toSnake produces snake_case top-level keys`, () => {
+      const persisted = handler.toSnake(sample);
+      for (const k of Object.keys(persisted)) {
+        expect(k).not.toMatch(/[A-Z]/);
+      }
+    });
+  }
+});
+
 describe("naming / NAMING_HANDLERS registry", () => {
-  it("exposes 9 Pass 1 handler entries", () => {
-    expect(Object.keys(NAMING_HANDLERS)).toHaveLength(9);
+  it("exposes 20 handler entries (9 Pass 1 + 11 Pass 2)", () => {
+    expect(Object.keys(NAMING_HANDLERS)).toHaveLength(20);
   });
 
   it("each registered handler has toSnake + toCamel", () => {
@@ -105,5 +148,13 @@ describe("naming / NAMING_HANDLERS registry", () => {
 
   it("intent + alternativeIntent share the same handler (per addendum)", () => {
     expect(NAMING_HANDLERS.intent).toBe(NAMING_HANDLERS.alternativeIntent);
+  });
+
+  it("registry includes all 11 Pass 2 Category T entries from §3 recategorization", () => {
+    const pass2Keys = ["player", "npc", "location", "region", "faction", "item",
+      "rumor", "belief", "consequence", "event", "campaign"] as const;
+    for (const k of pass2Keys) {
+      expect(NAMING_HANDLERS[k], `missing handler: ${k}`).toBeDefined();
+    }
   });
 });

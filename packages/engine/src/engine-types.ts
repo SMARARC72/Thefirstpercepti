@@ -15,12 +15,22 @@
  *
  *   1. **ABSORB** — schema entity in schema_pack_v0.8.json covers the shape;
  *      delete engine-local + cut consumers to schema imports.
- *      Status (Phase 24c §5b.1): empty for v0.8 — most candidates moved to T
- *      after pre-flight surfaced systemic two-body divergence.
+ *      Status (Phase 24c §5b.1): **NO-OP for v0.8.** Pre-flight pilot on Belief
+ *      (smallest divergence) surfaced systemic two-body shape mismatch across
+ *      all 12 valid Category-1 candidates. All moved to Category T per
+ *      SESSION_5B_PREFLIGHT_FINDINGS.md §3 recategorization. The remaining 5
+ *      map-flagged candidates (Ability, Trait, Scene, Condition, WorldPulse)
+ *      moved to KEEP/PROMOTE per the same findings doc.
  *
  *   2. **PROMOTE** — sub-entity of a schema entity; map to Foundation 14 $def
  *      or new v0.8/v0.9 candidate. Engine consumes via $ref.
- *      Status (Phase 24c §5b.2): blocked pending recategorization ratification.
+ *      Status (Phase 24c §5b.2): **doc-only annotation for v0.8.** Same shape-
+ *      divergence risk applies to PROMOTE candidates as ABSORB; per-entity
+ *      $def consumption deferred to Session 24d (seed) when the actual data
+ *      shapes flush out concrete divergences. Engine-local PROMOTE candidates
+ *      stay as-is with annotation markers per the deprecation map's table.
+ *      14 candidates per §3 recategorization (12 original + Condition + WorldPulse
+ *      moved from ABSORB).
  *
  *   3. **KEEP** — pure engine-internal (computation, transient, agent dispatch,
  *      simulation tick). Schema would never own these. The bulk of this file.
@@ -43,8 +53,13 @@
  *
  *   T. **TRANSLATION LAYER** — engine survives with different shape; persistence
  *      boundary applies toSnake()/toCamel() via packages/persistence/src/naming.ts.
- *      Status (Phase 24c §5b.5): Pass 1 scaffolded (9 handlers). Pass 2 expands
- *      to ~18-19 handlers post-recategorization ratification.
+ *      Status (Phase 24c §5b.5): **COMPLETE.** Pass 1 (9 handlers — addendum-
+ *      classified) + Pass 2 (11 handlers — promoted from Category 1 per
+ *      recategorization) = 20 total handler entries in NAMING_HANDLERS registry.
+ *      Pass 2 handlers use shallow camel↔snake remap stubs; bespoke per-entity
+ *      shape adapters (e.g. Belief.confidence enum↔integer, NPC.hp number↔hp_block)
+ *      land per-entity as Session 24d / repository wiring concretizes against
+ *      live Supabase tables.
  *
  * @module engine-types
  * @version 2.0.0 (Phase 24c §5b.6 KEEP annotation)
