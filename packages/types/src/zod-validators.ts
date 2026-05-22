@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T13:56:22.944Z
+ * Generated at:   2026-05-22T18:30:13.380Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -865,7 +865,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (54)
+// Top-level entities (56)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -2062,24 +2062,40 @@ export type InstitutionSchema = z.infer<typeof InstitutionSchemaZ>;
 
 export const QuestSchemaZ = z.object({
       "quest_id": z.string(),
-      "name": z.string(),
-      "description": z.string().optional(),
-      "tags": z.array(z.string()).optional(),
-      "archetype": z.enum(["want_collision", "institutional_failure", "faction_reach_attempt", "rumor_investigation", "discovery", "succession", "doctrinal", "economic"]),
-      "discovery_channel": DiscoveryChannelZ,
       "collision_pressure": CollisionPressureZ.optional(),
       "closing_state": z.enum(["open", "active", "completed_success", "completed_betrayal", "completed_walked", "expired", "failed", "deferred"]),
-      "subplot_graph_relation": SubplotGraphRelationZ,
-      "primary_npc_ids": z.array(z.string()).optional(),
-      "primary_faction_ids": z.array(z.string()).optional(),
-      "primary_region_id": z.string().nullable().optional(),
       "emerged_at_day": z.number().int().min(0).optional(),
       "campaign_id": z.string(),
       "session_id": z.string(),
     }).strict();
 export type QuestSchema = z.infer<typeof QuestSchemaZ>;
 
+export const QuestTemplateSchemaZ = z.object({
+      "quest_id": z.string(),
+      "name": z.string(),
+      "description": z.string().optional(),
+      "tags": z.array(z.string()).optional(),
+      "archetype": z.enum(["want_collision", "institutional_failure", "faction_reach_attempt", "rumor_investigation", "discovery", "succession", "doctrinal", "economic"]),
+      "discovery_channel": DiscoveryChannelZ,
+      "subplot_graph_relation": SubplotGraphRelationZ,
+      "primary_npc_ids": z.array(z.string()).optional(),
+      "primary_faction_ids": z.array(z.string()).optional(),
+      "primary_region_id": z.string().nullable().optional(),
+    }).strict();
+export type QuestTemplateSchema = z.infer<typeof QuestTemplateSchemaZ>;
+
 export const PlotSchemaZ = z.object({
+      "plot_id": z.string(),
+      "current_pressure": z.number().int().min(0).max(10),
+      "current_act": z.enum(["setup", "confrontation", "resolution"]),
+      "spine_visibility": z.enum(["hidden", "suggested", "visible", "named", "central"]),
+      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).nullable().optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
+    }).strict();
+export type PlotSchema = z.infer<typeof PlotSchemaZ>;
+
+export const PlotTemplateSchemaZ = z.object({
       "plot_id": z.string(),
       "region_id": z.string(),
       "name": z.string(),
@@ -2090,15 +2106,9 @@ export const PlotSchemaZ = z.object({
       "central_institution_ids": z.array(z.string()).optional(),
       "pan_world_plot_id": z.string().nullable().optional(),
       "constituent_quest_ids": z.array(z.string()),
-      "current_pressure": z.number().int().min(0).max(10),
-      "current_act": z.enum(["setup", "confrontation", "resolution"]),
-      "spine_visibility": z.enum(["hidden", "suggested", "visible", "named", "central"]),
-      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).nullable().optional(),
       "subplot_admission_policy": SubplotAdmissionPolicyZ.optional(),
-      "campaign_id": z.string(),
-      "session_id": z.string(),
     }).strict();
-export type PlotSchema = z.infer<typeof PlotSchemaZ>;
+export type PlotTemplateSchema = z.infer<typeof PlotTemplateSchemaZ>;
 
 export const SurfacingThresholdConfigSchemaZ = z.object({
       "max_surfaced_per_region": z.literal(7),
@@ -2256,5 +2266,5 @@ export const InformationSchemaZ = z.object({
     }).strict();
 export type InformationSchema = z.infer<typeof InformationSchemaZ>;
 
-// 74 $defs · 54 entities
+// 74 $defs · 56 entities
 // END OF GENERATED Zod VALIDATORS
