@@ -153,6 +153,53 @@ describe("RuleRegistry / findRulesFor", () => {
     expect(reg.findRulesFor("institution.opening_hours")).toHaveLength(1);
     expect(reg.findRulesFor("institution.leadership")).toHaveLength(1);
   });
+
+  it("wildcard entity '*' matches any target (Phase 5c.x — scene routing pattern per ARD-017)", () => {
+    const wildcardSceneRule: EngineRule = {
+      rule_id: "scene_routing_universal_v1",
+      applies_to_entity: "*",
+      applies_to_field: "*",
+      scene_id_when_match: "default_dialogue_scene",
+    };
+    const reg = new RuleRegistry({
+      preloadedRules: [openingHoursRule, wildcardSceneRule],
+    });
+    // Wildcard rule matches institution.opening_hours alongside the specific rule
+    const hits = reg.findRulesFor("institution.opening_hours");
+    expect(hits.map((r) => r.rule_id)).toContain("scene_routing_universal_v1");
+    expect(hits.map((r) => r.rule_id)).toContain("opening_hours_disagreement_rule_v1");
+    // Wildcard matches an entity with no specific rule
+    expect(reg.findRulesFor("npc.faction_id").map((r) => r.rule_id)).toEqual([
+      "scene_routing_universal_v1",
+    ]);
+  });
+
+  it("wildcard field '*' matches any field for the specified entity", () => {
+    const ruleWildcardField: EngineRule = {
+      rule_id: "validator_chain_npc_all_fields_v1",
+      applies_to_entity: "npc",
+      applies_to_field: "*",
+    };
+    const reg = new RuleRegistry({ preloadedRules: [ruleWildcardField] });
+    expect(reg.findRulesFor("npc.location_id")).toHaveLength(1);
+    expect(reg.findRulesFor("npc.hp")).toHaveLength(1);
+    expect(reg.findRulesFor("npc.want_model")).toHaveLength(1);
+    // Different entity does NOT match field-wildcard rule
+    expect(reg.findRulesFor("faction.goals")).toHaveLength(0);
+  });
+
+  it("wildcard entity but specific field — common for cross-entity field rules", () => {
+    const ruleAnyEntityCampaignField: EngineRule = {
+      rule_id: "cross_entity_campaign_membership_v1",
+      applies_to_entity: "*",
+      applies_to_field: "campaign_id",
+    };
+    const reg = new RuleRegistry({ preloadedRules: [ruleAnyEntityCampaignField] });
+    expect(reg.findRulesFor("npc.campaign_id")).toHaveLength(1);
+    expect(reg.findRulesFor("plot.campaign_id")).toHaveLength(1);
+    // Different field does NOT match
+    expect(reg.findRulesFor("npc.location_id")).toHaveLength(0);
+  });
 });
 
 describe("RuleRegistry / listRules + size", () => {

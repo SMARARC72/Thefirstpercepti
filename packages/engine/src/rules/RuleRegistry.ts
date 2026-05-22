@@ -82,6 +82,14 @@ export type RuleValidationResult =
  * contain dots (v0.8 enforces this via snake_case naming conventions). For
  * lookups by entity only, pass the entity name with no trailing `.field`.
  *
+ * **Wildcard matching:** rules may use `"*"` as `applies_to_entity` or
+ * `applies_to_field` to match any value at that position (per ARD-017 §other-
+ * candidate-rule-classes — scene routing uses entity="*" to apply universally).
+ * Wildcards are evaluated at lookup time, not insertion time; a rule with
+ * `applies_to_entity: "*"` will return for ANY `findRulesFor` target. Author
+ * wildcard rules deliberately — they intentionally compete with entity-
+ * specific rules in the result set.
+ *
  * **Versioning:** rule version (e.g. `_v2`) is part of the `rule_id` string,
  * never a separate field. Callers wanting "the current version of rule X"
  * iterate via {@link listRules} and inspect rule_id suffixes.
@@ -337,8 +345,17 @@ export class RuleRegistry implements RuleRegistrySurface {
     const entity = dotIndex >= 0 ? target.slice(0, dotIndex) : target;
     const field = dotIndex >= 0 ? target.slice(dotIndex + 1) : undefined;
     return [...this.rules.values()].filter((r) => {
-      if (r.applies_to_entity !== entity) return false;
-      if (field !== undefined && r.applies_to_field !== field) return false;
+      // Phase 5c.x wildcard matching per ARD-017 future rule classes:
+      //   - Scene routing rules use applies_to_entity: "*" (apply universally)
+      //   - Validator chain stage configs may use applies_to_field: "*"
+      //   - Disagreement rules use exact entity + field
+      // Wildcard "*" matches anything; otherwise strict equality.
+      if (r.applies_to_entity !== "*" && r.applies_to_entity !== entity) return false;
+      if (
+        field !== undefined &&
+        r.applies_to_field !== "*" &&
+        r.applies_to_field !== field
+      ) return false;
       return true;
     });
   }
