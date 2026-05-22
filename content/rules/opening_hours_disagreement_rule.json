@@ -1,0 +1,31 @@
+{
+  "$schema": "./_schema/disagreement_rule.json",
+  "rule_id": "opening_hours_disagreement_rule_v1",
+  "applies_to_entity": "institution",
+  "applies_to_field": "opening_hours",
+  "resolution_strategy": "highest_trust_source",
+  "fallback_strategy": "surface_disagreement",
+  "trust_ranking": [
+    { "source_kind": "institution_canonical_record", "trust": 10 },
+    { "source_kind": "npc_with_role_inside_institution", "trust": 8 },
+    { "source_kind": "third_party_document", "trust": 6 },
+    { "source_kind": "npc_with_role_outside_institution", "trust": 5 },
+    { "source_kind": "rumor", "trust": 2 }
+  ],
+  "side_effects_on_disagreement": [
+    {
+      "kind": "emit_contradiction_ledger_entry",
+      "with_topic": "institution_opening_hours_disagreement"
+    },
+    {
+      "kind": "tag_information_veracity",
+      "with_veracity": "partial"
+    },
+    {
+      "kind": "surface_to_player_if_threshold",
+      "trust_delta_threshold": 3
+    }
+  ],
+  "validator_chain_stage_5_hook": true,
+  "notes": "Phase 24b §4.10 / L.VIII-SC-04 — first instance of the engine-config rule registry pattern (Path R ratified 2026-05-21). Loaded into RuleRegistry at engine startup; consulted by validator chain Stage 5 (contradiction_check) and engine surface layer (NPC query time). Tweak trust weights here; no schema_pack version bump required."
+}

@@ -9087,6 +9087,14 @@
       "x_schema_namespace": "content"
     }
   },
+  "x_engine_rule_registry_pointers": [
+    {
+      "rule_file": "content/rules/opening_hours_disagreement_rule.json",
+      "rule_schema_file": "content/rules/_schema/disagreement_rule.json",
+      "anchor": "L.VIII-SC-04",
+      "rationale": "Engine resolution behavior, not schema-validated content. Per Phase 24b §4.10 audit (Path R ratified by Desktop 2026-05-21). Generator pipeline does NOT emit anything for rule registry files; loaded into RuleRegistry at engine startup. See repo_mirror/phase_24b/L_VIII_SC_04_audit.md for the 7-criteria audit; see ARD-017 (engine-config registry pattern, authored Session 4c) for the pattern definition. Sibling candidates (merchant_pricing, npc_relationship, historical_event_date, faction_membership disagreement rules) join this registry over time but are NOT Phase 4.10 work."
+    }
+  ],
   "validator_chain_required_stages": [
     "stage_1_input",
     "stage_2_rules",
