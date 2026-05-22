@@ -1740,6 +1740,52 @@ export interface FirstPerceptionSchemaPack {
     session_id: string;
   };
   /**
+   * Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.
+   */
+  plot?: {
+    plot_id: string;
+    region_id: string;
+    name: string;
+    description?: string;
+    tags?: string[];
+    /**
+     * e.g. 'Will The Unnamed choose?'
+     */
+    spine_question: string;
+    central_npc_ids?: string[];
+    central_institution_ids?: string[];
+    /**
+     * Optional FK to pan_world_plot.
+     */
+    pan_world_plot_id?: string | null;
+    constituent_quest_ids: string[];
+    current_pressure: number;
+    current_act: "setup" | "confrontation" | "resolution";
+    /**
+     * Bundle E / L.V-SC-06 — Drives UI surfacing of spine_question.
+     */
+    spine_visibility: "hidden" | "suggested" | "visible" | "named" | "central";
+    /**
+     * Bundle E / L.V-SC-03 — 9-value enum; closed_failure_state links to FS-SC-01 failure_state_branch.
+     */
+    closing_state?:
+      | (
+          | "open"
+          | "active_setup"
+          | "active_confrontation"
+          | "active_resolution"
+          | "closed_clean"
+          | "closed_messy"
+          | "closed_kinetic"
+          | "closed_silenced"
+          | "closed_failure_state"
+        )
+      | null;
+    subplot_admission_policy?: SubplotAdmissionPolicy;
+    campaign_id: string;
+    session_id: string;
+  };
+  /**
    * Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).
    */
   surfacing_threshold_config?: {
@@ -2532,6 +2578,24 @@ export interface SubplotGraphRelation {
    */
   emergence_path: string[];
 }
+/**
+ * Bundle E / L.V-SC-02 — Per-plot admission policy for candidate quests.
+ */
+export interface SubplotAdmissionPolicy {
+  /**
+   * FK to plot.plot_id
+   */
+  parent_plot_id: string;
+  admission_rules: {
+    rule_id: string;
+    /**
+     * Engine-resolvable predicate.
+     */
+    accepts_quest_if: string;
+    rejects_quest_if: string;
+  }[];
+  cross_plot_resonance_allowed: boolean;
+}
 
 
 // ============================================================================
@@ -2584,6 +2648,7 @@ export type OpexEventSchema = NonNullable<FirstPerceptionSchemaPack["opex_event"
 export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model_tier_policy"]>;
 export type InstitutionSchema = NonNullable<FirstPerceptionSchemaPack["institution"]>;
 export type QuestSchema = NonNullable<FirstPerceptionSchemaPack["quest"]>;
+export type PlotSchema = NonNullable<FirstPerceptionSchemaPack["plot"]>;
 export type SurfacingThresholdConfigSchema = NonNullable<FirstPerceptionSchemaPack["surfacing_threshold_config"]>;
 export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
@@ -2591,7 +2656,7 @@ export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSch
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 48
-// $defs count:  55
+// Entity count: 49
+// $defs count:  60
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

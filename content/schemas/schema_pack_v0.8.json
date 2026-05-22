@@ -764,6 +764,148 @@
       },
       "additionalProperties": false
     },
+    "subplot_admission_policy": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle E / L.V-SC-02 — Per-plot admission policy for candidate quests. Per L.VIII RT-32 (orthogonalized_subplot_admission patch), rejects cross-plot bleed unless cross_plot_resonance_allowed.",
+      "required": ["parent_plot_id", "admission_rules", "cross_plot_resonance_allowed"],
+      "properties": {
+        "parent_plot_id": { "type": "string", "description": "FK to plot.plot_id" },
+        "admission_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["rule_id", "accepts_quest_if", "rejects_quest_if"],
+            "properties": {
+              "rule_id": { "type": "string" },
+              "accepts_quest_if": { "type": "string", "description": "Engine-resolvable predicate." },
+              "rejects_quest_if": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "cross_plot_resonance_allowed": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "cross_plot_resonance": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle E / L.V-SC-04 — Inter-plot resonance primitive. Per L.VIII RT-31, smoothing_applied flag set by high_engagement_smoothing governor.",
+      "required": ["source_plot_id", "target_plot_id", "resonance_kind", "intensity", "smoothing_applied"],
+      "properties": {
+        "source_plot_id": { "type": "string" },
+        "target_plot_id": { "type": "string" },
+        "resonance_kind": {
+          "type": "string",
+          "enum": ["shared_constituent", "npc_mediated_bleed", "faction_mediated_tension", "pan_world_echo"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "cross_plot_resonance_kind"
+        },
+        "intensity": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "smoothing_applied": { "type": "boolean", "description": "Set by L.VIII-SC-01 high_engagement_smoothing when player engagement crosses threshold." }
+      },
+      "additionalProperties": false
+    },
+    "pan_world_plot": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle E / L.V-SC-05 — Cross-regional plot anchor. Per RT-26: HC regions stay content-static; pan_world_plot touches them through ONE mechanism only (single_mechanic_hook).",
+      "required": ["pan_world_plot_id", "name", "regional_instances", "single_mechanic_hook"],
+      "properties": {
+        "pan_world_plot_id": { "type": "string", "description": "e.g. PW-02 (Apotheosis Race)." },
+        "name": { "type": "string" },
+        "regional_instances": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["region_id", "plot_id"],
+            "properties": {
+              "region_id": { "type": "string" },
+              "plot_id": { "type": "string", "description": "FK to a regional plot instance." }
+            },
+            "additionalProperties": false
+          }
+        },
+        "single_mechanic_hook": {
+          "type": "object",
+          "required": ["kind", "intensity_per_region"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["name_succession", "currency_crisis", "doctrinal_drift", "counted_imbalance"],
+              "x_enum_strategy": "native",
+              "x_enum_name": "pan_world_hook_kind",
+              "description": "Per RT-26: ONLY ONE kind per pan_world_plot."
+            },
+            "intensity_per_region": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["region_id", "intensity"],
+                "properties": {
+                  "region_id": { "type": "string" },
+                  "intensity": { "type": "integer", "minimum": 1, "maximum": 5 }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "high_engagement_smoothing": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle H / L.VIII-SC-01 — Engine governor patching cross_plot_resonance. Smooths when player is highly engaged (many active threads).",
+      "required": ["governor_id", "active", "trigger_conditions", "smoothing_actions"],
+      "properties": {
+        "governor_id": { "type": "string" },
+        "active": { "type": "boolean" },
+        "trigger_conditions": {
+          "type": "object",
+          "required": ["cross_plot_resonance_count_threshold", "player_active_minutes_threshold"],
+          "properties": {
+            "cross_plot_resonance_count_threshold": { "type": "integer", "minimum": 1 },
+            "player_active_minutes_threshold": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "smoothing_actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["reduce_resonance_intensity", "delay_secondary_plot_pressure", "suppress_redundant_information"]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "orthogonalized_subplot_admission": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle H / L.VIII-SC-02 — Engine governor patching subplot_admission_policy. Prevents subplots that are just echoes of the parent plot.",
+      "required": ["governor_id", "active", "orthogonality_check", "rejection_log_path"],
+      "properties": {
+        "governor_id": { "type": "string" },
+        "active": { "type": "boolean" },
+        "orthogonality_check": {
+          "type": "object",
+          "required": ["min_distinct_npcs", "max_shared_locations", "blocked_relations"],
+          "properties": {
+            "min_distinct_npcs": { "type": "integer", "minimum": 0 },
+            "max_shared_locations": { "type": "integer", "minimum": 0 },
+            "blocked_relations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["mirrors", "contains"]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "rejection_log_path": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "subplot_graph_relation": {
       "type": "object",
       "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-05 — Quest-to-quest relational primitive. Bundle E clusters via parent_plot_id; related_quest_ids tracks the subplot graph.",
@@ -7774,6 +7916,70 @@
           "type": "string",
           "description": "Phase 4a.5 — state.* ownership sweep. FK to session (or save_snapshot until session entity exists)."
         }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "state"
+    },
+    "plot": {
+      "type": "object",
+      "description": "Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.",
+      "required": [
+        "plot_id",
+        "region_id",
+        "name",
+        "spine_question",
+        "constituent_quest_ids",
+        "current_pressure",
+        "current_act",
+        "spine_visibility",
+        "campaign_id",
+        "session_id"
+      ],
+      "properties": {
+        "plot_id": { "type": "string" },
+        "region_id": { "type": "string", "x_fk_target": "region", "x_fk_policy": { "on_delete": "RESTRICT" } },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "spine_question": { "type": "string", "description": "e.g. 'Will The Unnamed choose?'" },
+        "central_npc_ids": { "type": "array", "items": { "type": "string" } },
+        "central_institution_ids": { "type": "array", "items": { "type": "string" } },
+        "pan_world_plot_id": { "type": ["string", "null"], "description": "Optional FK to pan_world_plot." },
+        "constituent_quest_ids": {
+          "type": "array",
+          "items": { "type": "string", "description": "FK to quest.quest_id" }
+        },
+        "current_pressure": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "current_act": {
+          "type": "string",
+          "enum": ["setup", "confrontation", "resolution"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "plot_current_act"
+        },
+        "spine_visibility": {
+          "type": "string",
+          "enum": ["hidden", "suggested", "visible", "named", "central"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "spine_visibility",
+          "description": "Bundle E / L.V-SC-06 — Drives UI surfacing of spine_question."
+        },
+        "closing_state": {
+          "type": ["string", "null"],
+          "enum": ["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "plot_closing_state",
+          "description": "Bundle E / L.V-SC-03 — 9-value enum; closed_failure_state links to FS-SC-01 failure_state_branch."
+        },
+        "subplot_admission_policy": {
+          "$ref": "#/$defs/subplot_admission_policy",
+          "description": "Bundle E / L.V-SC-02 — Per-plot admission policy for candidate quests."
+        },
+        "campaign_id": {
+          "type": "string",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": { "type": "string" }
       },
       "additionalProperties": false,
       "x_schema_namespace": "state"

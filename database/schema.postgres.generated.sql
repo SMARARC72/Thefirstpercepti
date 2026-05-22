@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-21T23:27:13.828Z
+-- Generated at:   2026-05-22T02:10:13.119Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -310,6 +310,43 @@ DO $$ BEGIN
     'knowledge_asymmetry',
     'schedule_conflict',
     'faction_clash'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.cross_plot_resonance_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."cross_plot_resonance_kind" AS ENUM (
+    'shared_constituent',
+    'npc_mediated_bleed',
+    'faction_mediated_tension',
+    'pan_world_echo'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.pan_world_hook_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."pan_world_hook_kind" AS ENUM (
+    'name_succession',
+    'currency_crisis',
+    'doctrinal_drift',
+    'counted_imbalance'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_high_engagement_smoothing_properties_smoothing_actions_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_high_engagement_smoothing_properties_smoothing_actions_items_enum" AS ENUM (
+    'reduce_resonance_intensity',
+    'delay_secondary_plot_pressure',
+    'suppress_redundant_information'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_orthogonalized_subplot_admission_properties_orthogonality_check_properties_blocked_relations_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_orthogonalized_subplot_admission_properties_orthogonality_check_properties_blocked_relations_items_enum" AS ENUM (
+    'mirrors',
+    'contains'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -1945,6 +1982,41 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.plot_current_act
+DO $$ BEGIN
+  CREATE TYPE "public"."plot_current_act" AS ENUM (
+    'setup',
+    'confrontation',
+    'resolution'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.spine_visibility
+DO $$ BEGIN
+  CREATE TYPE "public"."spine_visibility" AS ENUM (
+    'hidden',
+    'suggested',
+    'visible',
+    'named',
+    'central'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.plot_closing_state
+DO $$ BEGIN
+  CREATE TYPE "public"."plot_closing_state" AS ENUM (
+    'open',
+    'active_setup',
+    'active_confrontation',
+    'active_resolution',
+    'closed_clean',
+    'closed_messy',
+    'closed_kinetic',
+    'closed_silenced',
+    'closed_failure_state'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.schemas_surfacing_threshold_config_properties_channel_priority_items_enum
 DO $$ BEGIN
   CREATE TYPE "public"."schemas_surfacing_threshold_config_properties_channel_priority_items_enum" AS ENUM (
@@ -3087,7 +3159,7 @@ COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.
 ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- STATE schema — 2 entities
+-- STATE schema — 3 entities
 -- ============================================================================
 -- quest (state.quest)
 -- Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
@@ -3115,6 +3187,37 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
 );
 COMMENT ON TABLE "state"."quest" IS "Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.";
 ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
+
+-- plot (state.plot)
+-- Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.
+CREATE TABLE IF NOT EXISTS "state"."plot" (
+  "plot_id" TEXT PRIMARY KEY NOT NULL,
+  "region_id" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "tags" JSONB,
+  "spine_question" TEXT NOT NULL,
+  "central_npc_ids" JSONB,
+  "central_institution_ids" JSONB,
+  "pan_world_plot_id" TEXT,
+  "constituent_quest_ids" JSONB NOT NULL,
+  "current_pressure" SMALLINT NOT NULL,
+  "current_act" "state"."plot_current_act" NOT NULL,
+  "spine_visibility" "state"."spine_visibility" NOT NULL,
+  "closing_state" "state"."plot_closing_state",
+  "subplot_admission_policy" JSONB  -- $ref: #/$defs/subplot_admission_policy,
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT NOT NULL,
+  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_plot_region_id" FOREIGN KEY ("region_id") REFERENCES "state"."region"("id") ON DELETE RESTRICT,
+  CHECK ("current_pressure" >= 0),
+  CHECK ("current_pressure" <= 10),
+  CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+);
+COMMENT ON TABLE "state"."plot" IS "Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.";
+ALTER TABLE "state"."plot" ENABLE ROW LEVEL SECURITY;
 
 -- institution_response_queue_entry (state.institution_response_queue_entry)
 -- Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
@@ -3162,5 +3265,5 @@ ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 48 entities · 161 enums · 5 schemas
+-- 49 entities · 168 enums · 5 schemas
 -- ----------------------------------------------------------------------------

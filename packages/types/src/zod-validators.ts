@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-21T23:27:16.067Z
+ * Generated at:   2026-05-22T02:10:13.595Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (55)
+// $defs (60)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -330,6 +330,66 @@ export const CollisionPressureZ = z.object({
     }).strict();
 export type CollisionPressure = z.infer<typeof CollisionPressureZ>;
 
+export const SubplotAdmissionPolicyZ = z.object({
+      "parent_plot_id": z.string(),
+      "admission_rules": z.array(z.object({
+      "rule_id": z.string(),
+      "accepts_quest_if": z.string(),
+      "rejects_quest_if": z.string(),
+    }).strict()),
+      "cross_plot_resonance_allowed": z.boolean(),
+    }).strict();
+export type SubplotAdmissionPolicy = z.infer<typeof SubplotAdmissionPolicyZ>;
+
+export const CrossPlotResonanceZ = z.object({
+      "source_plot_id": z.string(),
+      "target_plot_id": z.string(),
+      "resonance_kind": z.enum(["shared_constituent", "npc_mediated_bleed", "faction_mediated_tension", "pan_world_echo"]),
+      "intensity": z.number().int().min(1).max(5),
+      "smoothing_applied": z.boolean(),
+    }).strict();
+export type CrossPlotResonance = z.infer<typeof CrossPlotResonanceZ>;
+
+export const PanWorldPlotZ = z.object({
+      "pan_world_plot_id": z.string(),
+      "name": z.string(),
+      "regional_instances": z.array(z.object({
+      "region_id": z.string(),
+      "plot_id": z.string(),
+    }).strict()),
+      "single_mechanic_hook": z.object({
+      "kind": z.enum(["name_succession", "currency_crisis", "doctrinal_drift", "counted_imbalance"]),
+      "intensity_per_region": z.array(z.object({
+      "region_id": z.string(),
+      "intensity": z.number().int().min(1).max(5),
+    }).strict()),
+    }).strict(),
+    }).strict();
+export type PanWorldPlot = z.infer<typeof PanWorldPlotZ>;
+
+export const HighEngagementSmoothingZ = z.object({
+      "governor_id": z.string(),
+      "active": z.boolean(),
+      "trigger_conditions": z.object({
+      "cross_plot_resonance_count_threshold": z.number().int().min(1),
+      "player_active_minutes_threshold": z.number().int().min(0),
+    }).strict(),
+      "smoothing_actions": z.array(z.enum(["reduce_resonance_intensity", "delay_secondary_plot_pressure", "suppress_redundant_information"])),
+    }).strict();
+export type HighEngagementSmoothing = z.infer<typeof HighEngagementSmoothingZ>;
+
+export const OrthogonalizedSubplotAdmissionZ = z.object({
+      "governor_id": z.string(),
+      "active": z.boolean(),
+      "orthogonality_check": z.object({
+      "min_distinct_npcs": z.number().int().min(0),
+      "max_shared_locations": z.number().int().min(0),
+      "blocked_relations": z.array(z.enum(["mirrors", "contains"])),
+    }).strict(),
+      "rejection_log_path": z.string(),
+    }).strict();
+export type OrthogonalizedSubplotAdmission = z.infer<typeof OrthogonalizedSubplotAdmissionZ>;
+
 export const SubplotGraphRelationZ = z.object({
       "quest_id": z.string(),
       "parent_plot_id": z.string().nullable().optional(),
@@ -633,7 +693,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (48)
+// Top-level entities (49)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -1847,6 +1907,27 @@ export const QuestSchemaZ = z.object({
     }).strict();
 export type QuestSchema = z.infer<typeof QuestSchemaZ>;
 
+export const PlotSchemaZ = z.object({
+      "plot_id": z.string(),
+      "region_id": z.string(),
+      "name": z.string(),
+      "description": z.string().optional(),
+      "tags": z.array(z.string()).optional(),
+      "spine_question": z.string(),
+      "central_npc_ids": z.array(z.string()).optional(),
+      "central_institution_ids": z.array(z.string()).optional(),
+      "pan_world_plot_id": z.string().nullable().optional(),
+      "constituent_quest_ids": z.array(z.string()),
+      "current_pressure": z.number().int().min(0).max(10),
+      "current_act": z.enum(["setup", "confrontation", "resolution"]),
+      "spine_visibility": z.enum(["hidden", "suggested", "visible", "named", "central"]),
+      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).nullable().optional(),
+      "subplot_admission_policy": SubplotAdmissionPolicyZ.optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
+    }).strict();
+export type PlotSchema = z.infer<typeof PlotSchemaZ>;
+
 export const SurfacingThresholdConfigSchemaZ = z.object({
       "max_surfaced_per_region": z.literal(7),
       "pressure_threshold": z.number().min(0).max(10),
@@ -1885,5 +1966,5 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
     }).strict();
 export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
 
-// 55 $defs · 48 entities
+// 60 $defs · 49 entities
 // END OF GENERATED Zod VALIDATORS
