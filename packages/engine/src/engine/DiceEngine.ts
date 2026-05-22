@@ -19,8 +19,8 @@ import {
   CoreStat,
   ActionType,
   Condition,
-  PartialStatBlock,
-  StatBlock,
+  RuntimePartialStatBlock,
+  RuntimeStatBlock,
   DiceFormula,
   DCComponent,
   CostType,
@@ -755,7 +755,7 @@ export class DiceEngine {
    * Roll a skill check with automatic stat selection based on domain.
    */
   rollSkillCheck(params: {
-    stats: StatBlock;
+    stats: RuntimeStatBlock;
     domain: string;
     dc: number;
     actionType: ActionType;

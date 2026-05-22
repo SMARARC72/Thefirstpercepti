@@ -1,12 +1,68 @@
 /**
  * ============================================================================
- * THE FIRST PERCEPTION - Complete Type Definitions
+ * THE FIRST PERCEPTION - Engine Type Definitions
  * ============================================================================
- * A solo text-based living-world RPG engine type system.
- * All game entities, enums, interfaces, and type utilities.
+ * Engine-side type system for the solo text-based living-world RPG engine.
  *
- * @module types
- * @version 1.0.0
+ * Per Phase 24c §Session 5b cutover (engine_types_deprecation_map.md), the
+ * interfaces in this file are classified into 6 categories. The classifications
+ * are documented per-section below; see also:
+ *
+ *   - `engine_types_deprecation_map.md` (full categorization rationale)
+ *   - `SESSION_5B_PREFLIGHT_FINDINGS.md` (recategorization findings post-pilot)
+ *
+ * ## 6-Category Taxonomy
+ *
+ *   1. **ABSORB** — schema entity in schema_pack_v0.8.json covers the shape;
+ *      delete engine-local + cut consumers to schema imports.
+ *      Status (Phase 24c §5b.1): **NO-OP for v0.8.** Pre-flight pilot on Belief
+ *      (smallest divergence) surfaced systemic two-body shape mismatch across
+ *      all 12 valid Category-1 candidates. All moved to Category T per
+ *      SESSION_5B_PREFLIGHT_FINDINGS.md §3 recategorization. The remaining 5
+ *      map-flagged candidates (Ability, Trait, Scene, Condition, WorldPulse)
+ *      moved to KEEP/PROMOTE per the same findings doc.
+ *
+ *   2. **PROMOTE** — sub-entity of a schema entity; map to Foundation 14 $def
+ *      or new v0.8/v0.9 candidate. Engine consumes via $ref.
+ *      Status (Phase 24c §5b.2): **doc-only annotation for v0.8.** Same shape-
+ *      divergence risk applies to PROMOTE candidates as ABSORB; per-entity
+ *      $def consumption deferred to Session 24d (seed) when the actual data
+ *      shapes flush out concrete divergences. Engine-local PROMOTE candidates
+ *      stay as-is with annotation markers per the deprecation map's table.
+ *      14 candidates per §3 recategorization (12 original + Condition + WorldPulse
+ *      moved from ABSORB).
+ *
+ *   3. **KEEP** — pure engine-internal (computation, transient, agent dispatch,
+ *      simulation tick). Schema would never own these. The bulk of this file.
+ *      Sections marked `// 3-KEEP:` below.
+ *
+ *   D. **DEPRECATE** — unused since prior refactor; safe-delete.
+ *      Status (Phase 24c §5b.3): NO-OP for v0.8 — pre-flight grep showed all
+ *      4 map candidates (CostCalculation, CostType, DCCalculation, DCComponent)
+ *      are actively used by DiceEngine / RulesEngine. Moved to Category 3.
+ *
+ *   R. **RENAME** — name collision with schema $def; add `Runtime` prefix.
+ *      Status (Phase 24c §5b.4): COMPLETE. 6 entities renamed:
+ *        - StatBlock → RuntimeStatBlock
+ *        - PartialStatBlock → RuntimePartialStatBlock
+ *        - HitDicePool → RuntimeHitDicePool
+ *        - AttunementSlots → RuntimeAttunementSlots
+ *        - SpellSlotLevel → RuntimeSpellSlotLevel
+ *        - ActionEconomy → RuntimeActionEconomy
+ *      Bare names now belong to schema-derived types from @first-perception/types.
+ *
+ *   T. **TRANSLATION LAYER** — engine survives with different shape; persistence
+ *      boundary applies toSnake()/toCamel() via packages/persistence/src/naming.ts.
+ *      Status (Phase 24c §5b.5): **COMPLETE.** Pass 1 (9 handlers — addendum-
+ *      classified) + Pass 2 (11 handlers — promoted from Category 1 per
+ *      recategorization) = 20 total handler entries in NAMING_HANDLERS registry.
+ *      Pass 2 handlers use shallow camel↔snake remap stubs; bespoke per-entity
+ *      shape adapters (e.g. Belief.confidence enum↔integer, NPC.hp number↔hp_block)
+ *      land per-entity as Session 24d / repository wiring concretizes against
+ *      live Supabase tables.
+ *
+ * @module engine-types
+ * @version 2.0.0 (Phase 24c §5b.6 KEEP annotation)
  * ============================================================================
  */
 
@@ -387,8 +443,14 @@ export type EntityId = string;
 /** Timestamp in milliseconds since epoch */
 export type Timestamp = number;
 
-/** A stat block mapping core stats to numeric values */
-export interface StatBlock {
+/**
+ * A stat block mapping core stats to numeric values.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimeStatBlock`. Renamed to `RuntimeStatBlock` to
+ * disambiguate from schema's `custom_stats_block` $def (engine math helper;
+ * not the canonical schema block).
+ */
+export interface RuntimeStatBlock {
   body: number;
   grace: number;
   sense: number;
@@ -400,8 +462,12 @@ export interface StatBlock {
   creation: number;
 }
 
-/** Partial stat block for modifiers/differences */
-export interface PartialStatBlock {
+/**
+ * Partial stat block for modifiers/differences.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimePartialStatBlock`. Renamed to `RuntimePartialStatBlock`.
+ */
+export interface RuntimePartialStatBlock {
   body?: number;
   grace?: number;
   sense?: number;
@@ -499,27 +565,47 @@ export interface DCComponent {
 /** 5e hit-die size */
 export type HitDie = 'd6' | 'd8' | 'd10' | 'd12';
 
-/** Hit-dice pool — total hit dice the character has earned, plus how many remain to spend on a short rest. */
-export interface HitDicePool {
+/**
+ * Hit-dice pool — total hit dice the character has earned, plus how many remain to spend on a short rest.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimeHitDicePool`. Renamed to `RuntimeHitDicePool`
+ * to disambiguate from schema's v0.7 `hit_dice_entry` $def shape.
+ */
+export interface RuntimeHitDicePool {
   current: number;
   max: number;
   die: HitDie;
 }
 
-/** Attunement slot tracker — 5e limits a single character to 3 attuned magic items by default. */
-export interface AttunementSlots {
+/**
+ * Attunement slot tracker — 5e limits a single character to 3 attuned magic items by default.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimeAttunementSlots`. Renamed to `RuntimeAttunementSlots`
+ * to disambiguate from schema's v0.7 `attunement_slot` $def.
+ */
+export interface RuntimeAttunementSlots {
   used: number;
   max: number;
 }
 
-/** Per-level spell slot pool. Posture-driven casting (Phase 10) populates this; combat reducer ignores it. */
-export interface SpellSlotLevel {
+/**
+ * Per-level spell slot pool. Posture-driven casting (Phase 10) populates this; combat reducer ignores it.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimeSpellSlotLevel`. Renamed to `RuntimeSpellSlotLevel`
+ * to disambiguate from schema's v0.7 `spell_slot_table` $def.
+ */
+export interface RuntimeSpellSlotLevel {
   current: number;
   max: number;
 }
 
-/** 5e action economy — slots still available this turn. */
-export interface ActionEconomy {
+/**
+ * 5e action economy — slots still available this turn.
+ *
+ * Phase 24c §5b.4 RENAME: was `RuntimeActionEconomy`. Renamed to `RuntimeActionEconomy`
+ * to disambiguate from schema's `action_economy_block` $def (Foundation 14).
+ */
+export interface RuntimeActionEconomy {
   action: boolean;
   bonusAction: boolean;
   reaction: boolean;
@@ -542,7 +628,7 @@ export interface Player {
   /** Optional details/backstory */
   optionalDetails: string;
   /** Core stats */
-  stats: StatBlock;
+  stats: RuntimeStatBlock;
   /** Current health/hit points */
   hp: number;
   /** Maximum health */
@@ -582,15 +668,15 @@ export interface Player {
   /** 5e proficiency bonus — drives attack/save bonuses. */
   proficiencyBonus: number;
   /** 5e hit-dice pool for short-rest healing. */
-  hitDice: HitDicePool;
+  hitDice: RuntimeHitDicePool;
   /** Core stats this character is proficient in for saves. */
   savingThrowProficiencies: CoreStat[];
   /** Attunement slot tracker. */
-  attunementSlots: AttunementSlots;
+  attunementSlots: RuntimeAttunementSlots;
   /** Spell-slot pool keyed by level. Posture-driven casting (Phase 10) populates this. */
-  spellSlots?: Record<number, SpellSlotLevel>;
+  spellSlots?: Record<number, RuntimeSpellSlotLevel>;
   /** Combat reducer reads + writes this; turn-end resets. */
-  actionEconomy?: ActionEconomy;
+  actionEconomy?: RuntimeActionEconomy;
 }
 
 /** A non-player character */
@@ -608,7 +694,7 @@ export interface NPC {
   /** Current location ID */
   locationId: EntityId;
   /** Core stats */
-  stats: StatBlock;
+  stats: RuntimeStatBlock;
   /** Current HP */
   hp: number;
   /** Max HP */
@@ -864,7 +950,7 @@ export interface Item {
   /** Item category */
   category: ItemCategory;
   /** Stat modifiers when equipped/used */
-  statModifiers: PartialStatBlock;
+  statModifiers: RuntimePartialStatBlock;
   /** Special effects this item grants */
   effects: ItemEffect[];
   /** Whether this item is equippable */
@@ -940,7 +1026,7 @@ export interface Trait {
   /** Description */
   description: string;
   /** Stat modifiers */
-  statModifiers: PartialStatBlock;
+  statModifiers: RuntimePartialStatBlock;
   /** Special effects */
   specialEffects: string[];
   /** Whether this is a flaw (negative) */
@@ -964,7 +1050,7 @@ export interface Condition {
   /** Source of the condition */
   source: string;
   /** Stat modifiers from this condition */
-  statModifiers: PartialStatBlock;
+  statModifiers: RuntimePartialStatBlock;
 }
 
 // =============================================================================
@@ -1052,7 +1138,7 @@ export interface ConsequenceEffect {
   /** Description of the effect */
   description: string;
   /** Stat changes */
-  statChanges?: PartialStatBlock;
+  statChanges?: RuntimePartialStatBlock;
   /** Conditions to apply */
   conditions?: ConditionType[];
   /** Items to add/remove */
@@ -1246,7 +1332,7 @@ export interface DeathRecord {
   /** Legacy left */
   legacy: Legacy;
   /** Final stats */
-  finalStats: StatBlock;
+  finalStats: RuntimeStatBlock;
   /** Total actions taken */
   actionsTaken: number;
 }
@@ -1388,7 +1474,7 @@ export interface GlobalModifier {
   /** Description */
   description: string;
   /** Stat effects */
-  statEffects: PartialStatBlock;
+  statEffects: RuntimePartialStatBlock;
   /** Duration in turns (-1 for permanent) */
   duration: number;
   /** Remaining turns */

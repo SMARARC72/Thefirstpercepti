@@ -73,11 +73,20 @@ function renderZod(node, defRegistry, depth = 0) {
   if (node.const !== undefined) {
     return `z.literal(${JSON.stringify(node.const)})`;
   }
-  if (node.enum && Array.isArray(node.enum) && Array.isArray(node.type) && node.type.includes("null")) {
-    return `z.enum([${node.enum.filter(v => v !== null).map(v => JSON.stringify(v)).join(", ")}]).nullable()`;
-  }
   if (node.enum && Array.isArray(node.enum)) {
-    return `z.enum([${node.enum.map(v => JSON.stringify(v)).join(", ")}])`;
+    // F7a: detect null in enum array (regardless of `type` field) → emit .nullable()
+    // F7b: detect numeric enum values → emit z.union([z.literal(...)]) (z.enum is string-only)
+    const hasNull = node.enum.includes(null);
+    const nonNullValues = node.enum.filter(v => v !== null);
+    const allNumeric = nonNullValues.length > 0 && nonNullValues.every(v => typeof v === "number");
+    let expr;
+    if (allNumeric) {
+      const literals = nonNullValues.map(v => `z.literal(${v})`);
+      expr = literals.length === 1 ? literals[0] : `z.union([${literals.join(", ")}])`;
+    } else {
+      expr = `z.enum([${nonNullValues.map(v => JSON.stringify(v)).join(", ")}])`;
+    }
+    return hasNull ? `${expr}.nullable()` : expr;
   }
   if (node.oneOf && Array.isArray(node.oneOf) && node.x_discriminator) {
     const variants = node.oneOf.map(v => renderZod(v, defRegistry, depth + 1));
@@ -97,7 +106,8 @@ function renderZod(node, defRegistry, depth = 0) {
     if (node.format === "date-time") expr = "z.string().datetime()";
     if (node.minLength != null) expr += `.min(${node.minLength})`;
     if (node.maxLength != null) expr += `.max(${node.maxLength})`;
-    if (node.pattern) expr += `.regex(${JSON.stringify(node.pattern)})`;
+    // F7c: zod .regex() expects RegExp, not string. Wrap with new RegExp(...).
+    if (node.pattern) expr += `.regex(new RegExp(${JSON.stringify(node.pattern)}))`;
     return expr;
   }
   if (t === "integer" || t === "number") {

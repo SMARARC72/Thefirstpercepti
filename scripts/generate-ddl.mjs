@@ -240,9 +240,17 @@ function buildEntityNameIndex(pack) {
   for (const [name, def] of Object.entries(pack.schemas || {})) {
     const ns = def.x_schema_namespace || DEFAULT_NAMESPACE;
     const props = def.properties || {};
-    // Determine PK column: prefer `<entity>_id`, fallback to `id`
+    const required = def.required || [];
+    // Determine PK column:
+    //  1. prefer `<entity>_id`
+    //  2. fallback to bare `id`
+    //  3. fallback to first required field ending in `_id` (convention: PK is first required)
     let pk = `${name.toLowerCase()}_id`;
     if (!props[pk]) pk = "id";
+    if (!props[pk]) {
+      const firstRequiredId = required.find(r => r.endsWith("_id") && props[r]);
+      if (firstRequiredId) pk = firstRequiredId;
+    }
     idx[name.toLowerCase()] = { namespace: ns, pk_column: pk, tableName: snakeCase(name) };
   }
   return idx;
@@ -283,12 +291,14 @@ function inferFkTarget(colName, currentEntityName, entityIndex) {
 // CREATE TABLE emission
 // -----------------------------------------------------------------------------
 
-function emitTable(entity, allEnums, entityIndex) {
+function emitTable(entity, allEnums, entityIndex, fkOut) {
   const { name, def, namespace } = entity;
   const cols = [];
   const constraints = [];
   const props = def.properties || {};
   const required = new Set(def.required || []);
+  // Resolve PK column the same way buildEntityNameIndex does (so emit + index agree).
+  const pkCandidate = entityIndex?.[entity.original_name.toLowerCase()]?.pk_column;
 
   for (const [colName, colDef] of Object.entries(props)) {
     const col = snakeCase(colName);
@@ -297,18 +307,24 @@ function emitTable(entity, allEnums, entityIndex) {
       // Treat as JSONB referencing the $def shape
       const nullable = !required.has(colName);
       cols.push(`  ${quote(col)} JSONB${nullable ? "" : " NOT NULL"}`);
-      // CHECK constraint via pg_jsonschema (if available) — emit as comment for now
-      cols[cols.length - 1] += `  -- $ref: ${colDef.$ref}`;
+      // CHECK constraint via pg_jsonschema (if available) — emit as block comment
+      // (must be /* */ not -- to avoid swallowing the trailing comma added on join)
+      cols[cols.length - 1] += `  /* $ref: ${colDef.$ref} */`;
       continue;
     }
-    const isPrimaryKey = colName === "id" || colName.endsWith("_id") && colName === `${entity.original_name.toLowerCase()}_id`;
+    const isPrimaryKey = (pkCandidate && col === pkCandidate)
+      || colName === "id"
+      || (colName.endsWith("_id") && colName === `${entity.original_name.toLowerCase()}_id`);
     const isFk = colName.endsWith("_id") && !isPrimaryKey;
 
     // ENUM detection
     let sqlType;
     if (colDef.enum && colDef.x_enum_strategy === "native") {
       const enumName = colDef.x_enum_name || `${name}_${col}_enum`;
-      sqlType = `${quote(namespace)}.${quote(enumName)}`;
+      // F-ENUM-NS: enum types live in the SAME namespace they were CREATEd in (extractEnums
+      // defaults to public). Column-site references must match. Always public for v0.8 native enums.
+      const enumNs = colDef.x_schema_namespace || (allEnums?.find(e => e.name === enumName)?.namespace) || "public";
+      sqlType = `${quote(enumNs)}.${quote(enumName)}`;
     } else {
       sqlType = sqlTypeForJsonSchema(colDef, {});
     }
@@ -323,10 +339,19 @@ function emitTable(entity, allEnums, entityIndex) {
       if (colDef.x_fk_target) {
         // Explicit annotation (highest priority)
         const fkPolicy = colDef.x_fk_policy?.on_delete || "RESTRICT";
-        const [fkNs, fkTable] = colDef.x_fk_target.includes(".")
-          ? colDef.x_fk_target.split(".")
-          : [namespace, colDef.x_fk_target];
-        fkResolution = { namespace: fkNs, tableName: fkTable, pkColumn: "id", onDelete: fkPolicy, source: "explicit" };
+        let fkNs, fkTable;
+        if (colDef.x_fk_target.includes(".")) {
+          [fkNs, fkTable] = colDef.x_fk_target.split(".");
+        } else {
+          // F-FK-NS: unqualified target — look up target's actual namespace, NOT source's.
+          fkTable = colDef.x_fk_target;
+          const targetEntry = entityIndex?.[fkTable.toLowerCase()];
+          fkNs = targetEntry?.namespace || namespace; // namespace fallback only if unknown
+        }
+        // F-FK-PK: pkColumn from entityIndex (proper PK), fallback to "id".
+        const targetEntry = entityIndex?.[fkTable.toLowerCase()];
+        const fkPk = targetEntry?.pk_column || "id";
+        fkResolution = { namespace: fkNs, tableName: fkTable, pkColumn: fkPk, onDelete: fkPolicy, source: "explicit" };
       } else if (entityIndex) {
         // F5: infer from `<entity>_id` naming convention
         const inferred = inferFkTarget(colName, entity.original_name, entityIndex);
@@ -337,25 +362,49 @@ function emitTable(entity, allEnums, entityIndex) {
     }
     if (fkResolution) {
       const constraintName = `fk_${entity.name}_${col}`;
-      constraints.push(
-        `  CONSTRAINT ${quote(constraintName)} FOREIGN KEY (${quote(col)}) REFERENCES ${quote(fkResolution.namespace)}.${quote(fkResolution.tableName)}(${quote(fkResolution.pkColumn)}) ON DELETE ${fkResolution.onDelete}` +
-        (fkResolution.source === "inferred" ? "  -- F5: inferred from naming convention" : "")
-      );
+      // F-FK-ORDER: emit FK as separate ALTER TABLE at end of file (after all CREATE TABLEs)
+      // to avoid forward-reference errors when an entity references a not-yet-created table.
+      if (fkOut) {
+        fkOut.push({
+          tableNs: namespace,
+          tableName: name,
+          constraintName,
+          column: col,
+          refNs: fkResolution.namespace,
+          refTable: fkResolution.tableName,
+          refColumn: fkResolution.pkColumn,
+          onDelete: fkResolution.onDelete,
+          source: fkResolution.source,
+        });
+      } else {
+        // Fallback path (kept for safety; not used in main()).
+        constraints.push(
+          `  CONSTRAINT ${quote(constraintName)} FOREIGN KEY (${quote(col)}) REFERENCES ${quote(fkResolution.namespace)}.${quote(fkResolution.tableName)}(${quote(fkResolution.pkColumn)}) ON DELETE ${fkResolution.onDelete}` +
+          (fkResolution.source === "inferred" ? "  /* F5: inferred from naming convention */" : "")
+        );
+      }
     }
 
-    // Range constraints
-    if (colDef.minimum != null) {
-      constraints.push(`  CHECK (${quote(col)} >= ${colDef.minimum})`);
-    }
-    if (colDef.maximum != null) {
-      constraints.push(`  CHECK (${quote(col)} <= ${colDef.maximum})`);
+    // Range constraints (only on numeric column types — TEXT/JSONB/BOOLEAN skip)
+    // F-RANGE-NUMERIC: schema_pack may carry minimum/maximum on non-numeric fields
+    // (legacy v0.7 artifact); only emit CHECK when the underlying SQL type is numeric.
+    const isNumericType = /^(INTEGER|SMALLINT|BIGINT|NUMERIC|DOUBLE PRECISION|REAL)$/i.test(sqlType.replace(/"/g, ""));
+    if (isNumericType) {
+      if (colDef.minimum != null) {
+        constraints.push(`  CHECK (${quote(col)} >= ${colDef.minimum})`);
+      }
+      if (colDef.maximum != null) {
+        constraints.push(`  CHECK (${quote(col)} <= ${colDef.maximum})`);
+      }
     }
 
     cols.push(colLine);
   }
 
   // schema_version column for ARD-016 dual-write phase
-  if (namespace === "public" || namespace === "state") {
+  // Skip if entity already declared schema_version itself (v0.7 inherited: litany, marginalia)
+  const hasOwnSchemaVersion = Object.keys(props).some(k => snakeCase(k) === "schema_version");
+  if ((namespace === "public" || namespace === "state") && !hasOwnSchemaVersion) {
     cols.push(`  "schema_version" TEXT NOT NULL DEFAULT 'v0.8'`);
   }
 
@@ -375,7 +424,9 @@ function emitTable(entity, allEnums, entityIndex) {
   lines.push(body);
   lines.push(`);`);
   if (def.description) {
-    lines.push(`COMMENT ON TABLE ${quote(namespace)}.${quote(name)} IS ${JSON.stringify(def.description)};`);
+    // Postgres string literal: single quotes, with single-quote escape via doubling
+    const sqlStr = `'${def.description.replace(/'/g, "''")}'`;
+    lines.push(`COMMENT ON TABLE ${quote(namespace)}.${quote(name)} IS ${sqlStr};`);
   }
   lines.push(`ALTER TABLE ${quote(namespace)}.${quote(name)} ENABLE ROW LEVEL SECURITY;`);
   lines.push(``);
@@ -456,6 +507,7 @@ async function main() {
     for (const e of entities) {
       (byNs[e.namespace] = byNs[e.namespace] || []).push(e);
     }
+    const fkOut = []; // collected across all entities; emitted last
     for (const ns of NAMESPACES) {
       const ents = byNs[ns];
       if (!ents || ents.length === 0) continue;
@@ -463,8 +515,29 @@ async function main() {
       out.push(`-- ${ns.toUpperCase()} schema — ${ents.length} entities`);
       out.push(`-- ============================================================================`);
       for (const e of ents) {
-        out.push(emitTable(e, enums, entityIndex));
+        out.push(emitTable(e, enums, entityIndex, fkOut));
       }
+    }
+
+    // 3b. FK constraints emitted LAST (per F-FK-ORDER fix) so all referenced tables exist.
+    if (fkOut.length > 0) {
+      out.push(`-- ============================================================================`);
+      out.push(`-- FK CONSTRAINTS — emitted last to avoid forward-reference errors (F-FK-ORDER)`);
+      out.push(`-- ============================================================================`);
+      for (const fk of fkOut) {
+        const note = fk.source === "inferred" ? "  /* F5: inferred from naming convention */" : "";
+        // Wrap in DO block for idempotency (ADD CONSTRAINT has no IF NOT EXISTS variant)
+        out.push(`DO $$ BEGIN`);
+        out.push(
+          `  ALTER TABLE ${quote(fk.tableNs)}.${quote(fk.tableName)} ` +
+          `ADD CONSTRAINT ${quote(fk.constraintName)} ` +
+          `FOREIGN KEY (${quote(fk.column)}) ` +
+          `REFERENCES ${quote(fk.refNs)}.${quote(fk.refTable)}(${quote(fk.refColumn)}) ` +
+          `ON DELETE ${fk.onDelete};${note}`
+        );
+        out.push(`EXCEPTION WHEN duplicate_object THEN NULL; END $$;`);
+      }
+      out.push(``);
     }
   }
 

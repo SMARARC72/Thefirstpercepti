@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T02:40:12.149Z
+ * Generated at:   2026-05-22T04:28:46.848Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -147,7 +147,7 @@ export type FactionPlanBlock = z.infer<typeof FactionPlanBlockZ>;
 export const SessionStateBlockZ = z.object({
       "current_session_id": z.string().nullable().optional(),
       "ending_committed": z.boolean().optional(),
-      "notice_thresholds_fired": z.array(z.enum([7, 8, 9, 10])).optional(),
+      "notice_thresholds_fired": z.array(z.union([z.literal(7), z.literal(8), z.literal(9), z.literal(10)])).optional(),
       "ticker_queue": z.array(z.object({
     })).optional(),
       "apotheosis_accepted_this_turn": z.boolean().optional(),
@@ -666,7 +666,7 @@ export type HpBlock = z.infer<typeof HpBlockZ>;
 
 export const HitDiceEntryZ = z.object({
       "class_id": z.string(),
-      "die_size": z.enum([6, 8, 10, 12]),
+      "die_size": z.union([z.literal(6), z.literal(8), z.literal(10), z.literal(12)]),
       "total": z.number().int().min(1),
       "remaining": z.number().int().min(0),
     });
@@ -787,7 +787,7 @@ export const InventoryEntryZ = z.object({
       "quantity": z.number().int().min(1),
       "identified": z.boolean().optional(),
       "attuned_slot_index": z.number().int().min(0).max(2).nullable().optional(),
-      "equipped_slot": z.enum([null, "main_hand", "off_hand", "two_handed", "armor", "shield", "helm", "cloak", "boots", "gloves", "ring_1", "ring_2", "amulet", "belt"]).optional(),
+      "equipped_slot": z.enum(["main_hand", "off_hand", "two_handed", "armor", "shield", "helm", "cloak", "boots", "gloves", "ring_1", "ring_2", "amulet", "belt"]).nullable().optional(),
       "bound_to_you": z.boolean().optional(),
       "soul_instance": z.object({
       "soul_id": z.string().optional(),
@@ -1315,7 +1315,7 @@ export type ContradictionLedgerEntrySchema = z.infer<typeof ContradictionLedgerE
 export const ClassSchemaZ = z.object({
       "class_id": z.enum(["barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", "wizard"]),
       "default_calling_name": z.string(),
-      "hit_die": z.enum([6, 8, 10, 12]),
+      "hit_die": z.union([z.literal(6), z.literal(8), z.literal(10), z.literal(12)]),
       "primary_abilities": z.array(z.enum(["str", "dex", "con", "int", "wis", "cha"])),
       "save_proficiencies": z.array(z.enum(["str", "dex", "con", "int", "wis", "cha"])).min(2).max(2),
       "skill_choices": z.object({
@@ -1449,8 +1449,8 @@ export const SpellSchemaZ = z.object({
       "duration": DurationObjectZ,
       "concentration": z.boolean().optional(),
       "ritual_eligible": z.boolean().optional(),
-      "save_type": z.enum([null, "str", "dex", "con", "int", "wis", "cha"]).optional(),
-      "attack_kind": z.enum([null, "melee", "ranged"]).optional(),
+      "save_type": z.enum(["str", "dex", "con", "int", "wis", "cha"]).nullable().optional(),
+      "attack_kind": z.enum(["melee", "ranged"]).nullable().optional(),
       "damage_dice": z.string().nullable().optional(),
       "damage_type": z.string().nullable().optional(),
       "classes_allowed": z.array(z.string()),
@@ -1483,7 +1483,7 @@ export type ConditionSchema = z.infer<typeof ConditionSchemaZ>;
 
 export const ItemSchemaZ = z.union([z.object({
       "type": z.literal("weapon").optional(),
-      "subtype": z.enum([null, "simple_melee", "simple_ranged", "martial_melee", "martial_ranged"]).optional(),
+      "subtype": z.enum(["simple_melee", "simple_ranged", "martial_melee", "martial_ranged"]).nullable().optional(),
       "damage_dice": z.string(),
       "damage_type": z.enum(["bludgeoning", "piercing", "slashing", "fire", "cold", "lightning", "thunder", "force", "radiant", "necrotic", "psychic", "acid", "poison"]),
       "weapon_properties": z.array(z.string()).optional(),
@@ -1533,7 +1533,7 @@ export const RecipeSchemaZ = z.object({
       "workday_cost": z.number().min(0).optional(),
       "gp_cost": z.number().min(0).optional(),
       "difficulty_dc": z.number().int().min(0).optional(),
-      "ability_check": z.enum([null, "str", "dex", "con", "int", "wis", "cha"]).optional(),
+      "ability_check": z.enum(["str", "dex", "con", "int", "wis", "cha"]).nullable().optional(),
       "regional_origin_id": z.string().nullable().optional(),
       "branching_outcomes": z.union([z.array(z.object({
       "dc_band": z.string(),
@@ -1661,7 +1661,7 @@ export const MaterialSchemaZ = z.object({
       "witness_payload": z.union([z.null(), z.object({
       "witness_summary": z.string().optional(),
       "binding_dc": z.number().int().min(0).optional(),
-      "carries_soul_kind": z.enum([null, "witness", "spirit", "fragment", "echo"]).optional(),
+      "carries_soul_kind": z.enum(["witness", "spirit", "fragment", "echo"]).nullable().optional(),
       "carries_memory_tags": z.array(z.string()).optional(),
       "provenance_chain": z.array(z.object({
       "holder_id": z.string().optional(),
@@ -1691,7 +1691,7 @@ export const RegionalCurrencyStateSchemaZ = z.object({
       "region_id": z.string(),
       "base_value_gp": z.number().min(0),
       "volatility_modifier": z.number().min(0.5).max(2),
-      "crisis_intensity_modifier": z.enum([1, 0.85, 0.6, 0.4, 1.2, 0.05]),
+      "crisis_intensity_modifier": z.union([z.literal(1), z.literal(0.85), z.literal(0.6), z.literal(0.4), z.literal(1.2), z.literal(0.05)]),
       "crisis_label": z.enum(["calm", "rumored_crisis", "declared_crisis", "acute_crisis", "resolved", "collapsed"]).optional(),
       "last_recompute_event_id": z.string().optional(),
     });
@@ -1729,7 +1729,7 @@ export const CultInstitutionSchemaZ = z.object({
 export type CultInstitutionSchema = z.infer<typeof CultInstitutionSchemaZ>;
 
 export const CreatureMaterialSchemaZ = z.object({
-      "creature_material_id": z.string().regex("^cmat_[a-z0-9_]+$"),
+      "creature_material_id": z.string().regex(new RegExp("^cmat_[a-z0-9_]+$")),
       "name": z.string(),
       "source_creature_kinds": z.array(z.string()),
       "harvest_kind": z.enum(["hide", "blood", "bone", "scale", "tooth", "organ", "feather", "venom", "ichor", "shell"]),
@@ -1764,7 +1764,7 @@ export const MaterialSubstitutionSchemaZ = z.object({
 export type MaterialSubstitutionSchema = z.infer<typeof MaterialSubstitutionSchemaZ>;
 
 export const CompanionSchemaZ = z.object({
-      "companion_id": z.string().regex("^comp_[a-z0-9_]+$"),
+      "companion_id": z.string().regex(new RegExp("^comp_[a-z0-9_]+$")),
       "name": z.string(),
       "underlying_npc_id": z.string(),
       "recruitment_path": z.enum(["quest", "bond", "faction_mediated", "canon_event_emergent"]),
@@ -1856,7 +1856,7 @@ export const AgentEnvelopeSchemaZ = z.object({
 export type AgentEnvelopeSchema = z.infer<typeof AgentEnvelopeSchemaZ>;
 
 export const QuirkSchemaZ = z.object({
-      "quirk_id": z.string().regex("^quirk_[a-z0-9_]+$"),
+      "quirk_id": z.string().regex(new RegExp("^quirk_[a-z0-9_]+$")),
       "name": z.string(),
       "description_template": z.string(),
       "behavioral_modifier": z.object({
@@ -1890,7 +1890,7 @@ export const RecruitmentQuestSchemaZ = z.object({
 export type RecruitmentQuestSchema = z.infer<typeof RecruitmentQuestSchemaZ>;
 
 export const LocationSchemaZ = z.object({
-      "location_id": z.string().regex("^loc_[a-z0-9_]+$"),
+      "location_id": z.string().regex(new RegExp("^loc_[a-z0-9_]+$")),
       "region_id": z.string(),
       "name": z.string(),
       "discovered_by_player_event_id": z.string().nullable().optional(),
@@ -1951,8 +1951,8 @@ export const ImposedSpellSchemaZ = z.object({
       "duration": DurationObjectZ,
       "concentration": z.boolean().optional(),
       "ritual_eligible": z.boolean().optional(),
-      "save_type": z.enum([null, "str", "dex", "con", "int", "wis", "cha"]).optional(),
-      "attack_kind": z.enum([null, "melee", "ranged"]).optional(),
+      "save_type": z.enum(["str", "dex", "con", "int", "wis", "cha"]).nullable().optional(),
+      "attack_kind": z.enum(["melee", "ranged"]).nullable().optional(),
       "damage_dice": z.string().nullable().optional(),
       "damage_type": z.string().nullable().optional(),
       "classes_allowed": z.array(z.string()),
@@ -1999,7 +1999,7 @@ export const MarginaliaSchemaZ = z.object({
 export type MarginaliaSchema = z.infer<typeof MarginaliaSchemaZ>;
 
 export const OpexStateSchemaZ = z.object({
-      "utc_date": z.string().regex("^\\d{4}-\\d{2}-\\d{2}$"),
+      "utc_date": z.string().regex(new RegExp("^\\d{4}-\\d{2}-\\d{2}$")),
       "daily_spend_usd": z.number().min(0),
       "daily_cap_usd": z.number().min(0),
       "session_budgets": z.array(z.object({
@@ -2021,7 +2021,7 @@ export const OpexEventSchemaZ = z.object({
       "tokens_in": z.number().int().min(0),
       "tokens_out": z.number().int().min(0),
       "est_cost_usd": z.number().min(0),
-      "fallback_reason": z.enum([null, "daily_cap_hit", "session_budget_exhausted", "primary_failure", "manual_override", "tier_policy_default"]).optional(),
+      "fallback_reason": z.enum(["daily_cap_hit", "session_budget_exhausted", "primary_failure", "manual_override", "tier_policy_default"]).nullable().optional(),
       "success": z.boolean(),
       "error_kind": z.string().nullable().optional(),
       "session_id": z.string().nullable().optional(),
@@ -2093,7 +2093,7 @@ export const PlotSchemaZ = z.object({
       "current_pressure": z.number().int().min(0).max(10),
       "current_act": z.enum(["setup", "confrontation", "resolution"]),
       "spine_visibility": z.enum(["hidden", "suggested", "visible", "named", "central"]),
-      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).nullable().optional(),
+      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).optional(),
       "subplot_admission_policy": SubplotAdmissionPolicyZ.optional(),
       "campaign_id": z.string(),
       "session_id": z.string(),
@@ -2132,7 +2132,7 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
       "close_day": z.number().int().min(0),
     }).strict(),
       "resolved_by_npc_ids": z.array(z.string()).optional(),
-      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).nullable().optional(),
+      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).optional(),
       "campaign_id": z.string(),
       "session_id": z.string(),
     }).strict();
