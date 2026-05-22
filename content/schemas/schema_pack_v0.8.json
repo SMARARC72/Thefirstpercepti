@@ -8677,7 +8677,46 @@
     },
     "failure_state_branch": {
       "type": "object",
-      "description": "Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).",
+      "description": "Phase 24d §6a.5.8.1 / FS-SC-01 STATE layer — per-campaign mutable FS branch state. Definitional shape (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids) lives in content.failure_state_branch_template; this row FKs to branch_id there. Composite PK (campaign_id, branch_id) from 6a.5.7.1. Backlog #22 closed.",
+      "required": [
+        "branch_id",
+        "branch_state",
+        "campaign_id",
+        "session_id"
+      ],
+      "properties": {
+        "branch_id": {
+          "type": "string",
+          "x_fk_target": "failure_state_branch_template",
+          "x_fk_policy": { "on_delete": "RESTRICT" },
+          "description": "FK to content.failure_state_branch_template.branch_id; composite PK with campaign_id."
+        },
+        "branch_state": {
+          "type": "string",
+          "enum": ["pending", "armed", "fired", "averted", "resolved"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "failure_state_branch_state"
+        },
+        "armed_at_day": { "type": "integer", "minimum": 0 },
+        "resolved_at_day": { "type": ["integer", "null"], "minimum": 0 },
+        "campaign_id": {
+          "type": "string",
+          "description": "FK to campaign.",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": {
+          "type": "string",
+          "description": "FK to session (or save_snapshot until session entity exists)."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "state",
+      "x_composite_primary_key": ["campaign_id", "branch_id"]
+    },
+    "failure_state_branch_template": {
+      "type": "object",
+      "description": "Phase 24d §6a.5.8.1 / FS-SC-01 TEMPLATE layer — definitional FS branch rows authored once per world. Carries 7 definitional columns (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids). BORDERLINE-FSB-1 ratified Option A: parent_plot_id FKs to content.plot_template.plot_id (single PK). Mutable per-campaign state lives in state.failure_state_branch FK'd here. Mirrors 6a.5.5 plot/quest template pattern. Closes backlog #22.",
       "required": [
         "branch_id",
         "parent_plot_id",
@@ -8685,18 +8724,15 @@
         "cosmological_reach",
         "winner_set",
         "loser_set",
-        "handle_window_days",
-        "branch_state",
-        "campaign_id",
-        "session_id"
+        "handle_window_days"
       ],
       "properties": {
         "branch_id": { "type": "string" },
         "parent_plot_id": {
           "type": "string",
-          "description": "FK to plot.plot_id.",
-          "x_fk_target": "plot",
-          "x_fk_policy": { "on_delete": "CASCADE" }
+          "description": "FK to content.plot_template.plot_id (BORDERLINE-FSB-1 Option A).",
+          "x_fk_target": "plot_template",
+          "x_fk_policy": { "on_delete": "RESTRICT" }
         },
         "trigger": {
           "type": "string",
@@ -8756,7 +8792,7 @@
         "handle_window_days": {
           "type": "integer",
           "minimum": 3,
-          "description": "FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes."
+          "description": "FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes. TEMPLATE-only per BORDERLINE-FSB-2; v0.9 difficulty-mode override deferred to backlog #24 (conditional)."
         },
         "point_of_no_return_marker_ids": {
           "type": "array",
@@ -8764,29 +8800,10 @@
             "type": "string",
             "description": "FK to point_of_no_return_marker.marker_id."
           }
-        },
-        "branch_state": {
-          "type": "string",
-          "enum": ["pending", "armed", "fired", "averted", "resolved"],
-          "x_enum_strategy": "native",
-          "x_enum_name": "failure_state_branch_state"
-        },
-        "armed_at_day": { "type": "integer", "minimum": 0 },
-        "resolved_at_day": { "type": ["integer", "null"], "minimum": 0 },
-        "campaign_id": {
-          "type": "string",
-          "description": "Phase 4a.5 — state.* ownership sweep.",
-          "x_fk_target": "campaign",
-          "x_fk_policy": { "on_delete": "CASCADE" }
-        },
-        "session_id": {
-          "type": "string",
-          "description": "Phase 4a.5 — state.* ownership sweep."
         }
       },
       "additionalProperties": false,
-      "x_schema_namespace": "state",
-      "x_composite_primary_key": ["campaign_id", "branch_id"]
+      "x_schema_namespace": "content"
     },
     "creature": {
       "type": "object",

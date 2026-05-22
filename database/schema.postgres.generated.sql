@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T20:55:26.283Z
+-- Generated at:   2026-05-22T21:24:46.432Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2339,6 +2339,17 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.failure_state_branch_state
+DO $$ BEGIN
+  CREATE TYPE "public"."failure_state_branch_state" AS ENUM (
+    'pending',
+    'armed',
+    'fired',
+    'averted',
+    'resolved'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- public.failure_state_trigger
 DO $$ BEGIN
   CREATE TYPE "public"."failure_state_trigger" AS ENUM (
@@ -2368,17 +2379,6 @@ DO $$ BEGIN
     'faction',
     'institution',
     'deity'
-  );
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
--- public.failure_state_branch_state
-DO $$ BEGIN
-  CREATE TYPE "public"."failure_state_branch_state" AS ENUM (
-    'pending',
-    'armed',
-    'fired',
-    'averted',
-    'resolved'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -3501,7 +3501,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 8 entities
+-- CONTENT schema — 9 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -3579,6 +3579,24 @@ CREATE TABLE IF NOT EXISTS "content"."trade_route_v08" (
 );
 COMMENT ON TABLE "content"."trade_route_v08" IS 'Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.';
 ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
+
+-- failure_state_branch_template (content.failure_state_branch_template)
+-- Phase 24d §6a.5.8.1 / FS-SC-01 TEMPLATE layer — definitional FS branch rows authored once per world. Carries 7 definitional columns (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids). BORDERLINE-FSB-1 ratified Option A: parent_plot_id FKs to content.plot_template.plot_id (single PK). Mutable per-campaign state lives in state.failure_state_branch FK'd here. Mirrors 6a.5.5 plot/quest template pattern. Closes backlog #22.
+CREATE TABLE IF NOT EXISTS "content"."failure_state_branch_template" (
+  "branch_id" TEXT PRIMARY KEY NOT NULL,
+  "parent_plot_id" TEXT NOT NULL,
+  "trigger" "public"."failure_state_trigger" NOT NULL,
+  "cosmological_reach" "public"."failure_state_cosmological_reach" NOT NULL,
+  "winner_set" JSONB NOT NULL,
+  "loser_set" JSONB NOT NULL,
+  "handle_window_days" INTEGER NOT NULL,
+  "point_of_no_return_marker_ids" JSONB,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK ("handle_window_days" >= 3)
+);
+COMMENT ON TABLE "content"."failure_state_branch_template" IS 'Phase 24d §6a.5.8.1 / FS-SC-01 TEMPLATE layer — definitional FS branch rows authored once per world. Carries 7 definitional columns (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids). BORDERLINE-FSB-1 ratified Option A: parent_plot_id FKs to content.plot_template.plot_id (single PK). Mutable per-campaign state lives in state.failure_state_branch FK''d here. Mirrors 6a.5.5 plot/quest template pattern. Closes backlog #22.';
+ALTER TABLE "content"."failure_state_branch_template" ENABLE ROW LEVEL SECURITY;
 
 -- creature (content.creature)
 -- Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.
@@ -3719,16 +3737,9 @@ COMMENT ON TABLE "state"."institution_response_queue_entry" IS 'Phase 24b §4.3 
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
 
 -- failure_state_branch (state.failure_state_branch)
--- Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
+-- Phase 24d §6a.5.8.1 / FS-SC-01 STATE layer — per-campaign mutable FS branch state. Definitional shape (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids) lives in content.failure_state_branch_template; this row FKs to branch_id there. Composite PK (campaign_id, branch_id) from 6a.5.7.1. Backlog #22 closed.
 CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
   "branch_id" TEXT NOT NULL,
-  "parent_plot_id" TEXT NOT NULL,
-  "trigger" "public"."failure_state_trigger" NOT NULL,
-  "cosmological_reach" "public"."failure_state_cosmological_reach" NOT NULL,
-  "winner_set" JSONB NOT NULL,
-  "loser_set" JSONB NOT NULL,
-  "handle_window_days" INTEGER NOT NULL,
-  "point_of_no_return_marker_ids" JSONB,
   "branch_state" "public"."failure_state_branch_state" NOT NULL,
   "armed_at_day" INTEGER,
   "resolved_at_day" INTEGER,
@@ -3737,12 +3748,11 @@ CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CHECK ("handle_window_days" >= 3),
   CHECK ("armed_at_day" >= 0),
   CHECK ("resolved_at_day" >= 0),
   PRIMARY KEY ("campaign_id", "branch_id")
 );
-COMMENT ON TABLE "state"."failure_state_branch" IS 'Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).';
+COMMENT ON TABLE "state"."failure_state_branch" IS 'Phase 24d §6a.5.8.1 / FS-SC-01 STATE layer — per-campaign mutable FS branch state. Definitional shape (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids) lives in content.failure_state_branch_template; this row FKs to branch_id there. Composite PK (campaign_id, branch_id) from 6a.5.7.1. Backlog #22 closed.';
 ALTER TABLE "state"."failure_state_branch" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
@@ -3843,6 +3853,9 @@ DO $$ BEGIN
   ALTER TABLE "content"."trade_route_v08" ADD CONSTRAINT "fk_trade_route_v08_controlling_faction_id" FOREIGN KEY ("controlling_faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE SET NULL;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  ALTER TABLE "content"."failure_state_branch_template" ADD CONSTRAINT "fk_failure_state_branch_template_parent_plot_id" FOREIGN KEY ("parent_plot_id") REFERENCES "content"."plot_template"("plot_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
   ALTER TABLE "content"."combatant" ADD CONSTRAINT "fk_combatant_base_npc_id" FOREIGN KEY ("base_npc_id") REFERENCES "public"."npc"("npc_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
@@ -3870,7 +3883,7 @@ DO $$ BEGIN
   ALTER TABLE "state"."institution_response_queue_entry" ADD CONSTRAINT "fk_institution_response_queue_entry_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
-  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_parent_plot_id" FOREIGN KEY ("parent_plot_id") REFERENCES "state"."plot"("plot_id") ON DELETE CASCADE;
+  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_branch_id" FOREIGN KEY ("branch_id") REFERENCES "content"."failure_state_branch_template"("branch_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
@@ -3878,5 +3891,5 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 56 entities · 201 enums · 5 schemas
+-- 57 entities · 201 enums · 5 schemas
 -- ----------------------------------------------------------------------------
