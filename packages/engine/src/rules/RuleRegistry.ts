@@ -299,7 +299,7 @@ export class RuleRegistry implements RuleRegistrySurface {
     const fs = loadOptions.fs ?? (await defaultFs());
 
     // Phase 1: load schemas
-    const schemaFiles = await fs.listJson(schemasDir).catch(() => [] as string[]);
+    const schemaFiles = await listJsonOrEmptyIfMissing(fs, schemasDir);
     for (const file of schemaFiles) {
       try {
         const raw = await fs.readJson(file);
@@ -314,7 +314,7 @@ export class RuleRegistry implements RuleRegistrySurface {
     }
 
     // Phase 2: load rules
-    const ruleFiles = await fs.listJson(rulesDir).catch(() => [] as string[]);
+    const ruleFiles = await listJsonOrEmptyIfMissing(fs, rulesDir);
     for (const file of ruleFiles) {
       try {
         const raw = await fs.readJson(file);
@@ -386,6 +386,37 @@ export interface RuleRegistryFs {
   listJson(dir: string): Promise<string[]>;
   /** Read JSON file and return parsed object. Throws on read or parse failure. */
   readJson(file: string): Promise<unknown>;
+}
+
+/**
+ * List `.json` files in `dir` via the provided fs adapter. Returns empty array
+ * IFF the directory itself is missing (ENOENT or equivalent). ANY OTHER error
+ * (EACCES, EIO, JSON parse failure later, etc.) re-throws so silent failures
+ * don't disable schema/rule loading on transient infrastructure issues.
+ *
+ * Phase 5c.x BUG-FIX: previously `.catch(() => [])` swallowed every error
+ * which masked permission problems + I/O failures + adapter bugs as "no
+ * rules loaded" — silent degradation. Now: ONLY ENOENT is graceful.
+ */
+async function listJsonOrEmptyIfMissing(
+  fs: RuleRegistryFs,
+  dir: string,
+): Promise<string[]> {
+  try {
+    return await fs.listJson(dir);
+  } catch (err) {
+    const e = err as NodeJS.ErrnoException & { message?: string };
+    const code = e?.code ?? "";
+    const msg = String(e?.message ?? e ?? "");
+    // ENOENT covers POSIX + Windows missing-directory case.
+    // Match by code first (canonical); fall back to message substring for
+    // adapters that throw plain Errors with ENOENT-style messages
+    // (test mock adapters, network filesystems, etc.).
+    if (code === "ENOENT" || msg.includes("ENOENT")) {
+      return [];
+    }
+    throw err;
+  }
 }
 
 let _defaultFs: RuleRegistryFs | null = null;

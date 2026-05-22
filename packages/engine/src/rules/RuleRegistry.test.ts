@@ -328,11 +328,13 @@ describe("RuleRegistry / loadFromFilesystem (Phase 5c.1)", () => {
     );
   });
 
-  it("graceful on missing directories (returns empty array → 0 rules loaded)", async () => {
+  it("graceful on ENOENT (missing directory) — empty array, 0 rules loaded", async () => {
     const reg = new RuleRegistry();
     const fs: RuleRegistryFs = {
       async listJson() {
-        throw new Error("ENOENT: no such file or directory");
+        const err = new Error("ENOENT: no such file or directory") as NodeJS.ErrnoException;
+        err.code = "ENOENT";
+        throw err;
       },
       async readJson() {
         throw new Error("never called");
@@ -340,6 +342,55 @@ describe("RuleRegistry / loadFromFilesystem (Phase 5c.1)", () => {
     };
     await reg.loadFromFilesystem("/nonexistent", "/nonexistent_schemas", { fs });
     expect(reg.size()).toBe(0);
+  });
+
+  it("graceful on ENOENT via message substring (adapters without .code attribute)", async () => {
+    const reg = new RuleRegistry();
+    const fs: RuleRegistryFs = {
+      async listJson() {
+        // Plain Error with ENOENT in message but no code attribute
+        throw new Error("ENOENT: no such file or directory, scandir '/x'");
+      },
+      async readJson() {
+        throw new Error("never called");
+      },
+    };
+    await reg.loadFromFilesystem("/x", "/x_schemas", { fs });
+    expect(reg.size()).toBe(0);
+  });
+
+  it("re-throws non-ENOENT fs errors (EACCES, EIO, etc.) — does NOT silently disable loading (Phase 5c.x BUG-FIX-7)", async () => {
+    const reg = new RuleRegistry();
+    const fs: RuleRegistryFs = {
+      async listJson() {
+        const err = new Error("EACCES: permission denied") as NodeJS.ErrnoException;
+        err.code = "EACCES";
+        throw err;
+      },
+      async readJson() {
+        throw new Error("never called");
+      },
+    };
+    await expect(
+      reg.loadFromFilesystem("/forbidden", "/forbidden_schemas", { fs }),
+    ).rejects.toThrow(/EACCES/);
+  });
+
+  it("re-throws unrecognized fs error codes (defensive — don't assume silent fallback)", async () => {
+    const reg = new RuleRegistry();
+    const fs: RuleRegistryFs = {
+      async listJson() {
+        const err = new Error("EIO: i/o error") as NodeJS.ErrnoException;
+        err.code = "EIO";
+        throw err;
+      },
+      async readJson() {
+        throw new Error("never called");
+      },
+    };
+    await expect(
+      reg.loadFromFilesystem("/disk_broken", "/x", { fs }),
+    ).rejects.toThrow(/EIO/);
   });
 
   it("collects per-file errors; throws end-of-load when strictValidation=true", async () => {
