@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T02:10:13.595Z
+ * Generated at:   2026-05-22T02:28:07.635Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (60)
+// $defs (65)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -378,6 +378,83 @@ export const HighEngagementSmoothingZ = z.object({
     }).strict();
 export type HighEngagementSmoothing = z.infer<typeof HighEngagementSmoothingZ>;
 
+export const PointOfNoReturnMarkerZ = z.object({
+      "marker_id": z.string(),
+      "parent_branch_id": z.string(),
+      "description": z.string(),
+      "in_world_event": z.object({
+      "kind": z.enum(["item_movement", "scheduled_announcement", "institutional_act", "environmental_change"]),
+      "location_id": z.string().optional(),
+      "npc_id": z.string().optional(),
+      "item_id": z.string().optional(),
+    }).strict(),
+      "emits_readable_signal_within_days": z.number().int().min(0).max(1),
+    }).strict();
+export type PointOfNoReturnMarker = z.infer<typeof PointOfNoReturnMarkerZ>;
+
+export const OutcomeUncertaintyResolverZ = z.object({
+      "primitive_id": z.string(),
+      "applies_to_creature_id": z.string(),
+      "trigger_event": z.string(),
+      "uncertainty_window_days": z.number().int().min(0),
+      "resolution_mechanic": z.string(),
+      "affects_engine_rolls_until_resolved": z.boolean(),
+    }).strict();
+export type OutcomeUncertaintyResolver = z.infer<typeof OutcomeUncertaintyResolverZ>;
+
+export const CrossRegionalPresenceZ = z.object({
+      "primitive_id": z.string(),
+      "creature_id": z.string(),
+      "regions_present": z.array(z.object({
+      "region_id": z.string(),
+      "presence_kind": z.enum(["endemic", "migratory", "echo", "rumor_only"]),
+    }).strict()),
+      "single_mechanic_touch": z.object({
+      "mechanic_kind": z.string(),
+      "description": z.string(),
+    }).strict(),
+    }).strict();
+export type CrossRegionalPresence = z.infer<typeof CrossRegionalPresenceZ>;
+
+export const SocialAttackZ = z.object({
+      "attack_id": z.string(),
+      "name": z.string(),
+      "attack_kind": z.enum(["intimidation", "doctrinal_pressure", "ledger_revelation", "shame", "obligation_call", "aesthetic_judgment"]),
+      "range_in_scene_turns": z.number().int().min(0).optional(),
+      "target_resistance": z.object({
+      "stat": z.enum(["presence", "will", "mind"]),
+      "dc": z.number().int().min(1),
+    }).strict(),
+      "effect_on_failure": z.string(),
+      "effect_on_success": z.string(),
+      "ledger_record": z.boolean(),
+    }).strict();
+export type SocialAttack = z.infer<typeof SocialAttackZ>;
+
+export const CosmologicalRedirectionZ = z.object({
+      "primitive_id": z.string(),
+      "applies_to_combatant_id": z.string(),
+      "target_entity_kind": z.enum(["wraith", "haunting", "cult", "spirit", "named_being"]),
+      "target_entity_id": z.string().optional(),
+      "negotiation_ritual": z.object({
+      "duration_minutes_in_game": z.number().int().min(0),
+      "dc_check": z.object({
+      "stat": z.string(),
+      "dc": z.number().int().min(1),
+    }).strict(),
+      "dc_modifiers": z.array(z.object({
+      "kind": z.string(),
+      "modifier": z.number().int(),
+    }).strict()).optional(),
+    }).strict(),
+      "effect_kind": z.enum(["redirect_haunting", "transfer_burden", "renegotiate_term", "summon_substitute"]),
+      "effect_duration": z.object({
+      "unit": z.enum(["game_day", "game_week", "game_season"]),
+      "count": z.number().int().min(1),
+    }).strict(),
+    }).strict();
+export type CosmologicalRedirection = z.infer<typeof CosmologicalRedirectionZ>;
+
 export const OrthogonalizedSubplotAdmissionZ = z.object({
       "governor_id": z.string(),
       "active": z.boolean(),
@@ -693,7 +770,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (49)
+// Top-level entities (52)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -1966,5 +2043,84 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
     }).strict();
 export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResponseQueueEntrySchemaZ>;
 
-// 60 $defs · 49 entities
+export const FailureStateBranchSchemaZ = z.object({
+      "branch_id": z.string(),
+      "parent_plot_id": z.string(),
+      "trigger": z.enum(["spine_question_unanswered", "central_npc_lost", "central_institution_collapsed", "pressure_overrun", "player_withdrawal", "rival_plot_displacement"]),
+      "cosmological_reach": z.enum(["local", "regional", "pan_world", "cosmological"]),
+      "winner_set": z.array(z.object({
+      "actor_kind": z.enum(["npc", "faction", "institution", "deity"]),
+      "actor_id": z.string(),
+    }).strict()).min(1),
+      "loser_set": z.array(z.object({
+      "actor_kind": z.enum(["npc", "faction", "institution", "deity"]),
+      "actor_id": z.string(),
+    }).strict()).min(1),
+      "handle_window_days": z.number().int().min(3),
+      "point_of_no_return_marker_ids": z.array(z.string()).optional(),
+      "branch_state": z.enum(["pending", "armed", "fired", "averted", "resolved"]),
+      "armed_at_day": z.number().int().min(0).optional(),
+      "resolved_at_day": z.number().int().min(0).nullable().optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
+    }).strict();
+export type FailureStateBranchSchema = z.infer<typeof FailureStateBranchSchemaZ>;
+
+export const CreatureSchemaZ = z.object({
+      "creature_id": z.string(),
+      "name": z.string(),
+      "description": z.string().optional(),
+      "provenance": z.enum(["mundane", "drowned_church", "unnamed_touched", "deep_world", "substrate_emanation", "constructed", "wraith_class"]),
+      "tier": z.enum(["nuisance", "scenery", "named", "boss", "cosmological"]),
+      "combat_block": z.object({
+      "hp": z.object({
+      "current": z.number().int().min(0),
+      "max": z.number().int().min(1),
+    }).strict(),
+      "ac": z.number().int().min(0),
+      "derived_stats": DerivedStatsBlockZ,
+      "traits": z.array(z.object({
+      "name": z.string(),
+      "description": z.string(),
+    }).strict()),
+      "actions": z.array(z.object({
+      "name": z.string(),
+      "kind": z.enum(["melee", "ranged", "spell", "special", "reaction"]),
+      "to_hit": z.number().int().optional(),
+      "damage": z.string().optional(),
+      "effect": z.string().optional(),
+    }).strict()),
+    }).strict(),
+      "regional_presence_id": z.string().optional(),
+      "uncertainty_resolver_id": z.string().optional(),
+      "tags": z.array(z.string()),
+      "witness_payload": z.boolean(),
+    }).strict();
+export type CreatureSchema = z.infer<typeof CreatureSchemaZ>;
+
+export const CombatantSchemaZ = z.object({
+      "combatant_id": z.string(),
+      "base_npc_id": z.string(),
+      "voice_archetype": z.enum(["aesthete_magistrate", "sergeant_of_sanctions", "closed_books_servitor_operator", "sum_wraith_whisperer", "marrow_saint", "bell_magistrate", "venn_hook", "default_militant"]),
+      "combat_block": z.object({
+      "hp": z.object({
+      "current": z.number().int().min(0),
+      "max": z.number().int().min(1),
+    }).strict(),
+      "ac": z.number().int().min(0),
+      "initiative_modifier": z.number().int(),
+      "action_economy": ActionEconomyBlockZ,
+      "weapons": z.array(z.object({
+      "name": z.string(),
+      "to_hit": z.number().int().optional(),
+      "damage": z.string(),
+      "reach_or_range": z.string().optional(),
+    }).strict()).optional(),
+    }).strict(),
+      "social_attacks": z.array(SocialAttackZ),
+      "cosmological_redirection_id": z.string().optional(),
+    }).strict();
+export type CombatantSchema = z.infer<typeof CombatantSchemaZ>;
+
+// 65 $defs · 52 entities
 // END OF GENERATED Zod VALIDATORS

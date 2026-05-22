@@ -1862,6 +1862,160 @@ export interface FirstPerceptionSchemaPack {
      */
     session_id: string;
   };
+  /**
+   * Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
+   */
+  failure_state_branch?: {
+    branch_id: string;
+    /**
+     * FK to plot.plot_id.
+     */
+    parent_plot_id: string;
+    trigger:
+      | "spine_question_unanswered"
+      | "central_npc_lost"
+      | "central_institution_collapsed"
+      | "pressure_overrun"
+      | "player_withdrawal"
+      | "rival_plot_displacement";
+    cosmological_reach: "local" | "regional" | "pan_world" | "cosmological";
+    /**
+     * @minItems 1
+     */
+    winner_set: [
+      {
+        actor_kind: "npc" | "faction" | "institution" | "deity";
+        actor_id: string;
+      },
+      ...{
+        actor_kind: "npc" | "faction" | "institution" | "deity";
+        actor_id: string;
+      }[]
+    ];
+    /**
+     * @minItems 1
+     */
+    loser_set: [
+      {
+        actor_kind: "npc" | "faction" | "institution" | "deity";
+        actor_id: string;
+      },
+      ...{
+        actor_kind: "npc" | "faction" | "institution" | "deity";
+        actor_id: string;
+      }[]
+    ];
+    /**
+     * FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes.
+     */
+    handle_window_days: number;
+    point_of_no_return_marker_ids?: string[];
+    branch_state: "pending" | "armed" | "fired" | "averted" | "resolved";
+    armed_at_day?: number;
+    resolved_at_day?: number | null;
+    /**
+     * Phase 4a.5 — state.* ownership sweep.
+     */
+    campaign_id: string;
+    /**
+     * Phase 4a.5 — state.* ownership sweep.
+     */
+    session_id: string;
+  };
+  /**
+   * Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.
+   */
+  creature?: {
+    creature_id: string;
+    name: string;
+    description?: string;
+    provenance:
+      | "mundane"
+      | "drowned_church"
+      | "unnamed_touched"
+      | "deep_world"
+      | "substrate_emanation"
+      | "constructed"
+      | "wraith_class";
+    tier: "nuisance" | "scenery" | "named" | "boss" | "cosmological";
+    combat_block: {
+      hp: {
+        current: number;
+        max: number;
+      };
+      ac: number;
+      derived_stats: DerivedStatsBlock;
+      traits: {
+        name: string;
+        description: string;
+      }[];
+      actions: {
+        name: string;
+        kind: "melee" | "ranged" | "spell" | "special" | "reaction";
+        to_hit?: number;
+        damage?: string;
+        effect?: string;
+      }[];
+    };
+    /**
+     * FK to cross_regional_presence.primitive_id when this creature has pan-world reach.
+     */
+    regional_presence_id?: string;
+    /**
+     * FK to outcome_uncertainty_resolver.primitive_id when this creature triggers Unnamed-Touched echo.
+     */
+    uncertainty_resolver_id?: string;
+    tags: string[];
+    /**
+     * True if sighting/encountering this creature constitutes a canon-progression event (cosmological/substrate-revealing).
+     */
+    witness_payload: boolean;
+  };
+  /**
+   * Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.
+   */
+  combatant?: {
+    combatant_id: string;
+    /**
+     * FK to npc.npc_id — combatant inherits stats/derived_stats/tags from base NPC.
+     */
+    base_npc_id: string;
+    /**
+     * Phase 4.7 inline enum; Phase 4.8 harmonizes with Bundle F personality_fingerprint.archetype_id (FK migration scheduled Phase 4.8).
+     */
+    voice_archetype:
+      | "aesthete_magistrate"
+      | "sergeant_of_sanctions"
+      | "closed_books_servitor_operator"
+      | "sum_wraith_whisperer"
+      | "marrow_saint"
+      | "bell_magistrate"
+      | "venn_hook"
+      | "default_militant";
+    combat_block: {
+      hp: {
+        current: number;
+        max: number;
+      };
+      ac: number;
+      initiative_modifier: number;
+      action_economy: ActionEconomyBlock1;
+      weapons?: {
+        name: string;
+        to_hit?: number;
+        damage: string;
+        reach_or_range?: string;
+      }[];
+    };
+    /**
+     * Inline social_attack records (per CMB.II.IV inventory).
+     */
+    social_attacks: SocialAttack[];
+    /**
+     * FK to cosmological_redirection.primitive_id when combatant has Sum-Wraith Whisperer signature.
+     */
+    cosmological_redirection_id?: string;
+  };
 }
 export interface WorldTime {
   day: number;
@@ -2596,6 +2750,51 @@ export interface SubplotAdmissionPolicy {
   }[];
   cross_plot_resonance_allowed: boolean;
 }
+/**
+ * Phase 24b §4.1 / 24a-surfaced — Per-turn action budget. Promoted from runtime ActionEconomy (Phase 24a Player.actionEconomy).
+ */
+export interface ActionEconomyBlock1 {
+  /**
+   * Main action available this turn.
+   */
+  action: boolean;
+  /**
+   * Bonus action available this turn.
+   */
+  bonus_action: boolean;
+  /**
+   * Reaction available until next turn start.
+   */
+  reaction: boolean;
+}
+/**
+ * Phase 24b §4.7 / CMB-SC-02 — Combatant social-attack sub-type. Used by Aesthete-Magistrate, Sergeant of Sanctions, Closed-Books Servitor Operator (CMB.II.IV inventory).
+ */
+export interface SocialAttack {
+  attack_id: string;
+  name: string;
+  attack_kind:
+    | "intimidation"
+    | "doctrinal_pressure"
+    | "ledger_revelation"
+    | "shame"
+    | "obligation_call"
+    | "aesthetic_judgment";
+  range_in_scene_turns?: number;
+  target_resistance: {
+    /**
+     * Per Option C dual-stats; CoreStat side.
+     */
+    stat: "presence" | "will" | "mind";
+    dc: number;
+  };
+  effect_on_failure: string;
+  effect_on_success: string;
+  /**
+   * True for Numerand-recordable events.
+   */
+  ledger_record: boolean;
+}
 
 
 // ============================================================================
@@ -2652,11 +2851,14 @@ export type PlotSchema = NonNullable<FirstPerceptionSchemaPack["plot"]>;
 export type SurfacingThresholdConfigSchema = NonNullable<FirstPerceptionSchemaPack["surfacing_threshold_config"]>;
 export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
+export type FailureStateBranchSchema = NonNullable<FirstPerceptionSchemaPack["failure_state_branch"]>;
+export type CreatureSchema = NonNullable<FirstPerceptionSchemaPack["creature"]>;
+export type CombatantSchema = NonNullable<FirstPerceptionSchemaPack["combatant"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 49
-// $defs count:  60
+// Entity count: 52
+// $defs count:  65
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

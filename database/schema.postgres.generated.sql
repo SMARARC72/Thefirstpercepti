@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T02:10:13.119Z
+-- Generated at:   2026-05-22T02:28:06.643Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -339,6 +339,77 @@ DO $$ BEGIN
     'reduce_resonance_intensity',
     'delay_secondary_plot_pressure',
     'suppress_redundant_information'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.fs_marker_event_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."fs_marker_event_kind" AS ENUM (
+    'item_movement',
+    'scheduled_announcement',
+    'institutional_act',
+    'environmental_change'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.cross_regional_presence_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."cross_regional_presence_kind" AS ENUM (
+    'endemic',
+    'migratory',
+    'echo',
+    'rumor_only'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.social_attack_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."social_attack_kind" AS ENUM (
+    'intimidation',
+    'doctrinal_pressure',
+    'ledger_revelation',
+    'shame',
+    'obligation_call',
+    'aesthetic_judgment'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_social_attack_properties_target_resistance_properties_stat_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_social_attack_properties_target_resistance_properties_stat_enum" AS ENUM (
+    'presence',
+    'will',
+    'mind'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.cosmological_target_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."cosmological_target_kind" AS ENUM (
+    'wraith',
+    'haunting',
+    'cult',
+    'spirit',
+    'named_being'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.cosmological_effect_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."cosmological_effect_kind" AS ENUM (
+    'redirect_haunting',
+    'transfer_burden',
+    'renegotiate_term',
+    'summon_substitute'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_cosmological_redirection_properties_effect_duration_properties_unit_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_cosmological_redirection_properties_effect_duration_properties_unit_enum" AS ENUM (
+    'game_day',
+    'game_week',
+    'game_season'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -2048,6 +2119,98 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.failure_state_trigger
+DO $$ BEGIN
+  CREATE TYPE "public"."failure_state_trigger" AS ENUM (
+    'spine_question_unanswered',
+    'central_npc_lost',
+    'central_institution_collapsed',
+    'pressure_overrun',
+    'player_withdrawal',
+    'rival_plot_displacement'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.failure_state_cosmological_reach
+DO $$ BEGIN
+  CREATE TYPE "public"."failure_state_cosmological_reach" AS ENUM (
+    'local',
+    'regional',
+    'pan_world',
+    'cosmological'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.failure_state_actor_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."failure_state_actor_kind" AS ENUM (
+    'npc',
+    'faction',
+    'institution',
+    'deity'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.failure_state_branch_state
+DO $$ BEGIN
+  CREATE TYPE "public"."failure_state_branch_state" AS ENUM (
+    'pending',
+    'armed',
+    'fired',
+    'averted',
+    'resolved'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.creature_provenance
+DO $$ BEGIN
+  CREATE TYPE "public"."creature_provenance" AS ENUM (
+    'mundane',
+    'drowned_church',
+    'unnamed_touched',
+    'deep_world',
+    'substrate_emanation',
+    'constructed',
+    'wraith_class'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.creature_tier
+DO $$ BEGIN
+  CREATE TYPE "public"."creature_tier" AS ENUM (
+    'nuisance',
+    'scenery',
+    'named',
+    'boss',
+    'cosmological'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.creature_action_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."creature_action_kind" AS ENUM (
+    'melee',
+    'ranged',
+    'spell',
+    'special',
+    'reaction'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.combatant_voice_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."combatant_voice_archetype" AS ENUM (
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'closed_books_servitor_operator',
+    'sum_wraith_whisperer',
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'default_militant'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- ============================================================================
 -- PUBLIC schema — 43 entities
 -- ============================================================================
@@ -3114,7 +3277,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 2 entities
+-- CONTENT schema — 4 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -3158,8 +3321,43 @@ CREATE TABLE IF NOT EXISTS "content"."trade_route_v08" (
 COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.";
 ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
 
+-- creature (content.creature)
+-- Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.
+CREATE TABLE IF NOT EXISTS "content"."creature" (
+  "creature_id" TEXT PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "provenance" "content"."creature_provenance" NOT NULL,
+  "tier" "content"."creature_tier" NOT NULL,
+  "combat_block" JSONB NOT NULL,
+  "regional_presence_id" TEXT,
+  "uncertainty_resolver_id" TEXT,
+  "tags" JSONB NOT NULL,
+  "witness_payload" BOOLEAN NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+COMMENT ON TABLE "content"."creature" IS "Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.";
+ALTER TABLE "content"."creature" ENABLE ROW LEVEL SECURITY;
+
+-- combatant (content.combatant)
+-- Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.
+CREATE TABLE IF NOT EXISTS "content"."combatant" (
+  "combatant_id" TEXT PRIMARY KEY NOT NULL,
+  "base_npc_id" TEXT NOT NULL,
+  "voice_archetype" "content"."combatant_voice_archetype" NOT NULL,
+  "combat_block" JSONB NOT NULL,
+  "social_attacks" JSONB NOT NULL,
+  "cosmological_redirection_id" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_combatant_base_npc_id" FOREIGN KEY ("base_npc_id") REFERENCES "content"."npc"("id") ON DELETE CASCADE
+);
+COMMENT ON TABLE "content"."combatant" IS "Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.";
+ALTER TABLE "content"."combatant" ENABLE ROW LEVEL SECURITY;
+
 -- ============================================================================
--- STATE schema — 3 entities
+-- STATE schema — 4 entities
 -- ============================================================================
 -- quest (state.quest)
 -- Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
@@ -3240,6 +3438,34 @@ CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
 COMMENT ON TABLE "state"."institution_response_queue_entry" IS "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.";
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
 
+-- failure_state_branch (state.failure_state_branch)
+-- Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
+CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
+  "branch_id" TEXT NOT NULL,
+  "parent_plot_id" TEXT NOT NULL,
+  "trigger" "state"."failure_state_trigger" NOT NULL,
+  "cosmological_reach" "state"."failure_state_cosmological_reach" NOT NULL,
+  "winner_set" JSONB NOT NULL,
+  "loser_set" JSONB NOT NULL,
+  "handle_window_days" INTEGER NOT NULL,
+  "point_of_no_return_marker_ids" JSONB,
+  "branch_state" "state"."failure_state_branch_state" NOT NULL,
+  "armed_at_day" INTEGER,
+  "resolved_at_day" INTEGER,
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT NOT NULL,
+  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_failure_state_branch_parent_plot_id" FOREIGN KEY ("parent_plot_id") REFERENCES "state"."plot"("id") ON DELETE CASCADE,
+  CHECK ("handle_window_days" >= 3),
+  CHECK ("armed_at_day" >= 0),
+  CHECK ("resolved_at_day" >= 0),
+  CONSTRAINT "fk_failure_state_branch_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+);
+COMMENT ON TABLE "state"."failure_state_branch" IS "Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).";
+ALTER TABLE "state"."failure_state_branch" ENABLE ROW LEVEL SECURITY;
+
 -- ============================================================================
 -- ENGINE schema — 1 entities
 -- ============================================================================
@@ -3265,5 +3491,5 @@ ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 49 entities · 168 enums · 5 schemas
+-- 52 entities · 183 enums · 5 schemas
 -- ----------------------------------------------------------------------------

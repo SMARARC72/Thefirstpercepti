@@ -879,6 +879,186 @@
       },
       "additionalProperties": false
     },
+    "point_of_no_return_marker": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / FS-SC-02 — Per FS-RULE-2: every failure_state_branch must emit a readable signal within 1 in-world day of the point-of-no-return marker (CHECK constraint).",
+      "required": ["marker_id", "parent_branch_id", "description", "in_world_event", "emits_readable_signal_within_days"],
+      "properties": {
+        "marker_id": { "type": "string" },
+        "parent_branch_id": { "type": "string", "description": "FK to failure_state_branch.branch_id." },
+        "description": { "type": "string" },
+        "in_world_event": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["item_movement", "scheduled_announcement", "institutional_act", "environmental_change"],
+              "x_enum_strategy": "native",
+              "x_enum_name": "fs_marker_event_kind"
+            },
+            "location_id": { "type": "string" },
+            "npc_id": { "type": "string" },
+            "item_id": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "emits_readable_signal_within_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "FS-RULE-2 binding rule: ≤ 1 in-world day."
+        }
+      },
+      "additionalProperties": false
+    },
+    "outcome_uncertainty_resolver": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / BES-SC-02 — Unnamed-Touched Echo mechanic. When triggered, certain engine rolls become indeterminate-until-resolved.",
+      "required": ["primitive_id", "applies_to_creature_id", "trigger_event", "uncertainty_window_days", "resolution_mechanic", "affects_engine_rolls_until_resolved"],
+      "properties": {
+        "primitive_id": { "type": "string" },
+        "applies_to_creature_id": { "type": "string", "description": "FK to creature.creature_id." },
+        "trigger_event": { "type": "string" },
+        "uncertainty_window_days": { "type": "integer", "minimum": 0 },
+        "resolution_mechanic": { "type": "string", "description": "e.g. 'rest_required', 'specific_liturgical_action'." },
+        "affects_engine_rolls_until_resolved": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "cross_regional_presence": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / BES-SC-03 — Pan-world creature presence. Per RT-26 (HC regions stay content-static): single_mechanic_touch.",
+      "required": ["primitive_id", "creature_id", "regions_present", "single_mechanic_touch"],
+      "properties": {
+        "primitive_id": { "type": "string" },
+        "creature_id": { "type": "string" },
+        "regions_present": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["region_id", "presence_kind"],
+            "properties": {
+              "region_id": { "type": "string" },
+              "presence_kind": {
+                "type": "string",
+                "enum": ["endemic", "migratory", "echo", "rumor_only"],
+                "x_enum_strategy": "native",
+                "x_enum_name": "cross_regional_presence_kind"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "single_mechanic_touch": {
+          "type": "object",
+          "required": ["mechanic_kind", "description"],
+          "properties": {
+            "mechanic_kind": { "type": "string" },
+            "description": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "social_attack": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / CMB-SC-02 — Combatant social-attack sub-type. Used by Aesthete-Magistrate, Sergeant of Sanctions, Closed-Books Servitor Operator (CMB.II.IV inventory).",
+      "required": ["attack_id", "name", "attack_kind", "target_resistance", "effect_on_failure", "effect_on_success", "ledger_record"],
+      "properties": {
+        "attack_id": { "type": "string" },
+        "name": { "type": "string" },
+        "attack_kind": {
+          "type": "string",
+          "enum": ["intimidation", "doctrinal_pressure", "ledger_revelation", "shame", "obligation_call", "aesthetic_judgment"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "social_attack_kind"
+        },
+        "range_in_scene_turns": { "type": "integer", "minimum": 0 },
+        "target_resistance": {
+          "type": "object",
+          "required": ["stat", "dc"],
+          "properties": {
+            "stat": {
+              "type": "string",
+              "enum": ["presence", "will", "mind"],
+              "description": "Per Option C dual-stats; CoreStat side."
+            },
+            "dc": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "effect_on_failure": { "type": "string" },
+        "effect_on_success": { "type": "string" },
+        "ledger_record": { "type": "boolean", "description": "True for Numerand-recordable events." }
+      },
+      "additionalProperties": false
+    },
+    "cosmological_redirection": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / CMB-SC-03 — Sum-Wraith Whisperer signature negotiation mechanic. Combatant renegotiates wraith's target rather than fighting it.",
+      "required": ["primitive_id", "applies_to_combatant_id", "target_entity_kind", "negotiation_ritual", "effect_kind", "effect_duration"],
+      "properties": {
+        "primitive_id": { "type": "string" },
+        "applies_to_combatant_id": { "type": "string", "description": "FK to combatant.combatant_id." },
+        "target_entity_kind": {
+          "type": "string",
+          "enum": ["wraith", "haunting", "cult", "spirit", "named_being"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "cosmological_target_kind"
+        },
+        "target_entity_id": { "type": "string" },
+        "negotiation_ritual": {
+          "type": "object",
+          "required": ["duration_minutes_in_game", "dc_check"],
+          "properties": {
+            "duration_minutes_in_game": { "type": "integer", "minimum": 0 },
+            "dc_check": {
+              "type": "object",
+              "required": ["stat", "dc"],
+              "properties": {
+                "stat": { "type": "string" },
+                "dc": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": false
+            },
+            "dc_modifiers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["kind", "modifier"],
+                "properties": {
+                  "kind": { "type": "string" },
+                  "modifier": { "type": "integer" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "effect_kind": {
+          "type": "string",
+          "enum": ["redirect_haunting", "transfer_burden", "renegotiate_term", "summon_substitute"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "cosmological_effect_kind"
+        },
+        "effect_duration": {
+          "type": "object",
+          "required": ["unit", "count"],
+          "properties": {
+            "unit": {
+              "type": "string",
+              "enum": ["game_day", "game_week", "game_season"]
+            },
+            "count": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "orthogonalized_subplot_admission": {
       "type": "object",
       "description": "Phase 24b §4.6 / Bundle H / L.VIII-SC-02 — Engine governor patching subplot_admission_policy. Prevents subplots that are just echoes of the parent plot.",
@@ -8115,6 +8295,304 @@
       },
       "additionalProperties": false,
       "x_schema_namespace": "state"
+    },
+    "failure_state_branch": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).",
+      "required": [
+        "branch_id",
+        "parent_plot_id",
+        "trigger",
+        "cosmological_reach",
+        "winner_set",
+        "loser_set",
+        "handle_window_days",
+        "branch_state",
+        "campaign_id",
+        "session_id"
+      ],
+      "properties": {
+        "branch_id": { "type": "string" },
+        "parent_plot_id": {
+          "type": "string",
+          "description": "FK to plot.plot_id.",
+          "x_fk_target": "plot",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "trigger": {
+          "type": "string",
+          "enum": [
+            "spine_question_unanswered",
+            "central_npc_lost",
+            "central_institution_collapsed",
+            "pressure_overrun",
+            "player_withdrawal",
+            "rival_plot_displacement"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "failure_state_trigger"
+        },
+        "cosmological_reach": {
+          "type": "string",
+          "enum": ["local", "regional", "pan_world", "cosmological"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "failure_state_cosmological_reach"
+        },
+        "winner_set": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["actor_kind", "actor_id"],
+            "properties": {
+              "actor_kind": {
+                "type": "string",
+                "enum": ["npc", "faction", "institution", "deity"],
+                "x_enum_strategy": "native",
+                "x_enum_name": "failure_state_actor_kind"
+              },
+              "actor_id": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "loser_set": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["actor_kind", "actor_id"],
+            "properties": {
+              "actor_kind": {
+                "type": "string",
+                "enum": ["npc", "faction", "institution", "deity"],
+                "x_enum_strategy": "native",
+                "x_enum_name": "failure_state_actor_kind"
+              },
+              "actor_id": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "handle_window_days": {
+          "type": "integer",
+          "minimum": 3,
+          "description": "FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes."
+        },
+        "point_of_no_return_marker_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "FK to point_of_no_return_marker.marker_id."
+          }
+        },
+        "branch_state": {
+          "type": "string",
+          "enum": ["pending", "armed", "fired", "averted", "resolved"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "failure_state_branch_state"
+        },
+        "armed_at_day": { "type": "integer", "minimum": 0 },
+        "resolved_at_day": { "type": ["integer", "null"], "minimum": 0 },
+        "campaign_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep.",
+          "x_fk_target": "campaign",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Phase 4a.5 — state.* ownership sweep."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "state"
+    },
+    "creature": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.",
+      "required": [
+        "creature_id",
+        "name",
+        "provenance",
+        "tier",
+        "combat_block",
+        "tags",
+        "witness_payload"
+      ],
+      "properties": {
+        "creature_id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "provenance": {
+          "type": "string",
+          "enum": [
+            "mundane",
+            "drowned_church",
+            "unnamed_touched",
+            "deep_world",
+            "substrate_emanation",
+            "constructed",
+            "wraith_class"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "creature_provenance"
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["nuisance", "scenery", "named", "boss", "cosmological"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "creature_tier"
+        },
+        "combat_block": {
+          "type": "object",
+          "required": ["hp", "ac", "derived_stats", "traits", "actions"],
+          "properties": {
+            "hp": {
+              "type": "object",
+              "required": ["current", "max"],
+              "properties": {
+                "current": { "type": "integer", "minimum": 0 },
+                "max": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": false
+            },
+            "ac": { "type": "integer", "minimum": 0 },
+            "derived_stats": { "$ref": "#/$defs/derived_stats_block" },
+            "traits": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "description"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "kind"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "kind": {
+                    "type": "string",
+                    "enum": ["melee", "ranged", "spell", "special", "reaction"],
+                    "x_enum_strategy": "native",
+                    "x_enum_name": "creature_action_kind"
+                  },
+                  "to_hit": { "type": "integer" },
+                  "damage": { "type": "string" },
+                  "effect": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "regional_presence_id": {
+          "type": "string",
+          "description": "FK to cross_regional_presence.primitive_id when this creature has pan-world reach."
+        },
+        "uncertainty_resolver_id": {
+          "type": "string",
+          "description": "FK to outcome_uncertainty_resolver.primitive_id when this creature triggers Unnamed-Touched echo."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "witness_payload": {
+          "type": "boolean",
+          "description": "True if sighting/encountering this creature constitutes a canon-progression event (cosmological/substrate-revealing)."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "content"
+    },
+    "combatant": {
+      "type": "object",
+      "description": "Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.",
+      "required": [
+        "combatant_id",
+        "base_npc_id",
+        "voice_archetype",
+        "combat_block",
+        "social_attacks"
+      ],
+      "properties": {
+        "combatant_id": { "type": "string" },
+        "base_npc_id": {
+          "type": "string",
+          "description": "FK to npc.npc_id — combatant inherits stats/derived_stats/tags from base NPC.",
+          "x_fk_target": "npc",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "voice_archetype": {
+          "type": "string",
+          "enum": [
+            "aesthete_magistrate",
+            "sergeant_of_sanctions",
+            "closed_books_servitor_operator",
+            "sum_wraith_whisperer",
+            "marrow_saint",
+            "bell_magistrate",
+            "venn_hook",
+            "default_militant"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "combatant_voice_archetype",
+          "description": "Phase 4.7 inline enum; Phase 4.8 harmonizes with Bundle F personality_fingerprint.archetype_id (FK migration scheduled Phase 4.8)."
+        },
+        "combat_block": {
+          "type": "object",
+          "required": ["hp", "ac", "initiative_modifier", "action_economy"],
+          "properties": {
+            "hp": {
+              "type": "object",
+              "required": ["current", "max"],
+              "properties": {
+                "current": { "type": "integer", "minimum": 0 },
+                "max": { "type": "integer", "minimum": 1 }
+              },
+              "additionalProperties": false
+            },
+            "ac": { "type": "integer", "minimum": 0 },
+            "initiative_modifier": { "type": "integer" },
+            "action_economy": { "$ref": "#/$defs/action_economy_block" },
+            "weapons": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "damage"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "to_hit": { "type": "integer" },
+                  "damage": { "type": "string" },
+                  "reach_or_range": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "social_attacks": {
+          "type": "array",
+          "description": "Inline social_attack records (per CMB.II.IV inventory).",
+          "items": { "$ref": "#/$defs/social_attack" }
+        },
+        "cosmological_redirection_id": {
+          "type": "string",
+          "description": "FK to cosmological_redirection.primitive_id when combatant has Sum-Wraith Whisperer signature."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "content"
     }
   },
   "validator_chain_required_stages": [
