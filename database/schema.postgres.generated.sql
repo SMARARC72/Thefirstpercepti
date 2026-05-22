@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T02:28:06.643Z
+-- Generated at:   2026-05-22T02:36:23.021Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -418,6 +418,106 @@ DO $$ BEGIN
   CREATE TYPE "public"."defs_orthogonalized_subplot_admission_properties_orthogonality_check_properties_blocked_relations_items_enum" AS ENUM (
     'mirrors',
     'contains'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.personality_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."personality_archetype" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.voice_register_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."voice_register_kind" AS ENUM (
+    'formal',
+    'intimate',
+    'ceremonial',
+    'vernacular',
+    'fragmentary',
+    'incantatory',
+    'clinical'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_slide_trigger_properties_from_archetype_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_slide_trigger_properties_from_archetype_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_slide_trigger_properties_to_archetype_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_slide_trigger_properties_to_archetype_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.slide_trigger_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."slide_trigger_kind" AS ENUM (
+    'event_threshold',
+    'narrative_beat',
+    'relationship_collapse',
+    'canon_progression',
+    'player_invocation',
+    'scene_close'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.fingerprint_waiver_reason
+DO $$ BEGIN
+  CREATE TYPE "public"."fingerprint_waiver_reason" AS ENUM (
+    'constraint_dominant',
+    'narrative_silence',
+    'substrate_anchor',
+    'ritual_prescribed'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.skeleton_cache_invalidation_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."skeleton_cache_invalidation_kind" AS ENUM (
+    'ttl',
+    'fingerprint_change',
+    'manual_purge',
+    'session_end',
+    'canon_progression'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -2197,17 +2297,22 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- public.combatant_voice_archetype
+-- public.voice_segment_trigger
 DO $$ BEGIN
-  CREATE TYPE "public"."combatant_voice_archetype" AS ENUM (
-    'aesthete_magistrate',
-    'sergeant_of_sanctions',
-    'closed_books_servitor_operator',
-    'sum_wraith_whisperer',
-    'marrow_saint',
-    'bell_magistrate',
-    'venn_hook',
-    'default_militant'
+  CREATE TYPE "public"."voice_segment_trigger" AS ENUM (
+    'scene_open',
+    'scene_close',
+    'topic_raised',
+    'secret_pressured',
+    'rumor_referenced',
+    'canon_event_witnessed'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.schemas_prompt_skeleton_properties_schema_version_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."schemas_prompt_skeleton_properties_schema_version_enum" AS ENUM (
+    'v1'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -3277,7 +3382,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 4 entities
+-- CONTENT schema — 5 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -3345,7 +3450,7 @@ ALTER TABLE "content"."creature" ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS "content"."combatant" (
   "combatant_id" TEXT PRIMARY KEY NOT NULL,
   "base_npc_id" TEXT NOT NULL,
-  "voice_archetype" "content"."combatant_voice_archetype" NOT NULL,
+  "voice_archetype" "content"."personality_archetype" NOT NULL,
   "combat_block" JSONB NOT NULL,
   "social_attacks" JSONB NOT NULL,
   "cosmological_redirection_id" TEXT,
@@ -3355,6 +3460,25 @@ CREATE TABLE IF NOT EXISTS "content"."combatant" (
 );
 COMMENT ON TABLE "content"."combatant" IS "Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.";
 ALTER TABLE "content"."combatant" ENABLE ROW LEVEL SECURITY;
+
+-- prompt_skeleton (content.prompt_skeleton)
+-- Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).
+CREATE TABLE IF NOT EXISTS "content"."prompt_skeleton" (
+  "skeleton_id" TEXT NOT NULL,
+  "archetype_id" "content"."personality_archetype" NOT NULL,
+  "npc_id" TEXT,
+  "base_prompt" TEXT NOT NULL,
+  "voice_segments" JSONB NOT NULL,
+  "constraint_block" JSONB NOT NULL,
+  "fingerprint_waiver_id" TEXT,
+  "cluster_a_override" BOOLEAN NOT NULL,
+  "schema_version" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "fk_prompt_skeleton_npc_id" FOREIGN KEY ("npc_id") REFERENCES "content"."npc"("id") ON DELETE CASCADE
+);
+COMMENT ON TABLE "content"."prompt_skeleton" IS "Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).";
+ALTER TABLE "content"."prompt_skeleton" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
 -- STATE schema — 4 entities
@@ -3491,5 +3615,5 @@ ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 52 entities · 183 enums · 5 schemas
+-- 53 entities · 191 enums · 5 schemas
 -- ----------------------------------------------------------------------------

@@ -1981,17 +1981,21 @@ export interface FirstPerceptionSchemaPack {
      */
     base_npc_id: string;
     /**
-     * Phase 4.7 inline enum; Phase 4.8 harmonizes with Bundle F personality_fingerprint.archetype_id (FK migration scheduled Phase 4.8).
+     * Phase 4.8 harmonized — shares personality_archetype enum with personality_fingerprint.archetype_id (Bundle F L.VI-SC-02).
      */
     voice_archetype:
-      | "aesthete_magistrate"
-      | "sergeant_of_sanctions"
-      | "closed_books_servitor_operator"
-      | "sum_wraith_whisperer"
       | "marrow_saint"
       | "bell_magistrate"
       | "venn_hook"
-      | "default_militant";
+      | "butcher_who_repeats"
+      | "listening_child"
+      | "closed_books_servitor_operator"
+      | "aesthete_magistrate"
+      | "sergeant_of_sanctions"
+      | "sum_wraith_whisperer"
+      | "default_militant"
+      | "scholar_witness"
+      | "contradiction_bearer";
     combat_block: {
       hp: {
         current: number;
@@ -2015,6 +2019,61 @@ export interface FirstPerceptionSchemaPack {
      * FK to cosmological_redirection.primitive_id when combatant has Sum-Wraith Whisperer signature.
      */
     cosmological_redirection_id?: string;
+  };
+  /**
+   * Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).
+   */
+  prompt_skeleton?: {
+    skeleton_id: string;
+    archetype_id:
+      | "marrow_saint"
+      | "bell_magistrate"
+      | "venn_hook"
+      | "butcher_who_repeats"
+      | "listening_child"
+      | "closed_books_servitor_operator"
+      | "aesthete_magistrate"
+      | "sergeant_of_sanctions"
+      | "sum_wraith_whisperer"
+      | "default_militant"
+      | "scholar_witness"
+      | "contradiction_bearer";
+    /**
+     * Null = template skeleton (shared across NPCs of same archetype). Non-null = NPC-specific override.
+     */
+    npc_id?: string | null;
+    /**
+     * Top-level prompt template; supports {{variable}} interpolation.
+     */
+    base_prompt: string;
+    voice_segments: {
+      segment_id: string;
+      trigger_kind:
+        | "scene_open"
+        | "scene_close"
+        | "topic_raised"
+        | "secret_pressured"
+        | "rumor_referenced"
+        | "canon_event_witnessed";
+      text_template: string;
+    }[];
+    constraint_block: {
+      forbidden_phrases: string[];
+      required_register: string;
+      max_response_tokens: number;
+    };
+    /**
+     * FK to fingerprint_waiver.waiver_id when cluster_a_override=true.
+     */
+    fingerprint_waiver_id?: string;
+    /**
+     * True for Cluster A constraint-dominant overrides (Listening Child + Butcher per L.VI-SC-05). When true, fingerprint_waiver_id must be set and personality_fingerprint generation is bypassed.
+     */
+    cluster_a_override: boolean;
+    /**
+     * Versioning for prompt_skeleton render contract.
+     */
+    schema_version: "v1";
   };
 }
 export interface WorldTime {
@@ -2854,11 +2913,12 @@ export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSch
 export type FailureStateBranchSchema = NonNullable<FirstPerceptionSchemaPack["failure_state_branch"]>;
 export type CreatureSchema = NonNullable<FirstPerceptionSchemaPack["creature"]>;
 export type CombatantSchema = NonNullable<FirstPerceptionSchemaPack["combatant"]>;
+export type PromptSkeletonSchema = NonNullable<FirstPerceptionSchemaPack["prompt_skeleton"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 52
-// $defs count:  65
+// Entity count: 53
+// $defs count:  69
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

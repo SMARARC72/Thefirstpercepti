@@ -1086,6 +1086,190 @@
       },
       "additionalProperties": false
     },
+    "personality_fingerprint": {
+      "type": "object",
+      "description": "Phase 24b §4.8 / Bundle F / L.VI-SC-01 — Per-NPC voice fingerprint binding archetype + tonal constraints + drift tolerance. Pairs with prompt_skeleton (L.VI-SC-04) at generation time. NPCs with constraint-dominant voices (Listening Child, Butcher) use fingerprint_waiver override (L.VI-SC-05) rather than this fingerprint.",
+      "required": [
+        "fingerprint_id",
+        "npc_id",
+        "archetype_id",
+        "voice_register",
+        "tonal_constraints",
+        "drift_tolerance"
+      ],
+      "properties": {
+        "fingerprint_id": { "type": "string" },
+        "npc_id": {
+          "type": "string",
+          "description": "FK to npc.npc_id (1:1 cardinality).",
+          "x_fk_target": "npc",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "archetype_id": {
+          "type": "string",
+          "enum": [
+            "marrow_saint",
+            "bell_magistrate",
+            "venn_hook",
+            "butcher_who_repeats",
+            "listening_child",
+            "closed_books_servitor_operator",
+            "aesthete_magistrate",
+            "sergeant_of_sanctions",
+            "sum_wraith_whisperer",
+            "default_militant",
+            "scholar_witness",
+            "contradiction_bearer"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "personality_archetype",
+          "description": "L.VI-SC-02 archetype_enum. 8 base + 4 extension archetypes (per L.VI memory 8+4 frozen set). Combatant.voice_archetype harmonizes against this enum (Phase 4.7 inline enum is superseded in 4.8)."
+        },
+        "voice_register": {
+          "type": "string",
+          "enum": ["formal", "intimate", "ceremonial", "vernacular", "fragmentary", "incantatory", "clinical"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "voice_register_kind"
+        },
+        "tonal_constraints": {
+          "type": "object",
+          "required": ["max_sentence_words", "forbidden_register_drift_to", "required_lexical_anchors"],
+          "properties": {
+            "max_sentence_words": { "type": "integer", "minimum": 1 },
+            "forbidden_register_drift_to": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "required_lexical_anchors": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Phrases/words the voice must surface periodically (e.g. 'Numerand' for Aesthete-Magistrate)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "drift_tolerance": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Higher = more permissive voice variation between turns. 0 = strict invariant; 10 = free drift."
+        },
+        "active_slide_trigger_ids": {
+          "type": "array",
+          "items": { "type": "string", "description": "FK to slide_trigger.trigger_id." }
+        }
+      },
+      "additionalProperties": false
+    },
+    "slide_trigger": {
+      "type": "object",
+      "description": "Phase 24b §4.8 / Bundle F / L.VI-SC-03 — Per-NPC fingerprint slide trigger. When conditions fire, slides voice from from_archetype → to_archetype. Pairs with personality_fingerprint.active_slide_trigger_ids.",
+      "required": ["trigger_id", "from_archetype", "to_archetype", "trigger_kind", "conditions", "reversible"],
+      "properties": {
+        "trigger_id": { "type": "string" },
+        "from_archetype": {
+          "type": "string",
+          "enum": [
+            "marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats",
+            "listening_child", "closed_books_servitor_operator", "aesthete_magistrate",
+            "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant",
+            "scholar_witness", "contradiction_bearer"
+          ]
+        },
+        "to_archetype": {
+          "type": "string",
+          "enum": [
+            "marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats",
+            "listening_child", "closed_books_servitor_operator", "aesthete_magistrate",
+            "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant",
+            "scholar_witness", "contradiction_bearer"
+          ]
+        },
+        "trigger_kind": {
+          "type": "string",
+          "enum": ["event_threshold", "narrative_beat", "relationship_collapse", "canon_progression", "player_invocation", "scene_close"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "slide_trigger_kind"
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["predicate"],
+            "properties": {
+              "predicate": { "type": "string", "description": "Engine-evaluable predicate string." },
+              "threshold": { "type": "integer" },
+              "scope": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "reversible": { "type": "boolean", "description": "True = slide reverts on opposing trigger. False = permanent shift." }
+      },
+      "additionalProperties": false
+    },
+    "fingerprint_waiver": {
+      "type": "object",
+      "description": "Phase 24b §4.8 / Bundle F / L.VI-SC-05 — Cluster A constraint-dominant override (Listening Child + Butcher). NPCs with this waiver bypass personality_fingerprint generation and route to fixed prompt_skeleton.cluster_a_override path.",
+      "required": ["waiver_id", "npc_id", "reason", "override_skeleton_id"],
+      "properties": {
+        "waiver_id": { "type": "string" },
+        "npc_id": {
+          "type": "string",
+          "description": "FK to npc.npc_id.",
+          "x_fk_target": "npc",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["constraint_dominant", "narrative_silence", "substrate_anchor", "ritual_prescribed"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "fingerprint_waiver_reason"
+        },
+        "override_skeleton_id": {
+          "type": "string",
+          "description": "FK to prompt_skeleton.skeleton_id with cluster_a_override = true."
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "skeleton_cache": {
+      "type": "object",
+      "description": "Phase 24b §4.8 / Bundle H / L.VIII-SC-03 — Engine-level cache for prompt_skeleton renders. Avoids re-rendering identical fingerprint+context combinations. Lives in engine.* schema (per ARD-010 §3 engine internals).",
+      "required": [
+        "cache_id",
+        "skeleton_id",
+        "fingerprint_hash",
+        "cached_at_iso",
+        "cache_ttl_sec",
+        "invalidation_kind",
+        "hit_count",
+        "bytes_cached"
+      ],
+      "properties": {
+        "cache_id": { "type": "string" },
+        "skeleton_id": {
+          "type": "string",
+          "description": "FK to prompt_skeleton.skeleton_id.",
+          "x_fk_target": "prompt_skeleton",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "fingerprint_hash": { "type": "string", "description": "Stable hash of fingerprint + context inputs." },
+        "cached_at_iso": { "type": "string", "format": "date-time" },
+        "cache_ttl_sec": { "type": "integer", "minimum": 0 },
+        "invalidation_kind": {
+          "type": "string",
+          "enum": ["ttl", "fingerprint_change", "manual_purge", "session_end", "canon_progression"],
+          "x_enum_strategy": "native",
+          "x_enum_name": "skeleton_cache_invalidation_kind"
+        },
+        "hit_count": { "type": "integer", "minimum": 0 },
+        "bytes_cached": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
     "subplot_graph_relation": {
       "type": "object",
       "description": "Phase 24b §4.5 / Bundle D / L.IV-SC-05 — Quest-to-quest relational primitive. Bundle E clusters via parent_plot_id; related_quest_ids tracks the subplot graph.",
@@ -8535,18 +8719,22 @@
         "voice_archetype": {
           "type": "string",
           "enum": [
-            "aesthete_magistrate",
-            "sergeant_of_sanctions",
-            "closed_books_servitor_operator",
-            "sum_wraith_whisperer",
             "marrow_saint",
             "bell_magistrate",
             "venn_hook",
-            "default_militant"
+            "butcher_who_repeats",
+            "listening_child",
+            "closed_books_servitor_operator",
+            "aesthete_magistrate",
+            "sergeant_of_sanctions",
+            "sum_wraith_whisperer",
+            "default_militant",
+            "scholar_witness",
+            "contradiction_bearer"
           ],
           "x_enum_strategy": "native",
-          "x_enum_name": "combatant_voice_archetype",
-          "description": "Phase 4.7 inline enum; Phase 4.8 harmonizes with Bundle F personality_fingerprint.archetype_id (FK migration scheduled Phase 4.8)."
+          "x_enum_name": "personality_archetype",
+          "description": "Phase 4.8 harmonized — shares personality_archetype enum with personality_fingerprint.archetype_id (Bundle F L.VI-SC-02)."
         },
         "combat_block": {
           "type": "object",
@@ -8589,6 +8777,83 @@
         "cosmological_redirection_id": {
           "type": "string",
           "description": "FK to cosmological_redirection.primitive_id when combatant has Sum-Wraith Whisperer signature."
+        }
+      },
+      "additionalProperties": false,
+      "x_schema_namespace": "content"
+    },
+    "prompt_skeleton": {
+      "type": "object",
+      "description": "Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).",
+      "required": [
+        "skeleton_id",
+        "archetype_id",
+        "base_prompt",
+        "voice_segments",
+        "constraint_block",
+        "cluster_a_override",
+        "schema_version"
+      ],
+      "properties": {
+        "skeleton_id": { "type": "string" },
+        "archetype_id": {
+          "type": "string",
+          "enum": [
+            "marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats",
+            "listening_child", "closed_books_servitor_operator", "aesthete_magistrate",
+            "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant",
+            "scholar_witness", "contradiction_bearer"
+          ],
+          "x_enum_strategy": "native",
+          "x_enum_name": "personality_archetype"
+        },
+        "npc_id": {
+          "type": ["string", "null"],
+          "description": "Null = template skeleton (shared across NPCs of same archetype). Non-null = NPC-specific override.",
+          "x_fk_target": "npc",
+          "x_fk_policy": { "on_delete": "CASCADE" }
+        },
+        "base_prompt": { "type": "string", "minLength": 1, "description": "Top-level prompt template; supports {{variable}} interpolation." },
+        "voice_segments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["segment_id", "trigger_kind", "text_template"],
+            "properties": {
+              "segment_id": { "type": "string" },
+              "trigger_kind": {
+                "type": "string",
+                "enum": ["scene_open", "scene_close", "topic_raised", "secret_pressured", "rumor_referenced", "canon_event_witnessed"],
+                "x_enum_strategy": "native",
+                "x_enum_name": "voice_segment_trigger"
+              },
+              "text_template": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "constraint_block": {
+          "type": "object",
+          "required": ["forbidden_phrases", "required_register", "max_response_tokens"],
+          "properties": {
+            "forbidden_phrases": { "type": "array", "items": { "type": "string" } },
+            "required_register": { "type": "string" },
+            "max_response_tokens": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "fingerprint_waiver_id": {
+          "type": "string",
+          "description": "FK to fingerprint_waiver.waiver_id when cluster_a_override=true."
+        },
+        "cluster_a_override": {
+          "type": "boolean",
+          "description": "True for Cluster A constraint-dominant overrides (Listening Child + Butcher per L.VI-SC-05). When true, fingerprint_waiver_id must be set and personality_fingerprint generation is bypassed."
+        },
+        "schema_version": {
+          "type": "string",
+          "enum": ["v1"],
+          "description": "Versioning for prompt_skeleton render contract."
         }
       },
       "additionalProperties": false,

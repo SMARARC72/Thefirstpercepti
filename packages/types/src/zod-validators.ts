@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T02:28:07.635Z
+ * Generated at:   2026-05-22T02:36:23.792Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (65)
+// $defs (69)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -467,6 +467,56 @@ export const OrthogonalizedSubplotAdmissionZ = z.object({
     }).strict();
 export type OrthogonalizedSubplotAdmission = z.infer<typeof OrthogonalizedSubplotAdmissionZ>;
 
+export const PersonalityFingerprintZ = z.object({
+      "fingerprint_id": z.string(),
+      "npc_id": z.string(),
+      "archetype_id": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
+      "voice_register": z.enum(["formal", "intimate", "ceremonial", "vernacular", "fragmentary", "incantatory", "clinical"]),
+      "tonal_constraints": z.object({
+      "max_sentence_words": z.number().int().min(1),
+      "forbidden_register_drift_to": z.array(z.string()),
+      "required_lexical_anchors": z.array(z.string()),
+    }).strict(),
+      "drift_tolerance": z.number().int().min(0).max(10),
+      "active_slide_trigger_ids": z.array(z.string()).optional(),
+    }).strict();
+export type PersonalityFingerprint = z.infer<typeof PersonalityFingerprintZ>;
+
+export const SlideTriggerZ = z.object({
+      "trigger_id": z.string(),
+      "from_archetype": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
+      "to_archetype": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
+      "trigger_kind": z.enum(["event_threshold", "narrative_beat", "relationship_collapse", "canon_progression", "player_invocation", "scene_close"]),
+      "conditions": z.array(z.object({
+      "predicate": z.string(),
+      "threshold": z.number().int().optional(),
+      "scope": z.string().optional(),
+    }).strict()).min(1),
+      "reversible": z.boolean(),
+    }).strict();
+export type SlideTrigger = z.infer<typeof SlideTriggerZ>;
+
+export const FingerprintWaiverZ = z.object({
+      "waiver_id": z.string(),
+      "npc_id": z.string(),
+      "reason": z.enum(["constraint_dominant", "narrative_silence", "substrate_anchor", "ritual_prescribed"]),
+      "override_skeleton_id": z.string(),
+      "notes": z.string().optional(),
+    }).strict();
+export type FingerprintWaiver = z.infer<typeof FingerprintWaiverZ>;
+
+export const SkeletonCacheZ = z.object({
+      "cache_id": z.string(),
+      "skeleton_id": z.string(),
+      "fingerprint_hash": z.string(),
+      "cached_at_iso": z.string().datetime(),
+      "cache_ttl_sec": z.number().int().min(0),
+      "invalidation_kind": z.enum(["ttl", "fingerprint_change", "manual_purge", "session_end", "canon_progression"]),
+      "hit_count": z.number().int().min(0),
+      "bytes_cached": z.number().int().min(0),
+    }).strict();
+export type SkeletonCache = z.infer<typeof SkeletonCacheZ>;
+
 export const SubplotGraphRelationZ = z.object({
       "quest_id": z.string(),
       "parent_plot_id": z.string().nullable().optional(),
@@ -770,7 +820,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (52)
+// Top-level entities (53)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -2101,7 +2151,7 @@ export type CreatureSchema = z.infer<typeof CreatureSchemaZ>;
 export const CombatantSchemaZ = z.object({
       "combatant_id": z.string(),
       "base_npc_id": z.string(),
-      "voice_archetype": z.enum(["aesthete_magistrate", "sergeant_of_sanctions", "closed_books_servitor_operator", "sum_wraith_whisperer", "marrow_saint", "bell_magistrate", "venn_hook", "default_militant"]),
+      "voice_archetype": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
       "combat_block": z.object({
       "hp": z.object({
       "current": z.number().int().min(0),
@@ -2122,5 +2172,26 @@ export const CombatantSchemaZ = z.object({
     }).strict();
 export type CombatantSchema = z.infer<typeof CombatantSchemaZ>;
 
-// 65 $defs · 52 entities
+export const PromptSkeletonSchemaZ = z.object({
+      "skeleton_id": z.string(),
+      "archetype_id": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
+      "npc_id": z.string().nullable().optional(),
+      "base_prompt": z.string().min(1),
+      "voice_segments": z.array(z.object({
+      "segment_id": z.string(),
+      "trigger_kind": z.enum(["scene_open", "scene_close", "topic_raised", "secret_pressured", "rumor_referenced", "canon_event_witnessed"]),
+      "text_template": z.string(),
+    }).strict()),
+      "constraint_block": z.object({
+      "forbidden_phrases": z.array(z.string()),
+      "required_register": z.string(),
+      "max_response_tokens": z.number().int().min(1),
+    }).strict(),
+      "fingerprint_waiver_id": z.string().optional(),
+      "cluster_a_override": z.boolean(),
+      "schema_version": z.enum(["v1"]),
+    }).strict();
+export type PromptSkeletonSchema = z.infer<typeof PromptSkeletonSchemaZ>;
+
+// 69 $defs · 53 entities
 // END OF GENERATED Zod VALIDATORS
