@@ -300,6 +300,16 @@ function emitTable(entity, allEnums, entityIndex, fkOut) {
   // Resolve PK column the same way buildEntityNameIndex does (so emit + index agree).
   const pkCandidate = entityIndex?.[entity.original_name.toLowerCase()]?.pk_column;
 
+  // Phase 6a.5.6: composite-PK support via x_composite_primary_key annotation.
+  // When set (array of column names), suppress inline PRIMARY KEY on the single
+  // inferred column + emit table-level PRIMARY KEY (col1, col2, ...) constraint.
+  // Backward-compat: entities without the annotation get default single-PK behavior.
+  const compositePkRaw = def.x_composite_primary_key;
+  const compositePkCols = Array.isArray(compositePkRaw)
+    ? compositePkRaw.map((c) => snakeCase(c))
+    : null;
+  const hasCompositePk = compositePkCols !== null && compositePkCols.length > 1;
+
   for (const [colName, colDef] of Object.entries(props)) {
     const col = snakeCase(colName);
     // Skip $defs references at column level for now (would need denormalization decision)
@@ -312,9 +322,15 @@ function emitTable(entity, allEnums, entityIndex, fkOut) {
       cols[cols.length - 1] += `  /* $ref: ${colDef.$ref} */`;
       continue;
     }
-    const isPrimaryKey = (pkCandidate && col === pkCandidate)
+    // Inline PRIMARY KEY suppressed when composite PK is declared at table level.
+    const isPrimaryKey = !hasCompositePk && (
+      (pkCandidate && col === pkCandidate)
       || colName === "id"
-      || (colName.endsWith("_id") && colName === `${entity.original_name.toLowerCase()}_id`);
+      || (colName.endsWith("_id") && colName === `${entity.original_name.toLowerCase()}_id`)
+    );
+    // FK column heuristic: under composite PK, the entity_id column is still
+    // a FK target candidate (FKs into template, etc.) — treat as FK if it's
+    // not in the composite-PK set's leading column AND it ends with _id.
     const isFk = colName.endsWith("_id") && !isPrimaryKey;
 
     // ENUM detection
@@ -411,6 +427,12 @@ function emitTable(entity, allEnums, entityIndex, fkOut) {
   // timestamps
   cols.push(`  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()`);
   cols.push(`  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()`);
+
+  // Phase 6a.5.6: emit table-level composite PRIMARY KEY when annotated.
+  if (hasCompositePk) {
+    const pkCols = compositePkCols.map(quote).join(", ");
+    constraints.push(`  PRIMARY KEY (${pkCols})`);
+  }
 
   const allLines = [...cols, ...constraints];
   const body = allLines.join(",\n");

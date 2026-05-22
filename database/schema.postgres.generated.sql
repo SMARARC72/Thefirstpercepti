@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T18:30:12.908Z
+-- Generated at:   2026-05-22T18:46:17.562Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -3663,7 +3663,7 @@ ALTER TABLE "content"."information" ENABLE ROW LEVEL SECURITY;
 -- quest (state.quest)
 -- Phase 24d §6a.5.5 / Bundle D STATE layer — per-campaign mutable quest state. Definitional shape (name, archetype, discovery_channel, subplot_graph_relation, primary NPCs/factions/region) lives in content.quest_template; this row FKs to quest_template.quest_id. Composite PK (campaign_id, quest_id) live in DB.
 CREATE TABLE IF NOT EXISTS "state"."quest" (
-  "quest_id" TEXT PRIMARY KEY NOT NULL,
+  "quest_id" TEXT NOT NULL,
   "collision_pressure" JSONB  /* $ref: #/$defs/collision_pressure */,
   "closing_state" "public"."quest_closing_state" NOT NULL,
   "emerged_at_day" INTEGER,
@@ -3672,15 +3672,16 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CHECK ("emerged_at_day" >= 0)
+  CHECK ("emerged_at_day" >= 0),
+  PRIMARY KEY ("campaign_id", "quest_id")
 );
 COMMENT ON TABLE "state"."quest" IS 'Phase 24d §6a.5.5 / Bundle D STATE layer — per-campaign mutable quest state. Definitional shape (name, archetype, discovery_channel, subplot_graph_relation, primary NPCs/factions/region) lives in content.quest_template; this row FKs to quest_template.quest_id. Composite PK (campaign_id, quest_id) live in DB.';
 ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
 
 -- plot (state.plot)
--- Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.
+-- Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) declared via x_composite_primary_key annotation (added in 6a.5.6).
 CREATE TABLE IF NOT EXISTS "state"."plot" (
-  "plot_id" TEXT PRIMARY KEY NOT NULL,
+  "plot_id" TEXT NOT NULL,
   "current_pressure" SMALLINT NOT NULL,
   "current_act" "public"."plot_current_act" NOT NULL,
   "spine_visibility" "public"."spine_visibility" NOT NULL,
@@ -3691,9 +3692,10 @@ CREATE TABLE IF NOT EXISTS "state"."plot" (
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("current_pressure" >= 0),
-  CHECK ("current_pressure" <= 10)
+  CHECK ("current_pressure" <= 10),
+  PRIMARY KEY ("campaign_id", "plot_id")
 );
-COMMENT ON TABLE "state"."plot" IS 'Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.';
+COMMENT ON TABLE "state"."plot" IS 'Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) declared via x_composite_primary_key annotation (added in 6a.5.6).';
 ALTER TABLE "state"."plot" ENABLE ROW LEVEL SECURITY;
 
 -- institution_response_queue_entry (state.institution_response_queue_entry)
@@ -3848,7 +3850,13 @@ DO $$ BEGIN
   ALTER TABLE "content"."information" ADD CONSTRAINT "fk_information_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_quest_id" FOREIGN KEY ("quest_id") REFERENCES "content"."quest_template"("quest_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
   ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_plot_id" FOREIGN KEY ("plot_id") REFERENCES "content"."plot_template"("plot_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
