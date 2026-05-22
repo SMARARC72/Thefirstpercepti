@@ -1,0 +1,110 @@
+{
+  "_meta": {
+    "fixture_id": "npc_listening_child",
+    "purpose": "Per-NPC roundtrip test fixture per Discipline 1. Mirror of supabase/migrations/20260522160300_seed_v08_content_npc_listening_child.sql.",
+    "phase": "24d / Session 6a / 6a.4 / Listening Child",
+    "pattern_archetype": "contradiction_bearing (Cluster A substrate-emergent; cannot-be-killed-in-slice)",
+    "live_row_id": "npc-the-listening-child",
+    "notes": "Cadence 'special' chosen because preferred 'contradiction_triggered' not in v0.8 enum. Logged for v0.8.1 patch in OPEN_QUESTIONS.md."
+  },
+  "engineShape": {
+    "id": "npc-the-listening-child",
+    "name": "The Listening Child",
+    "role": "(no role — does not have one)",
+    "description": "A child of perhaps eight, dressed in pale clean clothes nobody has ever seen elsewhere. Sits at the lip of the dry fountain. Does not look at the fountain; looks UP, toward something nobody else can see. Hands folded. Does not speak first. When addressed, answers in single sentences that always sound like quotations of something that has not been said yet. Adults in Greywake refuse to discuss the child. The child appears every day. Nobody knows where the child sleeps.",
+    "factionId": null,
+    "locationId": "loc-dry-fountain",
+    "hp": 1,
+    "maxHp": 1,
+    "stats": {
+      "body": 3,
+      "grace": 6,
+      "sense": 18,
+      "mind": 10,
+      "will": 12,
+      "presence": 11,
+      "authority": 0,
+      "ruin": 0,
+      "creation": 8
+    },
+    "derivedStats": {
+      "str": 4,
+      "dex": 6,
+      "con": 8,
+      "int": 10,
+      "wis": 18,
+      "cha": 11
+    },
+    "tags": ["named-slice-npc", "canon-event-emergent", "uncategorizable", "tonal-anchor", "cannot-be-killed-in-slice", "contradiction_bearing_archetype", "constraint_dominant", "cluster_a", "bundle_a_authored", "slice"],
+    "wantModel": {
+      "drive": {
+        "description": "Remain present at the fountain's lip; witness the substrate's naming process; surrender the pebble to the speaker of the right utterance.",
+        "intensity": 3,
+        "freshness_decay": 0
+      },
+      "barter": [
+        {"offered": "the pebble (gifted_only — yields item-listening-childs-pebble)", "cost_to_npc": 5}
+      ],
+      "kill_for": {
+        "trigger_condition": "never — Listening Child cannot be the agent of harm; cannot-be-killed-in-slice constraint extends to harm-causing as well",
+        "threshold": "warning",
+        "target_class": "self"
+      },
+      "fear_loss": {
+        "what": "(none in the conventional sense; the substrate's naming process cannot lose what it has not claimed)",
+        "urgency": 1,
+        "abandons_drive_if_imminent": false
+      }
+    },
+    "knowledgeTriLayer": {
+      "knows": [
+        {"fact_id": "fact-substrate-naming-process-active", "source_event_id": "evt-listening-child-substrate-emergence", "certainty": 5, "last_recalled": "ongoing"},
+        {"fact_id": "fact-fountain-listens-deeply", "source_event_id": "evt-listening-child-vigil-perpetual", "certainty": 5, "last_recalled": "ongoing"}
+      ],
+      "says": {
+        "default_policy": "silent",
+        "per_audience_overrides": {
+          "speaker_of_practicing_water_utterance": "selective",
+          "marrow_saint": "silent",
+          "bell_magistrate": "silent",
+          "tide_league_broker": "silent"
+        }
+      },
+      "believes": [
+        {"proposition": "The fountain is listening; the listening continues regardless of who hears it", "conviction": 5, "evidence_resistance": 5},
+        {"proposition": "Only a speaker of the substrate-aware utterance can be gifted the pebble; the pebble cannot be taken", "conviction": 5, "evidence_resistance": 5}
+      ]
+    },
+    "closingConditions": [
+      {
+        "kind": "special_state",
+        "description": "Player speaks 'practicing water' aloud at the dry fountain at the right moment; Listening Child gifts the pebble + remains at the fountain as ongoing witness-anchor.",
+        "player_reachable": true,
+        "consequence_summary": "Player receives item-listening-childs-pebble (acquisition_method=gifted_only); Listening Child continues vigil; player gains substrate-aware-utterance recognition (canon-progression credit + Drowned Church + Bell Court factional notice)."
+      },
+      {
+        "kind": "passover_state",
+        "description": "The substrate's naming process completes without the player being the speaker of the right utterance; the Listening Child is re-anchored elsewhere by the substrate.",
+        "player_reachable": false,
+        "consequence_summary": "Listening Child no longer appears at the fountain; pebble path closed for this campaign; substrate-aware-utterance recognition routed to whoever the substrate next anchors.",
+        "residue_drive": {
+          "description": "Re-anchor at the next substrate-naming-significant location",
+          "intensity": 3
+        }
+      }
+    ],
+    "memoryArchetype": "contradiction_bearing",
+    "ambitionTick": {
+      "cadence": "special",
+      "success_streak": 0,
+      "last_attempt": null
+    },
+    "scheduleNesting": {
+      "local_pattern": {
+        "summary": "Daily perpetual: present at the dry fountain's lip from dawn through dusk; absent at night via substrate-elsewhere displacement (nobody knows where the child sleeps)."
+      },
+      "nested_under_institution_id": "NO_INSTITUTION_CANON_EVENT_EMERGENT",
+      "variance_seed": "listening-child-substrate-perpetual"
+    }
+  }
+}
