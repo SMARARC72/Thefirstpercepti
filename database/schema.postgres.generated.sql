@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T02:36:23.021Z
+-- Generated at:   2026-05-22T02:40:11.266Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -529,6 +529,126 @@ DO $$ BEGIN
     'enables',
     'mirrors',
     'subplot_of'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_concealment_policy_properties_conceal_from_archetypes_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_concealment_policy_properties_conceal_from_archetypes_items_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.concealment_reveal_trigger_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."concealment_reveal_trigger_kind" AS ENUM (
+    'skill_check',
+    'narrative_beat',
+    'canon_progression',
+    'ledger_audit',
+    'ritual_performance',
+    'force_revelation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.concealment_premature_reveal_penalty
+DO $$ BEGIN
+  CREATE TYPE "public"."concealment_premature_reveal_penalty" AS ENUM (
+    'none',
+    'relationship_damage',
+    'faction_consequence',
+    'canon_event',
+    'ledger_record'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.shaping_operator_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."shaping_operator_kind" AS ENUM (
+    'amplify',
+    'attenuate',
+    'invert',
+    'fragment',
+    'euphemize',
+    'literalize'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_shaping_operator_properties_applies_when_intermediary_archetype_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_shaping_operator_properties_applies_when_intermediary_archetype_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.third_party_document_kind
+DO $$ BEGIN
+  CREATE TYPE "public"."third_party_document_kind" AS ENUM (
+    'letter',
+    'ledger',
+    'broadsheet',
+    'inscription',
+    'petition',
+    'sermon',
+    'marginalia'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_archetype_lock_properties_permitted_archetypes_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_archetype_lock_properties_permitted_archetypes_items_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.defs_archetype_lock_properties_forbidden_archetypes_items_enum
+DO $$ BEGIN
+  CREATE TYPE "public"."defs_archetype_lock_properties_forbidden_archetypes_items_enum" AS ENUM (
+    'marrow_saint',
+    'bell_magistrate',
+    'venn_hook',
+    'butcher_who_repeats',
+    'listening_child',
+    'closed_books_servitor_operator',
+    'aesthete_magistrate',
+    'sergeant_of_sanctions',
+    'sum_wraith_whisperer',
+    'default_militant',
+    'scholar_witness',
+    'contradiction_bearer'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -2316,6 +2436,29 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- public.info_class
+DO $$ BEGIN
+  CREATE TYPE "public"."info_class" AS ENUM (
+    'rumor',
+    'fact',
+    'prophecy',
+    'doctrine',
+    'confession',
+    'judgment',
+    'omen'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.information_veracity
+DO $$ BEGIN
+  CREATE TYPE "public"."information_veracity" AS ENUM (
+    'true',
+    'false',
+    'partial',
+    'unknown'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- ============================================================================
 -- PUBLIC schema — 43 entities
 -- ============================================================================
@@ -3382,7 +3525,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 5 entities
+-- CONTENT schema — 6 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -3479,6 +3622,32 @@ CREATE TABLE IF NOT EXISTS "content"."prompt_skeleton" (
 );
 COMMENT ON TABLE "content"."prompt_skeleton" IS "Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).";
 ALTER TABLE "content"."prompt_skeleton" ENABLE ROW LEVEL SECURITY;
+
+-- information (content.information)
+-- Phase 24b §4.9 / Bundle G / L.VII-SC-01 — Bundle G core entity. Discrete unit of in-world information with provenance (source_npc / source_event), veracity classification, decay (half_life_days), and optional concealment + archetype-lock policies. Pairs with daily_news_3tier for time-banded surfacing.
+CREATE TABLE IF NOT EXISTS "content"."information" (
+  "information_id" TEXT PRIMARY KEY NOT NULL,
+  "content" TEXT NOT NULL,
+  "info_class" "content"."info_class" NOT NULL,
+  "source_npc_ids" JSONB,
+  "source_event_id" TEXT,
+  "veracity" "content"."information_veracity" NOT NULL,
+  "half_life_days" INTEGER NOT NULL,
+  "concealment_policy_id" TEXT,
+  "archetype_lock_id" TEXT,
+  "shaping_operator_ids" JSONB,
+  "emerged_at_day" INTEGER NOT NULL,
+  "tags" JSONB NOT NULL,
+  "campaign_id" TEXT NOT NULL,
+  "session_id" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK ("half_life_days" >= 0),
+  CHECK ("emerged_at_day" >= 0),
+  CONSTRAINT "fk_information_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "content"."campaign"("id") ON DELETE CASCADE
+);
+COMMENT ON TABLE "content"."information" IS "Phase 24b §4.9 / Bundle G / L.VII-SC-01 — Bundle G core entity. Discrete unit of in-world information with provenance (source_npc / source_event), veracity classification, decay (half_life_days), and optional concealment + archetype-lock policies. Pairs with daily_news_3tier for time-banded surfacing.";
+ALTER TABLE "content"."information" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
 -- STATE schema — 4 entities
@@ -3615,5 +3784,5 @@ ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 53 entities · 191 enums · 5 schemas
+-- 54 entities · 201 enums · 5 schemas
 -- ----------------------------------------------------------------------------

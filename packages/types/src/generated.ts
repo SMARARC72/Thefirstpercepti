@@ -2075,6 +2075,40 @@ export interface FirstPerceptionSchemaPack {
      */
     schema_version: "v1";
   };
+  /**
+   * Phase 24b §4.9 / Bundle G / L.VII-SC-01 — Bundle G core entity. Discrete unit of in-world information with provenance (source_npc / source_event), veracity classification, decay (half_life_days), and optional concealment + archetype-lock policies. Pairs with daily_news_3tier for time-banded surfacing.
+   */
+  information?: {
+    information_id: string;
+    content: string;
+    /**
+     * L.VII-SC-02 RT-40 frozen 7-value classification. DO NOT extend without RT-40 revision.
+     */
+    info_class: "rumor" | "fact" | "prophecy" | "doctrine" | "confession" | "judgment" | "omen";
+    source_npc_ids?: string[];
+    /**
+     * FK to event.event_id when info originates from a witnessed event.
+     */
+    source_event_id?: string;
+    veracity: "true" | "false" | "partial" | "unknown";
+    /**
+     * In-world days before info salience halves. 0 = perpetual (doctrine/prophecy).
+     */
+    half_life_days: number;
+    /**
+     * FK to concealment_policy.policy_id (optional).
+     */
+    concealment_policy_id?: string;
+    /**
+     * FK to archetype_lock.lock_id (optional).
+     */
+    archetype_lock_id?: string;
+    shaping_operator_ids?: string[];
+    emerged_at_day: number;
+    tags: string[];
+    campaign_id: string;
+    session_id: string;
+  };
 }
 export interface WorldTime {
   day: number;
@@ -2914,11 +2948,12 @@ export type FailureStateBranchSchema = NonNullable<FirstPerceptionSchemaPack["fa
 export type CreatureSchema = NonNullable<FirstPerceptionSchemaPack["creature"]>;
 export type CombatantSchema = NonNullable<FirstPerceptionSchemaPack["combatant"]>;
 export type PromptSkeletonSchema = NonNullable<FirstPerceptionSchemaPack["prompt_skeleton"]>;
+export type InformationSchema = NonNullable<FirstPerceptionSchemaPack["information"]>;
 
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 53
-// $defs count:  69
+// Entity count: 54
+// $defs count:  74
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

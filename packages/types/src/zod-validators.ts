@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T02:36:23.792Z
+ * Generated at:   2026-05-22T02:40:12.149Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -25,7 +25,7 @@ import { z } from "zod";
 
 
 // ============================================================================
-// $defs (69)
+// $defs (74)
 // ============================================================================
 
 export const WeatherPatternZ = z.object({
@@ -528,6 +528,51 @@ export const SubplotGraphRelationZ = z.object({
     }).strict();
 export type SubplotGraphRelation = z.infer<typeof SubplotGraphRelationZ>;
 
+export const ConcealmentPolicyZ = z.object({
+      "policy_id": z.string(),
+      "conceal_from_archetypes": z.array(z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"])),
+      "reveal_on_trigger_kind": z.enum(["skill_check", "narrative_beat", "canon_progression", "ledger_audit", "ritual_performance", "force_revelation"]),
+      "reveal_dc": z.number().int().min(1).optional(),
+      "penalty_on_premature_reveal": z.enum(["none", "relationship_damage", "faction_consequence", "canon_event", "ledger_record"]),
+    }).strict();
+export type ConcealmentPolicy = z.infer<typeof ConcealmentPolicyZ>;
+
+export const ShapingOperatorZ = z.object({
+      "operator_id": z.string(),
+      "operator_kind": z.enum(["amplify", "attenuate", "invert", "fragment", "euphemize", "literalize"]),
+      "applies_when_intermediary_archetype": z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"]),
+      "distortion_strength": z.number().int().min(0).max(10),
+    }).strict();
+export type ShapingOperator = z.infer<typeof ShapingOperatorZ>;
+
+export const ThirdPartyDocumentZ = z.object({
+      "document_id": z.string(),
+      "document_kind": z.enum(["letter", "ledger", "broadsheet", "inscription", "petition", "sermon", "marginalia"]),
+      "contained_information_ids": z.array(z.string()).min(1),
+      "author_npc_id": z.string(),
+      "produced_at_day": z.number().int().min(0),
+      "decay_rate": z.number().int().min(0).max(10),
+    }).strict();
+export type ThirdPartyDocument = z.infer<typeof ThirdPartyDocumentZ>;
+
+export const ArchetypeLockZ = z.object({
+      "lock_id": z.string(),
+      "permitted_archetypes": z.array(z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"])),
+      "forbidden_archetypes": z.array(z.enum(["marrow_saint", "bell_magistrate", "venn_hook", "butcher_who_repeats", "listening_child", "closed_books_servitor_operator", "aesthete_magistrate", "sergeant_of_sanctions", "sum_wraith_whisperer", "default_militant", "scholar_witness", "contradiction_bearer"])),
+      "unlock_condition": z.string(),
+    }).strict();
+export type ArchetypeLock = z.infer<typeof ArchetypeLockZ>;
+
+export const DailyNews3tierZ = z.object({
+      "tier_id": z.string(),
+      "date_day": z.number().int().min(0),
+      "tier1_local": z.array(z.string()),
+      "tier2_regional": z.array(z.string()),
+      "tier3_world": z.array(z.string()),
+      "triggered_institutional_response_ids": z.array(z.string()).optional(),
+    }).strict();
+export type DailyNews3tier = z.infer<typeof DailyNews3tierZ>;
+
 export const ScripStabilityModelZ = z.object({
       "current_peg": z.object({
       "commodity_id": z.string(),
@@ -820,7 +865,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (53)
+// Top-level entities (54)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -2193,5 +2238,23 @@ export const PromptSkeletonSchemaZ = z.object({
     }).strict();
 export type PromptSkeletonSchema = z.infer<typeof PromptSkeletonSchemaZ>;
 
-// 69 $defs · 53 entities
+export const InformationSchemaZ = z.object({
+      "information_id": z.string(),
+      "content": z.string().min(1),
+      "info_class": z.enum(["rumor", "fact", "prophecy", "doctrine", "confession", "judgment", "omen"]),
+      "source_npc_ids": z.array(z.string()).optional(),
+      "source_event_id": z.string().optional(),
+      "veracity": z.enum(["true", "false", "partial", "unknown"]),
+      "half_life_days": z.number().int().min(0),
+      "concealment_policy_id": z.string().optional(),
+      "archetype_lock_id": z.string().optional(),
+      "shaping_operator_ids": z.array(z.string()).optional(),
+      "emerged_at_day": z.number().int().min(0),
+      "tags": z.array(z.string()),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
+    }).strict();
+export type InformationSchema = z.infer<typeof InformationSchemaZ>;
+
+// 74 $defs · 54 entities
 // END OF GENERATED Zod VALIDATORS
