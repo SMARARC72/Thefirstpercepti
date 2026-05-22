@@ -1746,7 +1746,7 @@ export interface FirstPerceptionSchemaPack {
     primary_region_id?: string | null;
   };
   /**
-   * Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.
+   * Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) declared via x_composite_primary_key annotation (added in 6a.5.6).
    */
   plot?: {
     /**
