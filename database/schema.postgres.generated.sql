@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T02:40:11.266Z
+-- Generated at:   2026-05-22T04:11:53.598Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2469,7 +2469,7 @@ CREATE TABLE IF NOT EXISTS "public"."campaign" (
   "transparency_mode" TEXT,
   "ironman" BOOLEAN,
   "legacy_enabled" BOOLEAN,
-  "current_time" JSONB NOT NULL  -- $ref: #/$defs/world_time,
+  "current_time" JSONB NOT NULL  /* $ref: #/$defs/world_time */,
   "current_region_id" TEXT,
   "active_character_id" TEXT NOT NULL,
   "world_seed" TEXT,
@@ -2505,23 +2505,23 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "level_total" SMALLINT NOT NULL,
   "experience" INTEGER,
   "proficiency_bonus" SMALLINT,
-  "stats" JSONB NOT NULL  -- $ref: #/$defs/custom_stats_block,
-  "derived_stats" JSONB NOT NULL  -- $ref: #/$defs/derived_stats_block,
-  "meters" JSONB NOT NULL  -- $ref: #/$defs/meters_block,
-  "hp" JSONB NOT NULL  -- $ref: #/$defs/hp_block,
+  "stats" JSONB NOT NULL  /* $ref: #/$defs/custom_stats_block */,
+  "derived_stats" JSONB NOT NULL  /* $ref: #/$defs/derived_stats_block */,
+  "meters" JSONB NOT NULL  /* $ref: #/$defs/meters_block */,
+  "hp" JSONB NOT NULL  /* $ref: #/$defs/hp_block */,
   "hit_dice" JSONB,
   "armor_class" INTEGER,
   "speed_feet" INTEGER,
-  "initiative_mod" JSONB  -- $ref: #/$defs/modifier,
+  "initiative_mod" JSONB  /* $ref: #/$defs/modifier */,
   "skill_proficiencies" JSONB,
   "skill_expertise" JSONB,
   "save_proficiencies" JSONB,
   "languages" JSONB,
   "tool_proficiencies" JSONB,
-  "alignment_descriptor" JSONB NOT NULL  -- $ref: #/$defs/alignment_descriptor,
+  "alignment_descriptor" JSONB NOT NULL  /* $ref: #/$defs/alignment_descriptor */,
   "traits" JSONB,
   "conditions" JSONB,
-  "spell_slots" JSONB  -- $ref: #/$defs/spell_slot_table,
+  "spell_slots" JSONB  /* $ref: #/$defs/spell_slot_table */,
   "pact_slots" JSONB,
   "known_spells" JSONB,
   "spellbook_ids" JSONB,
@@ -2530,7 +2530,7 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "abilities_hidden" JSONB,
   "inventory" JSONB,
   "attunement_slots" JSONB,
-  "currency" JSONB  -- $ref: #/$defs/currency_amount,
+  "currency" JSONB  /* $ref: #/$defs/currency_amount */,
   "carry_weight_kg" NUMERIC,
   "relationships" JSONB,
   "reputation_profile" JSONB,
@@ -2540,15 +2540,15 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "pact_state" JSONB,
   "feats" JSONB,
   "inspiration_token" BOOLEAN,
-  "body_modifications" JSONB  -- $ref: #/$defs/body_modifications_block,
+  "body_modifications" JSONB  /* $ref: #/$defs/body_modifications_block */,
   "death_state" JSONB,
-  "body_modifications_block" JSONB  -- $ref: #/$defs/body_modifications_block,
+  "body_modifications_block" JSONB  /* $ref: #/$defs/body_modifications_block */,
   "knowledge_state" JSONB,
   "portrait_state" JSONB,
   "knowledge_posture_history" JSONB,
-  "session_state" JSONB  -- $ref: #/$defs/session_state_block,
-  "focus" JSONB NOT NULL  -- $ref: #/$defs/focus_block,
-  "action_economy" JSONB  -- $ref: #/$defs/action_economy_block,
+  "session_state" JSONB  /* $ref: #/$defs/session_state_block */,
+  "focus" JSONB NOT NULL  /* $ref: #/$defs/focus_block */,
+  "action_economy" JSONB  /* $ref: #/$defs/action_economy_block */,
   "tags" JSONB NOT NULL,
   "scrip_speculation_history" JSONB,
   "dream_state" JSONB,
@@ -2556,8 +2556,6 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_player_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_player_subrace_id" FOREIGN KEY ("subrace_id") REFERENCES "public"."subrace"("subrace_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level_total" >= 1),
   CHECK ("level_total" <= 20),
   CHECK ("experience" >= 0),
@@ -2572,7 +2570,7 @@ ALTER TABLE "public"."player" ENABLE ROW LEVEL SECURITY;
 -- event (public.event)
 CREATE TABLE IF NOT EXISTS "public"."event" (
   "event_id" TEXT PRIMARY KEY NOT NULL,
-  "timestamp" JSONB NOT NULL  -- $ref: #/$defs/world_time,
+  "timestamp" JSONB NOT NULL  /* $ref: #/$defs/world_time */,
   "event_type" TEXT NOT NULL,
   "kind" TEXT,
   "location_id" TEXT,
@@ -2604,9 +2602,7 @@ CREATE TABLE IF NOT EXISTS "public"."event" (
   "scene_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_event_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_event_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."event" ENABLE ROW LEVEL SECURITY;
 
@@ -2636,8 +2632,7 @@ CREATE TABLE IF NOT EXISTS "public"."faction" (
   "tags" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_faction_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."faction" ENABLE ROW LEVEL SECURITY;
 
@@ -2659,27 +2654,26 @@ CREATE TABLE IF NOT EXISTS "public"."npc" (
   "loyalty_threshold" INTEGER,
   "corruption_exposure" INTEGER,
   "memory" JSONB,
-  "stats_optional" JSONB  -- $ref: #/$defs/derived_stats_block,
-  "hp_optional" JSONB  -- $ref: #/$defs/hp_block,
+  "stats_optional" JSONB  /* $ref: #/$defs/derived_stats_block */,
+  "hp_optional" JSONB  /* $ref: #/$defs/hp_block */,
   "tracker_state" JSONB,
   "recruitable_via_bond" BOOLEAN,
   "recruitable_via_canon_event" TEXT,
   "behavior_tree_state" JSONB,
   "grudge_ledger" JSONB,
   "witness_history" JSONB,
-  "want_model" JSONB NOT NULL  -- $ref: #/$defs/want_model,
-  "knowledge_tri_layer" JSONB NOT NULL  -- $ref: #/$defs/knowledge_tri_layer,
+  "want_model" JSONB NOT NULL  /* $ref: #/$defs/want_model */,
+  "knowledge_tri_layer" JSONB NOT NULL  /* $ref: #/$defs/knowledge_tri_layer */,
   "closing_conditions" JSONB NOT NULL,
   "memory_archetype" "public"."npc_memory_archetype" NOT NULL,
-  "ambition_tick" JSONB NOT NULL  -- $ref: #/$defs/ambition_tick,
-  "schedule_nesting" JSONB NOT NULL  -- $ref: #/$defs/schedule_nesting,
-  "stats" JSONB NOT NULL  -- $ref: #/$defs/custom_stats_block,
-  "derived_stats" JSONB NOT NULL  -- $ref: #/$defs/derived_stats_block,
+  "ambition_tick" JSONB NOT NULL  /* $ref: #/$defs/ambition_tick */,
+  "schedule_nesting" JSONB NOT NULL  /* $ref: #/$defs/schedule_nesting */,
+  "stats" JSONB NOT NULL  /* $ref: #/$defs/custom_stats_block */,
+  "derived_stats" JSONB NOT NULL  /* $ref: #/$defs/derived_stats_block */,
   "tags" JSONB NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_npc_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."npc" ENABLE ROW LEVEL SECURITY;
 
@@ -2765,7 +2759,7 @@ ALTER TABLE "public"."state_diff" ENABLE ROW LEVEL SECURITY;
 
 -- contradiction_ledger_entry (public.contradiction_ledger_entry)
 CREATE TABLE IF NOT EXISTS "public"."contradiction_ledger_entry" (
-  "contradiction_id" TEXT NOT NULL,
+  "contradiction_id" TEXT PRIMARY KEY NOT NULL,
   "kind" TEXT NOT NULL,
   "source_event_id" TEXT NOT NULL,
   "previous_state_summary" TEXT,
@@ -2838,7 +2832,7 @@ CREATE TABLE IF NOT EXISTS "public"."deity" (
   "deity_id" TEXT PRIMARY KEY NOT NULL,
   "name" TEXT NOT NULL,
   "alternative_names" JSONB,
-  "alignment" JSONB NOT NULL  -- $ref: #/$defs/alignment_descriptor,
+  "alignment" JSONB NOT NULL  /* $ref: #/$defs/alignment_descriptor */,
   "domains" JSONB NOT NULL,
   "symbol" TEXT,
   "symbol_motif" TEXT,
@@ -2885,7 +2879,7 @@ CREATE TABLE IF NOT EXISTS "public"."spell" (
   "casting_time" TEXT NOT NULL,
   "range" TEXT NOT NULL,
   "components" JSONB NOT NULL,
-  "duration" JSONB NOT NULL  -- $ref: #/$defs/duration_object,
+  "duration" JSONB NOT NULL  /* $ref: #/$defs/duration_object */,
   "concentration" BOOLEAN,
   "ritual_eligible" BOOLEAN,
   "save_type" TEXT,
@@ -2894,7 +2888,7 @@ CREATE TABLE IF NOT EXISTS "public"."spell" (
   "damage_type" TEXT,
   "classes_allowed" JSONB NOT NULL,
   "domain_aligned" JSONB,
-  "cost_layer" JSONB  -- $ref: #/$defs/spell_cost_layer,
+  "cost_layer" JSONB  /* $ref: #/$defs/spell_cost_layer */,
   "description_template" TEXT,
   "tags" JSONB,
   "creates_canon_event_on_cast" BOOLEAN,
@@ -2943,7 +2937,7 @@ CREATE TABLE IF NOT EXISTS "public"."item" (
   "attunement_ceremony" TEXT,
   "weight_kg" NUMERIC,
   "value_cp" INTEGER,
-  "value_currency_alt" JSONB  -- $ref: #/$defs/currency_amount,
+  "value_currency_alt" JSONB  /* $ref: #/$defs/currency_amount */,
   "equip_slot" TEXT,
   "tinting_class" TEXT,
   "bound_to_you" BOOLEAN,
@@ -2998,7 +2992,6 @@ CREATE TABLE IF NOT EXISTS "public"."item" (
   CHECK ("weight_kg" >= 0),
   CHECK ("value_cp" >= 0),
   CHECK ("stack_size_max" >= 1),
-  CONSTRAINT "fk_item_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("attunement_slot_cost" >= 0),
   CHECK ("attunement_slot_cost" <= 3),
   CHECK ("weight_lb" >= 0),
@@ -3042,7 +3035,6 @@ CREATE TABLE IF NOT EXISTS "public"."recipe" (
   CHECK ("workday_cost" >= 0),
   CHECK ("gp_cost" >= 0),
   CHECK ("difficulty_dc" >= 0),
-  CHECK ("time_in_world_hours" >= 0),
   CHECK ("dc" >= 1),
   CHECK ("dc" <= 40)
 );
@@ -3074,21 +3066,20 @@ ALTER TABLE "public"."region" ENABLE ROW LEVEL SECURITY;
 
 -- regional_pack (public.regional_pack)
 CREATE TABLE IF NOT EXISTS "public"."regional_pack" (
-  "pack_id" TEXT NOT NULL,
+  "pack_id" TEXT PRIMARY KEY NOT NULL,
   "region_id" TEXT NOT NULL,
   "kind" TEXT NOT NULL,
   "version" TEXT,
   "contents_path" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_regional_pack_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."regional_pack" ENABLE ROW LEVEL SECURITY;
 
 -- mythological_substrate_entry (public.mythological_substrate_entry)
 CREATE TABLE IF NOT EXISTS "public"."mythological_substrate_entry" (
-  "substrate_id" TEXT NOT NULL,
+  "substrate_id" TEXT PRIMARY KEY NOT NULL,
   "name_descriptor" TEXT,
   "kind" TEXT NOT NULL,
   "era_band" JSONB,
@@ -3121,10 +3112,7 @@ CREATE TABLE IF NOT EXISTS "public"."loot_table" (
   "template_grammar_version" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_loot_table_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_loot_table_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_loot_table_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."loot_table" ENABLE ROW LEVEL SECURITY;
 
@@ -3156,7 +3144,7 @@ ALTER TABLE "public"."material" ENABLE ROW LEVEL SECURITY;
 
 -- regional_currency_state (public.regional_currency_state)
 CREATE TABLE IF NOT EXISTS "public"."regional_currency_state" (
-  "currency_id" TEXT NOT NULL,
+  "currency_id" TEXT PRIMARY KEY NOT NULL,
   "region_id" TEXT NOT NULL,
   "base_value_gp" NUMERIC NOT NULL,
   "volatility_modifier" NUMERIC NOT NULL,
@@ -3166,7 +3154,6 @@ CREATE TABLE IF NOT EXISTS "public"."regional_currency_state" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_regional_currency_state_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("base_value_gp" >= 0),
   CHECK ("volatility_modifier" >= 0.5),
   CHECK ("volatility_modifier" <= 2)
@@ -3186,9 +3173,7 @@ CREATE TABLE IF NOT EXISTS "public"."cult_institution" (
   "heretical_figures" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_cult_institution_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_cult_institution_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."cult_institution" ENABLE ROW LEVEL SECURITY;
 
@@ -3211,14 +3196,13 @@ CREATE TABLE IF NOT EXISTS "public"."creature_material" (
   "regional_pack_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_creature_material_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."creature_material" ENABLE ROW LEVEL SECURITY;
 
 -- material_substitution (public.material_substitution)
 CREATE TABLE IF NOT EXISTS "public"."material_substitution" (
-  "substitution_id" TEXT NOT NULL,
+  "substitution_id" TEXT PRIMARY KEY NOT NULL,
   "recipe_id" TEXT NOT NULL,
   "primary_material_id" TEXT NOT NULL,
   "alternative_material_id" TEXT NOT NULL,
@@ -3227,8 +3211,7 @@ CREATE TABLE IF NOT EXISTS "public"."material_substitution" (
   "narrative_tag" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_material_substitution_recipe_id" FOREIGN KEY ("recipe_id") REFERENCES "public"."recipe"("recipe_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."material_substitution" ENABLE ROW LEVEL SECURITY;
 
@@ -3247,8 +3230,8 @@ CREATE TABLE IF NOT EXISTS "public"."companion" (
   "canon_progression_credit" JSONB,
   "stats_block" JSONB,
   "inventory" JSONB,
-  "hp_block" JSONB  -- $ref: #/$defs/hp_block,
-  "meters_block" JSONB  -- $ref: #/$defs/meters_block,
+  "hp_block" JSONB  /* $ref: #/$defs/hp_block */,
+  "meters_block" JSONB  /* $ref: #/$defs/meters_block */,
   "conditions_active" JSONB,
   "is_dead" BOOLEAN,
   "death_state" JSONB,
@@ -3260,7 +3243,7 @@ ALTER TABLE "public"."companion" ENABLE ROW LEVEL SECURITY;
 
 -- orchestrator_session (public.orchestrator_session)
 CREATE TABLE IF NOT EXISTS "public"."orchestrator_session" (
-  "session_id" TEXT NOT NULL,
+  "session_id" TEXT PRIMARY KEY NOT NULL,
   "campaign_id" TEXT NOT NULL,
   "player_user_id" TEXT,
   "session_start_at" TIMESTAMPTZ,
@@ -3272,14 +3255,13 @@ CREATE TABLE IF NOT EXISTS "public"."orchestrator_session" (
   "last_state_diff_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_orchestrator_session_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."orchestrator_session" ENABLE ROW LEVEL SECURITY;
 
 -- agent_envelope (public.agent_envelope)
 CREATE TABLE IF NOT EXISTS "public"."agent_envelope" (
-  "envelope_id" TEXT NOT NULL,
+  "envelope_id" TEXT PRIMARY KEY NOT NULL,
   "session_id" TEXT NOT NULL,
   "agent_name" TEXT NOT NULL,
   "stage_index" SMALLINT NOT NULL,
@@ -3317,15 +3299,14 @@ ALTER TABLE "public"."quirk" ENABLE ROW LEVEL SECURITY;
 
 -- recruitment_quest (public.recruitment_quest)
 CREATE TABLE IF NOT EXISTS "public"."recruitment_quest" (
-  "quest_id" TEXT NOT NULL,
+  "quest_id" TEXT PRIMARY KEY NOT NULL,
   "target_companion_id" TEXT NOT NULL,
   "stages" JSONB,
   "completion_offer" JSONB,
   "abandonment_consequences" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_recruitment_quest_quest_id" FOREIGN KEY ("quest_id") REFERENCES "state"."quest"("quest_id") ON DELETE CASCADE  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."recruitment_quest" ENABLE ROW LEVEL SECURITY;
 
@@ -3339,14 +3320,13 @@ CREATE TABLE IF NOT EXISTS "public"."location" (
   "parent_location_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_location_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."location" ENABLE ROW LEVEL SECURITY;
 
 -- travel_route (public.travel_route)
 CREATE TABLE IF NOT EXISTS "public"."travel_route" (
-  "route_id" TEXT NOT NULL,
+  "route_id" TEXT PRIMARY KEY NOT NULL,
   "from_location_id" TEXT NOT NULL,
   "to_location_id" TEXT NOT NULL,
   "traversal_cost_hours" INTEGER,
@@ -3360,7 +3340,7 @@ ALTER TABLE "public"."travel_route" ENABLE ROW LEVEL SECURITY;
 
 -- conflict_envelope (public.conflict_envelope)
 CREATE TABLE IF NOT EXISTS "public"."conflict_envelope" (
-  "envelope_id" TEXT NOT NULL,
+  "envelope_id" TEXT PRIMARY KEY NOT NULL,
   "kind" TEXT NOT NULL,
   "parties" JSONB NOT NULL,
   "stakes" TEXT,
@@ -3374,7 +3354,7 @@ ALTER TABLE "public"."conflict_envelope" ENABLE ROW LEVEL SECURITY;
 
 -- portrait_layer_definition (public.portrait_layer_definition)
 CREATE TABLE IF NOT EXISTS "public"."portrait_layer_definition" (
-  "layer_id" TEXT NOT NULL,
+  "layer_id" TEXT PRIMARY KEY NOT NULL,
   "layer_kind" TEXT NOT NULL,
   "svg_path" TEXT NOT NULL,
   "triggered_by" JSONB,
@@ -3387,7 +3367,7 @@ ALTER TABLE "public"."portrait_layer_definition" ENABLE ROW LEVEL SECURITY;
 
 -- imposed_spell (public.imposed_spell)
 CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
-  "spell_id" TEXT NOT NULL,
+  "spell_id" TEXT PRIMARY KEY NOT NULL,
   "name" TEXT NOT NULL,
   "level" SMALLINT NOT NULL,
   "school" TEXT NOT NULL,
@@ -3397,7 +3377,7 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "casting_time" TEXT NOT NULL,
   "range" TEXT NOT NULL,
   "components" JSONB NOT NULL,
-  "duration" JSONB NOT NULL  -- $ref: #/$defs/duration_object,
+  "duration" JSONB NOT NULL  /* $ref: #/$defs/duration_object */,
   "concentration" BOOLEAN,
   "ritual_eligible" BOOLEAN,
   "save_type" TEXT,
@@ -3406,7 +3386,7 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "damage_type" TEXT,
   "classes_allowed" JSONB NOT NULL,
   "domain_aligned" JSONB,
-  "cost_layer" JSONB  -- $ref: #/$defs/spell_cost_layer,
+  "cost_layer" JSONB  /* $ref: #/$defs/spell_cost_layer */,
   "description_template" TEXT,
   "tags" JSONB,
   "creates_canon_event_on_cast" BOOLEAN,
@@ -3415,7 +3395,6 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_imposed_spell_spell_id" FOREIGN KEY ("spell_id") REFERENCES "public"."spell"("spell_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level" >= 0),
   CHECK ("level" <= 9)
 );
@@ -3437,7 +3416,6 @@ CREATE TABLE IF NOT EXISTS "public"."litany" (
   "tone_tags" JSONB,
   "regional_origin_id" TEXT,
   "schema_version" TEXT,
-  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -3454,7 +3432,6 @@ CREATE TABLE IF NOT EXISTS "public"."marginalia" (
   "tone_tags" JSONB,
   "regional_origin_id" TEXT,
   "schema_version" TEXT,
-  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -3477,7 +3454,7 @@ ALTER TABLE "public"."opex_state" ENABLE ROW LEVEL SECURITY;
 
 -- opex_event (public.opex_event)
 CREATE TABLE IF NOT EXISTS "public"."opex_event" (
-  "event_id" TEXT NOT NULL,
+  "event_id" TEXT PRIMARY KEY NOT NULL,
   "timestamp_iso" TEXT NOT NULL,
   "agent" TEXT NOT NULL,
   "model_id" TEXT NOT NULL,
@@ -3493,7 +3470,6 @@ CREATE TABLE IF NOT EXISTS "public"."opex_event" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_opex_event_event_id" FOREIGN KEY ("event_id") REFERENCES "public"."event"("event_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("tokens_in" >= 0),
   CHECK ("tokens_out" >= 0),
   CHECK ("est_cost_usd" >= 0),
@@ -3503,7 +3479,7 @@ ALTER TABLE "public"."opex_event" ENABLE ROW LEVEL SECURITY;
 
 -- model_tier_policy (public.model_tier_policy)
 CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
-  "policy_id" TEXT NOT NULL,
+  "policy_id" TEXT PRIMARY KEY NOT NULL,
   "version" TEXT,
   "last_updated_iso" TEXT,
   "daily_cap_usd" NUMERIC,
@@ -3534,39 +3510,35 @@ CREATE TABLE IF NOT EXISTS "content"."institution" (
   "name" TEXT NOT NULL,
   "description" TEXT,
   "tags" JSONB,
-  "institution_cadence" JSONB NOT NULL  -- $ref: #/$defs/institution_cadence,
+  "institution_cadence" JSONB NOT NULL  /* $ref: #/$defs/institution_cadence */,
   "jurisdictional_strength" SMALLINT NOT NULL,
   "internal_factions" JSONB NOT NULL,
-  "institutional_memory_archetype" "content"."institutional_memory_archetype" NOT NULL,
+  "institutional_memory_archetype" "public"."institutional_memory_archetype" NOT NULL,
   "parent_faction_id" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("jurisdictional_strength" >= 0),
-  CHECK ("jurisdictional_strength" <= 100),
-  CONSTRAINT "fk_institution_parent_faction_id" FOREIGN KEY ("parent_faction_id") REFERENCES "content"."faction"("id") ON DELETE SET NULL
+  CHECK ("jurisdictional_strength" <= 100)
 );
-COMMENT ON TABLE "content"."institution" IS "Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.";
+COMMENT ON TABLE "content"."institution" IS 'Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.';
 ALTER TABLE "content"."institution" ENABLE ROW LEVEL SECURITY;
 
 -- trade_route_v08 (content.trade_route_v08)
 -- Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
 CREATE TABLE IF NOT EXISTS "content"."trade_route_v08" (
-  "route_id" TEXT NOT NULL,
+  "route_id" TEXT PRIMARY KEY NOT NULL,
   "origin_location_id" TEXT NOT NULL,
   "destination_location_id" TEXT NOT NULL,
   "commodity_id" TEXT NOT NULL,
   "controlling_faction_id" TEXT,
   "weather_dependency" BOOLEAN NOT NULL,
-  "active_status" "content"."trade_route_active_status" NOT NULL,
+  "active_status" "public"."trade_route_active_status" NOT NULL,
   "capacity_per_season" INTEGER NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_trade_route_v08_origin_location_id" FOREIGN KEY ("origin_location_id") REFERENCES "content"."location"("id") ON DELETE RESTRICT,
-  CONSTRAINT "fk_trade_route_v08_destination_location_id" FOREIGN KEY ("destination_location_id") REFERENCES "content"."location"("id") ON DELETE RESTRICT,
-  CONSTRAINT "fk_trade_route_v08_controlling_faction_id" FOREIGN KEY ("controlling_faction_id") REFERENCES "content"."faction"("id") ON DELETE SET NULL,
   CHECK ("capacity_per_season" >= 0)
 );
-COMMENT ON TABLE "content"."trade_route_v08" IS "Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.";
+COMMENT ON TABLE "content"."trade_route_v08" IS 'Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.';
 ALTER TABLE "content"."trade_route_v08" ENABLE ROW LEVEL SECURITY;
 
 -- creature (content.creature)
@@ -3575,8 +3547,8 @@ CREATE TABLE IF NOT EXISTS "content"."creature" (
   "creature_id" TEXT PRIMARY KEY NOT NULL,
   "name" TEXT NOT NULL,
   "description" TEXT,
-  "provenance" "content"."creature_provenance" NOT NULL,
-  "tier" "content"."creature_tier" NOT NULL,
+  "provenance" "public"."creature_provenance" NOT NULL,
+  "tier" "public"."creature_tier" NOT NULL,
   "combat_block" JSONB NOT NULL,
   "regional_presence_id" TEXT,
   "uncertainty_resolver_id" TEXT,
@@ -3585,7 +3557,7 @@ CREATE TABLE IF NOT EXISTS "content"."creature" (
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-COMMENT ON TABLE "content"."creature" IS "Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.";
+COMMENT ON TABLE "content"."creature" IS 'Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.';
 ALTER TABLE "content"."creature" ENABLE ROW LEVEL SECURITY;
 
 -- combatant (content.combatant)
@@ -3593,22 +3565,21 @@ ALTER TABLE "content"."creature" ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS "content"."combatant" (
   "combatant_id" TEXT PRIMARY KEY NOT NULL,
   "base_npc_id" TEXT NOT NULL,
-  "voice_archetype" "content"."personality_archetype" NOT NULL,
+  "voice_archetype" "public"."personality_archetype" NOT NULL,
   "combat_block" JSONB NOT NULL,
   "social_attacks" JSONB NOT NULL,
   "cosmological_redirection_id" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_combatant_base_npc_id" FOREIGN KEY ("base_npc_id") REFERENCES "content"."npc"("id") ON DELETE CASCADE
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-COMMENT ON TABLE "content"."combatant" IS "Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.";
+COMMENT ON TABLE "content"."combatant" IS 'Phase 24b §4.7 / CMB-SC-01 — Combatant entity (content.* namespace). Extends NPC via base_npc_id FK with combat-specific overlay: voice_archetype routes to Bundle F personality_fingerprint, social_attacks[] references social_attack $def. Cosmological_redirection FK for Sum-Wraith Whisperer signature mechanic.';
 ALTER TABLE "content"."combatant" ENABLE ROW LEVEL SECURITY;
 
 -- prompt_skeleton (content.prompt_skeleton)
 -- Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).
 CREATE TABLE IF NOT EXISTS "content"."prompt_skeleton" (
-  "skeleton_id" TEXT NOT NULL,
-  "archetype_id" "content"."personality_archetype" NOT NULL,
+  "skeleton_id" TEXT PRIMARY KEY NOT NULL,
+  "archetype_id" "public"."personality_archetype" NOT NULL,
   "npc_id" TEXT,
   "base_prompt" TEXT NOT NULL,
   "voice_segments" JSONB NOT NULL,
@@ -3617,10 +3588,9 @@ CREATE TABLE IF NOT EXISTS "content"."prompt_skeleton" (
   "cluster_a_override" BOOLEAN NOT NULL,
   "schema_version" TEXT NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_prompt_skeleton_npc_id" FOREIGN KEY ("npc_id") REFERENCES "content"."npc"("id") ON DELETE CASCADE
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-COMMENT ON TABLE "content"."prompt_skeleton" IS "Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).";
+COMMENT ON TABLE "content"."prompt_skeleton" IS 'Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).';
 ALTER TABLE "content"."prompt_skeleton" ENABLE ROW LEVEL SECURITY;
 
 -- information (content.information)
@@ -3628,10 +3598,10 @@ ALTER TABLE "content"."prompt_skeleton" ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS "content"."information" (
   "information_id" TEXT PRIMARY KEY NOT NULL,
   "content" TEXT NOT NULL,
-  "info_class" "content"."info_class" NOT NULL,
+  "info_class" "public"."info_class" NOT NULL,
   "source_npc_ids" JSONB,
   "source_event_id" TEXT,
-  "veracity" "content"."information_veracity" NOT NULL,
+  "veracity" "public"."information_veracity" NOT NULL,
   "half_life_days" INTEGER NOT NULL,
   "concealment_policy_id" TEXT,
   "archetype_lock_id" TEXT,
@@ -3643,10 +3613,9 @@ CREATE TABLE IF NOT EXISTS "content"."information" (
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("half_life_days" >= 0),
-  CHECK ("emerged_at_day" >= 0),
-  CONSTRAINT "fk_information_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "content"."campaign"("id") ON DELETE CASCADE
+  CHECK ("emerged_at_day" >= 0)
 );
-COMMENT ON TABLE "content"."information" IS "Phase 24b §4.9 / Bundle G / L.VII-SC-01 — Bundle G core entity. Discrete unit of in-world information with provenance (source_npc / source_event), veracity classification, decay (half_life_days), and optional concealment + archetype-lock policies. Pairs with daily_news_3tier for time-banded surfacing.";
+COMMENT ON TABLE "content"."information" IS 'Phase 24b §4.9 / Bundle G / L.VII-SC-01 — Bundle G core entity. Discrete unit of in-world information with provenance (source_npc / source_event), veracity classification, decay (half_life_days), and optional concealment + archetype-lock policies. Pairs with daily_news_3tier for time-banded surfacing.';
 ALTER TABLE "content"."information" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
@@ -3659,11 +3628,11 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
   "name" TEXT NOT NULL,
   "description" TEXT,
   "tags" JSONB,
-  "archetype" "state"."quest_archetype" NOT NULL,
-  "discovery_channel" JSONB NOT NULL  -- $ref: #/$defs/discovery_channel,
-  "collision_pressure" JSONB  -- $ref: #/$defs/collision_pressure,
-  "closing_state" "state"."quest_closing_state" NOT NULL,
-  "subplot_graph_relation" JSONB NOT NULL  -- $ref: #/$defs/subplot_graph_relation,
+  "archetype" "public"."quest_archetype" NOT NULL,
+  "discovery_channel" JSONB NOT NULL  /* $ref: #/$defs/discovery_channel */,
+  "collision_pressure" JSONB  /* $ref: #/$defs/collision_pressure */,
+  "closing_state" "public"."quest_closing_state" NOT NULL,
+  "subplot_graph_relation" JSONB NOT NULL  /* $ref: #/$defs/subplot_graph_relation */,
   "primary_npc_ids" JSONB,
   "primary_faction_ids" JSONB,
   "primary_region_id" TEXT,
@@ -3673,10 +3642,9 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CHECK ("emerged_at_day" >= 0),
-  CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+  CHECK ("emerged_at_day" >= 0)
 );
-COMMENT ON TABLE "state"."quest" IS "Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.";
+COMMENT ON TABLE "state"."quest" IS 'Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.';
 ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
 
 -- plot (state.plot)
@@ -3693,21 +3661,19 @@ CREATE TABLE IF NOT EXISTS "state"."plot" (
   "pan_world_plot_id" TEXT,
   "constituent_quest_ids" JSONB NOT NULL,
   "current_pressure" SMALLINT NOT NULL,
-  "current_act" "state"."plot_current_act" NOT NULL,
-  "spine_visibility" "state"."spine_visibility" NOT NULL,
-  "closing_state" "state"."plot_closing_state",
-  "subplot_admission_policy" JSONB  -- $ref: #/$defs/subplot_admission_policy,
+  "current_act" "public"."plot_current_act" NOT NULL,
+  "spine_visibility" "public"."spine_visibility" NOT NULL,
+  "closing_state" "public"."plot_closing_state",
+  "subplot_admission_policy" JSONB  /* $ref: #/$defs/subplot_admission_policy */,
   "campaign_id" TEXT NOT NULL,
   "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_plot_region_id" FOREIGN KEY ("region_id") REFERENCES "state"."region"("id") ON DELETE RESTRICT,
   CHECK ("current_pressure" >= 0),
-  CHECK ("current_pressure" <= 10),
-  CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+  CHECK ("current_pressure" <= 10)
 );
-COMMENT ON TABLE "state"."plot" IS "Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.";
+COMMENT ON TABLE "state"."plot" IS 'Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.';
 ALTER TABLE "state"."plot" ENABLE ROW LEVEL SECURITY;
 
 -- institution_response_queue_entry (state.institution_response_queue_entry)
@@ -3719,30 +3685,28 @@ CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
   "proposed_response" TEXT NOT NULL,
   "decision_window" JSONB NOT NULL,
   "resolved_by_npc_ids" JSONB,
-  "resolution_kind" "state"."institution_response_resolution_kind",
+  "resolution_kind" "public"."institution_response_resolution_kind",
   "campaign_id" TEXT NOT NULL,
   "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_institution_response_queue_entry_institution_id" FOREIGN KEY ("institution_id") REFERENCES "state"."institution"("id") ON DELETE CASCADE,
-  CONSTRAINT "fk_institution_response_queue_entry_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-COMMENT ON TABLE "state"."institution_response_queue_entry" IS "Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.";
+COMMENT ON TABLE "state"."institution_response_queue_entry" IS 'Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution''s response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.';
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
 
 -- failure_state_branch (state.failure_state_branch)
 -- Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
 CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
-  "branch_id" TEXT NOT NULL,
+  "branch_id" TEXT PRIMARY KEY NOT NULL,
   "parent_plot_id" TEXT NOT NULL,
-  "trigger" "state"."failure_state_trigger" NOT NULL,
-  "cosmological_reach" "state"."failure_state_cosmological_reach" NOT NULL,
+  "trigger" "public"."failure_state_trigger" NOT NULL,
+  "cosmological_reach" "public"."failure_state_cosmological_reach" NOT NULL,
   "winner_set" JSONB NOT NULL,
   "loser_set" JSONB NOT NULL,
   "handle_window_days" INTEGER NOT NULL,
   "point_of_no_return_marker_ids" JSONB,
-  "branch_state" "state"."failure_state_branch_state" NOT NULL,
+  "branch_state" "public"."failure_state_branch_state" NOT NULL,
   "armed_at_day" INTEGER,
   "resolved_at_day" INTEGER,
   "campaign_id" TEXT NOT NULL,
@@ -3750,13 +3714,11 @@ CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_failure_state_branch_parent_plot_id" FOREIGN KEY ("parent_plot_id") REFERENCES "state"."plot"("id") ON DELETE CASCADE,
   CHECK ("handle_window_days" >= 3),
   CHECK ("armed_at_day" >= 0),
-  CHECK ("resolved_at_day" >= 0),
-  CONSTRAINT "fk_failure_state_branch_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "state"."campaign"("id") ON DELETE CASCADE
+  CHECK ("resolved_at_day" >= 0)
 );
-COMMENT ON TABLE "state"."failure_state_branch" IS "Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).";
+COMMENT ON TABLE "state"."failure_state_branch" IS 'Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).';
 ALTER TABLE "state"."failure_state_branch" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
@@ -3769,18 +3731,117 @@ CREATE TABLE IF NOT EXISTS "engine"."surfacing_threshold_config" (
   "pressure_threshold" NUMERIC NOT NULL,
   "recency_weight" NUMERIC NOT NULL,
   "channel_priority" JSONB NOT NULL,
-  "campaign_id" TEXT NOT NULL,
+  "campaign_id" TEXT PRIMARY KEY NOT NULL,
   "session_id" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("pressure_threshold" >= 0),
   CHECK ("pressure_threshold" <= 10),
   CHECK ("recency_weight" >= 0),
-  CHECK ("recency_weight" <= 2),
-  CONSTRAINT "fk_surfacing_threshold_config_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "engine"."campaign"("id") ON DELETE CASCADE
+  CHECK ("recency_weight" <= 2)
 );
-COMMENT ON TABLE "engine"."surfacing_threshold_config" IS "Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).";
+COMMENT ON TABLE "engine"."surfacing_threshold_config" IS 'Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).';
 ALTER TABLE "engine"."surfacing_threshold_config" ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================================
+-- FK CONSTRAINTS — emitted last to avoid forward-reference errors (F-FK-ORDER)
+-- ============================================================================
+DO $$ BEGIN
+  ALTER TABLE "public"."player" ADD CONSTRAINT "fk_player_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."player" ADD CONSTRAINT "fk_player_subrace_id" FOREIGN KEY ("subrace_id") REFERENCES "public"."subrace"("subrace_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."event" ADD CONSTRAINT "fk_event_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."event" ADD CONSTRAINT "fk_event_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."faction" ADD CONSTRAINT "fk_faction_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."npc" ADD CONSTRAINT "fk_npc_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."item" ADD CONSTRAINT "fk_item_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("pack_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."regional_pack" ADD CONSTRAINT "fk_regional_pack_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."loot_table" ADD CONSTRAINT "fk_loot_table_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."loot_table" ADD CONSTRAINT "fk_loot_table_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."loot_table" ADD CONSTRAINT "fk_loot_table_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."regional_currency_state" ADD CONSTRAINT "fk_regional_currency_state_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."cult_institution" ADD CONSTRAINT "fk_cult_institution_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."cult_institution" ADD CONSTRAINT "fk_cult_institution_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."creature_material" ADD CONSTRAINT "fk_creature_material_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("pack_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."material_substitution" ADD CONSTRAINT "fk_material_substitution_recipe_id" FOREIGN KEY ("recipe_id") REFERENCES "public"."recipe"("recipe_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."orchestrator_session" ADD CONSTRAINT "fk_orchestrator_session_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "public"."location" ADD CONSTRAINT "fk_location_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;  /* F5: inferred from naming convention */
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."institution" ADD CONSTRAINT "fk_institution_parent_faction_id" FOREIGN KEY ("parent_faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."trade_route_v08" ADD CONSTRAINT "fk_trade_route_v08_origin_location_id" FOREIGN KEY ("origin_location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."trade_route_v08" ADD CONSTRAINT "fk_trade_route_v08_destination_location_id" FOREIGN KEY ("destination_location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."trade_route_v08" ADD CONSTRAINT "fk_trade_route_v08_controlling_faction_id" FOREIGN KEY ("controlling_faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."combatant" ADD CONSTRAINT "fk_combatant_base_npc_id" FOREIGN KEY ("base_npc_id") REFERENCES "public"."npc"("npc_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."prompt_skeleton" ADD CONSTRAINT "fk_prompt_skeleton_npc_id" FOREIGN KEY ("npc_id") REFERENCES "public"."npc"("npc_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."information" ADD CONSTRAINT "fk_information_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."institution_response_queue_entry" ADD CONSTRAINT "fk_institution_response_queue_entry_institution_id" FOREIGN KEY ("institution_id") REFERENCES "content"."institution"("institution_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."institution_response_queue_entry" ADD CONSTRAINT "fk_institution_response_queue_entry_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_parent_plot_id" FOREIGN KEY ("parent_plot_id") REFERENCES "state"."plot"("plot_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL

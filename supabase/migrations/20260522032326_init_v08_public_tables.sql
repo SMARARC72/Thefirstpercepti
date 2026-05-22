@@ -19,7 +19,7 @@
 -- already from Phase 21 (20260520120000_opex_init.sql, 20260521041724_
 -- game_state_init.sql). Any v0.8 column additions for these tables are
 -- handled by separate ALTER TABLE migrations in future patches (NOT this
--- migration — ARD-016 Phase A discipline).
+-- migration -- ARD-016 Phase A discipline).
 --
 -- RLS enable + service-role policy land in Phase 5a.9 (separate migration).
 -- ============================================================================
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "public"."campaign" (
   "transparency_mode" TEXT,
   "ironman" BOOLEAN,
   "legacy_enabled" BOOLEAN,
-  "current_time" JSONB NOT NULL  -- $ref: #/$defs/world_time,
+  "current_time" JSONB NOT NULL  /* $ref: #/$defs/world_time */,
   "current_region_id" TEXT,
   "active_character_id" TEXT NOT NULL,
   "world_seed" TEXT,
@@ -70,23 +70,23 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "level_total" SMALLINT NOT NULL,
   "experience" INTEGER,
   "proficiency_bonus" SMALLINT,
-  "stats" JSONB NOT NULL  -- $ref: #/$defs/custom_stats_block,
-  "derived_stats" JSONB NOT NULL  -- $ref: #/$defs/derived_stats_block,
-  "meters" JSONB NOT NULL  -- $ref: #/$defs/meters_block,
-  "hp" JSONB NOT NULL  -- $ref: #/$defs/hp_block,
+  "stats" JSONB NOT NULL  /* $ref: #/$defs/custom_stats_block */,
+  "derived_stats" JSONB NOT NULL  /* $ref: #/$defs/derived_stats_block */,
+  "meters" JSONB NOT NULL  /* $ref: #/$defs/meters_block */,
+  "hp" JSONB NOT NULL  /* $ref: #/$defs/hp_block */,
   "hit_dice" JSONB,
   "armor_class" INTEGER,
   "speed_feet" INTEGER,
-  "initiative_mod" JSONB  -- $ref: #/$defs/modifier,
+  "initiative_mod" JSONB  /* $ref: #/$defs/modifier */,
   "skill_proficiencies" JSONB,
   "skill_expertise" JSONB,
   "save_proficiencies" JSONB,
   "languages" JSONB,
   "tool_proficiencies" JSONB,
-  "alignment_descriptor" JSONB NOT NULL  -- $ref: #/$defs/alignment_descriptor,
+  "alignment_descriptor" JSONB NOT NULL  /* $ref: #/$defs/alignment_descriptor */,
   "traits" JSONB,
   "conditions" JSONB,
-  "spell_slots" JSONB  -- $ref: #/$defs/spell_slot_table,
+  "spell_slots" JSONB  /* $ref: #/$defs/spell_slot_table */,
   "pact_slots" JSONB,
   "known_spells" JSONB,
   "spellbook_ids" JSONB,
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "abilities_hidden" JSONB,
   "inventory" JSONB,
   "attunement_slots" JSONB,
-  "currency" JSONB  -- $ref: #/$defs/currency_amount,
+  "currency" JSONB  /* $ref: #/$defs/currency_amount */,
   "carry_weight_kg" NUMERIC,
   "relationships" JSONB,
   "reputation_profile" JSONB,
@@ -105,15 +105,15 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "pact_state" JSONB,
   "feats" JSONB,
   "inspiration_token" BOOLEAN,
-  "body_modifications" JSONB  -- $ref: #/$defs/body_modifications_block,
+  "body_modifications" JSONB  /* $ref: #/$defs/body_modifications_block */,
   "death_state" JSONB,
-  "body_modifications_block" JSONB  -- $ref: #/$defs/body_modifications_block,
+  "body_modifications_block" JSONB  /* $ref: #/$defs/body_modifications_block */,
   "knowledge_state" JSONB,
   "portrait_state" JSONB,
   "knowledge_posture_history" JSONB,
-  "session_state" JSONB  -- $ref: #/$defs/session_state_block,
-  "focus" JSONB NOT NULL  -- $ref: #/$defs/focus_block,
-  "action_economy" JSONB  -- $ref: #/$defs/action_economy_block,
+  "session_state" JSONB  /* $ref: #/$defs/session_state_block */,
+  "focus" JSONB NOT NULL  /* $ref: #/$defs/focus_block */,
+  "action_economy" JSONB  /* $ref: #/$defs/action_economy_block */,
   "tags" JSONB NOT NULL,
   "scrip_speculation_history" JSONB,
   "dream_state" JSONB,
@@ -121,8 +121,6 @@ CREATE TABLE IF NOT EXISTS "public"."player" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_player_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_player_subrace_id" FOREIGN KEY ("subrace_id") REFERENCES "public"."subrace"("subrace_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level_total" >= 1),
   CHECK ("level_total" <= 20),
   CHECK ("experience" >= 0),
@@ -137,7 +135,7 @@ ALTER TABLE "public"."player" ENABLE ROW LEVEL SECURITY;
 -- event (public.event)
 CREATE TABLE IF NOT EXISTS "public"."event" (
   "event_id" TEXT PRIMARY KEY NOT NULL,
-  "timestamp" JSONB NOT NULL  -- $ref: #/$defs/world_time,
+  "timestamp" JSONB NOT NULL  /* $ref: #/$defs/world_time */,
   "event_type" TEXT NOT NULL,
   "kind" TEXT,
   "location_id" TEXT,
@@ -169,9 +167,7 @@ CREATE TABLE IF NOT EXISTS "public"."event" (
   "scene_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_event_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_event_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."event" ENABLE ROW LEVEL SECURITY;
 
@@ -201,8 +197,7 @@ CREATE TABLE IF NOT EXISTS "public"."faction" (
   "tags" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_faction_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."faction" ENABLE ROW LEVEL SECURITY;
 
@@ -224,27 +219,26 @@ CREATE TABLE IF NOT EXISTS "public"."npc" (
   "loyalty_threshold" INTEGER,
   "corruption_exposure" INTEGER,
   "memory" JSONB,
-  "stats_optional" JSONB  -- $ref: #/$defs/derived_stats_block,
-  "hp_optional" JSONB  -- $ref: #/$defs/hp_block,
+  "stats_optional" JSONB  /* $ref: #/$defs/derived_stats_block */,
+  "hp_optional" JSONB  /* $ref: #/$defs/hp_block */,
   "tracker_state" JSONB,
   "recruitable_via_bond" BOOLEAN,
   "recruitable_via_canon_event" TEXT,
   "behavior_tree_state" JSONB,
   "grudge_ledger" JSONB,
   "witness_history" JSONB,
-  "want_model" JSONB NOT NULL  -- $ref: #/$defs/want_model,
-  "knowledge_tri_layer" JSONB NOT NULL  -- $ref: #/$defs/knowledge_tri_layer,
+  "want_model" JSONB NOT NULL  /* $ref: #/$defs/want_model */,
+  "knowledge_tri_layer" JSONB NOT NULL  /* $ref: #/$defs/knowledge_tri_layer */,
   "closing_conditions" JSONB NOT NULL,
   "memory_archetype" "public"."npc_memory_archetype" NOT NULL,
-  "ambition_tick" JSONB NOT NULL  -- $ref: #/$defs/ambition_tick,
-  "schedule_nesting" JSONB NOT NULL  -- $ref: #/$defs/schedule_nesting,
-  "stats" JSONB NOT NULL  -- $ref: #/$defs/custom_stats_block,
-  "derived_stats" JSONB NOT NULL  -- $ref: #/$defs/derived_stats_block,
+  "ambition_tick" JSONB NOT NULL  /* $ref: #/$defs/ambition_tick */,
+  "schedule_nesting" JSONB NOT NULL  /* $ref: #/$defs/schedule_nesting */,
+  "stats" JSONB NOT NULL  /* $ref: #/$defs/custom_stats_block */,
+  "derived_stats" JSONB NOT NULL  /* $ref: #/$defs/derived_stats_block */,
   "tags" JSONB NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_npc_race_id" FOREIGN KEY ("race_id") REFERENCES "public"."race"("race_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."npc" ENABLE ROW LEVEL SECURITY;
 
@@ -403,7 +397,7 @@ CREATE TABLE IF NOT EXISTS "public"."deity" (
   "deity_id" TEXT PRIMARY KEY NOT NULL,
   "name" TEXT NOT NULL,
   "alternative_names" JSONB,
-  "alignment" JSONB NOT NULL  -- $ref: #/$defs/alignment_descriptor,
+  "alignment" JSONB NOT NULL  /* $ref: #/$defs/alignment_descriptor */,
   "domains" JSONB NOT NULL,
   "symbol" TEXT,
   "symbol_motif" TEXT,
@@ -450,7 +444,7 @@ CREATE TABLE IF NOT EXISTS "public"."spell" (
   "casting_time" TEXT NOT NULL,
   "range" TEXT NOT NULL,
   "components" JSONB NOT NULL,
-  "duration" JSONB NOT NULL  -- $ref: #/$defs/duration_object,
+  "duration" JSONB NOT NULL  /* $ref: #/$defs/duration_object */,
   "concentration" BOOLEAN,
   "ritual_eligible" BOOLEAN,
   "save_type" TEXT,
@@ -459,7 +453,7 @@ CREATE TABLE IF NOT EXISTS "public"."spell" (
   "damage_type" TEXT,
   "classes_allowed" JSONB NOT NULL,
   "domain_aligned" JSONB,
-  "cost_layer" JSONB  -- $ref: #/$defs/spell_cost_layer,
+  "cost_layer" JSONB  /* $ref: #/$defs/spell_cost_layer */,
   "description_template" TEXT,
   "tags" JSONB,
   "creates_canon_event_on_cast" BOOLEAN,
@@ -508,7 +502,7 @@ CREATE TABLE IF NOT EXISTS "public"."item" (
   "attunement_ceremony" TEXT,
   "weight_kg" NUMERIC,
   "value_cp" INTEGER,
-  "value_currency_alt" JSONB  -- $ref: #/$defs/currency_amount,
+  "value_currency_alt" JSONB  /* $ref: #/$defs/currency_amount */,
   "equip_slot" TEXT,
   "tinting_class" TEXT,
   "bound_to_you" BOOLEAN,
@@ -563,7 +557,6 @@ CREATE TABLE IF NOT EXISTS "public"."item" (
   CHECK ("weight_kg" >= 0),
   CHECK ("value_cp" >= 0),
   CHECK ("stack_size_max" >= 1),
-  CONSTRAINT "fk_item_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("attunement_slot_cost" >= 0),
   CHECK ("attunement_slot_cost" <= 3),
   CHECK ("weight_lb" >= 0),
@@ -607,7 +600,6 @@ CREATE TABLE IF NOT EXISTS "public"."recipe" (
   CHECK ("workday_cost" >= 0),
   CHECK ("gp_cost" >= 0),
   CHECK ("difficulty_dc" >= 0),
-  CHECK ("time_in_world_hours" >= 0),
   CHECK ("dc" >= 1),
   CHECK ("dc" <= 40)
 );
@@ -646,8 +638,7 @@ CREATE TABLE IF NOT EXISTS "public"."regional_pack" (
   "contents_path" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_regional_pack_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."regional_pack" ENABLE ROW LEVEL SECURITY;
 
@@ -686,10 +677,7 @@ CREATE TABLE IF NOT EXISTS "public"."loot_table" (
   "template_grammar_version" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_loot_table_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_loot_table_location_id" FOREIGN KEY ("location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_loot_table_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."loot_table" ENABLE ROW LEVEL SECURITY;
 
@@ -731,7 +719,6 @@ CREATE TABLE IF NOT EXISTS "public"."regional_currency_state" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_regional_currency_state_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("base_value_gp" >= 0),
   CHECK ("volatility_modifier" >= 0.5),
   CHECK ("volatility_modifier" <= 2)
@@ -751,9 +738,7 @@ CREATE TABLE IF NOT EXISTS "public"."cult_institution" (
   "heretical_figures" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_cult_institution_faction_id" FOREIGN KEY ("faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
-  CONSTRAINT "fk_cult_institution_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."cult_institution" ENABLE ROW LEVEL SECURITY;
 
@@ -776,8 +761,7 @@ CREATE TABLE IF NOT EXISTS "public"."creature_material" (
   "regional_pack_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_creature_material_regional_pack_id" FOREIGN KEY ("regional_pack_id") REFERENCES "public"."regional_pack"("id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."creature_material" ENABLE ROW LEVEL SECURITY;
 
@@ -792,8 +776,7 @@ CREATE TABLE IF NOT EXISTS "public"."material_substitution" (
   "narrative_tag" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_material_substitution_recipe_id" FOREIGN KEY ("recipe_id") REFERENCES "public"."recipe"("recipe_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."material_substitution" ENABLE ROW LEVEL SECURITY;
 
@@ -812,8 +795,8 @@ CREATE TABLE IF NOT EXISTS "public"."companion" (
   "canon_progression_credit" JSONB,
   "stats_block" JSONB,
   "inventory" JSONB,
-  "hp_block" JSONB  -- $ref: #/$defs/hp_block,
-  "meters_block" JSONB  -- $ref: #/$defs/meters_block,
+  "hp_block" JSONB  /* $ref: #/$defs/hp_block */,
+  "meters_block" JSONB  /* $ref: #/$defs/meters_block */,
   "conditions_active" JSONB,
   "is_dead" BOOLEAN,
   "death_state" JSONB,
@@ -837,8 +820,7 @@ CREATE TABLE IF NOT EXISTS "public"."orchestrator_session" (
   "last_state_diff_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_orchestrator_session_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."orchestrator_session" ENABLE ROW LEVEL SECURITY;
 
@@ -889,8 +871,7 @@ CREATE TABLE IF NOT EXISTS "public"."recruitment_quest" (
   "abandonment_consequences" JSONB,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_recruitment_quest_quest_id" FOREIGN KEY ("quest_id") REFERENCES "state"."quest"("quest_id") ON DELETE CASCADE  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."recruitment_quest" ENABLE ROW LEVEL SECURITY;
 
@@ -904,8 +885,7 @@ CREATE TABLE IF NOT EXISTS "public"."location" (
   "parent_location_id" TEXT,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_location_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT  -- F5: inferred from naming convention
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE "public"."location" ENABLE ROW LEVEL SECURITY;
 
@@ -962,7 +942,7 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "casting_time" TEXT NOT NULL,
   "range" TEXT NOT NULL,
   "components" JSONB NOT NULL,
-  "duration" JSONB NOT NULL  -- $ref: #/$defs/duration_object,
+  "duration" JSONB NOT NULL  /* $ref: #/$defs/duration_object */,
   "concentration" BOOLEAN,
   "ritual_eligible" BOOLEAN,
   "save_type" TEXT,
@@ -971,7 +951,7 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "damage_type" TEXT,
   "classes_allowed" JSONB NOT NULL,
   "domain_aligned" JSONB,
-  "cost_layer" JSONB  -- $ref: #/$defs/spell_cost_layer,
+  "cost_layer" JSONB  /* $ref: #/$defs/spell_cost_layer */,
   "description_template" TEXT,
   "tags" JSONB,
   "creates_canon_event_on_cast" BOOLEAN,
@@ -980,7 +960,6 @@ CREATE TABLE IF NOT EXISTS "public"."imposed_spell" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_imposed_spell_spell_id" FOREIGN KEY ("spell_id") REFERENCES "public"."spell"("spell_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("level" >= 0),
   CHECK ("level" <= 9)
 );
@@ -1002,7 +981,6 @@ CREATE TABLE IF NOT EXISTS "public"."litany" (
   "tone_tags" JSONB,
   "regional_origin_id" TEXT,
   "schema_version" TEXT,
-  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -1019,7 +997,6 @@ CREATE TABLE IF NOT EXISTS "public"."marginalia" (
   "tone_tags" JSONB,
   "regional_origin_id" TEXT,
   "schema_version" TEXT,
-  "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -1058,7 +1035,6 @@ CREATE TABLE IF NOT EXISTS "public"."opex_event" (
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  CONSTRAINT "fk_opex_event_event_id" FOREIGN KEY ("event_id") REFERENCES "public"."event"("event_id") ON DELETE RESTRICT  -- F5: inferred from naming convention,
   CHECK ("tokens_in" >= 0),
   CHECK ("tokens_out" >= 0),
   CHECK ("est_cost_usd" >= 0),
@@ -1089,8 +1065,3 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 );
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
--- ============================================================================
--- CONTENT schema — 6 entities
--- ============================================================================
--- institution (content.institution)
--- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
