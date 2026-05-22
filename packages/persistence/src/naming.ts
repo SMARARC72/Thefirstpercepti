@@ -220,50 +220,95 @@ export const playerHandler = {
 
 /**
  * NPC → public.npc (NpcSchema). Bundle A REQUIRED fields handled via
- * sentinel-NULL JSONB stubs per Session 5b user-issued risk-surface
- * guidance (the "stub NPC" pattern).
+ * **schema-conformant minimum-valid stubs** (Phase 24c §5c.0 audit fix).
  *
- * Schema makes 6 Bundle A fields REQUIRED on every npc row:
- *   want_model, knowledge_tri_layer, closing_conditions,
- *   memory_archetype, ambition_tick, schedule_nesting
+ * Schema_pack_v0.8 makes 6 Bundle A fields REQUIRED on every npc row,
+ * AND each $def has `additionalProperties: false` — meaning stub objects
+ * with extra `_stub` flags fail Zod validation. The earlier "sentinel-NULL
+ * with _stub flag" approach was rejected by the v0.8 audit; this rewrite
+ * uses **minimum-valid schema-conformant payloads** with a sentinel STRING
+ * marker (`NPC_STUB_MARKER`) embedded INSIDE the required string fields.
  *
- * Engine currently doesn't populate any of these. Naïve `null` would violate
- * NOT NULL constraints; naïve empty `{}` would violate JSONB shape CHECKs.
- * The conservative call (sentinel-NULL JSONB with status flag) lets the
- * write succeed AND makes the unmodeled-narrative-depth status visible:
+ * Detection: `isNpcBundleAStub(row)` checks for the marker substring in
+ * `want_model.drive.description`. Engine reads can branch on the flag to
+ * show "narrative depth missing" UI without crashing on stub payloads.
  *
- *   - want_model:           {_stub: true, _status: "awaiting_narrative_depth"}
- *   - knowledge_tri_layer:  {knows: [], says: [], believes: [], _stub: true}
- *   - closing_conditions:   [{_stub: true, condition_kind: "narrative_stub"}]
- *                           (schema requires ≥2; we provide minimum)
- *   - memory_archetype:     "peasant" (safe default; not narrative-loaded)
- *   - ambition_tick:        {cadence: "weekly", _stub: true}
- *   - schedule_nesting:     {local_pattern: "stub", _stub: true}
+ * Stub shapes (all REQUIRED fields present; additionalProperties: false safe):
  *
- * Reads check for `_stub: true` and surface to the engine as "Bundle A
- * unpopulated for this NPC" — engine's NPCBundle inspectors can show
- * "narrative depth missing" UI without crashing.
+ *   - want_model: full {drive, barter, kill_for, fear_loss} with stub strings
+ *   - knowledge_tri_layer: {knows:[], says:{default_policy:"silent"}, believes:[]}
+ *   - closing_conditions: 2 valid npc_closing_condition_entry items
+ *     (kind: "passover_state" + "death_state"; per Death's binding rule
+ *     engine-validator requires ≥1 player_reachable=true — first stub gets it)
+ *   - memory_archetype: "peasant" (valid enum value; safe baseline)
+ *   - ambition_tick: {cadence: "irregular_per_assignment", success_streak: 0}
+ *   - schedule_nesting: full {local_pattern, nested_under_institution_id,
+ *     variance_seed}; institution_id uses STUB sentinel
  *
- * As engine work progresses and individual NPCs gain Bundle A authoring,
- * those NPCs' writes will produce non-stub payloads naturally and reads
- * surface the real data.
+ * As individual NPCs gain Bundle A authoring, those writes supply real
+ * payloads via the engine override path; reads detect no marker, surface
+ * non-stub data.
  */
 
+/** Sentinel marker embedded in stub-NPC required strings. Detection key. */
+export const NPC_STUB_MARKER = "STUB::AWAITING_NARRATIVE_DEPTH";
+
 const NPC_BUNDLE_A_STUB = {
-  want_model: { _stub: true, _status: "awaiting_narrative_depth" },
-  knowledge_tri_layer: { knows: [], says: [], believes: [], _stub: true },
+  want_model: {
+    drive: {
+      description: NPC_STUB_MARKER,
+      intensity: 1,
+      freshness_decay: 0,
+    },
+    barter: [],
+    kill_for: {
+      trigger_condition: NPC_STUB_MARKER,
+      threshold: "warning",
+      target_class: "self",
+    },
+    fear_loss: {
+      what: NPC_STUB_MARKER,
+      urgency: 1,
+      abandons_drive_if_imminent: false,
+    },
+  },
+  knowledge_tri_layer: {
+    knows: [],
+    says: { default_policy: "silent" },
+    believes: [],
+  },
   closing_conditions: [
-    { _stub: true, condition_kind: "narrative_stub", player_reachable: true },
-    { _stub: true, condition_kind: "narrative_stub", player_reachable: false },
+    {
+      kind: "passover_state",
+      description: NPC_STUB_MARKER,
+      player_reachable: true, // ≥1 player_reachable=true per Death's binding rule
+    },
+    {
+      kind: "death_state",
+      description: NPC_STUB_MARKER,
+      player_reachable: false,
+    },
   ],
   memory_archetype: "peasant" as const,
-  ambition_tick: { cadence: "weekly", _stub: true },
-  schedule_nesting: { local_pattern: "stub", _stub: true },
+  ambition_tick: {
+    cadence: "irregular_per_assignment",
+    success_streak: 0,
+  },
+  schedule_nesting: {
+    local_pattern: { summary: NPC_STUB_MARKER },
+    nested_under_institution_id: NPC_STUB_MARKER,
+    variance_seed: NPC_STUB_MARKER,
+  },
 };
 
+/**
+ * Detect a stub NPC by looking for {@link NPC_STUB_MARKER} in want_model.drive.description.
+ * Stubs survive Zod validation because they are schema-conformant; marker lives inside
+ * a REQUIRED string field where the schema only constrains type, not content.
+ */
 export function isNpcBundleAStub(schemaRow: Record<string, unknown>): boolean {
-  const wm = schemaRow.want_model as Record<string, unknown> | undefined;
-  return wm?._stub === true;
+  const wm = schemaRow.want_model as { drive?: { description?: string } } | undefined;
+  return wm?.drive?.description === NPC_STUB_MARKER;
 }
 
 export const npcHandler = {
@@ -449,22 +494,38 @@ export interface BeliefPersistenceContext {
   holderId: string;
 }
 
+/**
+ * Engine's actual ConfidenceLevel enum (per CONFIDENCE_LEVELS in engine-types.ts):
+ *   rumor | likely | certain | proven | forgotten
+ *
+ * NOT certain/high/medium/low/doubtful (an earlier draft had this wrong;
+ * fixed in Phase 24c §5c.0 audit). Mapping to integer 0-100 chosen so the
+ * round-trip via {@link beliefConfidenceFromInt} bands lands back on the same
+ * enum value (boundaries set at midpoints between adjacent ints).
+ */
 const BELIEF_CONFIDENCE_TO_INT: Record<string, number> = {
-  certain: 95,
-  high: 80,
-  medium: 50,
-  low: 25,
-  doubtful: 10,
+  forgotten: 5,
+  rumor: 30,
+  likely: 65,
+  certain: 85,
+  proven: 98,
 };
 
 function beliefConfidenceFromInt(n: number): string {
-  if (n >= 90) return "certain";
-  if (n >= 65) return "high";
-  if (n >= 35) return "medium";
-  if (n >= 15) return "low";
-  return "doubtful";
+  if (n >= 95) return "proven";
+  if (n >= 75) return "certain";
+  if (n >= 50) return "likely";
+  if (n >= 15) return "rumor";
+  return "forgotten";
 }
 
+/**
+ * Engine-only fields on Belief (`heldByPlayer`, `gameplayImpact`) survive
+ * round-trips via the engine's `_runtimeMeta` side-channel. The schema row
+ * does NOT carry them; persistence layer's caller is responsible for stashing
+ * them in `world_state_blob` JSONB (ARD-016 Phase A) alongside the row write
+ * if cross-session preservation is needed.
+ */
 export const beliefHandler = {
   toSnake(
     engineShape: Record<string, unknown>,
@@ -476,7 +537,7 @@ export const beliefHandler = {
           "(holder_type + holder_id are schema-REQUIRED but engine-derived from context)",
       );
     }
-    const confidenceKey = String(engineShape.confidence ?? "medium");
+    const confidenceKey = String(engineShape.confidence ?? "rumor");
     const confidenceInt = BELIEF_CONFIDENCE_TO_INT[confidenceKey] ?? 50;
     const supporting = (engineShape.supportingEvidence as string[] | undefined) ?? [];
     const contradicting = (engineShape.contradictingEvidence as string[] | undefined) ?? [];
@@ -488,10 +549,15 @@ export const beliefHandler = {
       truth_status: engineShape.isTrue === true ? "true" : "false",
       confidence: confidenceInt,
       source_ids: [...supporting, ...contradicting],
-      // engine-only fields preserved via JSONB blob (ARD-016 Phase A); not in row shape
+      // heldByPlayer + gameplayImpact preserved via _runtimeMeta side-channel,
+      // not the row shape (engine-only, lives in world_state_blob per ARD-016
+      // Phase A). Caller stashes them alongside this row's write if needed.
     };
   },
-  toCamel(schemaRow: Record<string, unknown>): Record<string, unknown> {
+  toCamel(
+    schemaRow: Record<string, unknown>,
+    runtimeMeta?: { heldByPlayer?: boolean; gameplayImpact?: string },
+  ): Record<string, unknown> {
     const truthStatus = String(schemaRow.truth_status ?? "unknown");
     return {
       id: schemaRow.belief_id,
@@ -504,6 +570,10 @@ export const beliefHandler = {
       confidence: beliefConfidenceFromInt(Number(schemaRow.confidence ?? 50)),
       supportingEvidence: (schemaRow.source_ids as string[] | undefined) ?? [],
       contradictingEvidence: [],
+      // Engine-only fields restored from caller-provided runtimeMeta when available;
+      // safe defaults otherwise (heldByPlayer defaults true ONLY when holder is "player").
+      heldByPlayer: runtimeMeta?.heldByPlayer ?? schemaRow.holder_type === "player",
+      gameplayImpact: runtimeMeta?.gameplayImpact ?? "",
     };
   },
 };

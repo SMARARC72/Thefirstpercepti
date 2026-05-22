@@ -2,6 +2,7 @@ export * from './types';
 export {
   RuleRegistry,
   validateRuleAgainstSchema,
+  deriveSchemaClassName,
   type EngineRule,
   type RuleClassSchema,
   type RuleRegistryOptions,

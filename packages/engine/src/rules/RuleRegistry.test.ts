@@ -15,6 +15,7 @@ import { describe, it, expect } from "vitest";
 import {
   RuleRegistry,
   validateRuleAgainstSchema,
+  deriveSchemaClassName,
   type EngineRule,
   type RuleClassSchema,
 } from "./RuleRegistry.js";
@@ -168,6 +169,82 @@ describe("RuleRegistry / listRules + size", () => {
     expect(reg.size()).toBe(1);
     reg.addRule({ rule_id: "second_rule_v1", applies_to_entity: "npc", applies_to_field: "x" });
     expect(reg.size()).toBe(2);
+  });
+});
+
+describe("RuleRegistry / deriveSchemaClassName (Phase 5c.0 refinement)", () => {
+  it("derives className from relative $schema path", () => {
+    expect(deriveSchemaClassName({ $schema: "./_schema/disagreement_rule.json" })).toBe(
+      "disagreement_rule",
+    );
+  });
+
+  it("derives className from absolute path with forward slashes", () => {
+    expect(deriveSchemaClassName({ $schema: "/content/rules/_schema/scene_routing.json" })).toBe(
+      "scene_routing",
+    );
+  });
+
+  it("derives className from Windows-style path", () => {
+    expect(deriveSchemaClassName({ $schema: "_schema\\slide_trigger.json" })).toBe(
+      "slide_trigger",
+    );
+  });
+
+  it("returns null for missing $schema", () => {
+    expect(deriveSchemaClassName({})).toBeNull();
+  });
+
+  it("returns null for non-standard $schema path", () => {
+    expect(deriveSchemaClassName({ $schema: "https://example.com/schema" })).toBeNull();
+  });
+});
+
+describe("RuleRegistry / addRule auto-derives schemaClassName from $schema", () => {
+  it("uses derived class name when schemaClassName not passed", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const ruleWithSchema = {
+      ...openingHoursRule,
+      $schema: "./_schema/disagreement_rule.json",
+    };
+    reg.addRule(ruleWithSchema as EngineRule);
+    expect(reg.size()).toBe(1);
+  });
+
+  it("explicit schemaClassName overrides derivation", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const ruleWithMismatchedSchema = {
+      ...openingHoursRule,
+      $schema: "./_schema/some_other_schema.json", // wrong path
+    };
+    // Override forces use of registered schema
+    reg.addRule(ruleWithMismatchedSchema as EngineRule, "disagreement_rule");
+    expect(reg.size()).toBe(1);
+  });
+
+  it("rules without $schema and without explicit param skip validation", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    // No $schema, no explicit param — validation skipped, rule added
+    reg.addRule({ rule_id: "ad_hoc_rule_v1" });
+    expect(reg.size()).toBe(1);
+  });
+});
+
+describe("RuleRegistry / removeRule (Phase 5c.0 hot-reload surface)", () => {
+  it("removes existing rule by id; returns true", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    expect(reg.removeRule("opening_hours_disagreement_rule_v1")).toBe(true);
+    expect(reg.size()).toBe(0);
+    expect(reg.getRule("opening_hours_disagreement_rule_v1")).toBeNull();
+  });
+
+  it("returns false for unknown rule id", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    expect(reg.removeRule("does_not_exist_v1")).toBe(false);
+    expect(reg.size()).toBe(1);
   });
 });
 
