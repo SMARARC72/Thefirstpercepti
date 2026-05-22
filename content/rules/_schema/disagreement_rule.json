@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://first-perception.local/schemas/engine-config/disagreement_rule",
+  "title": "Disagreement Rule (engine-config registry schema)",
+  "description": "Phase 24b §4.10 / L.VIII-SC-04 — Engine-config schema for opening_hours_disagreement_rule and sibling rules. NOT part of schema_pack_v0.8.json; lives in the engine-config registry per Path R ratification (Desktop 2026-05-21). Validator-only: rule files are loaded into RuleRegistry at engine startup and validated against this schema, but the schema itself does NOT emit Postgres tables, TypeScript types, or Zod validators via the schema_pack generator pipeline. Per ARD-017 (engine-config registry pattern) when authored in Session 4c.",
+  "x_registry_tier": "engine_config",
+  "x_generator_emission": "none",
+  "type": "object",
+  "required": [
+    "rule_id",
+    "applies_to_entity",
+    "applies_to_field",
+    "resolution_strategy",
+    "fallback_strategy",
+    "trust_ranking",
+    "side_effects_on_disagreement",
+    "validator_chain_stage_5_hook"
+  ],
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "description": "Stable identifier including version suffix (e.g. opening_hours_disagreement_rule_v1)."
+    },
+    "applies_to_entity": {
+      "type": "string",
+      "description": "schema_pack_v0.8.json entity name the rule applies to (e.g. 'institution')."
+    },
+    "applies_to_field": {
+      "type": "string",
+      "description": "Field path on the entity the rule resolves disagreements for (e.g. 'opening_hours')."
+    },
+    "resolution_strategy": {
+      "type": "string",
+      "enum": [
+        "highest_trust_source",
+        "most_recent_source",
+        "majority_consensus",
+        "deterministic_priority_list",
+        "surface_all"
+      ],
+      "description": "Primary strategy when multiple disagreeing sources exist."
+    },
+    "fallback_strategy": {
+      "type": "string",
+      "enum": [
+        "surface_disagreement",
+        "use_default",
+        "block_query",
+        "emit_contradiction"
+      ],
+      "description": "Applied when primary resolution_strategy cannot decide (e.g. tie)."
+    },
+    "trust_ranking": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_kind", "trust"],
+        "properties": {
+          "source_kind": {
+            "type": "string",
+            "description": "Source classification (institution_canonical_record, npc_with_role_inside_institution, npc_with_role_outside_institution, rumor, third_party_document, etc.)."
+          },
+          "trust": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "0 = ignore; 10 = canonical authority."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "side_effects_on_disagreement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "emit_contradiction_ledger_entry",
+              "tag_information_veracity",
+              "surface_to_player_if_threshold",
+              "log_to_ledger",
+              "trigger_institutional_response_queue"
+            ]
+          },
+          "with_topic": { "type": "string" },
+          "with_veracity": {
+            "type": "string",
+            "enum": ["true", "false", "partial", "unknown"]
+          },
+          "trust_delta_threshold": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "validator_chain_stage_5_hook": {
+      "type": "boolean",
+      "description": "True = rule is consulted during Stage 5 contradiction_check of the validator chain. False = engine-surface only (NPC-query time)."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional human-readable rationale for tuning decisions."
+    }
+  },
+  "additionalProperties": false
+}
