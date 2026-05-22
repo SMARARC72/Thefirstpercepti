@@ -37,8 +37,9 @@ describe("NPC handler / Listening Child roundtrip (Phase 24d 6a.4 contradiction_
     expect((row.want_model as { kill_for: { trigger_condition: string } }).kill_for.trigger_condition)
       .toMatch(/^never/);
 
-    // 2 closing_conditions (Q-ILYRA-2 floor — Listening Child is constraint-dominant)
-    expect((row.closing_conditions as unknown[])).toHaveLength(2);
+    // 3 closing_conditions after Q-LISTENING-CHILD-CC-HYGIENE amend
+    // (special + passover + death-equivalent constraint-dissolution)
+    expect((row.closing_conditions as unknown[])).toHaveLength(3);
   });
 
   it("isNpcBundleAStub returns FALSE for Listening Child (fully-authored constraint-dominant, NOT scenery-stub)", () => {
@@ -62,12 +63,17 @@ describe("NPC handler / Listening Child roundtrip (Phase 24d 6a.4 contradiction_
     expect(restored.scheduleNesting).toEqual(engineLC.scheduleNesting);
   });
 
-  it("closing_conditions: NO death_state (cannot-be-killed-in-slice); ≥1 player_reachable via special_state", () => {
+  it("closing_conditions: 3 entries post-amend (special + passover + death-equivalent constraint-dissolution)", () => {
     const row = npcHandler.toSnake(engineLC);
-    const cc = row.closing_conditions as Array<{ kind: string; player_reachable: boolean }>;
-    expect(cc).toHaveLength(2);
-    // NO death_state — cannot-be-killed-in-slice constraint
-    expect(cc.find((c) => c.kind === "death_state")).toBeUndefined();
+    const cc = row.closing_conditions as Array<{ kind: string; player_reachable: boolean; non_orphan_in?: string }>;
+    expect(cc).toHaveLength(3);
+    // death_state ADDED via Q-LISTENING-CHILD-CC-HYGIENE amend (constraint-dissolution
+    // semantic; same shape as Butcher's death_state; player_reachable=false; tagged
+    // non_orphan_in=v0.9 since no v0.8 consequence-chain triggers Bell Court ledger-tampering)
+    const death = cc.find((c) => c.kind === "death_state");
+    expect(death).toBeDefined();
+    expect(death?.player_reachable).toBe(false);
+    expect(death?.non_orphan_in).toBe("v0.9");
     // Death's binding rule satisfied via player_reachable=true on special_state
     expect(cc.filter((c) => c.player_reachable === true)).toHaveLength(1);
     // passover_state with residue_drive

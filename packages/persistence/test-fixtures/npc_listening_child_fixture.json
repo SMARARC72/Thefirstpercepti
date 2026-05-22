@@ -91,6 +91,13 @@
           "description": "Re-anchor at the next substrate-naming-significant location",
           "intensity": 3
         }
+      },
+      {
+        "kind": "death_state",
+        "description": "Catastrophic Bell Court ledger-tampering (sustained doctrinal-civic ledger naming of the dry fountain's substrate process AS a Bell Court asset) dissolves the substrate-anchor constraint that holds the Listening Child at the fountain. She does NOT re-anchor elsewhere — the substrate naming process disperses without an anchor; the Listening Child as a continuous entity ENDS.",
+        "player_reachable": false,
+        "consequence_summary": "Listening Child permanently absent from the dry fountain and from all substrate-naming-significant locations; pebble path permanently closed; substrate-aware-utterance recognition mechanism dissolves regionally; Bell Court schism (the ledger-tampering faction loses internal legitimacy); Drowned Church marks the dissolution as a doctrinal incident requiring response; canon-event-emergent NPCs may stop emerging in the region for a recovery period.",
+        "non_orphan_in": "v0.9"
       }
     ],
     "memoryArchetype": "contradiction_bearing",
