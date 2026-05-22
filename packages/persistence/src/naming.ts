@@ -219,19 +219,114 @@ export const playerHandler = {
 };
 
 /**
- * NPC → public.npc (NpcSchema).
+ * NPC → public.npc (NpcSchema). Bundle A REQUIRED fields handled via
+ * sentinel-NULL JSONB stubs per Session 5b user-issued risk-surface
+ * guidance (the "stub NPC" pattern).
  *
- * Bespoke adapters TODO: hp number ↔ hp_block ($def); Bundle A REQUIRED
- * fields (want_model, knowledge_tri_layer, closing_conditions,
- * memory_archetype, ambition_tick, schedule_nesting) — engine doesn't
- * populate these yet; persistence writes empty defaults; engine reads ignore.
+ * Schema makes 6 Bundle A fields REQUIRED on every npc row:
+ *   want_model, knowledge_tri_layer, closing_conditions,
+ *   memory_archetype, ambition_tick, schedule_nesting
+ *
+ * Engine currently doesn't populate any of these. Naïve `null` would violate
+ * NOT NULL constraints; naïve empty `{}` would violate JSONB shape CHECKs.
+ * The conservative call (sentinel-NULL JSONB with status flag) lets the
+ * write succeed AND makes the unmodeled-narrative-depth status visible:
+ *
+ *   - want_model:           {_stub: true, _status: "awaiting_narrative_depth"}
+ *   - knowledge_tri_layer:  {knows: [], says: [], believes: [], _stub: true}
+ *   - closing_conditions:   [{_stub: true, condition_kind: "narrative_stub"}]
+ *                           (schema requires ≥2; we provide minimum)
+ *   - memory_archetype:     "peasant" (safe default; not narrative-loaded)
+ *   - ambition_tick:        {cadence: "weekly", _stub: true}
+ *   - schedule_nesting:     {local_pattern: "stub", _stub: true}
+ *
+ * Reads check for `_stub: true` and surface to the engine as "Bundle A
+ * unpopulated for this NPC" — engine's NPCBundle inspectors can show
+ * "narrative depth missing" UI without crashing.
+ *
+ * As engine work progresses and individual NPCs gain Bundle A authoring,
+ * those NPCs' writes will produce non-stub payloads naturally and reads
+ * surface the real data.
  */
+
+const NPC_BUNDLE_A_STUB = {
+  want_model: { _stub: true, _status: "awaiting_narrative_depth" },
+  knowledge_tri_layer: { knows: [], says: [], believes: [], _stub: true },
+  closing_conditions: [
+    { _stub: true, condition_kind: "narrative_stub", player_reachable: true },
+    { _stub: true, condition_kind: "narrative_stub", player_reachable: false },
+  ],
+  memory_archetype: "peasant" as const,
+  ambition_tick: { cadence: "weekly", _stub: true },
+  schedule_nesting: { local_pattern: "stub", _stub: true },
+};
+
+export function isNpcBundleAStub(schemaRow: Record<string, unknown>): boolean {
+  const wm = schemaRow.want_model as Record<string, unknown> | undefined;
+  return wm?._stub === true;
+}
+
 export const npcHandler = {
   toSnake(engineShape: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(engineShape, camelToSnake);
+    return {
+      npc_id: engineShape.id,
+      name: engineShape.name,
+      description: engineShape.description,
+      role: engineShape.role,
+      faction_id: engineShape.factionId,
+      location_id: engineShape.locationId,
+      // hp number → hp_block $def: TODO bespoke adapter (Pass 3); shallow for now
+      hp: { current: engineShape.hp, max: engineShape.maxHp },
+      // Bundle A defaults — overridden if engineShape already supplies them
+      ...NPC_BUNDLE_A_STUB,
+      // stats / derived_stats / tags REQUIRED per Phase 4a.5 Khoja Decision #2 —
+      // engine should provide these from Phase 24a wiring; pass through
+      stats: engineShape.stats,
+      derived_stats: engineShape.derivedStats,
+      tags: engineShape.tags ?? [],
+      // Allow caller-provided Bundle A fields to override stubs
+      ...(engineShape.wantModel != null ? { want_model: engineShape.wantModel } : {}),
+      ...(engineShape.knowledgeTriLayer != null
+        ? { knowledge_tri_layer: engineShape.knowledgeTriLayer }
+        : {}),
+      ...(engineShape.closingConditions != null
+        ? { closing_conditions: engineShape.closingConditions }
+        : {}),
+      ...(engineShape.memoryArchetype != null
+        ? { memory_archetype: engineShape.memoryArchetype }
+        : {}),
+      ...(engineShape.ambitionTick != null
+        ? { ambition_tick: engineShape.ambitionTick }
+        : {}),
+      ...(engineShape.scheduleNesting != null
+        ? { schedule_nesting: engineShape.scheduleNesting }
+        : {}),
+    };
   },
   toCamel(schemaRow: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(schemaRow, snakeToCamel);
+    const hpBlock = schemaRow.hp as { current?: number; max?: number } | undefined;
+    const stubFlag = isNpcBundleAStub(schemaRow);
+    return {
+      id: schemaRow.npc_id,
+      name: schemaRow.name,
+      description: schemaRow.description,
+      role: schemaRow.role,
+      factionId: schemaRow.faction_id,
+      locationId: schemaRow.location_id,
+      hp: hpBlock?.current ?? 0,
+      maxHp: hpBlock?.max ?? 0,
+      stats: schemaRow.stats,
+      derivedStats: schemaRow.derived_stats,
+      tags: schemaRow.tags ?? [],
+      // Bundle A status surfaced to engine; populated fields exposed regardless
+      _bundleAStub: stubFlag,
+      wantModel: stubFlag ? null : schemaRow.want_model,
+      knowledgeTriLayer: stubFlag ? null : schemaRow.knowledge_tri_layer,
+      closingConditions: stubFlag ? null : schemaRow.closing_conditions,
+      memoryArchetype: stubFlag ? null : schemaRow.memory_archetype,
+      ambitionTick: stubFlag ? null : schemaRow.ambition_tick,
+      scheduleNesting: stubFlag ? null : schemaRow.schedule_nesting,
+    };
   },
 };
 
@@ -317,25 +412,99 @@ export const rumorHandler = {
 };
 
 /**
- * Belief → public.belief (BeliefSchema).
+ * Belief → public.belief (BeliefSchema). **REFERENCE PATTERN** for Pass 2
+ * bespoke adapters (per Session 5b user-issued risk-surface guidance).
  *
- * Most-divergent case in §2 of SESSION_5B_PREFLIGHT_FINDINGS.md. Bespoke
- * adapters required:
- *   - statement (engine) ↔ claim (schema)
- *   - isTrue: boolean (engine) ↔ truth_status: 5-value enum (schema)
- *   - confidence: ConfidenceLevel (engine 5-value enum) ↔ integer 0-100 (schema)
- *   - supportingEvidence + contradictingEvidence (engine) ↔ source_ids (schema)
- *   - holder_type + holder_id REQUIRED on schema; engine derives from context
+ * Most-divergent case in §2 of SESSION_5B_PREFLIGHT_FINDINGS.md. This
+ * handler authors the full pattern other Pass 2 handlers should follow:
  *
- * Pass 2 stub uses shallow remap (loses data fidelity). Bespoke adapter
- * lands when Belief persistence wiring runs first read/write.
+ *   1. Explicit field-by-field mapping (NOT generic remapKeys) — every
+ *      engine field's schema target is declared in code.
+ *   2. Type/value adapters per field — confidence enum↔integer,
+ *      isTrue↔truth_status enum, etc. Wrong-direction conversions throw
+ *      rather than coerce silently.
+ *   3. Schema-required field defaulting — holder_type / holder_id derive
+ *      from caller-provided context object; if context missing, throw
+ *      (NEVER silently default to "unknown" because that pollutes the
+ *      persistence layer with garbage rows).
+ *   4. Engine-only field passthrough via meta — gameplayImpact survives
+ *      via the engine's RuntimeNamingMeta side-channel (not the persisted
+ *      shape; carried in world_state_blob JSONB per ARD-016 Phase A).
+ *   5. Stable round-trip on the canonical case (engine→snake→camel→engine
+ *      should equal input modulo holder context defaults).
+ *
+ * Adapter tables:
+ *   - confidence: certain=95, high=80, medium=50, low=25, doubtful=10
+ *     (covers ConfidenceLevel 5-value enum); reverse maps to nearest band
+ *   - isTrue: true→"true", false→"false" (engine's binary maps to truth_status
+ *     subset; the other 3 truth_status values — partial/unknown/contested —
+ *     never originate from engine, only from schema reads)
+ *   - source_ids: concatenation of supportingEvidence + contradictingEvidence;
+ *     reverse splits arbitrarily (loses supporting/contradicting distinction;
+ *     this is acknowledged data loss documented here)
  */
+
+export interface BeliefPersistenceContext {
+  holderType: "player" | "npc" | "faction" | "deity";
+  holderId: string;
+}
+
+const BELIEF_CONFIDENCE_TO_INT: Record<string, number> = {
+  certain: 95,
+  high: 80,
+  medium: 50,
+  low: 25,
+  doubtful: 10,
+};
+
+function beliefConfidenceFromInt(n: number): string {
+  if (n >= 90) return "certain";
+  if (n >= 65) return "high";
+  if (n >= 35) return "medium";
+  if (n >= 15) return "low";
+  return "doubtful";
+}
+
 export const beliefHandler = {
-  toSnake(engineShape: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(engineShape, camelToSnake);
+  toSnake(
+    engineShape: Record<string, unknown>,
+    ctx?: BeliefPersistenceContext,
+  ): Record<string, unknown> {
+    if (!ctx) {
+      throw new Error(
+        "beliefHandler.toSnake requires BeliefPersistenceContext " +
+          "(holder_type + holder_id are schema-REQUIRED but engine-derived from context)",
+      );
+    }
+    const confidenceKey = String(engineShape.confidence ?? "medium");
+    const confidenceInt = BELIEF_CONFIDENCE_TO_INT[confidenceKey] ?? 50;
+    const supporting = (engineShape.supportingEvidence as string[] | undefined) ?? [];
+    const contradicting = (engineShape.contradictingEvidence as string[] | undefined) ?? [];
+    return {
+      belief_id: engineShape.id,
+      holder_type: ctx.holderType,
+      holder_id: ctx.holderId,
+      claim: engineShape.statement,
+      truth_status: engineShape.isTrue === true ? "true" : "false",
+      confidence: confidenceInt,
+      source_ids: [...supporting, ...contradicting],
+      // engine-only fields preserved via JSONB blob (ARD-016 Phase A); not in row shape
+    };
   },
   toCamel(schemaRow: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(schemaRow, snakeToCamel);
+    const truthStatus = String(schemaRow.truth_status ?? "unknown");
+    return {
+      id: schemaRow.belief_id,
+      statement: schemaRow.claim,
+      // truth_status values "partial"/"unknown"/"contested" collapse to isTrue=false
+      // (engine's binary model can't represent them; engine reads should consult
+      // truthStatus directly for nuanced cases — exposed via meta side-channel).
+      isTrue: truthStatus === "true",
+      truthStatus, // expose raw schema value for engine code that wants nuance
+      confidence: beliefConfidenceFromInt(Number(schemaRow.confidence ?? 50)),
+      supportingEvidence: (schemaRow.source_ids as string[] | undefined) ?? [],
+      contradictingEvidence: [],
+    };
   },
 };
 

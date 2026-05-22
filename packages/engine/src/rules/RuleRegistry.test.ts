@@ -1,0 +1,191 @@
+/**
+ * RuleRegistry tests — Phase 24c §Session 5b Risk #3.
+ *
+ * Verifies the ARD-017 RuleRegistry abstraction:
+ *   1. Schema registration enforces Tier 2 markers
+ *   2. Rule add validates against registered schemas
+ *   3. findRulesFor() entity/field disambiguation
+ *   4. getRule() and listRules() consumption patterns
+ *   5. Strict vs non-strict validation modes
+ *
+ * Smoke-tests against the actual Phase 4.10 rule
+ * (opening_hours_disagreement_rule) + its schema.
+ */
+import { describe, it, expect } from "vitest";
+import {
+  RuleRegistry,
+  validateRuleAgainstSchema,
+  type EngineRule,
+  type RuleClassSchema,
+} from "./RuleRegistry.js";
+
+// Fixture: minimal Tier 2 schema following ARD-017 conventions
+const disagreementRuleSchema: RuleClassSchema = {
+  type: "object",
+  required: ["rule_id", "applies_to_entity", "applies_to_field"],
+  x_registry_tier: "engine_config",
+  x_generator_emission: "none",
+  properties: {
+    rule_id: { /* type: string */ },
+    applies_to_entity: {},
+    applies_to_field: {},
+    resolution_strategy: {},
+  },
+};
+
+// Fixture: the Phase 4.10 ratified rule
+const openingHoursRule: EngineRule = {
+  rule_id: "opening_hours_disagreement_rule_v1",
+  applies_to_entity: "institution",
+  applies_to_field: "opening_hours",
+  resolution_strategy: "highest_trust_source",
+  fallback_strategy: "surface_disagreement",
+  trust_ranking: [
+    { source_kind: "institution_canonical_record", trust: 10 },
+    { source_kind: "rumor", trust: 2 },
+  ],
+  side_effects_on_disagreement: [],
+  validator_chain_stage_5_hook: true,
+};
+
+describe("RuleRegistry / validateRuleAgainstSchema", () => {
+  it("accepts rule satisfying all required fields", () => {
+    const result = validateRuleAgainstSchema(openingHoursRule as Record<string, unknown>, disagreementRuleSchema);
+    expect(result.valid).toBe(true);
+  });
+
+  it("rejects rule missing required fields", () => {
+    const bad = { rule_id: "x_v1" }; // missing applies_to_entity + applies_to_field
+    const result = validateRuleAgainstSchema(bad, disagreementRuleSchema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors).toContain("Missing required field: 'applies_to_entity'");
+      expect(result.errors).toContain("Missing required field: 'applies_to_field'");
+    }
+  });
+
+  it("rejects rule missing rule_id (always required regardless of schema)", () => {
+    const bad = { applies_to_entity: "x", applies_to_field: "y" };
+    const result = validateRuleAgainstSchema(bad, disagreementRuleSchema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors.some((e) => e.includes("rule_id"))).toBe(true);
+    }
+  });
+});
+
+describe("RuleRegistry / schema registration discipline", () => {
+  it("refuses schemas without x_registry_tier='engine_config' (Tier 2 leakage guard)", () => {
+    const reg = new RuleRegistry();
+    const badSchema: RuleClassSchema = {
+      type: "object",
+      required: [],
+      // NO x_registry_tier — would be a Tier 1 schema_pack fragment
+    };
+    expect(() => reg.registerSchema("rogue_schema", badSchema)).toThrow(
+      /x_registry_tier="engine_config"/,
+    );
+  });
+
+  it("accepts schemas with the engine_config marker", () => {
+    const reg = new RuleRegistry();
+    expect(() => reg.registerSchema("disagreement_rule", disagreementRuleSchema)).not.toThrow();
+  });
+});
+
+describe("RuleRegistry / addRule + strict validation", () => {
+  it("adds a valid rule with no schema registered (validation skipped)", () => {
+    const reg = new RuleRegistry();
+    reg.addRule(openingHoursRule);
+    expect(reg.size()).toBe(1);
+    expect(reg.getRule("opening_hours_disagreement_rule_v1")).toBe(openingHoursRule);
+  });
+
+  it("adds a valid rule with schema (validation passes)", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    reg.addRule(openingHoursRule, "disagreement_rule");
+    expect(reg.size()).toBe(1);
+  });
+
+  it("throws on invalid rule under strict validation (default)", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const bad: EngineRule = { rule_id: "bad_v1" }; // missing applies_to_entity + applies_to_field
+    expect(() => reg.addRule(bad, "disagreement_rule")).toThrow(/failed Tier 2 validation/);
+    expect(reg.size()).toBe(0);
+  });
+
+  it("collects errors instead of throwing under non-strict validation", () => {
+    const reg = new RuleRegistry({ strictValidation: false });
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const bad: EngineRule = { rule_id: "bad_v1" };
+    expect(() => reg.addRule(bad, "disagreement_rule")).not.toThrow();
+    expect(reg.size()).toBe(0); // bad rule still skipped
+    expect(reg.loadErrors).toHaveLength(1);
+    expect(reg.loadErrors[0].ruleId).toBe("bad_v1");
+  });
+});
+
+describe("RuleRegistry / findRulesFor", () => {
+  it("returns rules matching entity.field target", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    const hits = reg.findRulesFor("institution.opening_hours");
+    expect(hits).toHaveLength(1);
+    expect(hits[0].rule_id).toBe("opening_hours_disagreement_rule_v1");
+  });
+
+  it("returns empty array when no rules match", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    expect(reg.findRulesFor("npc.location_id")).toEqual([]);
+  });
+
+  it("entity-only lookup returns all rules for that entity (any field)", () => {
+    const otherRule: EngineRule = {
+      rule_id: "fake_rule_v1",
+      applies_to_entity: "institution",
+      applies_to_field: "leadership",
+    };
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule, otherRule] });
+    expect(reg.findRulesFor("institution")).toHaveLength(2);
+    expect(reg.findRulesFor("institution.opening_hours")).toHaveLength(1);
+    expect(reg.findRulesFor("institution.leadership")).toHaveLength(1);
+  });
+});
+
+describe("RuleRegistry / listRules + size", () => {
+  it("listRules returns all loaded rules", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    const list = reg.listRules();
+    expect(list).toHaveLength(1);
+    expect(list[0]).toBe(openingHoursRule);
+  });
+
+  it("size grows as rules are added", () => {
+    const reg = new RuleRegistry();
+    expect(reg.size()).toBe(0);
+    reg.addRule(openingHoursRule);
+    expect(reg.size()).toBe(1);
+    reg.addRule({ rule_id: "second_rule_v1", applies_to_entity: "npc", applies_to_field: "x" });
+    expect(reg.size()).toBe(2);
+  });
+});
+
+describe("RuleRegistry / Phase 4.10 smoke (actual ratified rule)", () => {
+  it("loads + validates + looks up opening_hours_disagreement_rule_v1", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    reg.addRule(openingHoursRule, "disagreement_rule");
+
+    // Verify the engine consumption flow per ARD-017 §engine-consumption-pattern
+    const rules = reg.findRulesFor("institution.opening_hours");
+    expect(rules).toHaveLength(1);
+    expect(rules[0].rule_id).toBe("opening_hours_disagreement_rule_v1");
+    expect((rules[0] as { resolution_strategy?: string }).resolution_strategy).toBe(
+      "highest_trust_source",
+    );
+    expect((rules[0] as { validator_chain_stage_5_hook?: boolean }).validator_chain_stage_5_hook).toBe(
+      true,
+    );
+  });
+});

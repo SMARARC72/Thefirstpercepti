@@ -1,4 +1,13 @@
 export * from './types';
+export {
+  RuleRegistry,
+  validateRuleAgainstSchema,
+  type EngineRule,
+  type RuleClassSchema,
+  type RuleRegistryOptions,
+  type RuleRegistrySurface,
+  type RuleValidationResult,
+} from './rules/RuleRegistry';
 export * from './engine/CharacterCreation';
 export * from './engine/ContentValidator';
 export {
