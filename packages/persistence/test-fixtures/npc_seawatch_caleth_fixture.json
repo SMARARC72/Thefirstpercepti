@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "fixture_id": "npc_seawatch_caleth",
+    "purpose": "Per-NPC roundtrip test fixture per Discipline 1.",
+    "phase": "24d / Session 6a / 6a.4 / Sergeant Mer Caleth (closes 6a.4)",
+    "pattern_archetype": "soldier + Bell Court Sea-watch sub-faction + Vested fingerprint (PO.II authored)",
+    "live_row_id": "npc-seawatch-sergeant-mer-caleth"
+  },
+  "engineShape": {
+    "id": "npc-seawatch-sergeant-mer-caleth",
+    "name": "Sergeant Mer Caleth",
+    "role": "Senior Watchwoman of the Greywake Sea-watch",
+    "description": "Mid-fifties. Lean. Carries her left arm slightly stiff — old injury from a dockside arrest she does not discuss. Sea-watch tabard fits her like she's worn it for thirty years because she has. Salt-stained boots.",
+    "factionId": "fac-civic-bell-court",
+    "locationId": "loc-greywake-dockside",
+    "hp": 14,
+    "maxHp": 14,
+    "stats": {
+      "body": 14,
+      "grace": 9,
+      "sense": 14,
+      "mind": 11,
+      "will": 13,
+      "presence": 12,
+      "authority": 8,
+      "ruin": 5,
+      "creation": 3
+    },
+    "derivedStats": {
+      "str": 14,
+      "dex": 9,
+      "con": 14,
+      "int": 11,
+      "wis": 14,
+      "cha": 12
+    },
+    "tags": ["named-slice-npc", "seawatch-sub-faction", "bell-court-vested", "soldier-archetype", "vested-fingerprint", "retirement-countdown", "po-ii-authored", "paired-with-voryn", "slice"],
+    "wantModel": {
+      "drive": {
+        "description": "Retire cleanly. Four months remain in her service; the closing-condition race has a deadline.",
+        "intensity": 4,
+        "freshness_decay": 0
+      },
+      "barter": [
+        {"offered": "information about which dockside warehouses Tide League actually uses", "cost_to_npc": 3, "audience_refuse": ["drowned_church"]},
+        {"offered": "permission to read a sealed Sea-watch incident log (writ-permit OR verifiably outside both contesting factions)", "cost_to_npc": 4},
+        {"offered": "her own quiet judgment on whether Bell-Magistrate Orro is right about The Unnamed (offered ONLY to no-faction-loyalty player at end of shift)", "cost_to_npc": 5}
+      ],
+      "kill_for": {
+        "trigger_condition": "watch member under her supervision moved against; aggressor at lethal risk",
+        "threshold": "legal force first; physical only if a watch member is at lethal risk",
+        "target_class": "aggressor"
+      },
+      "fear_loss": {
+        "what": "the clean-retirement timeline; doctrinal-court testimony would pull her in unwillingly",
+        "urgency": 4,
+        "abandons_drive_if_imminent": false
+      }
+    },
+    "knowledgeTriLayer": {
+      "knows": [
+        {"fact_id": "fact-seawatch-funding-tied-to-tide-league-scrip-stability", "source_event_id": "evt-caleth-budget-briefing-historical", "certainty": 5, "last_recalled": "ongoing"},
+        {"fact_id": "fact-tide-league-actual-warehouse-list", "source_event_id": "evt-caleth-dockside-patrol-decades", "certainty": 5, "last_recalled": "ongoing"},
+        {"fact_id": "fact-two-prior-watch-members-quit-suddenly", "source_event_id": "evt-caleth-personnel-history", "certainty": 4},
+        {"fact_id": "fact-magistrate-verro-inquiry-adjacent-to-shift", "source_event_id": "evt-caleth-shift-briefing-current", "certainty": 3, "last_recalled": "current_week"}
+      ],
+      "says": {
+        "default_policy": "selective",
+        "per_audience_overrides": {
+          "bell_court_superior": "procedural_no_opinion",
+          "drowned_church": "courteous_no_signal",
+          "tide_league": "transactional_no_commitment",
+          "fellow_seawatch": "occasionally_candid",
+          "player_no_faction": "dry_observational"
+        }
+      },
+      "believes": [
+        {"proposition": "Years of service taught me more than my superiors know", "conviction": 5, "evidence_resistance": 4},
+        {"proposition": "The Bell Court is procedurally correct most of the time and morally correct rarely", "conviction": 4, "evidence_resistance": 3},
+        {"proposition": "The Unnamed is real; the Bell Courts jurisdictional claim over The Unnamed is doubtful; neither belief is for public discussion", "conviction": 4, "evidence_resistance": 4}
+      ]
+    },
+    "closingConditions": [
+      {
+        "kind": "success_state",
+        "description": "Clean four-month retirement completed without doctrinal-court testimony; Caleth transitions to retired-watch NPC (occasional witness role).",
+        "player_reachable": true,
+        "consequence_summary": "Caleth absent from active duty; available as occasional witness/informant for player; Sea-watch roster reduced by one senior; Voryn promotion accelerated."
+      },
+      {
+        "kind": "passover_state",
+        "description": "Caleth forced to testify in a doctrinal-civic dispute; retires under cloud.",
+        "player_reachable": true,
+        "consequence_summary": "Caleth retires with reputational damage; transitions to quiet contempt for the Court that abandoned her; becomes occasional informant to Drowned Church (player-aligned with Drowned Church gains a low-cost informant; player-aligned with Bell Court loses a procedural ally).",
+        "residue_drive": {
+          "description": "Quiet contempt for the Bell Court; willing to leak procedural details to Drowned Church contacts at low cost",
+          "intensity": 3
+        }
+      },
+      {
+        "kind": "death_state",
+        "description": "Caleth dies on duty (low probability per Codex; her competence makes this content-relevant but not likely without direct player intervention).",
+        "player_reachable": false,
+        "consequence_summary": "Sea-watch loses senior commander mid-retirement window; Bell Court emergency promotion (Voryn promoted unprepared OR external senior reassigned); Drowned Church + Tide League both flag the destabilization."
+      }
+    ],
+    "memoryArchetype": "soldier",
+    "ambitionTick": {
+      "cadence": "irregular_per_assignment",
+      "success_streak": 0,
+      "last_attempt": null
+    },
+    "scheduleNesting": {
+      "local_pattern": {
+        "summary": "Watch HQ 06:00-08:00 (briefing); dockside patrol with Voryn 08:00-14:00; civic district 14:00-18:00 (reports); home 18:00-22:00. Off-duty location varies between dockside tavern and home."
+      },
+      "nested_under_institution_id": "inst-civic-bell-court",
+      "variance_seed": "caleth-seawatch-senior-30min-shift-offset"
+    }
+  }
+}
