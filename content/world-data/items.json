@@ -3997,6 +3997,14 @@
           "duration_in_world_hours": null
         }
       ],
+      "effects_on_use_structured": [
+        {
+          "effect_kind": "spell_cast",
+          "spell_id": "harden_contradiction",
+          "charges_per_use": 1,
+          "magnitude_int": null
+        }
+      ],
       "weight_lb": 0.05,
       "value_cp": 1200,
       "weapon_properties": [],
@@ -4019,8 +4027,7 @@
         "faction_aligned_bell_court",
         "witness_bearing",
         "attunement_required",
-        "v0_9_crafting_graph_pending",
-        "v0_9_on_use_effect_pending"
+        "v0_9_crafting_graph_pending"
       ]
     },
     {
