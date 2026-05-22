@@ -77,6 +77,51 @@ export interface DisagreementResolution {
 }
 
 // ============================================================================
+// INTERNAL: rule specificity scoring
+// ============================================================================
+
+/**
+ * Score a rule's specificity relative to a target. Higher score = more specific.
+ *   - 3 = exact entity AND exact field
+ *   - 2 = exact entity, wildcard field
+ *   - 1 = wildcard entity, exact field
+ *   - 0 = wildcard entity AND wildcard field (or no fields at all)
+ *
+ * Wildcard rules are LESS specific than exact rules; among same specificity
+ * tier, insertion order breaks the tie.
+ */
+function specificityScore(rule: EngineRule, target: string): number {
+  const dotIndex = target.indexOf(".");
+  const entity = dotIndex >= 0 ? target.slice(0, dotIndex) : target;
+  const field = dotIndex >= 0 ? target.slice(dotIndex + 1) : undefined;
+  const entityExact = rule.applies_to_entity === entity;
+  const fieldExact = field !== undefined && rule.applies_to_field === field;
+  if (entityExact && fieldExact) return 3;
+  if (entityExact && rule.applies_to_field === "*") return 2;
+  if (rule.applies_to_entity === "*" && fieldExact) return 1;
+  return 0;
+}
+
+/**
+ * From a list of matching rules, pick the most-specific one. Returns null on
+ * empty input. Stable: among same specificity, the first rule by insertion
+ * order wins.
+ */
+function pickMostSpecificRule(rules: EngineRule[], target: string): EngineRule | null {
+  if (rules.length === 0) return null;
+  let best = rules[0];
+  let bestScore = specificityScore(best, target);
+  for (let i = 1; i < rules.length; i++) {
+    const score = specificityScore(rules[i], target);
+    if (score > bestScore) {
+      best = rules[i];
+      bestScore = score;
+    }
+  }
+  return best;
+}
+
+// ============================================================================
 // PUBLIC API
 // ============================================================================
 
@@ -109,10 +154,29 @@ export function applyDisagreementRules(
     (o) => JSON.stringify(o.value) !== firstValueStr,
   );
 
-  // Find rule(s) for target — first matching rule wins (could extend to
-  // multi-rule chains in v0.9 if needed; v0.8 has 1 rule per target).
-  const rules = registry.findRulesFor(target);
-  const matched_rule = rules[0] ?? null;
+  // Phase 5c.x BUG-FIX: select by rule CLASS + specific-over-wildcard precedence.
+  //
+  // Why: registry.findRulesFor returns ALL rules whose entity/field match
+  // (including wildcard "*" rules per ARD-017 future rule classes). Picking
+  // rules[0] made resolution depend on registry insertion order — a wildcard
+  // scene-routing rule registered before a specific disagreement rule would
+  // be chosen for a disagreement resolution, which is semantically wrong.
+  //
+  // Selection contract:
+  //   1. Filter to disagreement-class rules only (signature: has
+  //      `resolution_strategy` string field — disambiguates from scene
+  //      routing / validator chain configs / slide triggers / etc.)
+  //   2. Among disagreement rules, prefer EXACT entity+field matches over
+  //      wildcards. Order: (exact entity AND exact field) > (exact entity,
+  //      wildcard field) > (wildcard entity, exact field) > both wildcard.
+  //   3. Among rules at the same specificity tier, the first one (by
+  //      insertion order) wins. v0.9 may extend with `priority` field per
+  //      rule for explicit ordering.
+  const all = registry.findRulesFor(target);
+  const disagreementRules = all.filter(
+    (r) => typeof r.resolution_strategy === "string",
+  );
+  const matched_rule = pickMostSpecificRule(disagreementRules, target);
 
   // No rule registered → return first observation as winner (engine default)
   if (!matched_rule) {

@@ -168,6 +168,98 @@ describe("applyDisagreementRules / most_recent_source resolution", () => {
   });
 });
 
+describe("applyDisagreementRules / rule-class selection + specific-over-wildcard (Phase 5c.x BUG-FIX-6)", () => {
+  it("ignores non-disagreement rules (scene routing) when picking resolution rule", () => {
+    // A scene routing rule with applies_to_entity="*" matches institution.opening_hours
+    // via findRulesFor's wildcard semantics. applyDisagreementRules MUST ignore it
+    // (no resolution_strategy field → not a disagreement rule).
+    const sceneRoutingRule: EngineRule = {
+      rule_id: "scene_routing_universal_v1",
+      applies_to_entity: "*",
+      applies_to_field: "*",
+      scene_id_when_match: "default_scene",
+      // NO resolution_strategy — this is a scene routing rule
+    };
+    const reg = new RuleRegistry({
+      preloadedRules: [sceneRoutingRule, openingHoursRule], // scene routing FIRST
+    });
+    const obs: SourceObservation[] = [
+      { source_kind: "institution_canonical_record", value: "first dawn" },
+      { source_kind: "rumor", value: "midnight" },
+    ];
+    const result = applyDisagreementRules(reg, "institution.opening_hours", obs);
+    expect(result.matched_rule?.rule_id).toBe("opening_hours_disagreement_rule_v1");
+    expect(result.resolved_observation?.value).toBe("first dawn");
+  });
+
+  it("prefers exact entity+field over wildcard disagreement rules regardless of insertion order", () => {
+    const wildcardDisagreementRule: EngineRule = {
+      rule_id: "universal_disagreement_fallback_v1",
+      applies_to_entity: "*",
+      applies_to_field: "*",
+      resolution_strategy: "most_recent_source",
+      fallback_strategy: "surface_disagreement",
+    };
+    // Insert wildcard FIRST to prove insertion order doesn't decide
+    const reg = new RuleRegistry({
+      preloadedRules: [wildcardDisagreementRule, openingHoursRule],
+    });
+    const obs: SourceObservation[] = [
+      { source_kind: "rumor", value: "midnight" },
+      { source_kind: "institution_canonical_record", value: "first dawn" },
+    ];
+    const result = applyDisagreementRules(reg, "institution.opening_hours", obs);
+    expect(result.matched_rule?.rule_id).toBe("opening_hours_disagreement_rule_v1");
+    // highest_trust_source wins (institutional > rumor)
+    expect(result.resolved_observation?.value).toBe("first dawn");
+  });
+
+  it("falls back to wildcard disagreement rule when no specific rule exists", () => {
+    const wildcardDisagreementRule: EngineRule = {
+      rule_id: "universal_disagreement_fallback_v1",
+      applies_to_entity: "*",
+      applies_to_field: "*",
+      resolution_strategy: "most_recent_source",
+      fallback_strategy: "surface_disagreement",
+    };
+    const reg = new RuleRegistry({
+      preloadedRules: [wildcardDisagreementRule],
+    });
+    // Target with no specific rule
+    const obs: SourceObservation[] = [
+      { source_kind: "newest", value: "Z" },
+      { source_kind: "older", value: "Y" },
+    ];
+    const result = applyDisagreementRules(reg, "npc.faction_id", obs);
+    expect(result.matched_rule?.rule_id).toBe("universal_disagreement_fallback_v1");
+    expect(result.resolved_observation?.value).toBe("Z"); // most_recent (first in array)
+  });
+
+  it("entity-exact + wildcard-field ranks higher than wildcard-entity + exact-field", () => {
+    const ruleEntityExact: EngineRule = {
+      rule_id: "npc_any_field_v1",
+      applies_to_entity: "npc",
+      applies_to_field: "*",
+      resolution_strategy: "highest_trust_source",
+      fallback_strategy: "use_default",
+    };
+    const ruleFieldExact: EngineRule = {
+      rule_id: "any_entity_campaign_id_v1",
+      applies_to_entity: "*",
+      applies_to_field: "campaign_id",
+      resolution_strategy: "majority_consensus",
+      fallback_strategy: "surface_disagreement",
+    };
+    const reg = new RuleRegistry({
+      preloadedRules: [ruleFieldExact, ruleEntityExact], // field-exact inserted first
+    });
+    const obs: SourceObservation[] = [{ source_kind: "x", value: "y" }];
+    const result = applyDisagreementRules(reg, "npc.campaign_id", obs);
+    // entity-exact (score 2) beats field-exact (score 1) — most-specific entity match wins
+    expect(result.matched_rule?.rule_id).toBe("npc_any_field_v1");
+  });
+});
+
 describe("applyDisagreementRules / Phase 4.10 scenario (Ilyra vs Orro on bell-tower hours)", () => {
   it("resolves Marrow-Saint Ilyra (npc inside) vs Bell-Magistrate Orro (institution_canonical) to the institutional record", () => {
     const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
