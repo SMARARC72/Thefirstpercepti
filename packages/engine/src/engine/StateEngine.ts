@@ -42,7 +42,7 @@ import {
   EntityRemoval,
   EntityChanges,
   ConsequenceEffect,
-  PartialStatBlock,
+  RuntimePartialStatBlock,
   CoreStat,
   ActionType,
 } from '../engine-types';
@@ -657,7 +657,7 @@ export class StateEngine {
     // Apply stat changes to player
     if (effect.statChanges && this.player) {
       const oldPlayer = this.deepClone(this.player);
-      const changes = effect.statChanges as PartialStatBlock;
+      const changes = effect.statChanges as RuntimePartialStatBlock;
       for (const [stat, delta] of Object.entries(changes)) {
         if (delta !== undefined && stat in this.player.stats) {
           this.player.stats[stat as CoreStat] += delta as number;

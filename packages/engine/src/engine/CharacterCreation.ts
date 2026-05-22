@@ -25,7 +25,7 @@ import {
   Ability,
   Trait,
   Condition,
-  StatBlock,
+  RuntimeStatBlock,
   EntityId,
   CHARACTER_FORMS,
   KNOWLEDGE_POSTURES,
@@ -130,7 +130,7 @@ export interface StatAssignment {
   /** Remaining points */
   remaining: number;
   /** Current stat values */
-  stats: Partial<StatBlock>;
+  stats: Partial<RuntimeStatBlock>;
 }
 
 /** Default stat costs for point-buy */
@@ -254,7 +254,7 @@ export class CharacterCreationEngine {
   }
 
   /** Get stat modifiers from chosen form */
-  getFormModifiers(form: CharacterForm): Partial<StatBlock> {
+  getFormModifiers(form: CharacterForm): Partial<RuntimeStatBlock> {
     switch (form) {
       case 'human':
         return { mind: 1, presence: 1 };
@@ -313,9 +313,9 @@ export class CharacterCreationEngine {
   }
 
   /** Get suggested stats from capability claim */
-  getCapabilitySuggestions(claim: string): Partial<StatBlock> {
+  getCapabilitySuggestions(claim: string): Partial<RuntimeStatBlock> {
     const claim_lower = claim.toLowerCase();
-    const suggestions: Partial<StatBlock> = {};
+    const suggestions: Partial<RuntimeStatBlock> = {};
 
     if (claim_lower.includes('strong') || claim_lower.includes('fight') || claim_lower.includes('war')) {
       suggestions.body = ((suggestions.body ?? 0) + 2);
@@ -362,8 +362,8 @@ export class CharacterCreationEngine {
   }
 
   /** Get posture description and stat influence */
-  getPostureInfo(posture: KnowledgePosture): { description: string; statBonus: Partial<StatBlock> } {
-    const info: Record<KnowledgePosture, { description: string; statBonus: Partial<StatBlock> }> = {
+  getPostureInfo(posture: KnowledgePosture): { description: string; statBonus: Partial<RuntimeStatBlock> } {
+    const info: Record<KnowledgePosture, { description: string; statBonus: Partial<RuntimeStatBlock> }> = {
       seeker: {
         description: 'You believe knowledge must be found, whatever the cost.',
         statBonus: { sense: 1, mind: 1 },
@@ -425,7 +425,7 @@ export class CharacterCreationEngine {
   }
 
   /** Assign a stat value, returning the updated assignment */
-  assignStat(assignment: StatAssignment, stat: keyof StatBlock, value: number): StatAssignment {
+  assignStat(assignment: StatAssignment, stat: keyof RuntimeStatBlock, value: number): StatAssignment {
     const cost = getStatCost(value);
     const currentValue = assignment.stats[stat] ?? 0;
     const currentCost = getStatCost(currentValue);
@@ -445,8 +445,8 @@ export class CharacterCreationEngine {
   }
 
   /** Get auto-suggested stats based on character inputs */
-  getSuggestedStats(): Partial<StatBlock> {
-    const suggestions: Partial<StatBlock> = {};
+  getSuggestedStats(): Partial<RuntimeStatBlock> {
+    const suggestions: Partial<RuntimeStatBlock> = {};
 
     // Form modifiers
     if (this.inputs.form) {
@@ -483,7 +483,7 @@ export class CharacterCreationEngine {
     const seed = this.config.seed;
 
     // 1. Build player stats
-    const baseStats: StatBlock = {
+    const baseStats: RuntimeStatBlock = {
       body: statAssignment.stats.body ?? 1,
       grace: statAssignment.stats.grace ?? 1,
       sense: statAssignment.stats.sense ?? 1,
@@ -1232,7 +1232,7 @@ export class CharacterCreationEngine {
   // STARTING ABILITIES
   // =============================================================================
 
-  private generateStartingAbilities(stats: StatBlock, inputs: CreationInputs): Ability[] {
+  private generateStartingAbilities(stats: RuntimeStatBlock, inputs: CreationInputs): Ability[] {
     const abilities: Ability[] = [];
 
     // Everyone gets these basics

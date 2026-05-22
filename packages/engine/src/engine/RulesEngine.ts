@@ -19,7 +19,7 @@ import {
   CoreStat,
   ActionType,
   Condition,
-  StatBlock,
+  RuntimeStatBlock,
   Consequence,
   ConsequenceTrigger,
   ConsequenceEffect,
@@ -35,7 +35,7 @@ import {
   GameEngineError,
   NPCMemory,
   Item,
-  PartialStatBlock,
+  RuntimePartialStatBlock,
 } from '../engine-types';
 import { DiceEngine } from './DiceEngine';
 
@@ -702,8 +702,8 @@ export class RulesEngine {
     };
   }
 
-  private costToStatChanges(cost: CostCalculation): PartialStatBlock {
-    const changes: PartialStatBlock = {};
+  private costToStatChanges(cost: CostCalculation): RuntimePartialStatBlock {
+    const changes: RuntimePartialStatBlock = {};
 
     for (const costType of cost.costTypes) {
       if (costType.resource === 'hp' && costType.amount > 0) {
@@ -800,8 +800,8 @@ export class RulesEngine {
   /** Calculate damage for a successful attack */
   calculateDamage(
     rollResult: RollResult,
-    attackerStats: StatBlock,
-    defenderStats: StatBlock
+    attackerStats: RuntimeStatBlock,
+    defenderStats: RuntimeStatBlock
   ): { damage: number; critical: boolean; narrative: string } {
     const baseDamage = Math.max(1, attackerStats.body + attackerStats.ruin);
     let multiplier = 1;
