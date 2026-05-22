@@ -1,0 +1,123 @@
+{
+  "_meta": {
+    "fixture_id": "npc_seawatch_voryn",
+    "purpose": "Per-NPC roundtrip test fixture per Discipline 1.",
+    "phase": "24d / Session 6a / 6a.4 / Watchwoman Tess Voryn (closes 6a.4)",
+    "pattern_archetype": "soldier (early-career) + Bell Court Sea-watch sub-faction + Cynical fingerprint (PO.II authored; fingerprint-slide candidate)",
+    "live_row_id": "npc-seawatch-tess-voryn",
+    "notes": "Closing condition set has NO death_state — Voryn is junior + uncertain; lethal-risk content rests on Caleth per Codex pairing"
+  },
+  "engineShape": {
+    "id": "npc-seawatch-tess-voryn",
+    "name": "Watchwoman Tess Voryn",
+    "role": "Junior Sea-watch, four years service",
+    "description": "Late twenties. Short. Always seems to be one step from leaving the watch, then doesn't. Her tabard is too new; she replaced it last season. Walks like someone who has not yet decided whether she wants to be here.",
+    "factionId": "fac-civic-bell-court",
+    "locationId": "loc-greywake-dockside",
+    "hp": 11,
+    "maxHp": 11,
+    "stats": {
+      "body": 11,
+      "grace": 12,
+      "sense": 12,
+      "mind": 11,
+      "will": 9,
+      "presence": 11,
+      "authority": 4,
+      "ruin": 3,
+      "creation": 3
+    },
+    "derivedStats": {
+      "str": 11,
+      "dex": 12,
+      "con": 12,
+      "int": 11,
+      "wis": 12,
+      "cha": 11
+    },
+    "tags": ["named-slice-npc", "seawatch-sub-faction", "bell-court-uncertain", "soldier-archetype", "cynical-fingerprint", "fingerprint-slide-candidate", "po-ii-authored", "paired-with-caleth", "slice"],
+    "wantModel": {
+      "drive": {
+        "description": "Resolve uncertainty about whether the watch is the right place for her, by the end of next civic cycle. Open to being convinced either way.",
+        "intensity": 3,
+        "freshness_decay": 0
+      },
+      "barter": [
+        {"offered": "hearsay from the dockside about Tide League scrip rates", "cost_to_npc": 1},
+        {"offered": "her own observation that Sergeant Caleth has been different the last month", "cost_to_npc": 2, "requires": "any_rapport"},
+        {"offered": "fragments of Junior Magistrate Verros inquiry (overheard hallway conversations)", "cost_to_npc": 3, "requires": "trust_outside_watch_chain"}
+      ],
+      "kill_for": {
+        "trigger_condition": "fellow watch member at lethal risk; will draw before legal protocol if she is the only one on scene (has not done this yet; uncertain whether she will)",
+        "threshold": "lethal_risk",
+        "target_class": "aggressor"
+      },
+      "fear_loss": {
+        "what": "the choice itself; either path may be the wrong one",
+        "urgency": 4,
+        "abandons_drive_if_imminent": false
+      }
+    },
+    "knowledgeTriLayer": {
+      "knows": [
+        {"fact_id": "fact-caleth-counting-down-to-retirement", "source_event_id": "evt-voryn-partner-observation-monthly", "certainty": 4, "last_recalled": "current_week"},
+        {"fact_id": "fact-verro-inquiry-hallway-fragments", "source_event_id": "evt-voryn-hq-overheard-fragments", "certainty": 2, "last_recalled": "current_week"},
+        {"fact_id": "fact-two-dockside-tavernkeepers-by-name", "source_event_id": "evt-voryn-patrol-rounds-quarterly", "certainty": 5, "last_recalled": "ongoing"},
+        {"fact_id": "fact-one-training-cohort-quit-took-tide-league-security", "source_event_id": "evt-voryn-cohort-attrition", "certainty": 4}
+      ],
+      "says": {
+        "default_policy": "selective",
+        "per_audience_overrides": {
+          "anyone_friendly": "more_than_she_should",
+          "sergeant_caleth": "deferential",
+          "civilian_unknown": "by_the_book",
+          "player_open_handed": "talkative",
+          "player_as_authority": "terse"
+        }
+      },
+      "believes": [
+        {"proposition": "My uncertainty about the watch is the most important thing about me right now", "conviction": 4, "evidence_resistance": 2},
+        {"proposition": "Caleth knows the right answer but wont tell me", "conviction": 4, "evidence_resistance": 3},
+        {"proposition": "The Unnamed is probably a real thing I dont understand", "conviction": 3, "evidence_resistance": 1},
+        {"proposition": "Bell Court magistrates are mostly tired men", "conviction": 3, "evidence_resistance": 2}
+      ]
+    },
+    "closingConditions": [
+      {
+        "kind": "success_state",
+        "description": "Voryn stays; promoted to senior tier; transitions to mid-career Sea-watch NPC. Fingerprint slides Cynical → Vested.",
+        "player_reachable": true,
+        "consequence_summary": "Voryn promoted; becomes institutional ally for Bell Court-aligned players; her early-career social-memory advantage carries forward as senior; Sea-watch roster stabilized post-Caleth retirement."
+      },
+      {
+        "kind": "transfer_state",
+        "description": "Voryn leaves the watch; takes work with Tide League OR Drowned Church (HC contradiction: which is content-driven). Fingerprint slides Cynical → Fugitive (exit-glance tells become permanent).",
+        "player_reachable": true,
+        "consequence_summary": "Voryn no longer Sea-watch; reappears in target factions roster; Bell Court Sea-watch sub-faction destabilized (two senior departures in same cycle if paired with Caleth retirement); player may encounter her in new institutional context."
+      },
+      {
+        "kind": "passover_state",
+        "description": "Voryn stays unhappily; transitions to residue_drive = quiet competence, occasional informant.",
+        "player_reachable": true,
+        "consequence_summary": "Voryn remains Sea-watch but disengaged; available as low-trust informant for non-Bell-Court players; never promoted; her unresolved uncertainty becomes a permanent character feature.",
+        "residue_drive": {
+          "description": "Quiet competent service without commitment; occasional informant to whoever earns minimum trust outside the watch chain",
+          "intensity": 2
+        }
+      }
+    ],
+    "memoryArchetype": "soldier",
+    "ambitionTick": {
+      "cadence": "civic_6x_year",
+      "success_streak": 0,
+      "last_attempt": null
+    },
+    "scheduleNesting": {
+      "local_pattern": {
+        "summary": "Watch HQ 06:00-08:00 (briefing); dockside patrol with Caleth 08:00-14:00; bunk-house or off-duty 14:00-22:00 (varies). Mood per playthrough: talkative / withdrawn / restless."
+      },
+      "nested_under_institution_id": "inst-civic-bell-court",
+      "variance_seed": "voryn-seawatch-junior-mood-variant"
+    }
+  }
+}
