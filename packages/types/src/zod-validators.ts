@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T20:55:26.927Z
+ * Generated at:   2026-05-22T21:24:47.111Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -865,7 +865,7 @@ export const WorldPulseTickerItemZ = z.object({
 export type WorldPulseTickerItem = z.infer<typeof WorldPulseTickerItemZ>;
 
 // ============================================================================
-// Top-level entities (56)
+// Top-level entities (57)
 // ============================================================================
 
 export const CampaignSchemaZ = z.object({
@@ -2150,6 +2150,16 @@ export type InstitutionResponseQueueEntrySchema = z.infer<typeof InstitutionResp
 
 export const FailureStateBranchSchemaZ = z.object({
       "branch_id": z.string(),
+      "branch_state": z.enum(["pending", "armed", "fired", "averted", "resolved"]),
+      "armed_at_day": z.number().int().min(0).optional(),
+      "resolved_at_day": z.number().int().min(0).nullable().optional(),
+      "campaign_id": z.string(),
+      "session_id": z.string(),
+    }).strict();
+export type FailureStateBranchSchema = z.infer<typeof FailureStateBranchSchemaZ>;
+
+export const FailureStateBranchTemplateSchemaZ = z.object({
+      "branch_id": z.string(),
       "parent_plot_id": z.string(),
       "trigger": z.enum(["spine_question_unanswered", "central_npc_lost", "central_institution_collapsed", "pressure_overrun", "player_withdrawal", "rival_plot_displacement"]),
       "cosmological_reach": z.enum(["local", "regional", "pan_world", "cosmological"]),
@@ -2163,13 +2173,8 @@ export const FailureStateBranchSchemaZ = z.object({
     }).strict()).min(1),
       "handle_window_days": z.number().int().min(3),
       "point_of_no_return_marker_ids": z.array(z.string()).optional(),
-      "branch_state": z.enum(["pending", "armed", "fired", "averted", "resolved"]),
-      "armed_at_day": z.number().int().min(0).optional(),
-      "resolved_at_day": z.number().int().min(0).nullable().optional(),
-      "campaign_id": z.string(),
-      "session_id": z.string(),
     }).strict();
-export type FailureStateBranchSchema = z.infer<typeof FailureStateBranchSchemaZ>;
+export type FailureStateBranchTemplateSchema = z.infer<typeof FailureStateBranchTemplateSchemaZ>;
 
 export const CreatureSchemaZ = z.object({
       "creature_id": z.string(),
@@ -2266,5 +2271,5 @@ export const InformationSchemaZ = z.object({
     }).strict();
 export type InformationSchema = z.infer<typeof InformationSchemaZ>;
 
-// 74 $defs · 56 entities
+// 74 $defs · 57 entities
 // END OF GENERATED Zod VALIDATORS

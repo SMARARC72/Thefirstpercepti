@@ -1878,12 +1878,32 @@ export interface FirstPerceptionSchemaPack {
     session_id: string;
   };
   /**
-   * Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
+   * Phase 24d §6a.5.8.1 / FS-SC-01 STATE layer — per-campaign mutable FS branch state. Definitional shape (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids) lives in content.failure_state_branch_template; this row FKs to branch_id there. Composite PK (campaign_id, branch_id) from 6a.5.7.1. Backlog #22 closed.
    */
   failure_state_branch?: {
+    /**
+     * FK to content.failure_state_branch_template.branch_id; composite PK with campaign_id.
+     */
+    branch_id: string;
+    branch_state: "pending" | "armed" | "fired" | "averted" | "resolved";
+    armed_at_day?: number;
+    resolved_at_day?: number | null;
+    /**
+     * FK to campaign.
+     */
+    campaign_id: string;
+    /**
+     * FK to session (or save_snapshot until session entity exists).
+     */
+    session_id: string;
+  };
+  /**
+   * Phase 24d §6a.5.8.1 / FS-SC-01 TEMPLATE layer — definitional FS branch rows authored once per world. Carries 7 definitional columns (parent_plot_id, trigger, cosmological_reach, winner_set, loser_set, handle_window_days, point_of_no_return_marker_ids). BORDERLINE-FSB-1 ratified Option A: parent_plot_id FKs to content.plot_template.plot_id (single PK). Mutable per-campaign state lives in state.failure_state_branch FK'd here. Mirrors 6a.5.5 plot/quest template pattern. Closes backlog #22.
+   */
+  failure_state_branch_template?: {
     branch_id: string;
     /**
-     * FK to plot.plot_id.
+     * FK to content.plot_template.plot_id (BORDERLINE-FSB-1 Option A).
      */
     parent_plot_id: string;
     trigger:
@@ -1921,21 +1941,10 @@ export interface FirstPerceptionSchemaPack {
       }[]
     ];
     /**
-     * FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes.
+     * FS-RULE-1 binding: player has ≥3 in-world days to intervene before the branch finalizes. TEMPLATE-only per BORDERLINE-FSB-2; v0.9 difficulty-mode override deferred to backlog #24 (conditional).
      */
     handle_window_days: number;
     point_of_no_return_marker_ids?: string[];
-    branch_state: "pending" | "armed" | "fired" | "averted" | "resolved";
-    armed_at_day?: number;
-    resolved_at_day?: number | null;
-    /**
-     * Phase 4a.5 — state.* ownership sweep.
-     */
-    campaign_id: string;
-    /**
-     * Phase 4a.5 — state.* ownership sweep.
-     */
-    session_id: string;
   };
   /**
    * Phase 24b §4.7 / BES-SC-01 — Bestiary entity (content.* namespace). Distinct from NPC (no DialogueState/Wants/Ambitions): adversarial/encountered being with combat block + provenance. Witness-payload flag marks creatures whose presence/sighting constitutes a canon-progression event.
@@ -2962,6 +2971,7 @@ export type SurfacingThresholdConfigSchema = NonNullable<FirstPerceptionSchemaPa
 export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
 export type FailureStateBranchSchema = NonNullable<FirstPerceptionSchemaPack["failure_state_branch"]>;
+export type FailureStateBranchTemplateSchema = NonNullable<FirstPerceptionSchemaPack["failure_state_branch_template"]>;
 export type CreatureSchema = NonNullable<FirstPerceptionSchemaPack["creature"]>;
 export type CombatantSchema = NonNullable<FirstPerceptionSchemaPack["combatant"]>;
 export type PromptSkeletonSchema = NonNullable<FirstPerceptionSchemaPack["prompt_skeleton"]>;
@@ -2970,7 +2980,7 @@ export type InformationSchema = NonNullable<FirstPerceptionSchemaPack["informati
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 56
+// Entity count: 57
 // $defs count:  74
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================
