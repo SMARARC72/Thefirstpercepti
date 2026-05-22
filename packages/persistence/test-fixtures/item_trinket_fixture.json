@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "fixture_id": "item_trinket",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf trinket discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_listening_childs_pebble",
+    "variant": "trinket",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_listening_childs_pebble",
+    "name": "The Listening Child's Pebble",
+    "type": "trinket",
+    "rarity": "legendary",
+    "regionalPackId": "greywake",
+    "descriptionShort": "A small smooth pebble. Warm. Cannot be lost.",
+    "magical": true,
+    "requiresAttunement": false,
+    "attunementCeremony": null,
+    "attunementSlotCost": 0,
+    "weightLb": 0.01,
+    "valueCp": 0,
+    "valueNote": "not for sale; ungiftable; canon-event-only acquisition",
+    "effectsPassiveStructured": [
+      {
+        "effect_kind": "trigger_event",
+        "trigger_event_kind": "auto_return_to_player_inventory_on_drop_or_loss"
+      }
+    ],
+    "acquisitionMethod": "canon_event_only",
+    "tags": ["slice_eligible", "canon_event_acquired", "witness_bearing", "unloseable", "legendary"]
+  }
+}

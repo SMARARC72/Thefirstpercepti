@@ -112,7 +112,8 @@ describe("naming / Pass 2 shallow-remap handlers (round-trip)", () => {
     { name: "location", handler: locationHandler, sample: { id: "loc_market", regionId: "greywake", parentLocationId: undefined } },
     { name: "region", handler: regionHandler, sample: { id: "greywake", name: "Greywake", dangerModifier: 2 } },
     { name: "faction", handler: factionHandler, sample: { id: "fac_drowned", name: "Drowned Church", jurisdictionalStrength: 7 } },
-    { name: "item", handler: itemHandler, sample: { id: "itm_bell", name: "Drowned Bell", itemCategory: "key" } },
+    // Item sample uses weapon variant (closure-exercised); items-v06 oneOf requires type + damage fields for weapon
+    { name: "item", handler: itemHandler, sample: { itemId: "itm_dagger_test", name: "Test Dagger", type: "weapon", subtype: "simple_melee", rarity: "common", damageDice: "1d4", damageType: "piercing" } },
     { name: "rumor", handler: rumorHandler, sample: { id: "rmr_001", sourceNpcId: "npc_orro", emergedAtDay: 4 } },
     { name: "consequence", handler: consequenceHandler, sample: { id: "csq_001", triggerKind: "time", scheduledAtDay: 5 } },
     { name: "event", handler: eventHandler, sample: { id: "evt_001", actorId: "npc_orro", eventKind: "speech" } },

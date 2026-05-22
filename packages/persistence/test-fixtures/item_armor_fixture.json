@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "fixture_id": "item_armor",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf armor discriminator (Phase 24d §6a.5).",
+    "live_row_id": "itm_leather_armor",
+    "variant": "armor",
+    "required_per_variant": ["armorAcBase"]
+  },
+  "engineShape": {
+    "itemId": "itm_leather_armor",
+    "name": "Leather Armor",
+    "type": "armor",
+    "subtype": "light",
+    "rarity": "common",
+    "weightKg": 5,
+    "valueCp": 1000,
+    "equipSlot": "armor",
+    "tintingClass": "vellum_mundane",
+    "boundToYou": false,
+    "regionalOriginId": null,
+    "attunementRequired": false,
+    "attunementCeremony": null,
+    "identificationDc": 0,
+    "armorAcBase": 11,
+    "armorDexCap": 99
+  }
+}

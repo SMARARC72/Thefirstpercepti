@@ -1,6 +1,6 @@
 # Phase 24d / 6a.5 — Catalog Closure Report
 
-**Generated:** 2026-05-22T16:40:16.399Z
+**Generated:** 2026-05-22T17:16:22.192Z
 **Discipline:** Discipline 9 transitive-closure (Risk 3 hardening)
 **Stop thresholds:** items=30 / materials=50 / spells=25 / loot_tables=8
 
@@ -9,12 +9,12 @@
 | catalog | closure_size | threshold | status |
 |---|---|---|---|
 | items | 15 | 30 | OK |
-| materials | 1 | 50 | OK |
-| spells | 5 | 25 | OK |
+| materials | 0 | 50 | OK |
+| spells | 8 | 25 | OK |
 | loot_tables | 0 | 8 | OK |
-| recipes | 1 | _(no explicit cap)_ | — |
+| recipes | 0 | _(no explicit cap)_ | — |
 
-**Fixed-point reached in 2 iterations.**
+**Fixed-point reached in 1 iterations.**
 
 ## Bulk-seed catalogs (NOT closure-filtered; slice-fixed content)
 
@@ -52,8 +52,7 @@ This drives Item T handler design: only the variants above need bespoke handlers
 
 ## Broken FK refs (half-closures requiring ratification)
 
-- **recipe** `recipe_bell_marked_charm` (referenced from item `item_bell_marked_charm` via recipe_id)
-- **material** `item_vial_practiced_name_water` (referenced from recipe `bell_marked_charm` via material_id)
+_(none — closure is well-formed)_
 
 ## Full closure set
 
@@ -74,21 +73,24 @@ This drives Item T handler design: only the variants above need bespoke handlers
   - itm_leather_armor
   - itm_light_crossbow
 
-### Materials (1)
-  - mat_bell_tin
+### Materials (0)
 
-### Spells (5)
-  - armor_of_agathys
+
+### Spells (8)
+  - contradiction_bolt
   - eldritch_blast
   - hex
+  - hum_of_witnesses
   - mage_hand
-  - spell_harden_contradiction
+  - mark_stay
+  - name_pull
+  - witness_true
 
 ### Loot tables (0)
 
 
-### Recipes (1)
-  - bell_marked_charm
+### Recipes (0)
+
 
 ## Decision gates for Desktop
 

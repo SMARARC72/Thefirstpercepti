@@ -60,12 +60,18 @@ const START_SET = {
     "mage_hand",                            // utility cantrip
     // Warlock L1 spells known (2 at L1)
     "hex",                                  // signature warlock spell
-    "armor_of_agathys",                     // warlock defensive
-    // Spells referenced by start-set items (closure entry points)
-    "spell_harden_contradiction",           // referenced by item_bell_marked_charm.effects_on_use_structured
+    // armor_of_agathys was in original start_set but is NOT present in spells.json
+    // (dropped post-push verification). L1 defensive deferred to v0.9 spell expansion.
+    // Slice-relevant warlock-allowed spells (contradiction/witness/name family)
+    "contradiction_bolt",                   // L1; substitute for deferred spell_harden_contradiction
+    "witness_true",                         // L0
+    "name_pull",                            // L0
+    "mark_stay",                            // L0
+    "hum_of_witnesses",                     // L1
+    // spell_harden_contradiction: DROPPED — Q-CLOSURE-1 spirit, deferred to v0.9
   ],
   recipes: [
-    "bell_marked_charm",                    // crafting.recipe_id from item_bell_marked_charm
+    // All 12 recipes deferred to v0.9 per Q-CLOSURE-2 ratification
   ],
   materials: [],   // expand transitively from recipes
   loot_tables: [], // start empty; expand only if creatures/encounters need them

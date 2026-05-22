@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "fixture_id": "item_weapon",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf weapon discriminator (Phase 24d §6a.5).",
+    "live_row_id": "itm_dagger",
+    "variant": "weapon",
+    "required_per_variant": ["damageDice", "damageType"]
+  },
+  "engineShape": {
+    "itemId": "itm_dagger",
+    "name": "Dagger",
+    "type": "weapon",
+    "subtype": "simple_melee",
+    "rarity": "common",
+    "weightKg": 0.5,
+    "valueCp": 200,
+    "equipSlot": "main_hand",
+    "tintingClass": "vellum_mundane",
+    "boundToYou": false,
+    "regionalOriginId": null,
+    "attunementRequired": false,
+    "attunementCeremony": null,
+    "identificationDc": 0,
+    "damageDice": "1d4",
+    "damageType": "piercing",
+    "weaponProperties": ["finesse", "light", "thrown"]
+  }
+}

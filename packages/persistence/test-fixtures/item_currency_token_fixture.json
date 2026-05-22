@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "fixture_id": "item_currency_token",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf currency_token discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_tide_league_scrip_bundle_25",
+    "variant": "currency_token",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_tide_league_scrip_bundle_25",
+    "name": "Tide League Scrip Bundle (25)",
+    "type": "currency_token",
+    "rarity": "common",
+    "regionalPackId": "greywake",
+    "descriptionShort": "A tied bundle of 25 salt-scrip notes — Tide League issue, redeemable in tide-cycles.",
+    "magical": false,
+    "requiresAttunement": false,
+    "weightLb": 0.25,
+    "valueCp": 0,
+    "valueInScrip": 25,
+    "valueNote": "Face-value 25 scrip at Tide League offices; variable exchange to other factions per tide-cycle",
+    "tags": ["slice_eligible", "currency", "tide_league_issue"]
+  }
+}

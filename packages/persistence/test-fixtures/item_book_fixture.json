@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "fixture_id": "item_book",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf book discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_field_journal_blank",
+    "variant": "book",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_field_journal_blank",
+    "name": "Field Journal (Blank)",
+    "type": "book",
+    "rarity": "common",
+    "regionalPackId": "greywake",
+    "descriptionShort": "A salt-stained leather field journal with 80 blank pages. Writes player-authored entries into the Tale Log.",
+    "magical": false,
+    "requiresAttunement": false,
+    "weightLb": 0.4,
+    "valueCp": 50,
+    "effectsPassiveStructured": [
+      {
+        "effect_kind": "trigger_event",
+        "trigger_event_kind": "end_of_scene_commit_entry_to_tale_log",
+        "magnitude_int": null
+      }
+    ],
+    "tags": ["slice_eligible", "book", "cross_faction_record", "tale_log_writer"]
+  }
+}

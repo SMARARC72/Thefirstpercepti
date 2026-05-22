@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "fixture_id": "item_tool",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf tool discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_witness_bell",
+    "variant": "tool",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_witness_bell",
+    "name": "Witness Bell",
+    "type": "tool",
+    "rarity": "rare",
+    "regionalPackId": "greywake",
+    "descriptionShort": "A small handbell of brass-and-bone. Rings only in the presence of a witnessed canon event within thirty paces.",
+    "magical": true,
+    "requiresAttunement": false,
+    "weightLb": 0.3,
+    "valueCp": 800,
+    "effectsPassiveStructured": [
+      {
+        "effect_kind": "trigger_event",
+        "trigger_event_kind": "ring_on_canon_event_within_30ft",
+        "magnitude_int": null
+      }
+    ],
+    "tags": ["slice_eligible", "tool", "canon_event_detector"]
+  }
+}
