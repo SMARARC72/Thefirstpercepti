@@ -266,6 +266,70 @@ export class RuleRegistry implements RuleRegistrySurface {
     return this.rules.delete(ruleId);
   }
 
+  // ============== Filesystem loader (Phase 5c.1) ==============
+
+  /**
+   * Load all Tier 3 rule files from `rulesDir` and Tier 2 schemas from `schemasDir`
+   * (typically `<schemasDir>` is `rulesDir + "/_schema"`). Order:
+   *
+   *   1. Read schemas first (so addRule can validate against them)
+   *   2. Read rules; for each, attempt schema-class derivation from $schema
+   *      then add via addRule (which auto-validates)
+   *
+   * Errors from individual file reads or validation are collected in loadErrors;
+   * throws only at end if `strictValidation=true` AND any errors collected.
+   *
+   * Per ARD-017 §migration-path: this is the engine-bootstrap entry point.
+   * `loadOptions.fs` can override the filesystem implementation for tests
+   * (default uses `node:fs/promises`).
+   */
+  async loadFromFilesystem(
+    rulesDir: string,
+    schemasDir: string,
+    loadOptions: { fs?: RuleRegistryFs } = {},
+  ): Promise<void> {
+    const fs = loadOptions.fs ?? (await defaultFs());
+
+    // Phase 1: load schemas
+    const schemaFiles = await fs.listJson(schemasDir).catch(() => [] as string[]);
+    for (const file of schemaFiles) {
+      try {
+        const raw = await fs.readJson(file);
+        const className = file.replace(/^.*[\\/]/, "").replace(/\.json$/, "");
+        this.registerSchema(className, raw as RuleClassSchema);
+      } catch (err) {
+        this.loadErrors.push({
+          ruleId: `[schema:${file}]`,
+          errors: [String((err as Error).message ?? err)],
+        });
+      }
+    }
+
+    // Phase 2: load rules
+    const ruleFiles = await fs.listJson(rulesDir).catch(() => [] as string[]);
+    for (const file of ruleFiles) {
+      try {
+        const raw = await fs.readJson(file);
+        // addRule auto-derives schemaClassName from rule.$schema
+        this.addRule(raw as EngineRule);
+      } catch (err) {
+        this.loadErrors.push({
+          ruleId: `[rule:${file}]`,
+          errors: [String((err as Error).message ?? err)],
+        });
+      }
+    }
+
+    if (this.strictValidation && this.loadErrors.length > 0) {
+      throw new Error(
+        `RuleRegistry.loadFromFilesystem accumulated ${this.loadErrors.length} error(s):\n` +
+          this.loadErrors
+            .map((e) => `  ${e.ruleId}: ${e.errors.join("; ")}`)
+            .join("\n"),
+      );
+    }
+  }
+
   // ============== Consumption surface ==============
 
   findRulesFor(target: string): EngineRule[] {
@@ -290,4 +354,45 @@ export class RuleRegistry implements RuleRegistrySurface {
   size(): number {
     return this.rules.size;
   }
+}
+
+// ============================================================================
+// FILESYSTEM ADAPTER (kept as an interface so tests can mock without touching disk)
+// ============================================================================
+
+export interface RuleRegistryFs {
+  /**
+   * List absolute paths of `.json` files in `dir`. Returns empty array if
+   * the directory doesn't exist (graceful — engine startup shouldn't crash
+   * on missing rules dir during bootstrap of a fresh project).
+   */
+  listJson(dir: string): Promise<string[]>;
+  /** Read JSON file and return parsed object. Throws on read or parse failure. */
+  readJson(file: string): Promise<unknown>;
+}
+
+let _defaultFs: RuleRegistryFs | null = null;
+async function defaultFs(): Promise<RuleRegistryFs> {
+  if (_defaultFs) return _defaultFs;
+  // Dynamic import keeps the registry usable in bundled/browser contexts where
+  // fs/path are unavailable; only the engine's Node startup path triggers this.
+  const fsm = await import("node:fs/promises");
+  const path = await import("node:path");
+  _defaultFs = {
+    async listJson(dir: string): Promise<string[]> {
+      const entries = await fsm.readdir(dir, { withFileTypes: true });
+      const out: string[] = [];
+      for (const ent of entries) {
+        if (ent.isFile() && ent.name.endsWith(".json")) {
+          out.push(path.join(dir, ent.name));
+        }
+      }
+      return out;
+    },
+    async readJson(file: string): Promise<unknown> {
+      const buf = await fsm.readFile(file, "utf8");
+      return JSON.parse(buf);
+    },
+  };
+  return _defaultFs;
 }

@@ -18,6 +18,7 @@ import {
   deriveSchemaClassName,
   type EngineRule,
   type RuleClassSchema,
+  type RuleRegistryFs,
 } from "./RuleRegistry.js";
 
 // Fixture: minimal Tier 2 schema following ARD-017 conventions
@@ -246,6 +247,88 @@ describe("RuleRegistry / removeRule (Phase 5c.0 hot-reload surface)", () => {
     expect(reg.removeRule("does_not_exist_v1")).toBe(false);
     expect(reg.size()).toBe(1);
   });
+});
+
+describe("RuleRegistry / loadFromFilesystem (Phase 5c.1)", () => {
+  // In-memory mock fs adapter — exercises the loader without touching disk.
+  function mockFs(files: Record<string, unknown>): RuleRegistryFs {
+    return {
+      async listJson(dir: string) {
+        return Object.keys(files).filter(
+          (f) => f.startsWith(dir + "/") || f.startsWith(dir + "\\"),
+        );
+      },
+      async readJson(file: string) {
+        if (!(file in files)) throw new Error(`mockFs: file not found: ${file}`);
+        return files[file];
+      },
+    };
+  }
+
+  it("loads schemas then rules; rules validate against derived schema class", async () => {
+    const reg = new RuleRegistry();
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/opening_hours_disagreement_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        ...openingHoursRule,
+      },
+    });
+    await reg.loadFromFilesystem("/rules", "/_schema", { fs });
+    expect(reg.size()).toBe(1);
+    expect(reg.getRule("opening_hours_disagreement_rule_v1")?.applies_to_entity).toBe(
+      "institution",
+    );
+  });
+
+  it("graceful on missing directories (returns empty array → 0 rules loaded)", async () => {
+    const reg = new RuleRegistry();
+    const fs: RuleRegistryFs = {
+      async listJson() {
+        throw new Error("ENOENT: no such file or directory");
+      },
+      async readJson() {
+        throw new Error("never called");
+      },
+    };
+    await reg.loadFromFilesystem("/nonexistent", "/nonexistent_schemas", { fs });
+    expect(reg.size()).toBe(0);
+  });
+
+  it("collects per-file errors; throws end-of-load when strictValidation=true", async () => {
+    const reg = new RuleRegistry();
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/bad_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        rule_id: "bad_v1",
+        // missing applies_to_entity + applies_to_field
+      },
+    });
+    await expect(reg.loadFromFilesystem("/rules", "/_schema", { fs })).rejects.toThrow(
+      /accumulated/,
+    );
+    expect(reg.loadErrors.length).toBeGreaterThan(0);
+  });
+
+  it("non-strict mode accumulates errors without throwing", async () => {
+    const reg = new RuleRegistry({ strictValidation: false });
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/bad_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        rule_id: "bad_v1",
+      },
+    });
+    await reg.loadFromFilesystem("/rules", "/_schema", { fs });
+    expect(reg.size()).toBe(0); // bad rule skipped
+    expect(reg.loadErrors).toHaveLength(1);
+  });
+
+  // End-to-end fs smoke against the real opening_hours rule is deferred to
+  // workspace-level integration tests (Session 5c.2+ when engine bootstrap wires
+  // the loader at a stable cwd). Mock-fs tests above prove the loader's logic;
+  // the real default-fs path is exercised whenever engine starts up.
 });
 
 describe("RuleRegistry / Phase 4.10 smoke (actual ratified rule)", () => {
