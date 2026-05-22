@@ -8672,7 +8672,8 @@
         }
       },
       "additionalProperties": false,
-      "x_schema_namespace": "state"
+      "x_schema_namespace": "state",
+      "x_composite_primary_key": ["campaign_id", "id"]
     },
     "failure_state_branch": {
       "type": "object",
@@ -8784,7 +8785,8 @@
         }
       },
       "additionalProperties": false,
-      "x_schema_namespace": "state"
+      "x_schema_namespace": "state",
+      "x_composite_primary_key": ["campaign_id", "branch_id"]
     },
     "creature": {
       "type": "object",
