@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T18:46:18.064Z
+ * Generated at:   2026-05-22T20:55:26.927Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json

@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T18:46:17.562Z
+-- Generated at:   2026-05-22T20:55:26.283Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -3701,7 +3701,7 @@ ALTER TABLE "state"."plot" ENABLE ROW LEVEL SECURITY;
 -- institution_response_queue_entry (state.institution_response_queue_entry)
 -- Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution's response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.
 CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
-  "id" TEXT PRIMARY KEY NOT NULL,
+  "id" TEXT NOT NULL,
   "institution_id" TEXT NOT NULL,
   "trigger_event_id" TEXT NOT NULL,
   "proposed_response" TEXT NOT NULL,
@@ -3712,7 +3712,8 @@ CREATE TABLE IF NOT EXISTS "state"."institution_response_queue_entry" (
   "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY ("campaign_id", "id")
 );
 COMMENT ON TABLE "state"."institution_response_queue_entry" IS 'Phase 24b §4.3 / Bundle B / L.II-SC-02 — Per-event entry in an institution''s response queue. Lives in state.* schema (per ARD-010; mutable runtime queue). Engine writes entries when triggering events fire; resolves by NPC actions or institutional default policy.';
 ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY;
@@ -3720,7 +3721,7 @@ ALTER TABLE "state"."institution_response_queue_entry" ENABLE ROW LEVEL SECURITY
 -- failure_state_branch (state.failure_state_branch)
 -- Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).
 CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
-  "branch_id" TEXT PRIMARY KEY NOT NULL,
+  "branch_id" TEXT NOT NULL,
   "parent_plot_id" TEXT NOT NULL,
   "trigger" "public"."failure_state_trigger" NOT NULL,
   "cosmological_reach" "public"."failure_state_cosmological_reach" NOT NULL,
@@ -3738,7 +3739,8 @@ CREATE TABLE IF NOT EXISTS "state"."failure_state_branch" (
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("handle_window_days" >= 3),
   CHECK ("armed_at_day" >= 0),
-  CHECK ("resolved_at_day" >= 0)
+  CHECK ("resolved_at_day" >= 0),
+  PRIMARY KEY ("campaign_id", "branch_id")
 );
 COMMENT ON TABLE "state"."failure_state_branch" IS 'Phase 24b §4.7 / FS-SC-01 — Per-plot failure-state branch (lives in state.* because plot outcomes mutate per session). Holds trigger conditions, cosmological reach, winner/loser sets, and a handle window. Bound to FS-RULE-1 (≥3 day handle window) + FS-RULE-2 (readable signal via point_of_no_return_marker within 1 in-world day).';
 ALTER TABLE "state"."failure_state_branch" ENABLE ROW LEVEL SECURITY;
