@@ -1,0 +1,134 @@
+{
+  "_meta": {
+    "fixture_id": "npc_venn",
+    "purpose": "Per-NPC roundtrip test fixture per Discipline 1. Mirror of supabase/migrations/20260522155917_seed_v08_content_npc_venn.sql in engine-shape.",
+    "phase": "24d / Session 6a / 6a.4 / Venn Hook",
+    "pattern_archetype": "broker (vs Ilyra=devout, Orro=magistrate)",
+    "live_row_id": "npc-venn-hook"
+  },
+  "engineShape": {
+    "id": "npc-venn-hook",
+    "name": "Venn Hook",
+    "role": "Tide League Broker",
+    "description": "A wiry man of indeterminate age, late forties or sixty depending on the angle. Left hand replaced with a long brass weighing-hook — functional, articulated, used as a measuring device with three small chain-graduations. Speaks slowly, smiles slowly, listens fast. Tide League dark-blue tunic; salt-scrip pinned over the heart like a campaign medal.",
+    "factionId": "fac-merchant-tide-league",
+    "locationId": "loc-tide-league-brokers-office",
+    "hp": 16,
+    "maxHp": 16,
+    "stats": {
+      "body": 9,
+      "grace": 12,
+      "sense": 14,
+      "mind": 13,
+      "will": 11,
+      "presence": 12,
+      "authority": 4,
+      "ruin": 2,
+      "creation": 2
+    },
+    "derivedStats": {
+      "str": 9,
+      "dex": 12,
+      "con": 11,
+      "int": 13,
+      "wis": 14,
+      "cha": 12
+    },
+    "tags": ["named-slice-npc", "faction-anchor", "economic", "recruitable-via-bond", "self-preservation-first", "broker_archetype", "bundle_a_authored", "slice"],
+    "wantModel": {
+      "drive": {
+        "description": "Accumulate enough scrip to exit Greywake before the next major Shattering aftershock; outwardly: stable salt-scrip valuation.",
+        "intensity": 4,
+        "freshness_decay": 5
+      },
+      "barter": [
+        {"offered": "favorable scrip-to-salt-coin exchange rate (1 transaction)", "cost_to_npc": 1},
+        {"offered": "transit record entry with adjustable timing", "cost_to_npc": 2},
+        {"offered": "introduction to a foreign-port broker contact", "cost_to_npc": 3},
+        {"offered": "warning when Bell Court audit window opens", "cost_to_npc": 4, "refusal_if_audience_includes": ["npc-bell-magistrate-orro"]},
+        {"offered": "predecessor's name + the records of her case (if player has access)", "cost_to_npc": 5}
+      ],
+      "kill_for": {
+        "trigger_condition": "Imminent personal exposure of the fudged transit records AND escape vector blocked — survival-only trigger",
+        "threshold": "warning",
+        "target_class": "individual"
+      },
+      "fear_loss": {
+        "what": "his unfudged exit window + the predecessor's fate becoming his own",
+        "urgency": 5,
+        "abandons_drive_if_imminent": true
+      }
+    },
+    "knowledgeTriLayer": {
+      "knows": [
+        {"fact_id": "fact-tide-league-scrip-cycle", "source_event_id": "evt-venn-broker-onboarding", "certainty": 5, "last_recalled": "ongoing"},
+        {"fact_id": "fact-predecessor-ledger-struck", "source_event_id": "evt-venn-inheritance", "certainty": 4},
+        {"fact_id": "fact-fudged-transit-records-self", "source_event_id": "evt-venn-margin-adjustment-cycle-3", "certainty": 5},
+        {"fact_id": "fact-second-aftershock-imminent", "source_event_id": "evt-venn-coastal-pattern-reading", "certainty": 3}
+      ],
+      "says": {
+        "default_policy": "guarded",
+        "per_audience_overrides": {
+          "bell_court_magistrate": "silent",
+          "drowned_church_marrow_saint": "selective",
+          "tide_league_broker_peer": "open",
+          "foreign_port_visitor": "guarded"
+        }
+      },
+      "believes": [
+        {"proposition": "Greywake will not survive another aftershock the way it survived the Shattering", "conviction": 4, "evidence_resistance": 3},
+        {"proposition": "My predecessor's fate was civic erasure for unknown cause; the cause was scrip-side too", "conviction": 3, "evidence_resistance": 4},
+        {"proposition": "Self-preservation is the only honest contract", "conviction": 5, "evidence_resistance": 5}
+      ]
+    },
+    "closingConditions": [
+      {
+        "kind": "success_state",
+        "description": "Player helps Venn secure exit visa + foreign-port introduction before the next aftershock; Venn departs Greywake intact.",
+        "player_reachable": true,
+        "consequence_summary": "Venn permanently exits the slice; Tide League loses scrip-side primary broker; player gains foreign-port contact network access."
+      },
+      {
+        "kind": "death_state",
+        "description": "Venn caught by Bell Court audit + struck from ledger like predecessor; OR caught in second-aftershock event he predicted but failed to exit.",
+        "player_reachable": false,
+        "consequence_summary": "Tide League succession-of-broker crisis; salt-coin-side coalition gains influence; predecessor case re-opens."
+      },
+      {
+        "kind": "transfer_state",
+        "description": "Venn recognizes player as a better-positioned successor to the broker seat; transfers scrip-warrant access + the predecessor's case records.",
+        "player_reachable": true,
+        "consequence_summary": "Player inherits Tide League broker seat (commercial economic anchor); transit-record manipulation capability + predecessor knowledge transferred."
+      },
+      {
+        "kind": "passover_state",
+        "description": "Venn's exit window closes; he abandons the escape plan and re-commits to long-Greywake survival via deeper Tide League institutional embedding.",
+        "player_reachable": false,
+        "consequence_summary": "Venn becomes a permanent Greywake fixture; drive shifts to institutional consolidation rather than exit.",
+        "residue_drive": {
+          "description": "Maximize Tide League institutional power within Greywake",
+          "intensity": 3
+        }
+      },
+      {
+        "kind": "special_state",
+        "description": "Player provides Venn with information about the predecessor's case that resolves the cosmological-erasure question; Venn becomes a witness rather than a successor.",
+        "player_reachable": true,
+        "consequence_summary": "Venn becomes a Bell Court witness against Tide League fudging practices; institutional power shift in Bell Court's favor; high-Authority + Bell Court Faith path."
+      }
+    ],
+    "memoryArchetype": "broker",
+    "ambitionTick": {
+      "cadence": "trade_season_8x_year",
+      "success_streak": 0,
+      "last_attempt": null
+    },
+    "scheduleNesting": {
+      "local_pattern": {
+        "summary": "Stations: dawn (scrip-rate review at broker's office) → midday (active brokering with merchants + transit-record entry) → dusk (private accounting + exit-vector planning)."
+      },
+      "nested_under_institution_id": "inst-merchant-tide-league",
+      "variance_seed": "venn-schedule-2026"
+    }
+  }
+}
