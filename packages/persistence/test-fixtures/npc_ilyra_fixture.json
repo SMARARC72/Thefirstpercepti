@@ -1,0 +1,114 @@
+{
+  "_meta": {
+    "fixture_id": "npc_ilyra",
+    "purpose": "Per-NPC roundtrip test fixture per Discipline 1 (three-form seed). Mirror of supabase/migrations/20260522154326_seed_v08_content_npc_ilyra.sql in engine-shape (camelCase, runtime-flavored fields). Used by npcHandler.toSnake() roundtrip test to verify schema-shaped row matches the live seed row + toCamel() restores semantic identity (modulo Bundle A passthrough fields).",
+    "phase": "24d / Session 6a / 6a.4 / Ilyra",
+    "live_row_id": "npc-marrow-saint-ilyra"
+  },
+  "engineShape": {
+    "id": "npc-marrow-saint-ilyra",
+    "name": "Marrow-Saint Ilyra",
+    "role": "Marrow-Saint of the Drowned Church",
+    "description": "A thin woman of indeterminate middle age in salt-stiffened black robes. Speaks softly. Her hands are bound at the wrists with a length of red cord — voluntary, she tells anyone who asks, a vow against gesture. Eyes the same colour as the standing water in the antechamber. She is not unkind. She is not safe.",
+    "factionId": "fac-drowned-church",
+    "locationId": "loc-drowned-cathedral",
+    "hp": 24,
+    "maxHp": 24,
+    "stats": {
+      "body": 9,
+      "grace": 10,
+      "sense": 12,
+      "mind": 11,
+      "will": 14,
+      "presence": 13,
+      "authority": 6,
+      "ruin": 2,
+      "creation": 4
+    },
+    "derivedStats": {
+      "str": 9,
+      "dex": 10,
+      "con": 11,
+      "int": 11,
+      "wis": 12,
+      "cha": 13
+    },
+    "tags": ["named-slice-npc", "faction-anchor", "theological", "recruitable-via-bond", "dangerous-with-authority", "bundle_a_authored", "slice"],
+    "wantModel": {
+      "drive": {
+        "description": "Hear The Unnamed name a successor in the dry fountain; believe she may be the chosen vessel.",
+        "intensity": 5,
+        "freshness_decay": 0
+      },
+      "barter": [
+        {"offered": "absolution-warrant for civic transgression", "cost_to_npc": 2},
+        {"offered": "small marrow-wax candle (single vigil)", "cost_to_npc": 1},
+        {"offered": "salt-oath blessing on a personal commitment", "cost_to_npc": 3}
+      ],
+      "kill_for": {
+        "trigger_condition": "A rival apotheosis candidate emerges with Drowned Church Faith higher than Ilyra's and the Composing rite has been completed against her",
+        "threshold": "absolute",
+        "target_class": "individual"
+      },
+      "fear_loss": {
+        "what": "her succession candidacy",
+        "urgency": 5,
+        "abandons_drive_if_imminent": false
+      }
+    },
+    "knowledgeTriLayer": {
+      "knows": [
+        {"fact_id": "fact-marrow-source-pilgrims", "source_event_id": "evt-ilyra-rendered-third-pilgrim", "certainty": 5},
+        {"fact_id": "fact-fountain-listens", "source_event_id": "evt-ilyra-first-vigil", "certainty": 5},
+        {"fact_id": "fact-unnamed-active-in-greywake", "source_event_id": "evt-ilyra-second-vigil", "certainty": 4}
+      ],
+      "says": {
+        "default_policy": "guarded",
+        "per_audience_overrides": {
+          "bell_court_magistrate": "silent",
+          "salt_vow_acolyte": "open",
+          "drowned_church_pilgrim": "selective"
+        }
+      },
+      "believes": [
+        {"proposition": "I am the apotheosis candidate The Unnamed will choose", "conviction": 5, "evidence_resistance": 5},
+        {"proposition": "The marrow-wax candles work because the pilgrim renderings were consensual at salt-oath level", "conviction": 4, "evidence_resistance": 3},
+        {"proposition": "Bell Court struck-names persist in the fountain's deep memory and can be re-anchored", "conviction": 4, "evidence_resistance": 4}
+      ]
+    },
+    "closingConditions": [
+      {
+        "kind": "success_state",
+        "description": "Player helps Ilyra perform the Composing rite at the dry fountain; The Unnamed names her successor.",
+        "player_reachable": true,
+        "consequence_summary": "Ilyra ascends; Drowned Church institutional power consolidates; player gains apotheosis-route credit."
+      },
+      {
+        "kind": "death_state",
+        "description": "Ilyra dies in an apotheosis attempt that fails because The Unnamed names another candidate.",
+        "player_reachable": false,
+        "consequence_summary": "Ilyra's successor candidacy collapses; Drowned Church enters schism between salt-vow + marrow-rendering coalitions."
+      },
+      {
+        "kind": "transfer_state",
+        "description": "Ilyra recognizes the player as a fellow vessel and transfers her candidacy + accumulated marrow-wax knowledge to the player.",
+        "player_reachable": true,
+        "transfer_target_npc_id": null,
+        "consequence_summary": "Player inherits the candidacy path; Ilyra retires to vigil-keeping. Triggered by very-high-Authority + Drowned Church Faith."
+      }
+    ],
+    "memoryArchetype": "devout",
+    "ambitionTick": {
+      "cadence": "theological_irregular",
+      "success_streak": 0,
+      "last_attempt": null
+    },
+    "scheduleNesting": {
+      "local_pattern": {
+        "summary": "Stations: dawn (cathedral antechamber vigil at standing-water basin) → midday (marrow-rendering chamber, when active) → dusk (composing-rite preparation in the cathedral)."
+      },
+      "nested_under_institution_id": "inst-drowned-church",
+      "variance_seed": "ilyra-schedule-2026"
+    }
+  }
+}
