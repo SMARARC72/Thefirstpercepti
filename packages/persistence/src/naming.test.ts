@@ -140,7 +140,7 @@ describe("naming / beliefHandler — REFERENCE PATTERN for bespoke adapters (RIS
     id: "bel_unnamed_001",
     statement: "The Unnamed walks among us.",
     isTrue: true,
-    confidence: "high",
+    confidence: "certain", // ConfidenceLevel enum: rumor/likely/certain/proven/forgotten
     supportingEvidence: ["evt_witness_001", "evt_witness_002"],
     contradictingEvidence: ["evt_recantation_001"],
     gameplayImpact: "Drowned Church reveres bearer.",
@@ -158,7 +158,7 @@ describe("naming / beliefHandler — REFERENCE PATTERN for bespoke adapters (RIS
     expect(row.holder_id).toBe("npc_ilyra");
     expect(row.claim).toBe("The Unnamed walks among us.");
     expect(row.truth_status).toBe("true"); // isTrue: boolean → truth_status: enum
-    expect(row.confidence).toBe(80); // "high" → 80 per BELIEF_CONFIDENCE_TO_INT
+    expect(row.confidence).toBe(85); // "certain" → 85 per BELIEF_CONFIDENCE_TO_INT
     expect(row.source_ids).toEqual([
       "evt_witness_001",
       "evt_witness_002",
@@ -166,9 +166,9 @@ describe("naming / beliefHandler — REFERENCE PATTERN for bespoke adapters (RIS
     ]); // supporting + contradicting merged
   });
 
-  it("toSnake handles each ConfidenceLevel enum band", () => {
+  it("toSnake handles each ConfidenceLevel enum band (Phase 5c.0 audit fix: rumor/likely/certain/proven/forgotten)", () => {
     const bands: Array<[string, number]> = [
-      ["certain", 95], ["high", 80], ["medium", 50], ["low", 25], ["doubtful", 10],
+      ["forgotten", 5], ["rumor", 30], ["likely", 65], ["certain", 85], ["proven", 98],
     ];
     for (const [band, expected] of bands) {
       const row = beliefHandler.toSnake({ ...engineBelief, confidence: band }, ctx);
@@ -182,12 +182,29 @@ describe("naming / beliefHandler — REFERENCE PATTERN for bespoke adapters (RIS
     expect(restored.id).toBe("bel_unnamed_001");
     expect(restored.statement).toBe("The Unnamed walks among us.");
     expect(restored.isTrue).toBe(true);
-    expect(restored.confidence).toBe("high"); // 80 → "high" via beliefConfidenceFromInt
+    expect(restored.confidence).toBe("certain"); // 85 → "certain" via beliefConfidenceFromInt
     // supporting + contradicting can't unmerge — documented data loss
     expect(restored.supportingEvidence).toEqual([
       "evt_witness_001", "evt_witness_002", "evt_recantation_001",
     ]);
     expect(restored.contradictingEvidence).toEqual([]);
+  });
+
+  it("toCamel surfaces heldByPlayer + gameplayImpact from runtimeMeta side-channel", () => {
+    const row = beliefHandler.toSnake({ ...engineBelief, confidence: "rumor" }, ctx);
+    const restored = beliefHandler.toCamel(row, {
+      heldByPlayer: true,
+      gameplayImpact: "Drowned Church reveres bearer.",
+    });
+    expect(restored.heldByPlayer).toBe(true);
+    expect(restored.gameplayImpact).toBe("Drowned Church reveres bearer.");
+  });
+
+  it("toCamel defaults heldByPlayer=true ONLY when holder_type='player' (no runtimeMeta)", () => {
+    const playerRow = { belief_id: "b1", claim: "x", holder_type: "player", confidence: 30 };
+    const npcRow = { belief_id: "b2", claim: "x", holder_type: "npc", confidence: 30 };
+    expect(beliefHandler.toCamel(playerRow).heldByPlayer).toBe(true);
+    expect(beliefHandler.toCamel(npcRow).heldByPlayer).toBe(false);
   });
 
   it("toCamel exposes raw truthStatus for engine code needing nuance beyond boolean", () => {
@@ -199,10 +216,11 @@ describe("naming / beliefHandler — REFERENCE PATTERN for bespoke adapters (RIS
     expect(restored.isTrue).toBe(false); // boolean collapses partial→false
   });
 
-  it("toCamel confidence integer round-trips to nearest band", () => {
+  it("toCamel confidence integer round-trips to nearest band (Phase 5c.0 audit fix)", () => {
     const cases: Array<[number, string]> = [
-      [95, "certain"], [80, "high"], [50, "medium"], [25, "low"], [10, "doubtful"],
-      [70, "high"], [40, "medium"], [99, "certain"], [0, "doubtful"],
+      [5, "forgotten"], [30, "rumor"], [65, "likely"], [85, "certain"], [98, "proven"],
+      [0, "forgotten"], [14, "forgotten"], [15, "rumor"], [49, "rumor"], [50, "likely"],
+      [74, "likely"], [75, "certain"], [94, "certain"], [95, "proven"], [100, "proven"],
     ];
     for (const [int, band] of cases) {
       const restored = beliefHandler.toCamel({ belief_id: "b", confidence: int });
@@ -226,15 +244,60 @@ describe("naming / npcHandler — Bundle A sentinel-NULL JSONB defaults (RISK #2
     tags: ["market", "vendor"],
   };
 
-  it("toSnake populates all 6 Bundle A REQUIRED fields with sentinel-NULL stubs", () => {
+  it("toSnake populates all 6 Bundle A REQUIRED fields with schema-conformant stubs (Phase 5c.0 audit fix)", () => {
     const row = npcHandler.toSnake(stubNpc);
-    expect(row.want_model).toMatchObject({ _stub: true, _status: "awaiting_narrative_depth" });
-    expect(row.knowledge_tri_layer).toMatchObject({ knows: [], says: [], believes: [], _stub: true });
-    expect(Array.isArray(row.closing_conditions)).toBe(true);
-    expect((row.closing_conditions as unknown[]).length).toBeGreaterThanOrEqual(2); // schema requires ≥2
-    expect(row.memory_archetype).toBe("peasant"); // safe default
-    expect(row.ambition_tick).toMatchObject({ _stub: true });
-    expect(row.schedule_nesting).toMatchObject({ _stub: true });
+
+    // want_model: full shape per $def (drive/barter/kill_for/fear_loss);
+    // additionalProperties: false → no _stub flag at this level
+    expect(row.want_model).toMatchObject({
+      drive: { intensity: 1, freshness_decay: 0 },
+      barter: [],
+      kill_for: { threshold: "warning", target_class: "self" },
+      fear_loss: { urgency: 1, abandons_drive_if_imminent: false },
+    });
+    // No extra keys
+    expect(Object.keys(row.want_model as object).sort()).toEqual(
+      ["barter", "drive", "fear_loss", "kill_for"],
+    );
+
+    // knowledge_tri_layer: says is object {default_policy: enum}, not array
+    expect(row.knowledge_tri_layer).toEqual({
+      knows: [],
+      says: { default_policy: "silent" },
+      believes: [],
+    });
+
+    // closing_conditions: 2 items, each conforms to npc_closing_condition_entry
+    const cc = row.closing_conditions as Array<Record<string, unknown>>;
+    expect(cc).toHaveLength(2);
+    expect(cc[0].kind).toBe("passover_state"); // valid npc_closing_state ENUM value
+    expect(cc[0].player_reachable).toBe(true); // ≥1 player_reachable=true per Death's rule
+    expect(cc[1].kind).toBe("death_state");
+    expect(cc[1].player_reachable).toBe(false);
+
+    expect(row.memory_archetype).toBe("peasant");
+
+    // ambition_tick: cadence MUST be in ENUM (8 values); "weekly" was wrong
+    expect(row.ambition_tick).toEqual({
+      cadence: "irregular_per_assignment",
+      success_streak: 0,
+    });
+
+    // schedule_nesting: full $def shape (local_pattern.summary + nested + variance_seed)
+    expect(row.schedule_nesting).toMatchObject({
+      local_pattern: { summary: expect.any(String) },
+      nested_under_institution_id: expect.any(String),
+      variance_seed: expect.any(String),
+    });
+  });
+
+  it("Bundle A stub fields contain NPC_STUB_MARKER sentinel for detection", async () => {
+    const { NPC_STUB_MARKER, isNpcBundleAStub } = await import("./naming.js");
+    const row = npcHandler.toSnake(stubNpc);
+    // Marker lives inside required string fields, not as a separate flag
+    const wm = row.want_model as { drive: { description: string } };
+    expect(wm.drive.description).toBe(NPC_STUB_MARKER);
+    expect(isNpcBundleAStub(row)).toBe(true);
   });
 
   it("toSnake passes through Phase 4a.5 REQUIRED stats / derived_stats / tags", () => {

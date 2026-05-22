@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T04:28:46.848Z
+ * Generated at:   2026-05-22T13:56:22.944Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2093,7 +2093,7 @@ export const PlotSchemaZ = z.object({
       "current_pressure": z.number().int().min(0).max(10),
       "current_act": z.enum(["setup", "confrontation", "resolution"]),
       "spine_visibility": z.enum(["hidden", "suggested", "visible", "named", "central"]),
-      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).optional(),
+      "closing_state": z.enum(["open", "active_setup", "active_confrontation", "active_resolution", "closed_clean", "closed_messy", "closed_kinetic", "closed_silenced", "closed_failure_state"]).nullable().optional(),
       "subplot_admission_policy": SubplotAdmissionPolicyZ.optional(),
       "campaign_id": z.string(),
       "session_id": z.string(),
@@ -2132,7 +2132,7 @@ export const InstitutionResponseQueueEntrySchemaZ = z.object({
       "close_day": z.number().int().min(0),
     }).strict(),
       "resolved_by_npc_ids": z.array(z.string()).optional(),
-      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).optional(),
+      "resolution_kind": z.enum(["decisive", "deferred", "escalated", "ignored"]).nullable().optional(),
       "campaign_id": z.string(),
       "session_id": z.string(),
     }).strict();

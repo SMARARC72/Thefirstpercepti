@@ -15,8 +15,10 @@ import { describe, it, expect } from "vitest";
 import {
   RuleRegistry,
   validateRuleAgainstSchema,
+  deriveSchemaClassName,
   type EngineRule,
   type RuleClassSchema,
+  type RuleRegistryFs,
 } from "./RuleRegistry.js";
 
 // Fixture: minimal Tier 2 schema following ARD-017 conventions
@@ -151,6 +153,53 @@ describe("RuleRegistry / findRulesFor", () => {
     expect(reg.findRulesFor("institution.opening_hours")).toHaveLength(1);
     expect(reg.findRulesFor("institution.leadership")).toHaveLength(1);
   });
+
+  it("wildcard entity '*' matches any target (Phase 5c.x — scene routing pattern per ARD-017)", () => {
+    const wildcardSceneRule: EngineRule = {
+      rule_id: "scene_routing_universal_v1",
+      applies_to_entity: "*",
+      applies_to_field: "*",
+      scene_id_when_match: "default_dialogue_scene",
+    };
+    const reg = new RuleRegistry({
+      preloadedRules: [openingHoursRule, wildcardSceneRule],
+    });
+    // Wildcard rule matches institution.opening_hours alongside the specific rule
+    const hits = reg.findRulesFor("institution.opening_hours");
+    expect(hits.map((r) => r.rule_id)).toContain("scene_routing_universal_v1");
+    expect(hits.map((r) => r.rule_id)).toContain("opening_hours_disagreement_rule_v1");
+    // Wildcard matches an entity with no specific rule
+    expect(reg.findRulesFor("npc.faction_id").map((r) => r.rule_id)).toEqual([
+      "scene_routing_universal_v1",
+    ]);
+  });
+
+  it("wildcard field '*' matches any field for the specified entity", () => {
+    const ruleWildcardField: EngineRule = {
+      rule_id: "validator_chain_npc_all_fields_v1",
+      applies_to_entity: "npc",
+      applies_to_field: "*",
+    };
+    const reg = new RuleRegistry({ preloadedRules: [ruleWildcardField] });
+    expect(reg.findRulesFor("npc.location_id")).toHaveLength(1);
+    expect(reg.findRulesFor("npc.hp")).toHaveLength(1);
+    expect(reg.findRulesFor("npc.want_model")).toHaveLength(1);
+    // Different entity does NOT match field-wildcard rule
+    expect(reg.findRulesFor("faction.goals")).toHaveLength(0);
+  });
+
+  it("wildcard entity but specific field — common for cross-entity field rules", () => {
+    const ruleAnyEntityCampaignField: EngineRule = {
+      rule_id: "cross_entity_campaign_membership_v1",
+      applies_to_entity: "*",
+      applies_to_field: "campaign_id",
+    };
+    const reg = new RuleRegistry({ preloadedRules: [ruleAnyEntityCampaignField] });
+    expect(reg.findRulesFor("npc.campaign_id")).toHaveLength(1);
+    expect(reg.findRulesFor("plot.campaign_id")).toHaveLength(1);
+    // Different field does NOT match
+    expect(reg.findRulesFor("npc.location_id")).toHaveLength(0);
+  });
 });
 
 describe("RuleRegistry / listRules + size", () => {
@@ -169,6 +218,164 @@ describe("RuleRegistry / listRules + size", () => {
     reg.addRule({ rule_id: "second_rule_v1", applies_to_entity: "npc", applies_to_field: "x" });
     expect(reg.size()).toBe(2);
   });
+});
+
+describe("RuleRegistry / deriveSchemaClassName (Phase 5c.0 refinement)", () => {
+  it("derives className from relative $schema path", () => {
+    expect(deriveSchemaClassName({ $schema: "./_schema/disagreement_rule.json" })).toBe(
+      "disagreement_rule",
+    );
+  });
+
+  it("derives className from absolute path with forward slashes", () => {
+    expect(deriveSchemaClassName({ $schema: "/content/rules/_schema/scene_routing.json" })).toBe(
+      "scene_routing",
+    );
+  });
+
+  it("derives className from Windows-style path", () => {
+    expect(deriveSchemaClassName({ $schema: "_schema\\slide_trigger.json" })).toBe(
+      "slide_trigger",
+    );
+  });
+
+  it("returns null for missing $schema", () => {
+    expect(deriveSchemaClassName({})).toBeNull();
+  });
+
+  it("returns null for non-standard $schema path", () => {
+    expect(deriveSchemaClassName({ $schema: "https://example.com/schema" })).toBeNull();
+  });
+});
+
+describe("RuleRegistry / addRule auto-derives schemaClassName from $schema", () => {
+  it("uses derived class name when schemaClassName not passed", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const ruleWithSchema = {
+      ...openingHoursRule,
+      $schema: "./_schema/disagreement_rule.json",
+    };
+    reg.addRule(ruleWithSchema as EngineRule);
+    expect(reg.size()).toBe(1);
+  });
+
+  it("explicit schemaClassName overrides derivation", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    const ruleWithMismatchedSchema = {
+      ...openingHoursRule,
+      $schema: "./_schema/some_other_schema.json", // wrong path
+    };
+    // Override forces use of registered schema
+    reg.addRule(ruleWithMismatchedSchema as EngineRule, "disagreement_rule");
+    expect(reg.size()).toBe(1);
+  });
+
+  it("rules without $schema and without explicit param skip validation", () => {
+    const reg = new RuleRegistry();
+    reg.registerSchema("disagreement_rule", disagreementRuleSchema);
+    // No $schema, no explicit param — validation skipped, rule added
+    reg.addRule({ rule_id: "ad_hoc_rule_v1" });
+    expect(reg.size()).toBe(1);
+  });
+});
+
+describe("RuleRegistry / removeRule (Phase 5c.0 hot-reload surface)", () => {
+  it("removes existing rule by id; returns true", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    expect(reg.removeRule("opening_hours_disagreement_rule_v1")).toBe(true);
+    expect(reg.size()).toBe(0);
+    expect(reg.getRule("opening_hours_disagreement_rule_v1")).toBeNull();
+  });
+
+  it("returns false for unknown rule id", () => {
+    const reg = new RuleRegistry({ preloadedRules: [openingHoursRule] });
+    expect(reg.removeRule("does_not_exist_v1")).toBe(false);
+    expect(reg.size()).toBe(1);
+  });
+});
+
+describe("RuleRegistry / loadFromFilesystem (Phase 5c.1)", () => {
+  // In-memory mock fs adapter — exercises the loader without touching disk.
+  function mockFs(files: Record<string, unknown>): RuleRegistryFs {
+    return {
+      async listJson(dir: string) {
+        return Object.keys(files).filter(
+          (f) => f.startsWith(dir + "/") || f.startsWith(dir + "\\"),
+        );
+      },
+      async readJson(file: string) {
+        if (!(file in files)) throw new Error(`mockFs: file not found: ${file}`);
+        return files[file];
+      },
+    };
+  }
+
+  it("loads schemas then rules; rules validate against derived schema class", async () => {
+    const reg = new RuleRegistry();
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/opening_hours_disagreement_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        ...openingHoursRule,
+      },
+    });
+    await reg.loadFromFilesystem("/rules", "/_schema", { fs });
+    expect(reg.size()).toBe(1);
+    expect(reg.getRule("opening_hours_disagreement_rule_v1")?.applies_to_entity).toBe(
+      "institution",
+    );
+  });
+
+  it("graceful on missing directories (returns empty array → 0 rules loaded)", async () => {
+    const reg = new RuleRegistry();
+    const fs: RuleRegistryFs = {
+      async listJson() {
+        throw new Error("ENOENT: no such file or directory");
+      },
+      async readJson() {
+        throw new Error("never called");
+      },
+    };
+    await reg.loadFromFilesystem("/nonexistent", "/nonexistent_schemas", { fs });
+    expect(reg.size()).toBe(0);
+  });
+
+  it("collects per-file errors; throws end-of-load when strictValidation=true", async () => {
+    const reg = new RuleRegistry();
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/bad_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        rule_id: "bad_v1",
+        // missing applies_to_entity + applies_to_field
+      },
+    });
+    await expect(reg.loadFromFilesystem("/rules", "/_schema", { fs })).rejects.toThrow(
+      /accumulated/,
+    );
+    expect(reg.loadErrors.length).toBeGreaterThan(0);
+  });
+
+  it("non-strict mode accumulates errors without throwing", async () => {
+    const reg = new RuleRegistry({ strictValidation: false });
+    const fs = mockFs({
+      "/_schema/disagreement_rule.json": disagreementRuleSchema,
+      "/rules/bad_rule.json": {
+        $schema: "./_schema/disagreement_rule.json",
+        rule_id: "bad_v1",
+      },
+    });
+    await reg.loadFromFilesystem("/rules", "/_schema", { fs });
+    expect(reg.size()).toBe(0); // bad rule skipped
+    expect(reg.loadErrors).toHaveLength(1);
+  });
+
+  // End-to-end fs smoke against the real opening_hours rule is deferred to
+  // workspace-level integration tests (Session 5c.2+ when engine bootstrap wires
+  // the loader at a stable cwd). Mock-fs tests above prove the loader's logic;
+  // the real default-fs path is exercised whenever engine starts up.
 });
 
 describe("RuleRegistry / Phase 4.10 smoke (actual ratified rule)", () => {

@@ -66,14 +66,36 @@ export type RuleValidationResult =
 /**
  * RuleRegistry source-of-truth surface — what the engine consumes.
  *
- * Two consumption patterns:
+ * Consumption patterns:
  *   1. **Lookup by target** — disagreement rules, slide triggers: "what rule(s)
  *      apply to institution.opening_hours?" — returns array (may be empty).
  *   2. **Lookup by rule_id** — for direct rule consultation when caller knows
  *      which rule it wants (e.g., scene routing knows its own rule_id).
+ *   3. **Hot-replace + remove** — for admin tooling, test isolation, and v0.9
+ *      remote-rule refresh scenarios where rules need to be swapped at runtime
+ *      without restarting the engine.
+ *
+ * **Target string contract for `findRulesFor`:**
+ * The separator is `"."`. The first `.` splits the string into
+ * `entity = before-first-dot` and `field = after-first-dot` (the field portion
+ * is treated as opaque; further dots within it are kept). Entity names MUST NOT
+ * contain dots (v0.8 enforces this via snake_case naming conventions). For
+ * lookups by entity only, pass the entity name with no trailing `.field`.
+ *
+ * **Wildcard matching:** rules may use `"*"` as `applies_to_entity` or
+ * `applies_to_field` to match any value at that position (per ARD-017 §other-
+ * candidate-rule-classes — scene routing uses entity="*" to apply universally).
+ * Wildcards are evaluated at lookup time, not insertion time; a rule with
+ * `applies_to_entity: "*"` will return for ANY `findRulesFor` target. Author
+ * wildcard rules deliberately — they intentionally compete with entity-
+ * specific rules in the result set.
+ *
+ * **Versioning:** rule version (e.g. `_v2`) is part of the `rule_id` string,
+ * never a separate field. Callers wanting "the current version of rule X"
+ * iterate via {@link listRules} and inspect rule_id suffixes.
  */
 export interface RuleRegistrySurface {
-  /** Lookup rules that target a specific entity/field combination. */
+  /** Lookup rules that target a specific entity (e.g. `"institution"`) or entity.field. */
   findRulesFor(target: string): EngineRule[];
   /** Lookup a single rule by ID. */
   getRule(ruleId: string): EngineRule | null;
@@ -81,6 +103,36 @@ export interface RuleRegistrySurface {
   listRules(): EngineRule[];
   /** Count of loaded rules — useful for health checks. */
   size(): number;
+  /** Remove a rule by ID. Returns true if it existed. For hot-reload + test isolation. */
+  removeRule(ruleId: string): boolean;
+}
+
+// ============================================================================
+// SCHEMA CLASS NAME DERIVATION
+// ============================================================================
+
+/**
+ * Derive a Tier 2 schema class name from a Tier 3 rule's `$schema` field.
+ *
+ * Convention (per ARD-017 + Phase 4.10 ratified pattern): Tier 3 rule files
+ * declare their schema via a relative path like
+ *   "$schema": "./_schema/disagreement_rule.json"
+ *
+ * The class name is the file basename without `.json` extension —
+ * `"disagreement_rule"` in the example above. Returns `null` if the rule has
+ * no `$schema` or the path is non-standard (caller must provide schemaClassName
+ * explicitly to {@link RuleRegistry.addRule}).
+ *
+ * Stable derivation matters because Phase 5c's filesystem loader reads the
+ * `$schema` field per rule file to look up the registered Tier 2 schema —
+ * having this helper as a pure function keeps the loader thin and testable.
+ */
+export function deriveSchemaClassName(rule: { $schema?: unknown }): string | null {
+  if (typeof rule.$schema !== "string") return null;
+  const path = rule.$schema;
+  // Match the final path segment, stripping .json
+  const m = path.match(/(?:^|[\\/])([A-Za-z0-9_-]+)\.json$/);
+  return m ? m[1] : null;
 }
 
 // ============================================================================
@@ -95,6 +147,19 @@ export interface RuleRegistrySurface {
  * lighter-weight than Zod — checks required fields + top-level types, doesn't
  * traverse arbitrarily deep nested structures. For deeper validation, individual
  * rule classes can author their own validators in `packages/engine/src/rules/<class>/`.
+ *
+ * **Validation depth — explicit non-coverage (Phase 24c §5c.0 audit):**
+ *   - Top-level `required` fields: CHECKED (string presence).
+ *   - `rule_id` non-empty: CHECKED.
+ *   - Nested-object required fields (e.g. `trust_ranking[0].source_kind`): NOT checked.
+ *   - Type assertions per field: NOT checked (no `type: "string"` enforcement).
+ *   - Enum value membership: NOT checked.
+ *   - additionalProperties: NOT checked.
+ *
+ * Rule classes that need deep validation should author a class-specific
+ * validator alongside their schema in `content/rules/_schema/` and run it
+ * separately. The intent here is "fail loudly on missing top-level fields";
+ * everything finer-grained belongs to the rule class's own discipline.
  */
 export function validateRuleAgainstSchema(
   rule: Record<string, unknown>,
@@ -174,20 +239,27 @@ export class RuleRegistry implements RuleRegistrySurface {
   }
 
   /**
-   * Add a Tier 3 rule object. Validates against registered schema if one exists
-   * for the rule's class (derived from `$schema` reference, or explicitly named).
+   * Add a Tier 3 rule object. Validates against registered schema if one can
+   * be resolved. Resolution order:
+   *   1. Explicit `schemaClassName` parameter (highest priority — caller knows best)
+   *   2. Auto-derived from rule's `$schema` field via {@link deriveSchemaClassName}
+   *      (the natural path for filesystem-loaded rules)
+   *   3. None → skip validation, add unconditionally (caller is responsible)
+   *
    * Throws on validation failure when `strictValidation` is true (default).
    */
   addRule(rule: EngineRule, schemaClassName?: string): void {
-    if (schemaClassName) {
-      const schema = this.schemasByClass.get(schemaClassName);
+    const resolvedClassName =
+      schemaClassName ?? deriveSchemaClassName(rule as { $schema?: unknown });
+    if (resolvedClassName) {
+      const schema = this.schemasByClass.get(resolvedClassName);
       if (schema) {
         const result = validateRuleAgainstSchema(rule as Record<string, unknown>, schema);
         if (!result.valid) {
           this.loadErrors.push({ ruleId: rule.rule_id, errors: result.errors });
           if (this.strictValidation) {
             throw new Error(
-              `Rule '${rule.rule_id}' failed Tier 2 validation against schema '${schemaClassName}':\n  ` +
+              `Rule '${rule.rule_id}' failed Tier 2 validation against schema '${resolvedClassName}':\n  ` +
                 result.errors.join("\n  "),
             );
           }
@@ -198,6 +270,74 @@ export class RuleRegistry implements RuleRegistrySurface {
     this.rules.set(rule.rule_id, rule);
   }
 
+  removeRule(ruleId: string): boolean {
+    return this.rules.delete(ruleId);
+  }
+
+  // ============== Filesystem loader (Phase 5c.1) ==============
+
+  /**
+   * Load all Tier 3 rule files from `rulesDir` and Tier 2 schemas from `schemasDir`
+   * (typically `<schemasDir>` is `rulesDir + "/_schema"`). Order:
+   *
+   *   1. Read schemas first (so addRule can validate against them)
+   *   2. Read rules; for each, attempt schema-class derivation from $schema
+   *      then add via addRule (which auto-validates)
+   *
+   * Errors from individual file reads or validation are collected in loadErrors;
+   * throws only at end if `strictValidation=true` AND any errors collected.
+   *
+   * Per ARD-017 §migration-path: this is the engine-bootstrap entry point.
+   * `loadOptions.fs` can override the filesystem implementation for tests
+   * (default uses `node:fs/promises`).
+   */
+  async loadFromFilesystem(
+    rulesDir: string,
+    schemasDir: string,
+    loadOptions: { fs?: RuleRegistryFs } = {},
+  ): Promise<void> {
+    const fs = loadOptions.fs ?? (await defaultFs());
+
+    // Phase 1: load schemas
+    const schemaFiles = await fs.listJson(schemasDir).catch(() => [] as string[]);
+    for (const file of schemaFiles) {
+      try {
+        const raw = await fs.readJson(file);
+        const className = file.replace(/^.*[\\/]/, "").replace(/\.json$/, "");
+        this.registerSchema(className, raw as RuleClassSchema);
+      } catch (err) {
+        this.loadErrors.push({
+          ruleId: `[schema:${file}]`,
+          errors: [String((err as Error).message ?? err)],
+        });
+      }
+    }
+
+    // Phase 2: load rules
+    const ruleFiles = await fs.listJson(rulesDir).catch(() => [] as string[]);
+    for (const file of ruleFiles) {
+      try {
+        const raw = await fs.readJson(file);
+        // addRule auto-derives schemaClassName from rule.$schema
+        this.addRule(raw as EngineRule);
+      } catch (err) {
+        this.loadErrors.push({
+          ruleId: `[rule:${file}]`,
+          errors: [String((err as Error).message ?? err)],
+        });
+      }
+    }
+
+    if (this.strictValidation && this.loadErrors.length > 0) {
+      throw new Error(
+        `RuleRegistry.loadFromFilesystem accumulated ${this.loadErrors.length} error(s):\n` +
+          this.loadErrors
+            .map((e) => `  ${e.ruleId}: ${e.errors.join("; ")}`)
+            .join("\n"),
+      );
+    }
+  }
+
   // ============== Consumption surface ==============
 
   findRulesFor(target: string): EngineRule[] {
@@ -205,8 +345,17 @@ export class RuleRegistry implements RuleRegistrySurface {
     const entity = dotIndex >= 0 ? target.slice(0, dotIndex) : target;
     const field = dotIndex >= 0 ? target.slice(dotIndex + 1) : undefined;
     return [...this.rules.values()].filter((r) => {
-      if (r.applies_to_entity !== entity) return false;
-      if (field !== undefined && r.applies_to_field !== field) return false;
+      // Phase 5c.x wildcard matching per ARD-017 future rule classes:
+      //   - Scene routing rules use applies_to_entity: "*" (apply universally)
+      //   - Validator chain stage configs may use applies_to_field: "*"
+      //   - Disagreement rules use exact entity + field
+      // Wildcard "*" matches anything; otherwise strict equality.
+      if (r.applies_to_entity !== "*" && r.applies_to_entity !== entity) return false;
+      if (
+        field !== undefined &&
+        r.applies_to_field !== "*" &&
+        r.applies_to_field !== field
+      ) return false;
       return true;
     });
   }
@@ -222,4 +371,45 @@ export class RuleRegistry implements RuleRegistrySurface {
   size(): number {
     return this.rules.size;
   }
+}
+
+// ============================================================================
+// FILESYSTEM ADAPTER (kept as an interface so tests can mock without touching disk)
+// ============================================================================
+
+export interface RuleRegistryFs {
+  /**
+   * List absolute paths of `.json` files in `dir`. Returns empty array if
+   * the directory doesn't exist (graceful — engine startup shouldn't crash
+   * on missing rules dir during bootstrap of a fresh project).
+   */
+  listJson(dir: string): Promise<string[]>;
+  /** Read JSON file and return parsed object. Throws on read or parse failure. */
+  readJson(file: string): Promise<unknown>;
+}
+
+let _defaultFs: RuleRegistryFs | null = null;
+async function defaultFs(): Promise<RuleRegistryFs> {
+  if (_defaultFs) return _defaultFs;
+  // Dynamic import keeps the registry usable in bundled/browser contexts where
+  // fs/path are unavailable; only the engine's Node startup path triggers this.
+  const fsm = await import("node:fs/promises");
+  const path = await import("node:path");
+  _defaultFs = {
+    async listJson(dir: string): Promise<string[]> {
+      const entries = await fsm.readdir(dir, { withFileTypes: true });
+      const out: string[] = [];
+      for (const ent of entries) {
+        if (ent.isFile() && ent.name.endsWith(".json")) {
+          out.push(path.join(dir, ent.name));
+        }
+      }
+      return out;
+    },
+    async readJson(file: string): Promise<unknown> {
+      const buf = await fsm.readFile(file, "utf8");
+      return JSON.parse(buf);
+    },
+  };
+  return _defaultFs;
 }

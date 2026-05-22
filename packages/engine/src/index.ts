@@ -2,12 +2,20 @@ export * from './types';
 export {
   RuleRegistry,
   validateRuleAgainstSchema,
+  deriveSchemaClassName,
   type EngineRule,
   type RuleClassSchema,
   type RuleRegistryOptions,
   type RuleRegistrySurface,
   type RuleValidationResult,
+  type RuleRegistryFs,
 } from './rules/RuleRegistry';
+export {
+  applyDisagreementRules,
+  type SourceObservation,
+  type DisagreementSideEffect,
+  type DisagreementResolution,
+} from './rules/applyDisagreementRules';
 export * from './engine/CharacterCreation';
 export * from './engine/ContentValidator';
 export {

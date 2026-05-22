@@ -76,7 +76,14 @@ function renderZod(node, defRegistry, depth = 0) {
   if (node.enum && Array.isArray(node.enum)) {
     // F7a: detect null in enum array (regardless of `type` field) → emit .nullable()
     // F7b: detect numeric enum values → emit z.union([z.literal(...)]) (z.enum is string-only)
-    const hasNull = node.enum.includes(null);
+    // F7d (Phase 5c.x): preserve nullability when `type` declares it (e.g.
+    //      type: ["string", "null"] + enum: ["a","b","c"]) but null is NOT
+    //      a sentinel value in the enum array. Runtime data CAN be null per
+    //      the type declaration; failing to emit .nullable() would cause Zod
+    //      to reject legitimate null values from the persistence layer.
+    const hasNullInEnum = node.enum.includes(null);
+    const hasNullInType = Array.isArray(node.type) && node.type.includes("null");
+    const isNullable = hasNullInEnum || hasNullInType;
     const nonNullValues = node.enum.filter(v => v !== null);
     const allNumeric = nonNullValues.length > 0 && nonNullValues.every(v => typeof v === "number");
     let expr;
@@ -86,7 +93,7 @@ function renderZod(node, defRegistry, depth = 0) {
     } else {
       expr = `z.enum([${nonNullValues.map(v => JSON.stringify(v)).join(", ")}])`;
     }
-    return hasNull ? `${expr}.nullable()` : expr;
+    return isNullable ? `${expr}.nullable()` : expr;
   }
   if (node.oneOf && Array.isArray(node.oneOf) && node.x_discriminator) {
     const variants = node.oneOf.map(v => renderZod(v, defRegistry, depth + 1));
