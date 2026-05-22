@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "fixture_id": "item_consumable",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf consumable discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_vial_of_practiced_name_water",
+    "variant": "consumable",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_vial_of_practiced_name_water",
+    "name": "Vial of Practiced-Name Water",
+    "type": "consumable",
+    "rarity": "rare",
+    "regionalPackId": "greywake",
+    "descriptionShort": "A small glass vial holding clear water that hums faintly when held close to the ear.",
+    "magical": true,
+    "requiresAttunement": false,
+    "weightLb": 0.1,
+    "valueCp": 800,
+    "effectsOnUseStructured": [
+      {
+        "effect_kind": "trigger_event",
+        "trigger_event_kind": "drink_temporary_unspoken_name_fluency",
+        "charges_per_use": 1
+      }
+    ],
+    "chargesMax": 1,
+    "chargesRecover": "consumed_on_use",
+    "tags": ["slice_eligible", "consumable", "hear_the_fountain_output"]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "fixture_id": "item_wondrous",
+    "purpose": "Per-variant roundtrip test fixture — items-v06 oneOf wondrous discriminator (Phase 24d §6a.5).",
+    "live_row_id": "item_marrow_wax_seal_of_ilyra",
+    "variant": "wondrous",
+    "required_per_variant": []
+  },
+  "engineShape": {
+    "itemId": "item_marrow_wax_seal_of_ilyra",
+    "name": "Marrow-Wax Seal of Ilyra",
+    "type": "wondrous",
+    "rarity": "very_rare",
+    "regionalOriginId": "greywake",
+    "descriptionShort": "A small wax seal — drowned-red wax over an iron core — bearing the personal sigil of Marrow-Saint Ilyra.",
+    "magical": true,
+    "requiresAttunement": true,
+    "attunementCeremony": "sworn_oath",
+    "attunementSlotCost": 1,
+    "weightLb": 0.1,
+    "valueCp": 0,
+    "valueNote": "not for sale; sworn-gift only",
+    "effectsOnAttuneStructured": [
+      { "effect_kind": "stat_modifier", "magnitude_int": 2, "condition_target": "will", "duration_in_world_hours": null }
+    ],
+    "tags": ["slice_eligible", "faction_aligned_drowned_church", "witness_bearing", "sworn"]
+  }
+}

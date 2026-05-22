@@ -10,3 +10,4 @@ test-results/
 .vercel/
 .playwright-mcp/
 .claude/worktrees/
+tools/closure-inventory/.candidate/

@@ -3997,16 +3997,6 @@
           "duration_in_world_hours": null
         }
       ],
-      "effects_on_use_structured": [
-        {
-          "effect_kind": "spell_cast",
-          "spell_id": "spell_harden_contradiction",
-          "charges_per_use": 1,
-          "magnitude_int": null
-        }
-      ],
-      "charges_max": 1,
-      "charges_recover": "long_rest_in_bell_court_precinct",
       "weight_lb": 0.05,
       "value_cp": 1200,
       "weapon_properties": [],
@@ -4024,19 +4014,13 @@
           }
         ]
       },
-      "crafting": {
-        "recipe_id": "recipe_bell_marked_charm",
-        "intermediate_steps": [
-          "recipe_bell_marked_charm_step_a_practicing_water_vial",
-          "recipe_bell_marked_charm_step_b_forge"
-        ],
-        "primary_craft_station": "loc_bell_forge"
-      },
       "tags": [
         "slice_eligible",
         "faction_aligned_bell_court",
         "witness_bearing",
-        "attunement_required"
+        "attunement_required",
+        "v0_9_crafting_graph_pending",
+        "v0_9_on_use_effect_pending"
       ]
     },
     {

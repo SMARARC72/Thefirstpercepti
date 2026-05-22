@@ -424,19 +424,150 @@ export const factionHandler = {
   },
 };
 
+// ============================================================================
+// ITEM T HANDLER — Phase 24d §6a.5 Q-CLOSURE-4 (Risk 3 hardening)
+// ============================================================================
+// items-v06 schema is a oneOf discriminator with 11 variants. Khojen slice
+// closure exercises 8 of them (armor / book / consumable / currency_token /
+// tool / trinket / weapon / wondrous). Variants NOT exercised → DEFER to v0.9:
+// shield, ammunition, key.
+//
+// Design constraints (per user ratification Q-CLOSURE-4):
+//   - ONE thin dispatcher reads items-v06 discriminator (item.type)
+//   - 8 BESPOKE variant handlers (per-variant required-field validation)
+//   - NO base class, NO generic Translator<T>, NO inheritance
+//   - Each variant has its own roundtrip test fixture
+//   - 3 deferred variants throw on access with a clear v0.9 message
+// ============================================================================
+
+/** Item variants exercised by Khojen slice closure (6a.5). */
+export const SUPPORTED_ITEM_VARIANTS = [
+  "weapon", "armor", "consumable", "currency_token",
+  "tool", "trinket", "wondrous", "book",
+] as const;
+export type SupportedItemVariant = (typeof SUPPORTED_ITEM_VARIANTS)[number];
+
+/** Item variants present in schema oneOf but NOT exercised by slice → v0.9. */
+export const DEFERRED_ITEM_VARIANTS = ["shield", "ammunition", "key"] as const;
+
+/** Engine-side missing-required-field error (per Belief reference pattern). */
+function itemRequireField(e: Record<string, unknown>, field: string, variant: string): void {
+  if (e[field] === undefined || e[field] === null) {
+    throw new Error(`item variant '${variant}' missing required field: ${field}`);
+  }
+}
+
+// --- weapon (oneOf required: damage_dice, damage_type) ---
+function translateWeapon_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  itemRequireField(e, "damageDice", "weapon");
+  itemRequireField(e, "damageType", "weapon");
+  return remapKeys(e, camelToSnake);
+}
+function translateWeapon_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  itemRequireField(s, "damage_dice", "weapon");
+  itemRequireField(s, "damage_type", "weapon");
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- armor (oneOf required: armor_ac_base) ---
+function translateArmor_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  itemRequireField(e, "armorAcBase", "armor");
+  return remapKeys(e, camelToSnake);
+}
+function translateArmor_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  itemRequireField(s, "armor_ac_base", "armor");
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- consumable (no variant-specific required fields; effects_on_use_structured prominent) ---
+function translateConsumable_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateConsumable_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- currency_token (no variant-specific required; value_in_scrip / value_cp prominent) ---
+function translateCurrencyToken_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateCurrencyToken_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- tool (no variant-specific required) ---
+function translateTool_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateTool_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- trinket (no variant-specific required; effects_passive_structured prominent) ---
+function translateTrinket_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateTrinket_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- wondrous (no variant-specific required; effects + attunement prominent) ---
+function translateWondrous_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateWondrous_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
+// --- book (no variant-specific required; description_long prominent) ---
+function translateBook_toSnake(e: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(e, camelToSnake);
+}
+function translateBook_toCamel(s: Record<string, unknown>): Record<string, unknown> {
+  return remapKeys(s, snakeToCamel);
+}
+
 /**
- * Item → public.item (ItemSchema).
- *
- * ItemSchema is a v0.6 oneOf discriminator (items-v06.ts) — runtime engine
- * uses simpler ItemCategory enum. Bespoke adapter TODO: map engine.Item
- * category to schema's discriminator + back.
+ * 8 bespoke variant handlers exercised by Khojen slice closure.
+ * Each is independent — NO shared base class, NO generic Translator<T>, NO
+ * inheritance. Adding logic to one variant does NOT affect the others.
+ */
+export const itemVariantHandlers = {
+  weapon:         { toSnake: translateWeapon_toSnake,         toCamel: translateWeapon_toCamel },
+  armor:          { toSnake: translateArmor_toSnake,          toCamel: translateArmor_toCamel },
+  consumable:     { toSnake: translateConsumable_toSnake,     toCamel: translateConsumable_toCamel },
+  currency_token: { toSnake: translateCurrencyToken_toSnake,  toCamel: translateCurrencyToken_toCamel },
+  tool:           { toSnake: translateTool_toSnake,           toCamel: translateTool_toCamel },
+  trinket:        { toSnake: translateTrinket_toSnake,        toCamel: translateTrinket_toCamel },
+  wondrous:       { toSnake: translateWondrous_toSnake,       toCamel: translateWondrous_toCamel },
+  book:           { toSnake: translateBook_toSnake,           toCamel: translateBook_toCamel },
+} as const;
+
+/**
+ * Item → public.item — thin dispatcher reading items-v06 oneOf discriminator
+ * (item.type). Routes to bespoke variant handlers; throws on deferred or
+ * unknown variants with a clear v0.9 message (caller surfaces).
  */
 export const itemHandler = {
   toSnake(engineShape: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(engineShape, camelToSnake);
+    const variant = engineShape.type as string | undefined;
+    if (!variant) throw new Error("item missing 'type' discriminator (items-v06 oneOf)");
+    if ((DEFERRED_ITEM_VARIANTS as readonly string[]).includes(variant)) {
+      throw new Error(`item variant '${variant}' deferred to v0.9 — not supported in v0.8 slice`);
+    }
+    const h = itemVariantHandlers[variant as SupportedItemVariant];
+    if (!h) throw new Error(`unknown item variant: '${variant}' (not in items-v06 oneOf)`);
+    return h.toSnake(engineShape);
   },
   toCamel(schemaRow: Record<string, unknown>): Record<string, unknown> {
-    return remapKeys(schemaRow, snakeToCamel);
+    const variant = schemaRow.type as string | undefined;
+    if (!variant) throw new Error("item row missing 'type' discriminator (items-v06 oneOf)");
+    if ((DEFERRED_ITEM_VARIANTS as readonly string[]).includes(variant)) {
+      throw new Error(`item variant '${variant}' deferred to v0.9 — not supported in v0.8 slice`);
+    }
+    const h = itemVariantHandlers[variant as SupportedItemVariant];
+    if (!h) throw new Error(`unknown item variant: '${variant}' (not in items-v06 oneOf)`);
+    return h.toCamel(schemaRow);
   },
 };
 
