@@ -1677,18 +1677,46 @@ export interface FirstPerceptionSchemaPack {
     parent_faction_id?: string | null;
   };
   /**
-   * Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
+   * Phase 24d §6a.5.5 / Bundle D STATE layer — per-campaign mutable quest state. Definitional shape (name, archetype, discovery_channel, subplot_graph_relation, primary NPCs/factions/region) lives in content.quest_template; this row FKs to quest_template.quest_id. Composite PK (campaign_id, quest_id) live in DB.
    */
   quest?: {
+    /**
+     * FK to content.quest_template.quest_id; composite PK with campaign_id.
+     */
+    quest_id: string;
+    collision_pressure?: CollisionPressure;
+    /**
+     * Bundle D / L.IV-SC-06 — Per-campaign closing state.
+     */
+    closing_state:
+      | "open"
+      | "active"
+      | "completed_success"
+      | "completed_betrayal"
+      | "completed_walked"
+      | "expired"
+      | "failed"
+      | "deferred";
+    /**
+     * Day this campaign surfaced the quest.
+     */
+    emerged_at_day?: number;
+    /**
+     * FK to campaign.
+     */
+    campaign_id: string;
+    /**
+     * FK to session (or save_snapshot until session entity exists).
+     */
+    session_id: string;
+  };
+  /**
+   * Phase 24d §6a.5.5 / Bundle D TEMPLATE layer — definitional quest rows authored once per world. discovery_channel here is the channel SET (canonical surfacing modes per BORDERLINE-2 ratification); fired channel in a campaign is implicit via event.cause_event_ids. subplot_graph_relation per BORDERLINE-3 ratified TEMPLATE. Mutable per-campaign state lives in state.quest FK'd here.
+   */
+  quest_template?: {
     quest_id: string;
     name: string;
-    /**
-     * v0.8 cross-cutting.
-     */
     description?: string;
-    /**
-     * v0.8 cross-cutting tags primitive.
-     */
     tags?: string[];
     /**
      * Bundle D / L.IV-SC-01 — 8-value archetype taxonomy.
@@ -1703,19 +1731,6 @@ export interface FirstPerceptionSchemaPack {
       | "doctrinal"
       | "economic";
     discovery_channel: DiscoveryChannel;
-    collision_pressure?: CollisionPressure;
-    /**
-     * Bundle D / L.IV-SC-06 — Quest-scoped closing state (parallel to NPC closing_conditions but quest-level).
-     */
-    closing_state:
-      | "open"
-      | "active"
-      | "completed_success"
-      | "completed_betrayal"
-      | "completed_walked"
-      | "expired"
-      | "failed"
-      | "deferred";
     subplot_graph_relation: SubplotGraphRelation;
     /**
      * NPCs central to the quest. FK to npc.npc_id.
@@ -1729,40 +1744,19 @@ export interface FirstPerceptionSchemaPack {
      * Region the quest is rooted in. FK to region.region_id; null for cross-regional.
      */
     primary_region_id?: string | null;
-    emerged_at_day?: number;
-    /**
-     * Phase 4a.5 — state.* ownership sweep. FK to campaign.
-     */
-    campaign_id: string;
-    /**
-     * Phase 4a.5 — state.* ownership sweep. FK to session (or save_snapshot until session entity exists).
-     */
-    session_id: string;
   };
   /**
-   * Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.
+   * Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.
    */
   plot?: {
+    /**
+     * FK to content.plot_template.plot_id; composite PK with campaign_id.
+     */
     plot_id: string;
-    region_id: string;
-    name: string;
-    description?: string;
-    tags?: string[];
-    /**
-     * e.g. 'Will The Unnamed choose?'
-     */
-    spine_question: string;
-    central_npc_ids?: string[];
-    central_institution_ids?: string[];
-    /**
-     * Optional FK to pan_world_plot.
-     */
-    pan_world_plot_id?: string | null;
-    constituent_quest_ids: string[];
     current_pressure: number;
     current_act: "setup" | "confrontation" | "resolution";
     /**
-     * Bundle E / L.V-SC-06 — Drives UI surfacing of spine_question.
+     * Bundle E / L.V-SC-06 — Drives UI surfacing of spine_question. Per-player knowledge state.
      */
     spine_visibility: "hidden" | "suggested" | "visible" | "named" | "central";
     /**
@@ -1781,9 +1775,30 @@ export interface FirstPerceptionSchemaPack {
           | "closed_failure_state"
         )
       | null;
-    subplot_admission_policy?: SubplotAdmissionPolicy;
     campaign_id: string;
     session_id: string;
+  };
+  /**
+   * Phase 24d §6a.5.5 / Bundle E TEMPLATE layer — definitional plot rows authored once per world. Carries definitional columns (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy per BORDERLINE-1 ratification). Mutable per-campaign state lives in state.plot FK'd here.
+   */
+  plot_template?: {
+    plot_id: string;
+    region_id: string;
+    name: string;
+    description?: string;
+    tags?: string[];
+    /**
+     * e.g. 'Will The Unnamed choose?'
+     */
+    spine_question: string;
+    central_npc_ids?: string[];
+    central_institution_ids?: string[];
+    /**
+     * Optional FK to pan_world_plot.
+     */
+    pan_world_plot_id?: string | null;
+    constituent_quest_ids: string[];
+    subplot_admission_policy?: SubplotAdmissionPolicy;
   };
   /**
    * Phase 24b §4.5 / Bundle D / L.IV-SC-04 — Engine config governing when collision_pressure crosses to emerge as a quest. Hard cap of 7 surfaced threads per region (House L.I governor; codified).
@@ -2768,7 +2783,18 @@ export interface InternalFactionEntry {
   influence_weight: number;
 }
 /**
- * Bundle D / L.IV-SC-02 — How the quest surfaces.
+ * Bundle D / L.IV-SC-03 — Mutable per-campaign accumulation toward surfacing threshold.
+ */
+export interface CollisionPressure {
+  npc_id_a: string;
+  npc_id_b: string;
+  pressure_value: number;
+  collision_kind: "want_overlap" | "knowledge_asymmetry" | "schedule_conflict" | "faction_clash";
+  emerged_at_day: number;
+  resolved_at_day?: number | null;
+}
+/**
+ * Bundle D / L.IV-SC-02 — Channel SET (canonical surfacing modes); BORDERLINE-2 ratified TEMPLATE.
  */
 export interface DiscoveryChannel {
   kind: "overheard" | "witnessed" | "requested" | "stumbled" | "recruited" | "prophecy";
@@ -2797,18 +2823,7 @@ export interface SkillCheckBlock {
   dc: number;
 }
 /**
- * Bundle D / L.IV-SC-03 — Optional; populated for want_collision archetype quests.
- */
-export interface CollisionPressure {
-  npc_id_a: string;
-  npc_id_b: string;
-  pressure_value: number;
-  collision_kind: "want_overlap" | "knowledge_asymmetry" | "schedule_conflict" | "faction_clash";
-  emerged_at_day: number;
-  resolved_at_day?: number | null;
-}
-/**
- * Bundle D / L.IV-SC-05 — Subplot graph + parent plot ref.
+ * Bundle D / L.IV-SC-05 — Subplot graph + parent plot ref; BORDERLINE-3 ratified TEMPLATE.
  */
 export interface SubplotGraphRelation {
   quest_id: string;
@@ -2826,7 +2841,7 @@ export interface SubplotGraphRelation {
   emergence_path: string[];
 }
 /**
- * Bundle E / L.V-SC-02 — Per-plot admission policy for candidate quests.
+ * Bundle E / L.V-SC-02 — Per-plot admission policy for candidate quests. Audit BORDERLINE-1 ratified TEMPLATE.
  */
 export interface SubplotAdmissionPolicy {
   /**
@@ -2940,7 +2955,9 @@ export type OpexEventSchema = NonNullable<FirstPerceptionSchemaPack["opex_event"
 export type ModelTierPolicySchema = NonNullable<FirstPerceptionSchemaPack["model_tier_policy"]>;
 export type InstitutionSchema = NonNullable<FirstPerceptionSchemaPack["institution"]>;
 export type QuestSchema = NonNullable<FirstPerceptionSchemaPack["quest"]>;
+export type QuestTemplateSchema = NonNullable<FirstPerceptionSchemaPack["quest_template"]>;
 export type PlotSchema = NonNullable<FirstPerceptionSchemaPack["plot"]>;
+export type PlotTemplateSchema = NonNullable<FirstPerceptionSchemaPack["plot_template"]>;
 export type SurfacingThresholdConfigSchema = NonNullable<FirstPerceptionSchemaPack["surfacing_threshold_config"]>;
 export type TradeRouteV08Schema = NonNullable<FirstPerceptionSchemaPack["trade_route_v08"]>;
 export type InstitutionResponseQueueEntrySchema = NonNullable<FirstPerceptionSchemaPack["institution_response_queue_entry"]>;
@@ -2953,7 +2970,7 @@ export type InformationSchema = NonNullable<FirstPerceptionSchemaPack["informati
 
 // ============================================================================
 // Generated from schema_pack v0.8.0
-// Entity count: 54
+// Entity count: 56
 // $defs count:  74
 // Source: content/schemas/schema_pack_v0.8.json
 // ============================================================================

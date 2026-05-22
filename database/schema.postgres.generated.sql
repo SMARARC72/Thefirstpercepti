@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T04:11:53.598Z
+-- Generated at:   2026-05-22T18:30:12.908Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2245,20 +2245,6 @@ DO $$ BEGIN
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- public.quest_archetype
-DO $$ BEGIN
-  CREATE TYPE "public"."quest_archetype" AS ENUM (
-    'want_collision',
-    'institutional_failure',
-    'faction_reach_attempt',
-    'rumor_investigation',
-    'discovery',
-    'succession',
-    'doctrinal',
-    'economic'
-  );
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-
 -- public.quest_closing_state
 DO $$ BEGIN
   CREATE TYPE "public"."quest_closing_state" AS ENUM (
@@ -2270,6 +2256,20 @@ DO $$ BEGIN
     'expired',
     'failed',
     'deferred'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- public.quest_archetype
+DO $$ BEGIN
+  CREATE TYPE "public"."quest_archetype" AS ENUM (
+    'want_collision',
+    'institutional_failure',
+    'faction_reach_attempt',
+    'rumor_investigation',
+    'discovery',
+    'succession',
+    'doctrinal',
+    'economic'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -3501,7 +3501,7 @@ CREATE TABLE IF NOT EXISTS "public"."model_tier_policy" (
 ALTER TABLE "public"."model_tier_policy" ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- CONTENT schema — 6 entities
+-- CONTENT schema — 8 entities
 -- ============================================================================
 -- institution (content.institution)
 -- Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.
@@ -3522,6 +3522,45 @@ CREATE TABLE IF NOT EXISTS "content"."institution" (
 );
 COMMENT ON TABLE "content"."institution" IS 'Phase 24b §4.3 / Bundle B — Institution entity. Distinct from FactionSchema: faction-level orgs may or may not be institutions (e.g. Drowned Church is both; a feud-clan is a faction but not an institution). Institutions have cadence, jurisdictional strength, internal sub-factions, and an institutional memory archetype. Source: Sec L.II.';
 ALTER TABLE "content"."institution" ENABLE ROW LEVEL SECURITY;
+
+-- quest_template (content.quest_template)
+-- Phase 24d §6a.5.5 / Bundle D TEMPLATE layer — definitional quest rows authored once per world. discovery_channel here is the channel SET (canonical surfacing modes per BORDERLINE-2 ratification); fired channel in a campaign is implicit via event.cause_event_ids. subplot_graph_relation per BORDERLINE-3 ratified TEMPLATE. Mutable per-campaign state lives in state.quest FK'd here.
+CREATE TABLE IF NOT EXISTS "content"."quest_template" (
+  "quest_id" TEXT PRIMARY KEY NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "tags" JSONB,
+  "archetype" "public"."quest_archetype" NOT NULL,
+  "discovery_channel" JSONB NOT NULL  /* $ref: #/$defs/discovery_channel */,
+  "subplot_graph_relation" JSONB NOT NULL  /* $ref: #/$defs/subplot_graph_relation */,
+  "primary_npc_ids" JSONB,
+  "primary_faction_ids" JSONB,
+  "primary_region_id" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+COMMENT ON TABLE "content"."quest_template" IS 'Phase 24d §6a.5.5 / Bundle D TEMPLATE layer — definitional quest rows authored once per world. discovery_channel here is the channel SET (canonical surfacing modes per BORDERLINE-2 ratification); fired channel in a campaign is implicit via event.cause_event_ids. subplot_graph_relation per BORDERLINE-3 ratified TEMPLATE. Mutable per-campaign state lives in state.quest FK''d here.';
+ALTER TABLE "content"."quest_template" ENABLE ROW LEVEL SECURITY;
+
+-- plot_template (content.plot_template)
+-- Phase 24d §6a.5.5 / Bundle E TEMPLATE layer — definitional plot rows authored once per world. Carries definitional columns (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy per BORDERLINE-1 ratification). Mutable per-campaign state lives in state.plot FK'd here.
+CREATE TABLE IF NOT EXISTS "content"."plot_template" (
+  "plot_id" TEXT PRIMARY KEY NOT NULL,
+  "region_id" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "tags" JSONB,
+  "spine_question" TEXT NOT NULL,
+  "central_npc_ids" JSONB,
+  "central_institution_ids" JSONB,
+  "pan_world_plot_id" TEXT,
+  "constituent_quest_ids" JSONB NOT NULL,
+  "subplot_admission_policy" JSONB  /* $ref: #/$defs/subplot_admission_policy */,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+COMMENT ON TABLE "content"."plot_template" IS 'Phase 24d §6a.5.5 / Bundle E TEMPLATE layer — definitional plot rows authored once per world. Carries definitional columns (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy per BORDERLINE-1 ratification). Mutable per-campaign state lives in state.plot FK''d here.';
+ALTER TABLE "content"."plot_template" ENABLE ROW LEVEL SECURITY;
 
 -- trade_route_v08 (content.trade_route_v08)
 -- Phase 24b §4.4 / Bundle C / L.III-SC-06 — Commerce route distinct from v0.7 geographic travel_route $def. Carries commodity + capacity + controlling faction + active status. Reconciled with v0.7 travel_route via engine adapter at scene-load boundary.
@@ -3622,20 +3661,11 @@ ALTER TABLE "content"."information" ENABLE ROW LEVEL SECURITY;
 -- STATE schema — 4 entities
 -- ============================================================================
 -- quest (state.quest)
--- Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.
+-- Phase 24d §6a.5.5 / Bundle D STATE layer — per-campaign mutable quest state. Definitional shape (name, archetype, discovery_channel, subplot_graph_relation, primary NPCs/factions/region) lives in content.quest_template; this row FKs to quest_template.quest_id. Composite PK (campaign_id, quest_id) live in DB.
 CREATE TABLE IF NOT EXISTS "state"."quest" (
   "quest_id" TEXT PRIMARY KEY NOT NULL,
-  "name" TEXT NOT NULL,
-  "description" TEXT,
-  "tags" JSONB,
-  "archetype" "public"."quest_archetype" NOT NULL,
-  "discovery_channel" JSONB NOT NULL  /* $ref: #/$defs/discovery_channel */,
   "collision_pressure" JSONB  /* $ref: #/$defs/collision_pressure */,
   "closing_state" "public"."quest_closing_state" NOT NULL,
-  "subplot_graph_relation" JSONB NOT NULL  /* $ref: #/$defs/subplot_graph_relation */,
-  "primary_npc_ids" JSONB,
-  "primary_faction_ids" JSONB,
-  "primary_region_id" TEXT,
   "emerged_at_day" INTEGER,
   "campaign_id" TEXT NOT NULL,
   "session_id" TEXT NOT NULL,
@@ -3644,27 +3674,17 @@ CREATE TABLE IF NOT EXISTS "state"."quest" (
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CHECK ("emerged_at_day" >= 0)
 );
-COMMENT ON TABLE "state"."quest" IS 'Phase 24b §4.5 / Bundle D — Quest entity. Quests emerge from collision_pressure crossing surfacing_threshold; harvest NPC want_models (Bundle A), institutional failures (Bundle B), and faction reach attempts (Bundle C). Bundle E clusters quests into plots. Source: Sec L.IV.';
+COMMENT ON TABLE "state"."quest" IS 'Phase 24d §6a.5.5 / Bundle D STATE layer — per-campaign mutable quest state. Definitional shape (name, archetype, discovery_channel, subplot_graph_relation, primary NPCs/factions/region) lives in content.quest_template; this row FKs to quest_template.quest_id. Composite PK (campaign_id, quest_id) live in DB.';
 ALTER TABLE "state"."quest" ENABLE ROW LEVEL SECURITY;
 
 -- plot (state.plot)
--- Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.
+-- Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.
 CREATE TABLE IF NOT EXISTS "state"."plot" (
   "plot_id" TEXT PRIMARY KEY NOT NULL,
-  "region_id" TEXT NOT NULL,
-  "name" TEXT NOT NULL,
-  "description" TEXT,
-  "tags" JSONB,
-  "spine_question" TEXT NOT NULL,
-  "central_npc_ids" JSONB,
-  "central_institution_ids" JSONB,
-  "pan_world_plot_id" TEXT,
-  "constituent_quest_ids" JSONB NOT NULL,
   "current_pressure" SMALLINT NOT NULL,
   "current_act" "public"."plot_current_act" NOT NULL,
   "spine_visibility" "public"."spine_visibility" NOT NULL,
   "closing_state" "public"."plot_closing_state",
-  "subplot_admission_policy" JSONB  /* $ref: #/$defs/subplot_admission_policy */,
   "campaign_id" TEXT NOT NULL,
   "session_id" TEXT NOT NULL,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
@@ -3673,7 +3693,7 @@ CREATE TABLE IF NOT EXISTS "state"."plot" (
   CHECK ("current_pressure" >= 0),
   CHECK ("current_pressure" <= 10)
 );
-COMMENT ON TABLE "state"."plot" IS 'Phase 24b §4.6 / Bundle E / L.V-SC-01 — Plot entity. Clusters constituent quests (Bundle D) around a spine_question; may anchor a pan_world_plot. Source: Sec L.V.';
+COMMENT ON TABLE "state"."plot" IS 'Phase 24d §6a.5.5 / Bundle E STATE layer — per-campaign mutable plot state. Definitional shape (region, name, spine_question, constituent_quest_ids, central NPCs/institutions, pan_world link, subplot_admission_policy) lives in content.plot_template; this row FKs to plot_template.plot_id. Composite PK (campaign_id, plot_id) live in DB — gen-ddl emits single-PK due to current limitation; resolved at v0.8.1 generator enhancement.';
 ALTER TABLE "state"."plot" ENABLE ROW LEVEL SECURITY;
 
 -- institution_response_queue_entry (state.institution_response_queue_entry)
@@ -3804,6 +3824,12 @@ DO $$ BEGIN
   ALTER TABLE "content"."institution" ADD CONSTRAINT "fk_institution_parent_faction_id" FOREIGN KEY ("parent_faction_id") REFERENCES "public"."faction"("faction_id") ON DELETE SET NULL;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
+  ALTER TABLE "content"."quest_template" ADD CONSTRAINT "fk_quest_template_primary_region_id" FOREIGN KEY ("primary_region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE "content"."plot_template" ADD CONSTRAINT "fk_plot_template_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
   ALTER TABLE "content"."trade_route_v08" ADD CONSTRAINT "fk_trade_route_v08_origin_location_id" FOREIGN KEY ("origin_location_id") REFERENCES "public"."location"("location_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
@@ -3825,9 +3851,6 @@ DO $$ BEGIN
   ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
-  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_region_id" FOREIGN KEY ("region_id") REFERENCES "public"."region"("region_id") ON DELETE RESTRICT;
-EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN
   ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
@@ -3845,5 +3868,5 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ----------------------------------------------------------------------------
 -- END OF GENERATED DDL
--- 54 entities · 201 enums · 5 schemas
+-- 56 entities · 201 enums · 5 schemas
 -- ----------------------------------------------------------------------------
