@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-22T21:29:25.671Z
+ * Generated at:   2026-05-23T16:22:18.944Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -1124,6 +1124,7 @@ export const EventSchemaZ = z.object({
     })).optional(),
       "public_summary_for_ticker": z.string().max(80).nullable().optional(),
       "scene_id": z.string().nullable().optional(),
+      "is_prologue": z.boolean().optional(),
     });
 export type EventSchema = z.infer<typeof EventSchemaZ>;
 

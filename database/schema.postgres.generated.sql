@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T21:29:24.856Z
+-- Generated at:   2026-05-23T16:22:18.439Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2600,6 +2600,7 @@ CREATE TABLE IF NOT EXISTS "public"."event" (
   "diegetic_elements" JSONB,
   "public_summary_for_ticker" TEXT,
   "scene_id" TEXT,
+  "is_prologue" BOOLEAN,
   "schema_version" TEXT NOT NULL DEFAULT 'v0.8',
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
