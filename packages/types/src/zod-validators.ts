@@ -6,7 +6,7 @@
  * Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
  *
  * Schema version: 0.8.0
- * Generated at:   2026-05-23T16:22:18.944Z
+ * Generated at:   2026-05-23T17:08:21.057Z
  *
  * To change validators:
  *   1. Edit content/schemas/schema_pack_v0.8.json
@@ -2229,7 +2229,6 @@ export const CombatantSchemaZ = z.object({
     }).strict()).optional(),
     }).strict(),
       "social_attacks": z.array(SocialAttackZ),
-      "cosmological_redirection_id": z.string().optional(),
     }).strict();
 export type CombatantSchema = z.infer<typeof CombatantSchemaZ>;
 
