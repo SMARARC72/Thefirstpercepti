@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-23T16:22:18.439Z
+-- Generated at:   2026-05-23T17:08:20.527Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -3626,7 +3626,6 @@ CREATE TABLE IF NOT EXISTS "content"."combatant" (
   "voice_archetype" "public"."personality_archetype" NOT NULL,
   "combat_block" JSONB NOT NULL,
   "social_attacks" JSONB NOT NULL,
-  "cosmological_redirection_id" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

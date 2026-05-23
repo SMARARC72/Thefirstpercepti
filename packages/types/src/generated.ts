@@ -2043,10 +2043,6 @@ export interface FirstPerceptionSchemaPack {
      * Inline social_attack records (per CMB.II.IV inventory).
      */
     social_attacks: SocialAttack[];
-    /**
-     * FK to cosmological_redirection.primitive_id when combatant has Sum-Wraith Whisperer signature.
-     */
-    cosmological_redirection_id?: string;
   };
   /**
    * Phase 24b §4.8 / Bundle F / L.VI-SC-04 — Generation scaffold for NPC dialogue. UNIFIES Cluster A npc_prompt_skeleton per Session 3.5 overlap resolution. Two flavors: archetype-templated (default) and cluster_a_override=true (constraint-dominant per L.VI-SC-05 / fingerprint_waiver).
