@@ -5,7 +5,7 @@
 -- Per ARD-009: schema_pack is canonical; this file is a DERIVED ARTIFACT.
 --
 -- Schema version: 0.8.0
--- Generated at:   2026-05-22T21:24:46.432Z
+-- Generated at:   2026-05-22T21:29:24.856Z
 --
 -- To change DDL output:
 --   1. Edit content/schemas/schema_pack_v0.8.json
@@ -3865,13 +3865,13 @@ DO $$ BEGIN
   ALTER TABLE "content"."information" ADD CONSTRAINT "fk_information_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
-  ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_quest_id" FOREIGN KEY ("quest_id") REFERENCES "content"."quest_template"("quest_id") ON DELETE RESTRICT;
+  ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_template_id" FOREIGN KEY ("quest_id") REFERENCES "content"."quest_template"("quest_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "state"."quest" ADD CONSTRAINT "fk_quest_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
-  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_plot_id" FOREIGN KEY ("plot_id") REFERENCES "content"."plot_template"("plot_id") ON DELETE RESTRICT;
+  ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_template_id" FOREIGN KEY ("plot_id") REFERENCES "content"."plot_template"("plot_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "state"."plot" ADD CONSTRAINT "fk_plot_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
@@ -3883,7 +3883,7 @@ DO $$ BEGIN
   ALTER TABLE "state"."institution_response_queue_entry" ADD CONSTRAINT "fk_institution_response_queue_entry_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
-  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_branch_id" FOREIGN KEY ("branch_id") REFERENCES "content"."failure_state_branch_template"("branch_id") ON DELETE RESTRICT;
+  ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_template_id" FOREIGN KEY ("branch_id") REFERENCES "content"."failure_state_branch_template"("branch_id") ON DELETE RESTRICT;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN
   ALTER TABLE "state"."failure_state_branch" ADD CONSTRAINT "fk_failure_state_branch_campaign_id" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaign"("campaign_id") ON DELETE CASCADE;

@@ -1,0 +1,240 @@
+{
+  "_meta": {
+    "generated": "2026-05-22T21:32:07.126Z",
+    "source": "supabase db query --linked information_schema.referential_constraints",
+    "note": "Re-run dump-db-fk-targets.mjs after any schema migration touching FK constraints."
+  },
+  "fk_count": 36,
+  "by_source_table": {
+    "content.combatant": [
+      {
+        "column": "base_npc_id",
+        "targets": "public.npc.npc_id",
+        "on_delete": "CASCADE"
+      }
+    ],
+    "content.failure_state_branch_template": [
+      {
+        "column": "parent_plot_id",
+        "targets": "content.plot_template.plot_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "content.information": [
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "CASCADE"
+      }
+    ],
+    "content.institution": [
+      {
+        "column": "parent_faction_id",
+        "targets": "public.faction.faction_id",
+        "on_delete": "SET NULL"
+      }
+    ],
+    "content.plot_template": [
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "content.prompt_skeleton": [
+      {
+        "column": "npc_id",
+        "targets": "public.npc.npc_id",
+        "on_delete": "CASCADE"
+      }
+    ],
+    "content.quest_template": [
+      {
+        "column": "primary_region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "content.trade_route_v08": [
+      {
+        "column": "controlling_faction_id",
+        "targets": "public.faction.faction_id",
+        "on_delete": "SET NULL"
+      },
+      {
+        "column": "destination_location_id",
+        "targets": "public.location.location_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "origin_location_id",
+        "targets": "public.location.location_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.creature_material": [
+      {
+        "column": "regional_pack_id",
+        "targets": "public.regional_pack.pack_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.cult_institution": [
+      {
+        "column": "faction_id",
+        "targets": "public.faction.faction_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.event": [
+      {
+        "column": "location_id",
+        "targets": "public.location.location_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.faction": [
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.item": [
+      {
+        "column": "regional_pack_id",
+        "targets": "public.regional_pack.pack_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.location": [
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.loot_table": [
+      {
+        "column": "faction_id",
+        "targets": "public.faction.faction_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "location_id",
+        "targets": "public.location.location_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.material_substitution": [
+      {
+        "column": "recipe_id",
+        "targets": "public.recipe.recipe_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.npc": [
+      {
+        "column": "race_id",
+        "targets": "public.race.race_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.orchestrator_session": [
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.player": [
+      {
+        "column": "race_id",
+        "targets": "public.race.race_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "subrace_id",
+        "targets": "public.subrace.subrace_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.regional_currency_state": [
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "public.regional_pack": [
+      {
+        "column": "region_id",
+        "targets": "public.region.region_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "state.failure_state_branch": [
+      {
+        "column": "branch_id",
+        "targets": "content.failure_state_branch_template.branch_id",
+        "on_delete": "RESTRICT"
+      },
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "CASCADE"
+      }
+    ],
+    "state.institution_response_queue_entry": [
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "CASCADE"
+      },
+      {
+        "column": "institution_id",
+        "targets": "content.institution.institution_id",
+        "on_delete": "CASCADE"
+      }
+    ],
+    "state.plot": [
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "CASCADE"
+      },
+      {
+        "column": "plot_id",
+        "targets": "content.plot_template.plot_id",
+        "on_delete": "RESTRICT"
+      }
+    ],
+    "state.quest": [
+      {
+        "column": "campaign_id",
+        "targets": "public.campaign.campaign_id",
+        "on_delete": "CASCADE"
+      },
+      {
+        "column": "quest_id",
+        "targets": "content.quest_template.quest_id",
+        "on_delete": "RESTRICT"
+      }
+    ]
+  }
+}
