@@ -448,6 +448,10 @@ export interface FirstPerceptionSchemaPack {
      * R-122-E: groups events by scene for easier filtering. Replaces implicit grouping.
      */
     scene_id?: string | null;
+    /**
+     * Phase 24d 6a.6 commit 4 — TRUE for canonical-past events (Khojen prologue) that occurred before any campaign existed. FK-independent of campaign per ARD-010.
+     */
+    is_prologue?: boolean;
   };
   faction?: {
     faction_id: string;
