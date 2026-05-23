@@ -1130,3 +1130,12 @@ export type { FactionSchema, NpcSchema } from "./generated.js";
 // campaign-config side and is re-exported here for explicit access.
 // v0.8 Session 4 promotes Exit / POI / LockRequirement / SkillCheck.
 export type { LocationSchema } from "./generated.js";
+
+// Phase 6a.5.8.2 #18 — subplot_admission_policy predicate DSL (parser + Zod).
+export {
+  parsePredicate,
+  isValidPredicate,
+  PredicateStringZ,
+  AdmissionRulePredicateZ,
+} from "./predicate-dsl.js";
+export type { PredicateAst } from "./predicate-dsl.js";

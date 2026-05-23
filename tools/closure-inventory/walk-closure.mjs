@@ -82,16 +82,22 @@ const START_SET = {
 // ----------------------------------------------------------------------------
 function loadCatalogs() {
   const items     = JSON.parse(readFileSync(join(CONTENT, "items.json"),       "utf8"));
-  const materials = JSON.parse(readFileSync(join(CONTENT, "materials.json"),   "utf8"));
-  const spells    = JSON.parse(readFileSync(join(CONTENT, "spells.json"),      "utf8"));
-  const loot      = JSON.parse(readFileSync(join(CONTENT, "loot_tables.json"), "utf8"));
-  const recipes   = JSON.parse(readFileSync(join(CONTENT, "recipes.json"),     "utf8"));
+  const materials       = JSON.parse(readFileSync(join(CONTENT, "materials.json"),       "utf8"));
+  const spells          = JSON.parse(readFileSync(join(CONTENT, "spells.json"),          "utf8"));
+  const imposedSpells   = JSON.parse(readFileSync(join(CONTENT, "imposed_spells.json"),  "utf8"));
+  const loot            = JSON.parse(readFileSync(join(CONTENT, "loot_tables.json"),     "utf8"));
+  const recipes         = JSON.parse(readFileSync(join(CONTENT, "recipes.json"),         "utf8"));
 
   const arr = (x, key) => Array.isArray(x) ? x : (x[key] || []);
+  // Phase 6a.5.8.2 #2 follow-up: spell_id refs in item effect blocks can
+  // resolve to either public.spell OR public.imposed_spell (same key column
+  // semantics). Merge both catalogs at walker scan time so the walker
+  // doesn't false-positive on imposed_spells-only refs like harden_contradiction.
+  const allSpells = [...arr(spells, "spells"), ...arr(imposedSpells, "imposed_spells")];
   return {
     items:       arr(items, "items"),
     materials:   arr(materials, "materials"),
-    spells:      arr(spells, "spells"),
+    spells:      allSpells,
     loot_tables: arr(loot, "loot_tables"),
     recipes:     arr(recipes, "recipes"),
   };
@@ -239,6 +245,50 @@ function walkClosure(cat) {
 }
 
 // ----------------------------------------------------------------------------
+// Phase 6a.5.8.2 #2 — DB-level FK cross-check
+// ----------------------------------------------------------------------------
+// Closure walker only sees JSON-source FK refs. DB-level FKs (e.g. items.
+// regional_pack_id → regional_pack — caught only at INSERT-time during
+// 6a.5 commit 2) are invisible without help. This cross-check reads the
+// cached `db-fk-targets.json` (produced by dump-db-fk-targets.mjs) and
+// surfaces any FK target tables that the closure-considered source tables
+// reference but the closure walk does NOT visit.
+//
+// Tables walked by closure: public.item, public.material, public.spell,
+// public.loot_table, public.recipe (default start-set targets).
+function dbFkCrossCheck() {
+  const cachePath = join(__dirname, "db-fk-targets.json");
+  try {
+    const cache = JSON.parse(readFileSync(cachePath, "utf8"));
+    const walkedTables = new Set([
+      "public.item", "public.material", "public.spell",
+      "public.loot_table", "public.recipe",
+    ]);
+    const warnings = [];
+    for (const sourceTable of walkedTables) {
+      const fks = cache.by_source_table?.[sourceTable] || [];
+      for (const fk of fks) {
+        const targetTable = fk.targets.split(".").slice(0, 2).join(".");
+        // Surface FKs to tables NOT in the closure walk's scope —
+        // these are blind-spots that the JSON-only walker can't see.
+        if (!walkedTables.has(targetTable)) {
+          warnings.push({
+            source_table: sourceTable,
+            source_column: fk.column,
+            target: fk.targets,
+            on_delete: fk.on_delete,
+            note: `${sourceTable}.${fk.column} FKs to ${fk.targets} — closure walker doesn't visit ${targetTable}; verify seed populates this target before pushing.`,
+          });
+        }
+      }
+    }
+    return { cacheAge: cache._meta?.generated, fkCount: cache.fk_count, warnings };
+  } catch (e) {
+    return { cacheMissing: true, error: e.message };
+  }
+}
+
+// ----------------------------------------------------------------------------
 // Report writer
 // ----------------------------------------------------------------------------
 function variantCountsForItems(closure, idxItem) {
@@ -321,6 +371,21 @@ This drives Item T handler design: only the variants above need bespoke handlers
 ## Broken FK refs (half-closures requiring ratification)
 
 ${brokenLines}
+
+## DB-level FK cross-check (Phase 6a.5.8.2 #2)
+
+${(() => {
+  const r = dbFkCrossCheck();
+  if (r.cacheMissing) {
+    return `_(no cache; run \`node tools/closure-inventory/dump-db-fk-targets.mjs\` to populate \`db-fk-targets.json\`, then re-run walker)_`;
+  }
+  if (r.warnings.length === 0) {
+    return `_(clean — closure-walked tables have no DB-level FK targets outside the walk scope; cache from ${r.cacheAge}; ${r.fkCount} FKs scanned)_`;
+  }
+  const head = `Cache from ${r.cacheAge}; ${r.fkCount} FKs scanned; ${r.warnings.length} blind-spot(s) — closure-walked tables reference targets NOT in the closure-walk scope. **Verify each target has rows OR is explicitly seeded before pushing.**\n`;
+  const list = r.warnings.map((w) => `- \`${w.source_table}.${w.source_column}\` → \`${w.target}\` (ON DELETE ${w.on_delete})`).join("\n");
+  return head + "\n" + list;
+})()}
 
 ## Full closure set
 

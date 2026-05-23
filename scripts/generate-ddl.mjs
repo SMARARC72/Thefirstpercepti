@@ -377,7 +377,16 @@ function emitTable(entity, allEnums, entityIndex, fkOut) {
       }
     }
     if (fkResolution) {
-      const constraintName = `fk_${entity.name}_${col}`;
+      // Phase 6a.5.8.2 (#17): align FK constraint naming with migration-authored convention.
+      // When source FKs to its own template (e.g., state.plot.plot_id → content.plot_template),
+      // emit `fk_<source>_template_id` to match the intent-revealing name used in 6a.5.5+
+      // migrations. Otherwise keep default `fk_<source>_<column>` (matches campaign_id +
+      // other cross-entity FKs already in live DB).
+      const sourceEntity = entity.name;
+      const isTemplateFK = fkResolution.tableName === `${sourceEntity}_template`;
+      const constraintName = isTemplateFK
+        ? `fk_${sourceEntity}_template_id`
+        : `fk_${sourceEntity}_${col}`;
       // F-FK-ORDER: emit FK as separate ALTER TABLE at end of file (after all CREATE TABLEs)
       // to avoid forward-reference errors when an entity references a not-yet-created table.
       if (fkOut) {

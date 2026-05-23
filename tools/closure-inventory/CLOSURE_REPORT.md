@@ -1,6 +1,6 @@
 # Phase 24d / 6a.5 — Catalog Closure Report
 
-**Generated:** 2026-05-22T17:16:22.192Z
+**Generated:** 2026-05-22T21:33:47.674Z
 **Discipline:** Discipline 9 transitive-closure (Risk 3 hardening)
 **Stop thresholds:** items=30 / materials=50 / spells=25 / loot_tables=8
 
@@ -10,11 +10,11 @@
 |---|---|---|---|
 | items | 15 | 30 | OK |
 | materials | 0 | 50 | OK |
-| spells | 8 | 25 | OK |
+| spells | 9 | 25 | OK |
 | loot_tables | 0 | 8 | OK |
 | recipes | 0 | _(no explicit cap)_ | — |
 
-**Fixed-point reached in 1 iterations.**
+**Fixed-point reached in 2 iterations.**
 
 ## Bulk-seed catalogs (NOT closure-filtered; slice-fixed content)
 
@@ -54,6 +54,15 @@ This drives Item T handler design: only the variants above need bespoke handlers
 
 _(none — closure is well-formed)_
 
+## DB-level FK cross-check (Phase 6a.5.8.2 #2)
+
+Cache from 2026-05-22T21:32:07.126Z; 36 FKs scanned; 4 blind-spot(s) — closure-walked tables reference targets NOT in the closure-walk scope. **Verify each target has rows OR is explicitly seeded before pushing.**
+
+- `public.item.regional_pack_id` → `public.regional_pack.pack_id` (ON DELETE RESTRICT)
+- `public.loot_table.faction_id` → `public.faction.faction_id` (ON DELETE RESTRICT)
+- `public.loot_table.location_id` → `public.location.location_id` (ON DELETE RESTRICT)
+- `public.loot_table.region_id` → `public.region.region_id` (ON DELETE RESTRICT)
+
 ## Full closure set
 
 ### Items (15)
@@ -76,9 +85,10 @@ _(none — closure is well-formed)_
 ### Materials (0)
 
 
-### Spells (8)
+### Spells (9)
   - contradiction_bolt
   - eldritch_blast
+  - harden_contradiction
   - hex
   - hum_of_witnesses
   - mage_hand
