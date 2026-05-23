@@ -127,6 +127,62 @@ Before re-promotion, surface for ratification:
 
 ---
 
+## Section C — combatant.base_npc_id identity-anchor + stub-NPC pattern (LIVE in v0.8)
+
+### Background — Codex divergence (informational)
+
+The Codex CMB.0 design sketch (§11522-34) frames `combatant` as a **sibling primitive** with its own identity (`combatant_id`, `name`, `tagline`), provenance metadata, and a first-class `entity_type` enum (`individual` / `gang` / `cell` / `council`) handling cardinality natively. The sketch has **NO `base_npc_id` field**.
+
+The Phase 24c 5a.5 `content.combatant` table implementation added a `base_npc_id` NOT NULL FK → `public.npc(npc_id)` CASCADE that does not appear in the Codex design. This is an implementation choice carried forward into v0.8.
+
+This ADR §C accepts the implementation-as-shipped (live since Phase 24c) and characterizes how `base_npc_id` is correctly used. v0.9 may revisit the design (e.g., add `entity_type` enum + nullable `base_faction_id` per-type-FK pair, dropping the NPC-mandatory anchor) if group-adversary content surfaces a real consumer pressure.
+
+### Decision
+
+`combatant.base_npc_id` semantic role is **identity-anchor**, NOT stat-source:
+
+- **Stat source:** `combat_block` JSONB on combatant — self-contained per-row stat block (HP, AC, attacks, abilities, speed, etc.). Engine consumes combat stats from this jsonb at encounter time.
+- **Identity anchor:** `base_npc_id` references the NPC whose narrative identity grounds the combatant's existence. The NPC does NOT contribute stats; the NPC anchors *who this combatant is in the world* for dialogue, faction-affiliation, and recurrence semantics.
+
+### Stub-NPC pattern (used in Phase 6a.7 commit "C0")
+
+Group/cell/faction adversaries (e.g., "Glass-Tooth Gang") have no single named NPC leader in seeded content. To satisfy `base_npc_id` NOT NULL while preserving Path B principle (don't fabricate canonical content), use the established **BUG-FIX-2 sentinel-string stub pattern** (`packages/persistence/src/naming.ts` — `NPC_STUB_MARKER = "STUB::AWAITING_NARRATIVE_DEPTH"`):
+
+1. Author a minimal Bundle A stub NPC row per cell/gang/faction adversary
+2. Populate required string fields with `NPC_STUB_MARKER` sentinel (schema-conformant; survives Zod validation)
+3. Tag the row with `combatant_anchor_only_stub` + `scenery_tier` for filtering
+4. Point combatant's `base_npc_id` at the stub
+
+**Detection helpers:**
+- `isNpcBundleAStub(row)` (existing; checks `want_model.drive.description === NPC_STUB_MARKER`)
+- Combatant-anchor-specific: filter by tag `combatant_anchor_only_stub` in the npc.tags JSONB array
+
+### Criteria for using the stub-NPC pattern
+
+Use ONLY when:
+
+| Criterion | Required | Rationale |
+|---|---|---|
+| Adversary is genuinely group-typed (gang / cell / faction / council) per Codex authorship | YES | Individual adversaries should anchor at a real seeded NPC |
+| No suitable seeded NPC exists for narrative anchoring | YES | If a fitting NPC exists, use it (Bell-Magistrate Orro for a Bell Court adversary, etc.) |
+| Combatant ships in v0.8 slice scope | YES | Defer combatant to v0.9 if stub would be the only option AND no slice need exists |
+| `combatant_anchor_only_stub` tag applied | YES | Marks the row for engine + audit filtering |
+| Codex doesn't author the adversary's leader figure | YES | If Codex names a leader, that NPC should be seeded properly, not stubbed |
+
+**Anti-pattern:** Do NOT use the stub-NPC pattern to satisfy FK requirements for individual named adversaries whose Codex authoring deserves a full NPC. Stub-NPC is for group-cell-faction adversaries only.
+
+### v0.9 revisit criteria
+
+If 2+ of the following hold, revisit `combatant.base_npc_id` design:
+- Group-adversary content count exceeds 5 stub NPCs (sentinel-row pollution becomes audit burden)
+- Codex authors `entity_type` field as definitional combatant metadata
+- An adversary needs to anchor at a faction (not an NPC) for narrative correctness
+- Engine read paths fragment between "combatant via NPC" and "combatant via stub-NPC" with different handling
+
+Design alternatives for v0.9: (1) ALTER make `base_npc_id` NULLABLE + add `base_faction_id` nullable + CHECK (one non-null); (2) Promote Codex `entity_type` field to first-class column; (3) Polymorphic-via-join-table per ARD-011 if multiple anchor types needed.
+
+---
+
 ## Consequences
 
 **Positive:**
